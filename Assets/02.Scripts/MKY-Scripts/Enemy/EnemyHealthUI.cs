@@ -11,7 +11,7 @@ public class EnemyHealthUI : MonoBehaviour
     [Header("딜레이 옵션")]
     [SerializeField] private float _fillSpeed = 8f;
     [SerializeField] private float _delaySpeed = 5f;
-    [SerializeField] private float _delayTime = 0.3f;
+    [SerializeField] private float _delayTime = 0.2f;
 
     private EnemyBase _enemy;
 
@@ -53,11 +53,11 @@ public class EnemyHealthUI : MonoBehaviour
             StopCoroutine(_delayCoroutine);
         }
 
-        _fillCoroutine = StartCoroutine(SmoothFill(_healthFill, target, _fillSpeed));
-        _delayCoroutine = StartCoroutine(SmoothDelay(_healthDelay, target));
+        _fillCoroutine = StartCoroutine(SmoothFill_Coroutine(_healthFill, target, _fillSpeed));
+        _delayCoroutine = StartCoroutine(SmoothDelay_Coroutine(_healthDelay, target));
     }
 
-    private IEnumerator SmoothFill(Image image, float target, float speed)
+    private IEnumerator SmoothFill_Coroutine(Image image, float target, float speed)
     {
         while (!Mathf.Approximately(image.fillAmount, target))
         {
@@ -68,7 +68,7 @@ public class EnemyHealthUI : MonoBehaviour
         image.fillAmount = target;
     }
 
-    private IEnumerator SmoothDelay(Image image, float target)
+    private IEnumerator SmoothDelay_Coroutine(Image image, float target)
     {
         yield return new WaitForSeconds(_delayTime);
 

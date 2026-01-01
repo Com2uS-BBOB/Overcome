@@ -9,6 +9,8 @@ public abstract class EnemyBase : MonoBehaviour
     protected float _currentHealth;
     // protected EnemyMovement _movement;
 
+    private float _destroyTime = 1.2f;
+
     public event Action<float, float> OnHealthChanged;
 
     protected virtual void Awake()
@@ -38,6 +40,6 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Die()
     {
         Debug.Log($"적이 죽었습니다.");
-        Destroy(gameObject);
+        Destroy(gameObject, _destroyTime);
     }
 }

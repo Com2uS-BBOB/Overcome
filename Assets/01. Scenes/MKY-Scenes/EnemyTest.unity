@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 125339699}
   - component: {fileID: 125339698}
   - component: {fileID: 125339697}
+  - component: {fileID: 125339700}
   - component: {fileID: 125339696}
   m_Layer: 0
   m_Name: Canvas
@@ -386,6 +387,23 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &125339700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 125339694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
+  _healthFill: {fileID: 726181820}
+  _healthDelay: {fileID: 89657636}
+  _fillSpeed: 8
+  _delaySpeed: 5
+  _delayTime: 0.2
 --- !u!1 &176706831
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,7 +417,6 @@ GameObject:
   - component: {fileID: 176706835}
   - component: {fileID: 176706834}
   - component: {fileID: 176706833}
-  - component: {fileID: 176706832}
   m_Layer: 0
   m_Name: SmallEnemy
   m_TagString: Untagged
@@ -407,23 +424,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &176706832
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 176706831}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
-  _healthFill: {fileID: 1790057533}
-  _healthDelay: {fileID: 665762258}
-  _fillSpeed: 8
-  _delaySpeed: 5
-  _delayTime: 0.3
 --- !u!114 &176706833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -896,7 +896,6 @@ GameObject:
   - component: {fileID: 650913257}
   - component: {fileID: 650913256}
   - component: {fileID: 650913255}
-  - component: {fileID: 650913254}
   m_Layer: 0
   m_Name: BuffEnemy
   m_TagString: Untagged
@@ -904,23 +903,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &650913254
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 650913253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
-  _healthFill: {fileID: 726181820}
-  _healthDelay: {fileID: 89657636}
-  _fillSpeed: 8
-  _delaySpeed: 5
-  _delayTime: 0.3
 --- !u!114 &650913255
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1191,7 +1173,6 @@ GameObject:
   - component: {fileID: 778022579}
   - component: {fileID: 778022578}
   - component: {fileID: 778022582}
-  - component: {fileID: 778022576}
   m_Layer: 0
   m_Name: BigEnemy
   m_TagString: Untagged
@@ -1199,23 +1180,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &778022576
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 778022575}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
-  _healthFill: {fileID: 862666428}
-  _healthDelay: {fileID: 1099115639}
-  _fillSpeed: 8
-  _delaySpeed: 5
-  _delayTime: 0.3
 --- !u!136 &778022578
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1534,7 +1498,6 @@ GameObject:
   - component: {fileID: 1087044357}
   - component: {fileID: 1087044356}
   - component: {fileID: 1087044361}
-  - component: {fileID: 1087044360}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -1638,23 +1601,6 @@ Transform:
   - {fileID: 1697697947}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1087044360
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1087044355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
-  _healthFill: {fileID: 415511662}
-  _healthDelay: {fileID: 1981982315}
-  _fillSpeed: 8
-  _delaySpeed: 5
-  _delayTime: 0.3
 --- !u!114 &1087044361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1755,6 +1701,7 @@ GameObject:
   - component: {fileID: 1273983340}
   - component: {fileID: 1273983339}
   - component: {fileID: 1273983338}
+  - component: {fileID: 1273983342}
   - component: {fileID: 1273983341}
   m_Layer: 0
   m_Name: Canvas
@@ -1860,6 +1807,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0228fe69fa8eef74799f1847f2dec21b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Billboard
+--- !u!114 &1273983342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1273983336}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
+  _healthFill: {fileID: 1790057533}
+  _healthDelay: {fileID: 665762258}
+  _fillSpeed: 8
+  _delaySpeed: 5
+  _delayTime: 0.2
 --- !u!1 &1661236427
 GameObject:
   m_ObjectHideFlags: 0
@@ -1985,6 +1949,7 @@ GameObject:
   - component: {fileID: 1697697950}
   - component: {fileID: 1697697949}
   - component: {fileID: 1697697948}
+  - component: {fileID: 1697697952}
   - component: {fileID: 1697697951}
   m_Layer: 0
   m_Name: Canvas
@@ -2090,6 +2055,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0228fe69fa8eef74799f1847f2dec21b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Billboard
+--- !u!114 &1697697952
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1697697946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
+  _healthFill: {fileID: 415511662}
+  _healthDelay: {fileID: 1981982315}
+  _fillSpeed: 8
+  _delaySpeed: 5
+  _delayTime: 0.2
 --- !u!1 &1790057530
 GameObject:
   m_ObjectHideFlags: 0
@@ -2177,6 +2159,7 @@ GameObject:
   - component: {fileID: 1884476188}
   - component: {fileID: 1884476187}
   - component: {fileID: 1884476186}
+  - component: {fileID: 1884476189}
   - component: {fileID: 1884476185}
   m_Layer: 0
   m_Name: Canvas
@@ -2282,6 +2265,23 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!114 &1884476189
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884476183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
+  _healthFill: {fileID: 862666428}
+  _healthDelay: {fileID: 1099115639}
+  _fillSpeed: 8
+  _delaySpeed: 5
+  _delayTime: 0.2
 --- !u!1 &1981982314
 GameObject:
   m_ObjectHideFlags: 0
@@ -2503,6 +2503,6 @@ SceneRoots:
   - {fileID: 1661236431}
   - {fileID: 1087044359}
   - {fileID: 778022581}
-  - {fileID: 781773135}
   - {fileID: 176706837}
   - {fileID: 650913259}
+  - {fileID: 781773135}
