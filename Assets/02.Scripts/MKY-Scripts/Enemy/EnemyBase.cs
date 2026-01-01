@@ -15,7 +15,10 @@ public abstract class EnemyBase : MonoBehaviour
     {
         // _movement = GetComponent<EnemyMovement>();
         _currentHp = EnemyStatData.MaxHealth;
+    }
 
+    protected virtual void Start()
+    {
         OnHealthChanged?.Invoke(_currentHp, EnemyStatData.MaxHealth);
     }
 

@@ -24,10 +24,7 @@ public class EnemyHealthUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_enemy != null)
-        {
-            _enemy.OnHealthChanged += OnHealthChanged;
-        }
+        _enemy.OnHealthChanged += OnHealthChanged;
     }
 
     private void OnDisable()
