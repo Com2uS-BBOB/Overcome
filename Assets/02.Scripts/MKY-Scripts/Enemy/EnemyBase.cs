@@ -6,7 +6,7 @@ public abstract class EnemyBase : MonoBehaviour
     [Header("스탯")]
     public EnemyStatData EnemyStatData;
 
-    protected float _currentHp;
+    protected float _currentHealth;
     // protected EnemyMovement _movement;
 
     public event Action<float, float> OnHealthChanged;
@@ -14,22 +14,22 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Awake()
     {
         // _movement = GetComponent<EnemyMovement>();
-        _currentHp = EnemyStatData.MaxHealth;
+        _currentHealth = EnemyStatData.MaxHealth;
     }
 
     protected virtual void Start()
     {
-        OnHealthChanged?.Invoke(_currentHp, EnemyStatData.MaxHealth);
+        OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
     }
 
     public virtual void TakeDamage(float damage)
     {
-        _currentHp -= damage;
-        _currentHp = Mathf.Max(_currentHp, 0);
+        _currentHealth -= damage;
+        _currentHealth = Mathf.Max(_currentHealth, 0);
 
-        OnHealthChanged?.Invoke(_currentHp, EnemyStatData.MaxHealth);
+        OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
 
-        if (_currentHp <= 0)
+        if (_currentHealth <= 0)
         {
             Die();
         }

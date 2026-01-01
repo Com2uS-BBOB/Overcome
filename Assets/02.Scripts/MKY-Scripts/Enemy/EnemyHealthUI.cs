@@ -9,12 +9,13 @@ public class EnemyHealthUI : MonoBehaviour
     [SerializeField] private Image _healthDelay;
 
     [Header("딜레이 옵션")]
+    [SerializeField] private float _fillSpeed = 8f;
+    [SerializeField] private float _delaySpeed = 5f;
     [SerializeField] private float _delayTime = 0.3f;
-    [SerializeField] private float _smoothSpeed = 2f;
 
     private EnemyBase _enemy;
 
-    private float _maxHealth;
+    private Coroutine _fillCoroutine;
     private Coroutine _delayCoroutine;
 
     private void Awake()
@@ -24,7 +25,10 @@ public class EnemyHealthUI : MonoBehaviour
 
     private void OnEnable()
     {
-        _enemy.OnHealthChanged += OnHealthChanged;
+        if (_enemy != null)
+        {
+            _enemy.OnHealthChanged += OnHealthChanged;
+        }
     }
 
     private void OnDisable()
@@ -37,30 +41,43 @@ public class EnemyHealthUI : MonoBehaviour
 
     private void OnHealthChanged(float currentHp, float maxHp)
     {
-        _maxHealth = maxHp;
-
         float target = currentHp / maxHp;
-        _healthFill.fillAmount = target;
+
+        if (_fillCoroutine != null)
+        {
+            StopCoroutine(_fillCoroutine);
+        }
 
         if (_delayCoroutine != null)
         {
             StopCoroutine(_delayCoroutine);
         }
 
-        _delayCoroutine = StartCoroutine(DelayBar(target));
+        _fillCoroutine = StartCoroutine(SmoothFill(_healthFill, target, _fillSpeed));
+        _delayCoroutine = StartCoroutine(SmoothDelay(_healthDelay, target));
     }
 
-    private IEnumerator DelayBar(float target)
+    private IEnumerator SmoothFill(Image image, float target, float speed)
     {
-        yield return new WaitForSeconds(_delayTime);
-
-        while (_healthDelay.fillAmount > target)
+        while (!Mathf.Approximately(image.fillAmount, target))
         {
-            _healthDelay.fillAmount = Mathf.Lerp(_healthDelay.fillAmount,target,Time.deltaTime * _smoothSpeed);
-
+            image.fillAmount = Mathf.Lerp(image.fillAmount, target, Time.deltaTime * speed);
             yield return null;
         }
 
-        _healthDelay.fillAmount = target;
+        image.fillAmount = target;
+    }
+
+    private IEnumerator SmoothDelay(Image image, float target)
+    {
+        yield return new WaitForSeconds(_delayTime);
+
+        while (!Mathf.Approximately(image.fillAmount, target))
+        {
+            image.fillAmount = Mathf.Lerp(image.fillAmount, target, Time.deltaTime * _delaySpeed);
+            yield return null;
+        }
+
+        image.fillAmount = target;
     }
 }
