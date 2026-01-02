@@ -1,30 +1,30 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
 {
     [System.Serializable]
-    public struct EnemyPrefab
+    public class EnemyPoolData
     {
-        public EEnemyType type;
-        public EnemyBase prefab;
+        public EEnemyType Type;
+        public EnemyBase Prefab;
+        public int InitialSize;
     }
 
-    [SerializeField] private EnemyPrefab[] _enemyPrefabs;
+    [SerializeField]
+    private List<EnemyPoolData> _enemyPools;
 
-    protected override void SetupPrefabs()
+    private void Awake()
     {
-        foreach (var data in _enemyPrefabs)
+        foreach (var data in _enemyPools)
         {
-            if (!_prefabs.ContainsKey(data.type))
-            {
-                _prefabs.Add(data.type, data.prefab);
-            }
+            RegisterType(data.Type, data.Prefab, data.InitialSize);
         }
     }
 
-    public EnemyBase SpawnEnemy(EEnemyType type, Vector3 pos, Quaternion rot)
+    public EnemyBase SpawnEnemy(EEnemyType type, Vector3 position, Quaternion rotation)
     {
-        EnemyBase enemy = Spawn(type, pos, rot);
+        EnemyBase enemy = Spawn(type, position, rotation);
         enemy.SetPool(this);
         enemy.SetEnemyType(type);
         return enemy;

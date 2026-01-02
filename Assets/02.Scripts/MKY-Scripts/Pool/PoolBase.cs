@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-
 public abstract class PoolBase : MonoBehaviour
 {
     protected virtual void Awake()
@@ -10,33 +9,25 @@ public abstract class PoolBase : MonoBehaviour
     }
 }
 
-public abstract class PoolBase<TEnum, TObject> : PoolBase
+public abstract class PoolBase<TEnum, TObject> : MonoBehaviour
     where TEnum : System.Enum
     where TObject : Component
 {
-    [SerializeField] protected int _defaultSize = 10;
-
     protected Dictionary<TEnum, Queue<TObject>> _pool = new();
     protected Dictionary<TEnum, TObject> _prefabs = new();
 
-    protected abstract void SetupPrefabs();
-
-    protected virtual void Start()
+    protected void RegisterType(TEnum type, TObject prefab, int initialSize)
     {
-        SetupPrefabs();
+        _prefabs[type] = prefab;
 
-        foreach (var pair in _prefabs)
+        Queue<TObject> queue = new();
+
+        for (int i = 0; i < initialSize; i++)
         {
-            Queue<TObject> queue = new Queue<TObject>();
-
-            for (int i = 0; i < _defaultSize; i++)
-            {
-                TObject obj = Create(pair.Key);
-                queue.Enqueue(obj);
-            }
-
-            _pool.Add(pair.Key, queue);
+            queue.Enqueue(Create(type));
         }
+
+        _pool[type] = queue;
     }
 
     protected TObject Create(TEnum type)
@@ -46,7 +37,7 @@ public abstract class PoolBase<TEnum, TObject> : PoolBase
         return obj;
     }
 
-    public virtual TObject Spawn(TEnum type, Vector3 pos, Quaternion rot)
+    public virtual TObject Spawn(TEnum type, Vector3 position, Quaternion rotation)
     {
         if (!_pool.ContainsKey(type))
         {
@@ -58,7 +49,7 @@ public abstract class PoolBase<TEnum, TObject> : PoolBase
             _pool[type].Enqueue(Create(type));
 
         TObject obj = _pool[type].Dequeue();
-        obj.transform.SetPositionAndRotation(pos, rot);
+        obj.transform.SetPositionAndRotation(position, rotation);
         obj.gameObject.SetActive(true);
         return obj;
     }
@@ -69,4 +60,3 @@ public abstract class PoolBase<TEnum, TObject> : PoolBase
         _pool[type].Enqueue(obj);
     }
 }
-

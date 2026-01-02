@@ -290,16 +290,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69644ecdc3550364cab7d40bb0bea931, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPool
-  _defaultSize: 10
-  _enemyPrefabs:
-  - type: 0
-    prefab: {fileID: 1986956077294670782, guid: 050f78e19c0ebca408b83d8cc2a4e3ff, type: 3}
-  - type: 1
-    prefab: {fileID: 9243648425913167, guid: 61220eac648dc9941890e02bee2c2a62, type: 3}
-  - type: 2
-    prefab: {fileID: 211374651718498087, guid: 3042ca450be3bf34b8edd90813d08da5, type: 3}
-  - type: 3
-    prefab: {fileID: 4475157664041445708, guid: 80b1a12faf8605f4d9e234037fc8d46a, type: 3}
+  _enemyPools:
+  - Type: 0
+    Prefab: {fileID: 1986956077294670782, guid: 050f78e19c0ebca408b83d8cc2a4e3ff, type: 3}
+    InitialSize: 30
+  - Type: 1
+    Prefab: {fileID: 9243648425913167, guid: 61220eac648dc9941890e02bee2c2a62, type: 3}
+    InitialSize: 30
+  - Type: 2
+    Prefab: {fileID: 211374651718498087, guid: 3042ca450be3bf34b8edd90813d08da5, type: 3}
+    InitialSize: 10
+  - Type: 3
+    Prefab: {fileID: 4475157664041445708, guid: 80b1a12faf8605f4d9e234037fc8d46a, type: 3}
+    InitialSize: 15
 --- !u!1 &781773133
 GameObject:
   m_ObjectHideFlags: 0
