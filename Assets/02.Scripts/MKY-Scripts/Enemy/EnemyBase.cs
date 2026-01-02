@@ -9,7 +9,9 @@ public abstract class EnemyBase : MonoBehaviour
     protected float _currentHealth;
     // protected EnemyMovement _movement;
 
-    private float _destroyTime = 1.2f;
+    public EEnemyType EnemyType { get; private set; }
+
+    private PoolManager _poolManager;
 
     public event Action<float, float> OnHealthChanged;
 
@@ -22,6 +24,12 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Start()
     {
         OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
+    }
+
+    public void Init(PoolManager poolManager, EEnemyType type)
+    {
+        _poolManager = poolManager;
+        EnemyType = type;
     }
 
     public virtual void TakeDamage(float damage)
@@ -40,6 +48,6 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Die()
     {
         Debug.Log($"적이 죽었습니다.");
-        Destroy(gameObject, _destroyTime);
+        _poolManager.ReturnEnemy(this);
     }
 }
