@@ -246,6 +246,60 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &642449876
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 642449877}
+  - component: {fileID: 642449878}
+  m_Layer: 0
+  m_Name: Pool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &642449877
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642449876}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1146956386}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &642449878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 642449876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69644ecdc3550364cab7d40bb0bea931, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyPool
+  _defaultSize: 10
+  _enemyPrefabs:
+  - type: 0
+    prefab: {fileID: 1986956077294670782, guid: 050f78e19c0ebca408b83d8cc2a4e3ff, type: 3}
+  - type: 1
+    prefab: {fileID: 9243648425913167, guid: 61220eac648dc9941890e02bee2c2a62, type: 3}
+  - type: 2
+    prefab: {fileID: 211374651718498087, guid: 3042ca450be3bf34b8edd90813d08da5, type: 3}
+  - type: 3
+    prefab: {fileID: 4475157664041445708, guid: 80b1a12faf8605f4d9e234037fc8d46a, type: 3}
 --- !u!1 &781773133
 GameObject:
   m_ObjectHideFlags: 0
@@ -321,7 +375,8 @@ Transform:
   m_LocalPosition: {x: 0, y: -0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 642449877}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1146956387
@@ -336,19 +391,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2ded70c28fcc824c87a0d27e99b69e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoolManager
-  EnemyPoolDatas:
-  - Type: 0
-    Prefab: {fileID: 1986956077294670782, guid: 050f78e19c0ebca408b83d8cc2a4e3ff, type: 3}
-    InitialCount: 30
-  - Type: 1
-    Prefab: {fileID: 9243648425913167, guid: 61220eac648dc9941890e02bee2c2a62, type: 3}
-    InitialCount: 30
-  - Type: 2
-    Prefab: {fileID: 211374651718498087, guid: 3042ca450be3bf34b8edd90813d08da5, type: 3}
-    InitialCount: 10
-  - Type: 3
-    Prefab: {fileID: 4475157664041445708, guid: 80b1a12faf8605f4d9e234037fc8d46a, type: 3}
-    InitialCount: 20
 --- !u!1 &1661236427
 GameObject:
   m_ObjectHideFlags: 0

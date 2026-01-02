@@ -1,72 +1,40 @@
 using UnityEngine;
+using System;
 using System.Collections.Generic;
 
+[DefaultExecutionOrder(-100)]
 public class PoolManager : MonoBehaviour
 {
-    public static PoolManager Instance;
+    public static PoolManager Instance { get; private set; }
 
-    [System.Serializable]
-    public class EnemyPoolData
-    {
-        public EEnemyType Type;
-        public EnemyBase Prefab;
-        public int InitialCount;
-    }
-
-    public List<EnemyPoolData> EnemyPoolDatas;
-
-    private Dictionary<EEnemyType, Queue<EnemyBase>> _pools = new();
-    private Dictionary<EEnemyType, EnemyBase> _prefabs = new();
+    private Dictionary<Type, PoolBase> _pools = new();
 
     private void Awake()
     {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
-
-        foreach (var data in EnemyPoolDatas)
-        {
-            Queue<EnemyBase> pool = new Queue<EnemyBase>();
-
-            for (int i = 0; i < data.InitialCount; i++)
-            {
-                EnemyBase enemy = CreateEnemy(data.Type, data.Prefab);
-                enemy.gameObject.SetActive(false);
-                pool.Enqueue(enemy);
-            }
-
-            _pools.Add(data.Type, pool);
-            _prefabs.Add(data.Type, data.Prefab);
-        }
     }
 
-    private EnemyBase CreateEnemy(EEnemyType type, EnemyBase prefab)
+    public void RegisterPool<T>(T pool) where T : PoolBase
     {
-        EnemyBase enemy = Instantiate(prefab, transform);
-        enemy.Init(this, type);
-        return enemy;
+        Type type = typeof(T);
+
+        if (_pools.ContainsKey(type))
+            return;
+
+        _pools.Add(type, pool);
     }
 
-    public EnemyBase SpawnEnemy(EEnemyType type, Vector3 position)
+    public T GetPool<T>() where T : PoolBase
     {
-        EnemyBase enemy;
+        if (_pools.TryGetValue(typeof(T), out PoolBase pool))
+            return pool as T;
 
-        if (_pools[type].Count > 0)
-        {
-            enemy = _pools[type].Dequeue();
-        }
-        else
-        {
-            enemy = CreateEnemy(type, _prefabs[type]);
-        }
-
-        enemy.transform.position = position;
-        enemy.gameObject.SetActive(true);
-
-        return enemy;
-    }
-
-    public void ReturnEnemy(EnemyBase enemy)
-    {
-        enemy.gameObject.SetActive(false);
-        _pools[enemy.EnemyType].Enqueue(enemy);
+        Debug.LogError($"[PoolManager] Pool not found: {typeof(T)}");
+        return null;
     }
 }

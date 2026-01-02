@@ -11,25 +11,25 @@ public abstract class EnemyBase : MonoBehaviour
 
     public EEnemyType EnemyType { get; private set; }
 
-    private PoolManager _poolManager;
+    private EnemyPool _pool;
 
     public event Action<float, float> OnHealthChanged;
 
-    protected virtual void Awake()
+    public void SetPool(EnemyPool pool)
+    {
+        _pool = pool;
+    }
+
+    public void SetEnemyType(EEnemyType type)
+    {
+        EnemyType = type;
+    }
+
+    protected virtual void OnEnable()
     {
         // _movement = GetComponent<EnemyMovement>();
         _currentHealth = EnemyStatData.MaxHealth;
-    }
-
-    protected virtual void Start()
-    {
         OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
-    }
-
-    public void Init(PoolManager poolManager, EEnemyType type)
-    {
-        _poolManager = poolManager;
-        EnemyType = type;
     }
 
     public virtual void TakeDamage(float damage)
@@ -48,6 +48,6 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Die()
     {
         Debug.Log($"적이 죽었습니다.");
-        _poolManager.ReturnEnemy(this);
+        _pool.Despawn(EnemyType, this);
     }
 }
