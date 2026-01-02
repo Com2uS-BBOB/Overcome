@@ -6,11 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : SingletonBehaviour<SceneController>
 {
-    private ESceneType _currentScene = ESceneType.TitleScene;
+    private ESceneType _currentScene = ESceneType.SampleScene;
     private Dictionary<ESceneType, string> _sceneNameMap;
     private bool _isLoading;
-
-    public ESceneType GetCurrentScene() => _currentScene;
+    public event Action<ESceneType> OnSceneChanged;
+    public ESceneType CurrentScene => _currentScene;
     public bool IsLoading => _isLoading;
     
     protected override void Init()
@@ -68,8 +68,9 @@ public class SceneController : SingletonBehaviour<SceneController>
 
     private void OnActiveSceneChanged(Scene previousScene, Scene newScene)
     {
-        if (!Enum.TryParse<ESceneType>(newScene.name, out ESceneType sceneType)) return;
+        if (!Enum.TryParse(newScene.name, out ESceneType sceneType)) return;
         _currentScene = sceneType;
+        OnSceneChanged?.Invoke(sceneType);
     }
 
     public void LoadScene(ESceneType nextScene)
