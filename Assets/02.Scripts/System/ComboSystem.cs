@@ -3,10 +3,12 @@ using UnityEngine;
 
 public class ComboSystem : SingletonBehaviour<ComboSystem>
 {
+    protected override bool DontDestroy => false;
+    
     [Header("Combo Configs")]
     [SerializeField] private ComboConfigData _comboConfigData;
 
-    // InGame Combo Data
+    // Ingame Data
     private ComboConfig _currentComboConfig;
     private int _comboCount;
     private float _comboTimer;
