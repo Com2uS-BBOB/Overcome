@@ -7,10 +7,13 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private EnemyPool _enemyPool;
 
     [Header("스폰 설정")]
-    [SerializeField] private int _minAroundCount = 20;
-    [SerializeField] private int _maxAroundCount = 20;
+    [SerializeField] private int _aroundCount = 20;
     [SerializeField] private float _spawnRadius = 6f;
     [SerializeField] private float _respawnDelay = 3f;
+
+    [Header("자연스러운 배치 설정")]
+    [SerializeField] private float _randomDegree = 10f;
+    [SerializeField] private float _randomRadius = 0.5f;
 
     private void Start()
     {
@@ -23,24 +26,27 @@ public class EnemySpawner : MonoBehaviour
         Vector3 center = transform.position;
         SpawnEnemy(EEnemyType.Elite, center);
 
-        // 주변에 적 스폰
-        int count = Random.Range(_minAroundCount, _maxAroundCount + 1);
-
+        // 주위에 적 스폰
+        int count = _aroundCount + 1;
         float angleStep = 360f / count;
-        float radius = _spawnRadius;
 
         for (int i = 0; i < count; i++)
         {
+            // 일반 혹은 소형 랜덤 스폰
             EEnemyType type = Random.value < 0.5f
                 ? EEnemyType.Normal
                 : EEnemyType.Small;
 
-            float angle = angleStep * i * Mathf.Deg2Rad;
+            // 약간의 랜덤 각도 및 반경 변동 추가 (자연스러운 배치)
+            float angleDegree = angleStep * i + Random.Range(-_randomDegree, _randomDegree);
+            float radius = _spawnRadius + Random.Range(-_randomRadius, _randomRadius);
+
+            float angleRadius = angleDegree * Mathf.Deg2Rad;
 
             Vector3 offset = new Vector3(
-                Mathf.Cos(angle) * radius,
+                Mathf.Cos(angleRadius) * radius,
                 0f,
-                Mathf.Sin(angle) * radius
+                Mathf.Sin(angleRadius) * radius
             );
 
             Vector3 spawnPosition = center + offset;
@@ -48,35 +54,37 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    private void SpawnEnemy(EEnemyType type, Vector3 position)
+    private void SpawnEnemy(EEnemyType type, Vector3 basePosition)
     {
-        Vector3 offset = enemyOffset(type);
-        Vector3 finalPosition = position + offset;
+        Vector3 finalPosition = basePosition + GetSpawnHeight(type);
 
-        EnemyBase enemy = _enemyPool.SpawnEnemy(type, finalPosition, Quaternion.identity);
+        EnemyBase enemy = _enemyPool.SpawnEnemy(
+            type,
+            finalPosition,
+            Quaternion.identity
+        );
+
         enemy.SetSpawner(this);
+        enemy.SetSpawnBasePosition(basePosition); // 리스폰용 (높이 재설정 제외)
     }
-
-    private Vector3 enemyOffset(EEnemyType type)
+    private Vector3 GetSpawnHeight(EEnemyType type)
     {
         EnemyBase prefab = _enemyPool.GetPrefab(type);
-        return prefab.GetSpawnOffset();
+        return Vector3.up * prefab.GetSpawnHeight();
     }
 
     public void RequestRespawn(EnemyBase enemy)
     {
-        StartCoroutine(RespawnEnemy(enemy.EnemyType));
+        StartCoroutine(RespawnEnemy_Coroutine(enemy));
     }
 
-    private IEnumerator RespawnEnemy(EEnemyType type)
+    private IEnumerator RespawnEnemy_Coroutine(EnemyBase enemy)
     {
+        Vector3 respawnPosition = enemy.GetSpawnBasePosition();
+        EEnemyType type = enemy.EnemyType;
+
         yield return new WaitForSeconds(_respawnDelay);
-        SpawnEnemy(type, GetRandomPositionAround());
-    }
 
-    private Vector3 GetRandomPositionAround()
-    {
-        Vector2 circle = Random.insideUnitCircle.normalized * Random.Range(2f, _spawnRadius);
-        return transform.position + new Vector3(circle.x, 0f, circle.y);
+        SpawnEnemy(type, respawnPosition);
     }
 }

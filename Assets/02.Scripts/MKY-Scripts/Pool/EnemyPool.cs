@@ -35,7 +35,7 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
         if (_prefabs.TryGetValue(type, out EnemyBase prefab))
             return prefab;
 
-        Debug.LogError($"Enemy prefab not found: {type}");
+        Debug.LogError($"적 프리팹을 찾을 수 없습니다: {type}");
         return null;
     }
 }

@@ -1,36 +1,31 @@
-using System;
 using UnityEngine;
+using System;
 
 public abstract class EnemyBase : MonoBehaviour
 {
     [Header("스탯")]
     public EnemyStatData EnemyStatData;
 
-    [Header("스폰 높이")]
-    [SerializeField] private float _spawnHeight = 1f;
-
     protected float _currentHealth;
     // protected EnemyMovement _movement;
+
+    [Header("스폰 높이")]
+    [SerializeField] private float _spawnHeight = 1f;
 
     public EEnemyType EnemyType { get; private set; }
 
     private EnemyPool _pool;
     private EnemySpawner _spawner;
 
-    private Vector3 _spawnOffset;
+    private Vector3 _spawnBasePosition;
 
     public event Action<float, float> OnHealthChanged;
 
-
-    protected virtual void Awake()
+    protected virtual void OnEnable()
     {
-        // 프리팹 상태에서의 로컬 위치 기억
-        _spawnOffset = transform.localPosition;
-    }
-
-    public Vector3 GetSpawnOffset()
-    {
-        return Vector3.up * _spawnHeight;
+        // _movement = GetComponent<EnemyMovement>();
+        _currentHealth = EnemyStatData.MaxHealth;
+        OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
     }
 
     public void SetPool(EnemyPool pool)
@@ -42,17 +37,27 @@ public abstract class EnemyBase : MonoBehaviour
     {
         EnemyType = type;
     }
+
     public void SetSpawner(EnemySpawner spawner)
     {
         _spawner = spawner;
     }
 
-    protected virtual void OnEnable()
+    // 최초 스폰 위치 저장 (리스폰용)
+    public void SetSpawnBasePosition(Vector3 basePosition)
     {
-        // _movement = GetComponent<EnemyMovement>();
-        _currentHealth = EnemyStatData.MaxHealth;
-        OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
+        _spawnBasePosition = basePosition;
     }
+
+    public Vector3 GetSpawnBasePosition()
+    {
+        return _spawnBasePosition;
+    }
+    public float GetSpawnHeight()
+    {
+        return _spawnHeight;
+    }
+
 
     public virtual void TakeDamage(float damage)
     {
