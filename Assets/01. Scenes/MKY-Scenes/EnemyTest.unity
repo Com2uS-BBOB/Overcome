@@ -326,7 +326,7 @@ Transform:
   m_GameObject: {fileID: 766418080}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0, z: 4}
+  m_LocalPosition: {x: 0, y: -0, z: 6}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -346,10 +346,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   _enemyPool: {fileID: 642449878}
   _aroundCount: 20
-  _spawnRadius: 6
+  _spawnRadius: 10
   _respawnDelay: 3
-  _randomDegree: 10
-  _randomRadius: 0.5
+  _randomDegree: 6
+  _randomRadius: 0.2
 --- !u!1 &781773133
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,12 +8,12 @@ public class EnemySpawner : MonoBehaviour
 
     [Header("스폰 설정")]
     [SerializeField] private int _aroundCount = 20;
-    [SerializeField] private float _spawnRadius = 6f;
+    [SerializeField] private float _spawnRadius = 10f;
     [SerializeField] private float _respawnDelay = 3f;
 
     [Header("자연스러운 배치 설정")]
-    [SerializeField] private float _randomDegree = 10f;
-    [SerializeField] private float _randomRadius = 0.5f;
+    [SerializeField] private float _randomDegree = 6f;
+    [SerializeField] private float _randomRadius = 0.2f;
 
     private void Start()
     {
@@ -27,7 +27,7 @@ public class EnemySpawner : MonoBehaviour
         SpawnEnemy(EEnemyType.Elite, center);
 
         // 주위에 적 스폰
-        int count = _aroundCount + 1;
+        int count = _aroundCount;
         float angleStep = 360f / count;
 
         for (int i = 0; i < count; i++)
