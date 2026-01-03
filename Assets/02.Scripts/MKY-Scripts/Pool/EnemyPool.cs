@@ -29,4 +29,13 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
         enemy.SetEnemyType(type);
         return enemy;
     }
+
+    public EnemyBase GetPrefab(EEnemyType type)
+    {
+        if (_prefabs.TryGetValue(type, out EnemyBase prefab))
+            return prefab;
+
+        Debug.LogError($"Enemy prefab not found: {type}");
+        return null;
+    }
 }
