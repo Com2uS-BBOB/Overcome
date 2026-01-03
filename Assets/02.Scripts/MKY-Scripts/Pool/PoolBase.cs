@@ -46,7 +46,9 @@ public abstract class PoolBase<TEnum, TObject> : MonoBehaviour
         }
 
         if (_pool[type].Count == 0)
+        {
             _pool[type].Enqueue(Create(type));
+        }
 
         TObject obj = _pool[type].Dequeue();
         obj.transform.SetPositionAndRotation(position, rotation);
