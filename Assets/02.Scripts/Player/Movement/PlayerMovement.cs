@@ -43,6 +43,11 @@ namespace _02.Scripts.Player.Movement
         public bool IsMoving { get; private set; }
         public bool IsDashing => _isDashing;
 
+        /// <summary>
+        /// 질풍참 가능 여부
+        /// </summary>
+        public bool CanDash => !_isDashing && Time.time >= _lastDashTime + _dashCooldown;
+
         // 이벤트
         public event Action OnDashStarted;
         public event Action OnDashEnded;

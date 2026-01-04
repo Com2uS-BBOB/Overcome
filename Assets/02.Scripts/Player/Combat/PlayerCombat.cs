@@ -23,6 +23,11 @@ namespace _02.Scripts.Player.Combat
 
         public bool IsAttacking => _isAttacking;
 
+        /// <summary>
+        /// 공격 가능 여부
+        /// </summary>
+        public bool CanAttack => !_isAttacking && Time.time >= _lastAttackTime + _attackCooldown;
+
         // 이벤트
         public event Action OnAttackStarted;
         public event Action OnAttackEnded;

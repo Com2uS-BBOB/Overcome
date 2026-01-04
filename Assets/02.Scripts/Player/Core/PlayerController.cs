@@ -1,12 +1,14 @@
 using UnityEngine;
 using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Movement;
+using _02.Scripts.Player.StateMachine;
+using _02.Scripts.Player.StateMachine.States;
 
 namespace _02.Scripts.Player.Core
 {
     /// <summary>
     /// 플레이어 메인 컨트롤러
-    /// 입력 → 이동/전투 연결
+    /// FSM 기반 상태 관리
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerInputHandler))]
@@ -16,61 +18,92 @@ namespace _02.Scripts.Player.Core
         [Header("References")]
         [SerializeField] private PlayerCombat _combat;
 
-        private PlayerInputHandler _input;
-        private PlayerMovement _movement;
-        private CharacterController _controller;
+        // 컴포넌트 참조 (public for states)
+        public PlayerInputHandler Input { get; private set; }
+        public PlayerMovement Movement { get; private set; }
+        public PlayerCombat Combat => _combat;
+        public CharacterController CharacterController { get; private set; }
+
+        // State Machine
+        public PlayerStateMachine StateMachine { get; private set; }
 
         private void Awake()
         {
-            _input = GetComponent<PlayerInputHandler>();
-            _movement = GetComponent<PlayerMovement>();
-            _controller = GetComponent<CharacterController>();
+            Input = GetComponent<PlayerInputHandler>();
+            Movement = GetComponent<PlayerMovement>();
+            CharacterController = GetComponent<CharacterController>();
 
             if (_combat == null)
             {
                 _combat = GetComponent<PlayerCombat>();
             }
+
+            InitializeStateMachine();
+        }
+
+        private void InitializeStateMachine()
+        {
+            StateMachine = new PlayerStateMachine();
+
+            // 상태 등록
+            StateMachine.RegisterState(new IdleState(this, StateMachine));
+            StateMachine.RegisterState(new MoveState(this, StateMachine));
+            StateMachine.RegisterState(new AttackState(this, StateMachine));
+            StateMachine.RegisterState(new DashAttackState(this, StateMachine));
+
+            // 초기 상태
+            StateMachine.Initialize<IdleState>();
         }
 
         private void OnEnable()
         {
-            _input.OnJumpPerformed += HandleJump;
-            _input.OnDashAttackPerformed += HandleDashAttack;
-            _input.OnAttackPerformed += HandleAttack;
+            Input.OnJumpPerformed += HandleJump;
+            Input.OnDashAttackPerformed += HandleDashAttack;
+            Input.OnAttackPerformed += HandleAttack;
         }
 
         private void OnDisable()
         {
-            _input.OnJumpPerformed -= HandleJump;
-            _input.OnDashAttackPerformed -= HandleDashAttack;
-            _input.OnAttackPerformed -= HandleAttack;
+            Input.OnJumpPerformed -= HandleJump;
+            Input.OnDashAttackPerformed -= HandleDashAttack;
+            Input.OnAttackPerformed -= HandleAttack;
         }
 
         private void Update()
         {
-            HandleMovement();
+            StateMachine.Update();
         }
 
-        private void HandleMovement()
+        private void FixedUpdate()
         {
-            _movement.Move(_input.MoveInput);
+            StateMachine.FixedUpdate();
         }
 
         private void HandleJump()
         {
-            _movement.Jump();
+            // 점프는 모든 상태에서 가능 (공중 체크는 Movement에서)
+            Movement.Jump();
         }
 
         private void HandleDashAttack()
         {
-            _movement.DashAttack();
+            // 질풍참 가능할 때만 상태 전환
+            if (Movement.CanDash && !StateMachine.IsCurrentState<DashAttackState>())
+            {
+                StateMachine.ChangeState<DashAttackState>();
+            }
         }
 
         private void HandleAttack()
         {
-            if (_combat != null)
+            // 공격 가능할 때만 상태 전환
+            if (_combat != null &&
+                _combat.CanAttack &&
+                !Movement.IsDashing &&
+                !StateMachine.IsCurrentState<AttackState>() &&
+                !StateMachine.IsCurrentState<DashAttackState>())
             {
-                _combat.Attack();
+                StateMachine.ChangeState<AttackState>();
             }
         }
     }
