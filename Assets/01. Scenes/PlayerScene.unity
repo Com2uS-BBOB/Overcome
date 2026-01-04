@@ -119,6 +119,72 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &7904190
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7904191}
+  - component: {fileID: 7904192}
+  - component: {fileID: 7904193}
+  m_Layer: 0
+  m_Name: MeleeHitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7904191
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7904190}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1089555347}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &7904192
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7904190}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.5, y: 1, z: 2}
+  m_Center: {x: 0, y: 0, z: 1}
+--- !u!114 &7904193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7904190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f290d3376df1445e8658b0dd90d0215, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.MeleeHitbox
 --- !u!1 &18113530
 GameObject:
   m_ObjectHideFlags: 0
@@ -639,6 +705,7 @@ GameObject:
   - component: {fileID: 1089555350}
   - component: {fileID: 1089555349}
   - component: {fileID: 1089555348}
+  - component: {fileID: 1089555352}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -738,7 +805,8 @@ Transform:
   m_LocalPosition: {x: 0.26286, y: 2.46, z: 3.84787}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7904191}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1089555348
@@ -753,6 +821,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00507a6f309ed42b9ad2eb15c7884a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Core.PlayerController
+  _combat: {fileID: 1089555352}
 --- !u!114 &1089555349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -768,6 +837,9 @@ MonoBehaviour:
   _moveSpeed: 8
   _rotationSpeed: 10
   _jumpForce: 10
+  _dashDistance: 10
+  _dashDuration: 0.3
+  _dashCooldown: 3
   _gravity: -20
   _groundCheckDistance: 0.2
   _groundLayer:
@@ -812,6 +884,22 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1089555352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089555343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0b21b9940874d6986e9f80223aae4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
+  _attackDamage: 10
+  _attackCooldown: 0.5
+  _attackDuration: 0.3
+  _hitbox: {fileID: 7904193}
 --- !u!1 &1291455054
 GameObject:
   m_ObjectHideFlags: 0
