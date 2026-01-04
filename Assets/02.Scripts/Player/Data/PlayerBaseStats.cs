@@ -26,14 +26,28 @@ namespace _02.Scripts.Player.Data
         [Tooltip("점프력")]
         public float jumpForce = 10f;
 
-        [Header("스킬 스탯")]
+        [Header("스킬 스탯 - 질풍참")]
         [Tooltip("질풍참 이동 거리")]
         public float dashDistance = 10f;
 
         [Tooltip("질풍참 쿨타임")]
         public float dashCooldown = 3f;
 
+        [Header("스킬 스탯 - 용검")]
         [Tooltip("기본 공격 쿨타임")]
         public float attackCooldown = 0.5f;
+
+        [Header("스킬 스탯 - 크레센트")]
+        [Tooltip("크레센트 데미지")]
+        public float crescentDamage = 15f;
+
+        [Tooltip("크레센트 속도")]
+        public float crescentSpeed = 20f;
+
+        [Tooltip("크레센트 사거리")]
+        public float crescentRange = 30f;
+
+        [Tooltip("크레센트 쿨타임")]
+        public float crescentCooldown = 1f;
     }
 }

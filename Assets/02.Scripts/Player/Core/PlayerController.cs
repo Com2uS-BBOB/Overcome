@@ -19,11 +19,13 @@ namespace _02.Scripts.Player.Core
     {
         [Header("References")]
         [SerializeField] private PlayerCombat _combat;
+        [SerializeField] private CrescentSkill _crescent;
 
         // 컴포넌트 참조 (public for states)
         public PlayerInputHandler Input { get; private set; }
         public PlayerMovement Movement { get; private set; }
         public PlayerCombat Combat => _combat;
+        public CrescentSkill Crescent => _crescent;
         public CharacterController CharacterController { get; private set; }
         public PlayerRuntimeStats Stats { get; private set; }
 
@@ -42,11 +44,20 @@ namespace _02.Scripts.Player.Core
                 _combat = GetComponent<PlayerCombat>();
             }
 
+            if (_crescent == null)
+            {
+                _crescent = GetComponent<CrescentSkill>();
+            }
+
             // Stats 주입
             Movement.Initialize(Stats);
             if (_combat != null)
             {
                 _combat.Initialize(Stats);
+            }
+            if (_crescent != null)
+            {
+                _crescent.Initialize(Stats);
             }
 
             InitializeStateMachine();
@@ -71,6 +82,7 @@ namespace _02.Scripts.Player.Core
             Input.OnJumpPerformed += HandleJump;
             Input.OnDashAttackPerformed += HandleDashAttack;
             Input.OnAttackPerformed += HandleAttack;
+            Input.OnCrescentPerformed += HandleCrescent;
         }
 
         private void OnDisable()
@@ -78,6 +90,7 @@ namespace _02.Scripts.Player.Core
             Input.OnJumpPerformed -= HandleJump;
             Input.OnDashAttackPerformed -= HandleDashAttack;
             Input.OnAttackPerformed -= HandleAttack;
+            Input.OnCrescentPerformed -= HandleCrescent;
         }
 
         private void Update()
@@ -115,6 +128,15 @@ namespace _02.Scripts.Player.Core
                 !StateMachine.IsCurrentState<DashAttackState>())
             {
                 StateMachine.ChangeState<AttackState>();
+            }
+        }
+
+        private void HandleCrescent()
+        {
+            // 크레센트 발사 (상태 전환 없이 즉시 발사)
+            if (_crescent != null && _crescent.CanFire)
+            {
+                _crescent.Fire();
             }
         }
     }

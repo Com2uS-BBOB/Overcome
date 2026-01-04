@@ -25,6 +25,12 @@ namespace _02.Scripts.Player.Data
         public float DashCooldown => _baseStats.dashCooldown;
         public float AttackCooldown => _baseStats.attackCooldown;
 
+        // 크레센트 스탯
+        public float CrescentDamage => _baseStats.crescentDamage;
+        public float CrescentSpeed => _baseStats.crescentSpeed;
+        public float CrescentRange => _baseStats.crescentRange;
+        public float CrescentCooldown => _baseStats.crescentCooldown;
+
         // 이벤트
         public event Action<float, float> OnHpChanged; // current, max
         public event Action OnDeath;

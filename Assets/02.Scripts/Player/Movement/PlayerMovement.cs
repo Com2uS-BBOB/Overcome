@@ -80,6 +80,29 @@ namespace _02.Scripts.Player.Movement
         {
             CheckGround();
             ApplyGravity();
+            RotateToCamera();
+        }
+
+        /// <summary>
+        /// 항상 카메라 방향으로 회전
+        /// </summary>
+        private void RotateToCamera()
+        {
+            if (_cameraTransform == null) return;
+
+            Vector3 forward = _cameraTransform.forward;
+            forward.y = 0f;
+            forward.Normalize();
+
+            if (forward.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(forward);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRotation,
+                    _rotationSpeed * Time.deltaTime
+                );
+            }
         }
 
         /// <summary>
@@ -105,17 +128,6 @@ namespace _02.Scripts.Player.Movement
             right.Normalize();
 
             Vector3 moveDirection = forward * input.y + right * input.x;
-
-            // 캐릭터 회전
-            if (moveDirection.sqrMagnitude > 0.01f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
-                transform.rotation = Quaternion.Slerp(
-                    transform.rotation,
-                    targetRotation,
-                    _rotationSpeed * Time.deltaTime
-                );
-            }
 
             // 이동 적용
             _controller.Move(moveDirection * MoveSpeed * Time.deltaTime);

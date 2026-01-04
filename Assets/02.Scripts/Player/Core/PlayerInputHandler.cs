@@ -19,6 +19,7 @@ namespace _02.Scripts.Player.Core
         private InputAction _attackAction;
         private InputAction _sprintAction;
         private InputAction _jumpAction;
+        private InputAction _crescentAction;
 
         // 입력 값
         public Vector2 MoveInput { get; private set; }
@@ -29,6 +30,7 @@ namespace _02.Scripts.Player.Core
         public event Action OnAttackPerformed;
         public event Action OnDashAttackPerformed;
         public event Action OnJumpPerformed;
+        public event Action OnCrescentPerformed;
 
         private void Awake()
         {
@@ -67,6 +69,7 @@ namespace _02.Scripts.Player.Core
             _attackAction = playerMap.FindAction("Attack");
             _sprintAction = playerMap.FindAction("Sprint");
             _jumpAction = playerMap.FindAction("Jump");
+            _crescentAction = playerMap.FindAction("Crescent");
         }
 
         private void EnableActions()
@@ -76,6 +79,7 @@ namespace _02.Scripts.Player.Core
             _attackAction?.Enable();
             _sprintAction?.Enable();
             _jumpAction?.Enable();
+            _crescentAction?.Enable();
         }
 
         private void DisableActions()
@@ -85,6 +89,7 @@ namespace _02.Scripts.Player.Core
             _attackAction?.Disable();
             _sprintAction?.Disable();
             _jumpAction?.Disable();
+            _crescentAction?.Disable();
         }
 
         private void SubscribeEvents()
@@ -116,6 +121,11 @@ namespace _02.Scripts.Player.Core
             {
                 _jumpAction.performed += OnJumpPerformedCallback;
             }
+
+            if (_crescentAction != null)
+            {
+                _crescentAction.performed += OnCrescentPerformedCallback;
+            }
         }
 
         private void UnsubscribeEvents()
@@ -146,6 +156,11 @@ namespace _02.Scripts.Player.Core
             if (_jumpAction != null)
             {
                 _jumpAction.performed -= OnJumpPerformedCallback;
+            }
+
+            if (_crescentAction != null)
+            {
+                _crescentAction.performed -= OnCrescentPerformedCallback;
             }
         }
 
@@ -192,6 +207,12 @@ namespace _02.Scripts.Player.Core
         {
             Debug.Log("[Input] Jump");
             OnJumpPerformed?.Invoke();
+        }
+
+        private void OnCrescentPerformedCallback(InputAction.CallbackContext ctx)
+        {
+            Debug.Log("[Input] Crescent (크레센트)");
+            OnCrescentPerformed?.Invoke();
         }
 
         #endregion
