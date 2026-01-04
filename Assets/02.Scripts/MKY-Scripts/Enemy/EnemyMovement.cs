@@ -16,14 +16,6 @@ public class EnemyMovement : MonoBehaviour
         _moveSpeed = EnemyStatData.MoveSpeed;
     }
 
-    private void Update()
-    {
-        if (_isMoving)
-        {
-            Move();
-        }
-    }
-
     public void MoveTo(Vector3 target)
     {
         _targetPosition = target;
@@ -52,6 +44,14 @@ public class EnemyMovement : MonoBehaviour
         if (moveDirection != Vector3.zero)
         {
             transform.rotation = Quaternion.LookRotation(moveDirection);
+        }
+    }
+
+    private void Update()
+    {
+        if (_isMoving)
+        {
+            Move();
         }
     }
 

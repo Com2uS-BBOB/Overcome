@@ -9,11 +9,17 @@ public class EnemyLogic : MonoBehaviour
     private EEnemyState _currentState;
 
     private bool _canMove => _enemy.EnemyType != EEnemyType.Small;
+    private bool _canReturn => _enemy.EnemyType != EEnemyType.Small;
     // private bool _canAttack => _enemy.EnemyType == EEnemyType.Elite;
 
     private Transform player => PlayerLocator.Player;
 
+    [Header("Trace 관련 옵션")]
     [SerializeField] private float _detectRange = 6f;
+
+    [Header("Return 관련 옵션")]
+    [SerializeField] private float _outRange = 12f;
+    [SerializeField] private float _stopDistance = 0.1f;
 
     private void Awake()
     {
@@ -38,6 +44,9 @@ public class EnemyLogic : MonoBehaviour
             case EEnemyState.Chase:
                 Chase();
                 break;
+            case EEnemyState.Return:
+                Return();
+                break;
         }
     }
 
@@ -47,6 +56,7 @@ public class EnemyLogic : MonoBehaviour
 
         if (IsPlayerInRange())
         {
+            Debug.Log("Idle -> Trace");
             ChangeState(EEnemyState.Chase);
         }
     }
@@ -59,7 +69,34 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
+        if (IsPlayerOutRange())
+        {
+            Debug.Log("Trace -> Return");
+            ChangeState(EEnemyState.Return);
+            return;
+        }
+
         _movement.MoveTo(player.position);
+    }
+
+    private void Return()
+    {
+        if (!_canReturn || player == null)
+        {
+            ChangeState(EEnemyState.Idle);
+            return;
+        }
+
+        Vector3 returnPosition = _enemy.GetSpawnBasePosition();
+        _movement.MoveTo(returnPosition);
+
+        
+        float distance = Vector3.Distance(transform.position, returnPosition);
+        if (distance < _stopDistance)
+        {
+            Debug.Log("Return -> Idle");
+            ChangeState(EEnemyState.Idle);
+        }
     }
 
     private bool IsPlayerInRange()
@@ -68,6 +105,14 @@ public class EnemyLogic : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, player.position);
         return distance <= _detectRange;
+    }
+
+    private bool IsPlayerOutRange()
+    {
+        if (player == null) return false;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        return distance >= _outRange;
     }
 
     private void ChangeState(EEnemyState newState)
