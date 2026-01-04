@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using _02.Scripts.Common;
 using _02.Scripts.Player.Data;
 
 namespace _02.Scripts.Player.Movement
@@ -12,6 +13,8 @@ namespace _02.Scripts.Player.Movement
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonoBehaviour
     {
+        private const string DashCooldownKey = "Dash";
+
         [Header("Settings (고정값)")]
         [SerializeField] private float _rotationSpeed = 10f;
         [SerializeField] private float _dashDuration = 0.3f;
@@ -26,14 +29,14 @@ namespace _02.Scripts.Player.Movement
 
         private CharacterController _controller;
         private PlayerRuntimeStats _stats;
+        private CooldownManager _cooldownManager;
         private Vector3 _velocity;
         private bool _isGrounded;
 
         // Dash 상태
         private bool _isDashing;
-        private float _lastDashTime = -100f;
 
-        // 스탯 참조 (RuntimeStats에서 가져옴)
+        // 스탯 참조
         private float MoveSpeed => _stats != null ? _stats.MoveSpeed : 8f;
         private float JumpForce => _stats != null ? _stats.JumpForce : 10f;
         private float DashDistance => _stats != null ? _stats.DashDistance : 10f;
@@ -43,10 +46,8 @@ namespace _02.Scripts.Player.Movement
         public bool IsMoving { get; private set; }
         public bool IsDashing => _isDashing;
 
-        /// <summary>
         /// 질풍참 가능 여부
-        /// </summary>
-        public bool CanDash => !_isDashing && Time.time >= _lastDashTime + DashCooldown;
+        public bool CanDash => !_isDashing && _cooldownManager.IsReady(DashCooldownKey, DashCooldown);
 
         // 이벤트
         public event Action OnDashStarted;
@@ -56,6 +57,7 @@ namespace _02.Scripts.Player.Movement
         {
             _controller = GetComponent<CharacterController>();
             _stats = GetComponent<PlayerRuntimeStats>();
+            _cooldownManager = new CooldownManager();
 
             if (_cameraTransform == null)
             {
@@ -211,9 +213,9 @@ namespace _02.Scripts.Player.Movement
                 return;
             }
 
-            if (Time.time < _lastDashTime + DashCooldown)
+            if (!_cooldownManager.IsReady(DashCooldownKey, DashCooldown))
             {
-                float remaining = (_lastDashTime + DashCooldown) - Time.time;
+                float remaining = _cooldownManager.GetRemainingTime(DashCooldownKey, DashCooldown);
                 Debug.Log($"[Movement] 질풍참 불가 - 쿨타임 {remaining:F1}초 남음");
                 return;
             }
@@ -224,7 +226,7 @@ namespace _02.Scripts.Player.Movement
         private IEnumerator DashCoroutine()
         {
             _isDashing = true;
-            _lastDashTime = Time.time;
+            _cooldownManager.Use(DashCooldownKey);
             OnDashStarted?.Invoke();
 
             Debug.Log("[Movement] 질풍참 시작!");
@@ -254,7 +256,7 @@ namespace _02.Scripts.Player.Movement
         /// </summary>
         public void ResetDashCooldown()
         {
-            _lastDashTime = -100f;
+            _cooldownManager.Reset(DashCooldownKey);
             Debug.Log("[Movement] 질풍참 쿨타임 초기화!");
         }
 

@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
+using _02.Scripts.Interfaces;
 
 namespace _02.Scripts.Player.Data
 {
     /// <summary>
     /// 플레이어 런타임 스탯 관리
     /// BaseStats를 기반으로 실제 게임 내 스탯 처리
+    /// IDamageable 인터페이스 구현
     /// </summary>
-    public class PlayerRuntimeStats : MonoBehaviour
+    public class PlayerRuntimeStats : MonoBehaviour, IDamageable
     {
         [Header("Base Stats")]
         [SerializeField] private PlayerBaseStats _baseStats;
@@ -15,8 +17,11 @@ namespace _02.Scripts.Player.Data
         // 현재 HP
         public float CurrentHp { get; private set; }
 
-        // 스탯 프로퍼티 (BaseStats에서 가져옴)
+        // IDamageable 구현
         public float MaxHp => _baseStats.maxHp;
+        public bool IsDead => CurrentHp <= 0;
+
+        // 스탯 프로퍼티 (BaseStats에서 가져옴)
         public float AttackDamage => _baseStats.attackDamage;
         public float Defense => _baseStats.defense;
         public float MoveSpeed => _baseStats.moveSpeed;
@@ -31,8 +36,8 @@ namespace _02.Scripts.Player.Data
         public float CrescentRange => _baseStats.crescentRange;
         public float CrescentCooldown => _baseStats.crescentCooldown;
 
-        // 이벤트
-        public event Action<float, float> OnHpChanged; // current, max
+        // 이벤트 (IDamageable)
+        public event Action<float, float> OnHpChanged;
         public event Action OnDeath;
 
         private void Awake()
@@ -47,10 +52,12 @@ namespace _02.Scripts.Player.Data
         }
 
         /// <summary>
-        /// 데미지 받기
+        /// 데미지 받기 (IDamageable 구현)
         /// </summary>
-        public void TakeDamage(float damage)
+        public void TakeDamage(float damage, GameObject attacker = null)
         {
+            if (IsDead) return;
+
             // 방어력 적용
             float actualDamage = Mathf.Max(0, damage - Defense);
             CurrentHp = Mathf.Max(0, CurrentHp - actualDamage);
@@ -70,6 +77,8 @@ namespace _02.Scripts.Player.Data
         /// </summary>
         public void Heal(float amount)
         {
+            if (IsDead) return;
+
             float previousHp = CurrentHp;
             CurrentHp = Mathf.Min(MaxHp, CurrentHp + amount);
 

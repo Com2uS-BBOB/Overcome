@@ -21,7 +21,7 @@ namespace _02.Scripts.Player.Core
         [SerializeField] private PlayerCombat _combat;
         [SerializeField] private CrescentSkill _crescent;
 
-        // 컴포넌트 참조 (public for states)
+        // 컴포넌트 참조
         public PlayerInputHandler Input { get; private set; }
         public PlayerMovement Movement { get; private set; }
         public PlayerCombat Combat => _combat;
@@ -134,9 +134,9 @@ namespace _02.Scripts.Player.Core
         private void HandleCrescent()
         {
             // 크레센트 발사 (상태 전환 없이 즉시 발사)
-            if (_crescent != null && _crescent.CanFire)
+            if (_crescent != null && _crescent.CanUse)
             {
-                _crescent.Fire();
+                _crescent.Use();
             }
         }
     }
