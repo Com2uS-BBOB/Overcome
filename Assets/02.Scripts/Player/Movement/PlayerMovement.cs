@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using _02.Scripts.Player.Data;
 
 namespace _02.Scripts.Player.Movement
 {
@@ -11,17 +12,9 @@ namespace _02.Scripts.Player.Movement
     [RequireComponent(typeof(CharacterController))]
     public class PlayerMovement : MonoBehaviour
     {
-        [Header("Movement")]
-        [SerializeField] private float _moveSpeed = 8f;
+        [Header("Settings (고정값)")]
         [SerializeField] private float _rotationSpeed = 10f;
-
-        [Header("Jump")]
-        [SerializeField] private float _jumpForce = 10f;
-
-        [Header("Dash Attack (질풍참)")]
-        [SerializeField] private float _dashDistance = 10f;
         [SerializeField] private float _dashDuration = 0.3f;
-        [SerializeField] private float _dashCooldown = 3f;
 
         [Header("Gravity")]
         [SerializeField] private float _gravity = -20f;
@@ -32,12 +25,19 @@ namespace _02.Scripts.Player.Movement
         [SerializeField] private Transform _cameraTransform;
 
         private CharacterController _controller;
+        private PlayerRuntimeStats _stats;
         private Vector3 _velocity;
         private bool _isGrounded;
 
         // Dash 상태
         private bool _isDashing;
         private float _lastDashTime = -100f;
+
+        // 스탯 참조 (RuntimeStats에서 가져옴)
+        private float MoveSpeed => _stats != null ? _stats.MoveSpeed : 8f;
+        private float JumpForce => _stats != null ? _stats.JumpForce : 10f;
+        private float DashDistance => _stats != null ? _stats.DashDistance : 10f;
+        private float DashCooldown => _stats != null ? _stats.DashCooldown : 3f;
 
         public bool IsGrounded => _isGrounded;
         public bool IsMoving { get; private set; }
@@ -46,7 +46,7 @@ namespace _02.Scripts.Player.Movement
         /// <summary>
         /// 질풍참 가능 여부
         /// </summary>
-        public bool CanDash => !_isDashing && Time.time >= _lastDashTime + _dashCooldown;
+        public bool CanDash => !_isDashing && Time.time >= _lastDashTime + DashCooldown;
 
         // 이벤트
         public event Action OnDashStarted;
@@ -55,11 +55,25 @@ namespace _02.Scripts.Player.Movement
         private void Awake()
         {
             _controller = GetComponent<CharacterController>();
+            _stats = GetComponent<PlayerRuntimeStats>();
 
             if (_cameraTransform == null)
             {
                 _cameraTransform = Camera.main?.transform;
             }
+
+            if (_stats == null)
+            {
+                Debug.LogWarning("[PlayerMovement] RuntimeStats 없음 - 기본값 사용");
+            }
+        }
+
+        /// <summary>
+        /// 외부에서 Stats 주입 (PlayerController에서 호출)
+        /// </summary>
+        public void Initialize(PlayerRuntimeStats stats)
+        {
+            _stats = stats;
         }
 
         private void Update()
@@ -104,7 +118,7 @@ namespace _02.Scripts.Player.Movement
             }
 
             // 이동 적용
-            _controller.Move(moveDirection * _moveSpeed * Time.deltaTime);
+            _controller.Move(moveDirection * MoveSpeed * Time.deltaTime);
         }
 
         /// <summary>
@@ -122,7 +136,7 @@ namespace _02.Scripts.Player.Movement
             }
 
             Debug.Log("[Movement] 점프!");
-            _velocity.y = _jumpForce;
+            _velocity.y = JumpForce;
         }
 
         /// <summary>
@@ -172,14 +186,6 @@ namespace _02.Scripts.Player.Movement
             _controller.Move(_velocity * Time.deltaTime);
         }
 
-        /// <summary>
-        /// 이동 속도 변경
-        /// </summary>
-        public void SetMoveSpeed(float speed)
-        {
-            _moveSpeed = speed;
-        }
-
         #region Dash Attack (질풍참)
 
         /// <summary>
@@ -193,9 +199,9 @@ namespace _02.Scripts.Player.Movement
                 return;
             }
 
-            if (Time.time < _lastDashTime + _dashCooldown)
+            if (Time.time < _lastDashTime + DashCooldown)
             {
-                float remaining = (_lastDashTime + _dashCooldown) - Time.time;
+                float remaining = (_lastDashTime + DashCooldown) - Time.time;
                 Debug.Log($"[Movement] 질풍참 불가 - 쿨타임 {remaining:F1}초 남음");
                 return;
             }
@@ -213,7 +219,7 @@ namespace _02.Scripts.Player.Movement
 
             // 대시 방향 (캐릭터 전방)
             Vector3 dashDirection = transform.forward;
-            float dashSpeed = _dashDistance / _dashDuration;
+            float dashSpeed = DashDistance / _dashDuration;
 
             float elapsed = 0f;
             while (elapsed < _dashDuration)

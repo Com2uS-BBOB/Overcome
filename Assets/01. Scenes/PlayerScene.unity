@@ -930,6 +930,7 @@ GameObject:
   - component: {fileID: 1089555349}
   - component: {fileID: 1089555348}
   - component: {fileID: 1089555352}
+  - component: {fileID: 1089555353}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -1058,12 +1059,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c3582a718848482b8a6653cbb111331, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Movement.PlayerMovement
-  _moveSpeed: 8
   _rotationSpeed: 10
-  _jumpForce: 10
-  _dashDistance: 20
   _dashDuration: 0.3
-  _dashCooldown: 0.5
   _gravity: -20
   _groundCheckDistance: 0.2
   _groundLayer:
@@ -1120,10 +1117,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0b21b9940874d6986e9f80223aae4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
-  _attackDamage: 10
-  _attackCooldown: 0.5
   _attackDuration: 0.3
   _hitbox: {fileID: 7904193}
+--- !u!114 &1089555353
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089555343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8e593e52b9f44a282f6fe3b32df7e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Data.PlayerRuntimeStats
+  _baseStats: {fileID: 11400000, guid: 2cd159078aefe4700b7944e6e84870d7, type: 2}
 --- !u!1 &1285544714
 GameObject:
   m_ObjectHideFlags: 0

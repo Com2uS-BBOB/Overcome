@@ -1,5 +1,6 @@
 using UnityEngine;
 using _02.Scripts.Player.Combat;
+using _02.Scripts.Player.Data;
 using _02.Scripts.Player.Movement;
 using _02.Scripts.Player.StateMachine;
 using _02.Scripts.Player.StateMachine.States;
@@ -13,6 +14,7 @@ namespace _02.Scripts.Player.Core
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerInputHandler))]
     [RequireComponent(typeof(PlayerMovement))]
+    [RequireComponent(typeof(PlayerRuntimeStats))]
     public class PlayerController : MonoBehaviour
     {
         [Header("References")]
@@ -23,6 +25,7 @@ namespace _02.Scripts.Player.Core
         public PlayerMovement Movement { get; private set; }
         public PlayerCombat Combat => _combat;
         public CharacterController CharacterController { get; private set; }
+        public PlayerRuntimeStats Stats { get; private set; }
 
         // State Machine
         public PlayerStateMachine StateMachine { get; private set; }
@@ -32,10 +35,18 @@ namespace _02.Scripts.Player.Core
             Input = GetComponent<PlayerInputHandler>();
             Movement = GetComponent<PlayerMovement>();
             CharacterController = GetComponent<CharacterController>();
+            Stats = GetComponent<PlayerRuntimeStats>();
 
             if (_combat == null)
             {
                 _combat = GetComponent<PlayerCombat>();
+            }
+
+            // Stats 주입
+            Movement.Initialize(Stats);
+            if (_combat != null)
+            {
+                _combat.Initialize(Stats);
             }
 
             InitializeStateMachine();

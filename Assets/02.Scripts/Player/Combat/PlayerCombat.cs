@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using _02.Scripts.Player.Data;
 
 namespace _02.Scripts.Player.Combat
 {
@@ -10,28 +11,49 @@ namespace _02.Scripts.Player.Combat
     /// </summary>
     public class PlayerCombat : MonoBehaviour
     {
-        [Header("Attack")]
-        [SerializeField] private float _attackDamage = 10f;
-        [SerializeField] private float _attackCooldown = 0.5f;
+        [Header("Settings (고정값)")]
         [SerializeField] private float _attackDuration = 0.3f;
 
         [Header("References")]
         [SerializeField] private MeleeHitbox _hitbox;
 
+        private PlayerRuntimeStats _stats;
         private float _lastAttackTime = -100f;
         private bool _isAttacking;
+
+        // 스탯 참조 (RuntimeStats에서 가져옴)
+        private float AttackDamage => _stats != null ? _stats.AttackDamage : 10f;
+        private float AttackCooldown => _stats != null ? _stats.AttackCooldown : 0.5f;
 
         public bool IsAttacking => _isAttacking;
 
         /// <summary>
         /// 공격 가능 여부
         /// </summary>
-        public bool CanAttack => !_isAttacking && Time.time >= _lastAttackTime + _attackCooldown;
+        public bool CanAttack => !_isAttacking && Time.time >= _lastAttackTime + AttackCooldown;
 
         // 이벤트
         public event Action OnAttackStarted;
         public event Action OnAttackEnded;
         public event Action<Collider, float> OnEnemyHit;
+
+        private void Awake()
+        {
+            _stats = GetComponent<PlayerRuntimeStats>();
+
+            if (_stats == null)
+            {
+                Debug.LogWarning("[PlayerCombat] RuntimeStats 없음 - 기본값 사용");
+            }
+        }
+
+        /// <summary>
+        /// 외부에서 Stats 주입 (PlayerController에서 호출)
+        /// </summary>
+        public void Initialize(PlayerRuntimeStats stats)
+        {
+            _stats = stats;
+        }
 
         private void OnEnable()
         {
@@ -60,9 +82,9 @@ namespace _02.Scripts.Player.Combat
                 return;
             }
 
-            if (Time.time < _lastAttackTime + _attackCooldown)
+            if (Time.time < _lastAttackTime + AttackCooldown)
             {
-                float remaining = (_lastAttackTime + _attackCooldown) - Time.time;
+                float remaining = (_lastAttackTime + AttackCooldown) - Time.time;
                 Debug.Log($"[Combat] 공격 불가 - 쿨타임 {remaining:F2}초 남음");
                 return;
             }
@@ -81,7 +103,7 @@ namespace _02.Scripts.Player.Combat
             // 히트박스 활성화
             if (_hitbox != null)
             {
-                _hitbox.EnableHitbox(_attackDamage);
+                _hitbox.EnableHitbox(AttackDamage);
             }
 
             // 공격 지속시간
