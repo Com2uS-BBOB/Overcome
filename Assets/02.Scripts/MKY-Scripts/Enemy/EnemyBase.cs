@@ -20,6 +20,7 @@ public abstract class EnemyBase : MonoBehaviour
     private Vector3 _spawnBasePosition;
 
     public event Action<float, float> OnHealthChanged;
+    public static event Action<EnemyStatData> OnEnemyKilled;
 
     protected virtual void OnEnable()
     {
@@ -75,6 +76,9 @@ public abstract class EnemyBase : MonoBehaviour
     protected virtual void Die()
     {
         Debug.Log($"적이 죽었습니다.");
+
+        OnEnemyKilled?.Invoke(EnemyStatData);  // 보상 알림
+
         _spawner.RequestRespawn(this);
         _pool.Despawn(EnemyType, this);
     }

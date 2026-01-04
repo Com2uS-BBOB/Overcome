@@ -14,4 +14,7 @@ public class EnemyStatData : ScriptableObject
     [Header("보상")]
     [SerializeField] private int _score;
     [SerializeField] private int _playtime;
+
+    public int Score => _score;
+    public int Playtime => _playtime;
 }
