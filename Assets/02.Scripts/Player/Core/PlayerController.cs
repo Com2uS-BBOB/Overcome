@@ -26,11 +26,13 @@ namespace _02.Scripts.Player.Core
         private void OnEnable()
         {
             _input.OnJumpPerformed += HandleJump;
+            _input.OnDashAttackPerformed += HandleDashAttack;
         }
 
         private void OnDisable()
         {
             _input.OnJumpPerformed -= HandleJump;
+            _input.OnDashAttackPerformed -= HandleDashAttack;
         }
 
         private void Update()
@@ -46,6 +48,11 @@ namespace _02.Scripts.Player.Core
         private void HandleJump()
         {
             _movement.Jump();
+        }
+
+        private void HandleDashAttack()
+        {
+            _movement.DashAttack();
         }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 namespace _02.Scripts.Player.Movement
@@ -16,6 +18,11 @@ namespace _02.Scripts.Player.Movement
         [Header("Jump")]
         [SerializeField] private float _jumpForce = 10f;
 
+        [Header("Dash Attack (질풍참)")]
+        [SerializeField] private float _dashDistance = 10f;
+        [SerializeField] private float _dashDuration = 0.3f;
+        [SerializeField] private float _dashCooldown = 3f;
+
         [Header("Gravity")]
         [SerializeField] private float _gravity = -20f;
         [SerializeField] private float _groundCheckDistance = 0.2f;
@@ -28,8 +35,17 @@ namespace _02.Scripts.Player.Movement
         private Vector3 _velocity;
         private bool _isGrounded;
 
+        // Dash 상태
+        private bool _isDashing;
+        private float _lastDashTime = -100f;
+
         public bool IsGrounded => _isGrounded;
         public bool IsMoving { get; private set; }
+        public bool IsDashing => _isDashing;
+
+        // 이벤트
+        public event Action OnDashStarted;
+        public event Action OnDashEnded;
 
         private void Awake()
         {
@@ -91,7 +107,10 @@ namespace _02.Scripts.Player.Movement
         /// </summary>
         public void Jump()
         {
-            if (!_isGrounded)
+            // Input 이벤트 타이밍 문제로 controller.isGrounded 직접 체크
+            bool canJump = _isGrounded || _controller.isGrounded;
+
+            if (!canJump)
             {
                 Debug.Log("[Movement] 점프 불가 - 공중");
                 return;
@@ -106,16 +125,29 @@ namespace _02.Scripts.Player.Movement
         /// </summary>
         private void CheckGround()
         {
+            // CharacterController 기본 체크
             _isGrounded = _controller.isGrounded;
 
-            // 추가 레이캐스트 체크 (더 정확한 감지)
+            // SphereCast로 더 넓은 범위 체크 (이동 중에도 안정적)
             if (!_isGrounded)
+            {
+                _isGrounded = Physics.SphereCast(
+                    transform.position + Vector3.up * (_controller.radius + 0.1f),
+                    _controller.radius * 0.9f,
+                    Vector3.down,
+                    out _,
+                    _groundCheckDistance + 0.1f,
+                    _groundLayer
+                );
+            }
+
+            // 레이어 미설정 시 기본 레이캐스트 (모든 레이어)
+            if (!_isGrounded && _groundLayer == 0)
             {
                 _isGrounded = Physics.Raycast(
                     transform.position + Vector3.up * 0.1f,
                     Vector3.down,
-                    _groundCheckDistance + 0.1f,
-                    _groundLayer
+                    _groundCheckDistance + 0.2f
                 );
             }
 
@@ -142,6 +174,68 @@ namespace _02.Scripts.Player.Movement
         {
             _moveSpeed = speed;
         }
+
+        #region Dash Attack (질풍참)
+
+        /// <summary>
+        /// 질풍참 실행
+        /// </summary>
+        public void DashAttack()
+        {
+            if (_isDashing)
+            {
+                Debug.Log("[Movement] 질풍참 불가 - 이미 대시 중");
+                return;
+            }
+
+            if (Time.time < _lastDashTime + _dashCooldown)
+            {
+                float remaining = (_lastDashTime + _dashCooldown) - Time.time;
+                Debug.Log($"[Movement] 질풍참 불가 - 쿨타임 {remaining:F1}초 남음");
+                return;
+            }
+
+            StartCoroutine(DashCoroutine());
+        }
+
+        private IEnumerator DashCoroutine()
+        {
+            _isDashing = true;
+            _lastDashTime = Time.time;
+            OnDashStarted?.Invoke();
+
+            Debug.Log("[Movement] 질풍참 시작!");
+
+            // 대시 방향 (캐릭터 전방)
+            Vector3 dashDirection = transform.forward;
+            float dashSpeed = _dashDistance / _dashDuration;
+
+            float elapsed = 0f;
+            while (elapsed < _dashDuration)
+            {
+                // 대시 이동
+                _controller.Move(dashDirection * dashSpeed * Time.deltaTime);
+
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+
+            _isDashing = false;
+            OnDashEnded?.Invoke();
+
+            Debug.Log("[Movement] 질풍참 종료!");
+        }
+
+        /// <summary>
+        /// 질풍참 쿨타임 초기화 (적 처치 시)
+        /// </summary>
+        public void ResetDashCooldown()
+        {
+            _lastDashTime = -100f;
+            Debug.Log("[Movement] 질풍참 쿨타임 초기화!");
+        }
+
+        #endregion
 
         private void OnDrawGizmosSelected()
         {
