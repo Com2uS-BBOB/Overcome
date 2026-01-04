@@ -272,8 +272,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 18113530}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000002686093, y: -0.000000029802326, z: -8.005182e-16, w: 1}
-  m_LocalPosition: {x: 0.26286, y: 2.46, z: -1.1521299}
+  m_LocalRotation: {x: 0.14780943, y: 6.172501e-11, z: -9.224865e-12, w: 0.9890159}
+  m_LocalPosition: {x: 0.26286, y: 3.9218585, z: -0.9336536}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -355,6 +355,37 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
+--- !u!1 &652988628
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 652988629}
+  m_Layer: 0
+  m_Name: CrescentPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &652988629
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 652988628}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -10.47075, y: 0.85, z: 3.6191}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &818856958
 GameObject:
   m_ObjectHideFlags: 0
@@ -762,8 +793,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937650197}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000002686093, y: -0.000000029802326, z: -7.6949783e-16, w: 1}
-  m_LocalPosition: {x: 0.26286, y: 2.46, z: -1.1521299}
+  m_LocalRotation: {x: 0.14780942, y: 6.172499e-11, z: -9.224863e-12, w: 0.9890159}
+  m_LocalPosition: {x: 0.26286, y: 3.9218585, z: -0.9336536}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -842,9 +873,9 @@ MonoBehaviour:
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: 0
-    Center: 0
-    Range: {x: -15, y: 80}
+    Value: 17
+    Center: 17
+    Range: {x: -40, y: 80}
     Wrap: 0
     Recentering:
       Enabled: 0
@@ -1149,6 +1180,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.CrescentSkill
   _projectilePrefab: {fileID: 5555896469636686190, guid: 90608efcaac7e4bf7bb4ffe905db7674, type: 3}
   _firePoint: {fileID: 1441109180}
+  _cameraTransform: {fileID: 937650199}
+  _poolContainer: {fileID: 652988629}
 --- !u!1 &1285544714
 GameObject:
   m_ObjectHideFlags: 0
@@ -1544,3 +1577,4 @@ SceneRoots:
   - {fileID: 1285544718}
   - {fileID: 910577043}
   - {fileID: 1089555347}
+  - {fileID: 652988629}

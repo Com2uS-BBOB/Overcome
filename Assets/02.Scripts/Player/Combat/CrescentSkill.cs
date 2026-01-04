@@ -18,6 +18,8 @@ namespace _02.Scripts.Player.Combat
         [Header("References")]
         [SerializeField] private CrescentProjectile _projectilePrefab;
         [SerializeField] private Transform _firePoint;
+        [SerializeField] private Transform _cameraTransform;
+        [SerializeField] private Transform _poolContainer;
 
         private PlayerRuntimeStats _stats;
         private CooldownManager _cooldownManager;
@@ -53,12 +55,17 @@ namespace _02.Scripts.Player.Combat
             }
             else
             {
-                _projectilePool = new ObjectPool<CrescentProjectile>(_projectilePrefab, transform, PoolInitialSize);
+                _projectilePool = new ObjectPool<CrescentProjectile>(_projectilePrefab, _poolContainer, PoolInitialSize);
             }
 
             if (_firePoint == null)
             {
                 _firePoint = transform;
+            }
+
+            if (_cameraTransform == null)
+            {
+                _cameraTransform = Camera.main?.transform;
             }
         }
 
@@ -98,9 +105,9 @@ namespace _02.Scripts.Player.Combat
 
             _cooldownManager.Use(CooldownKey);
 
-            // 발사 위치 및 방향
+            // 발사 위치 및 방향 (카메라 방향 - 위/아래 포함)
             Vector3 spawnPosition = _firePoint.position;
-            Vector3 direction = transform.forward;
+            Vector3 direction = _cameraTransform.forward;
 
             // 풀에서 프로젝타일 가져오기
             CrescentProjectile projectile = _projectilePool.Get();
