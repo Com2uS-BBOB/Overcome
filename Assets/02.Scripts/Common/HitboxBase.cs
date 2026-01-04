@@ -5,10 +5,7 @@ using _02.Scripts.Interfaces;
 
 namespace _02.Scripts.Common
 {
-    /// <summary>
-    /// 히트박스 공통 로직 추상 클래스
-    /// MeleeHitbox, CrescentProjectile 등이 상속
-    /// </summary>
+    // 히트박스 공통 로직 (MeleeHitbox, CrescentProjectile 상속)
     [RequireComponent(typeof(Collider))]
     public abstract class HitboxBase : MonoBehaviour, IHitDetector
     {
@@ -18,15 +15,8 @@ namespace _02.Scripts.Common
 
         public event Action<IDamageable, float> OnHit;
 
-        protected virtual void Awake()
-        {
-            var col = GetComponent<Collider>();
-            col.isTrigger = true;
-        }
+        protected virtual void Awake() => GetComponent<Collider>().isTrigger = true;
 
-        /// <summary>
-        /// 히트 감지 활성화
-        /// </summary>
         public virtual void EnableHitDetection(float damage)
         {
             _damage = damage;
@@ -34,9 +24,6 @@ namespace _02.Scripts.Common
             _hitTargets.Clear();
         }
 
-        /// <summary>
-        /// 히트 감지 비활성화
-        /// </summary>
         public virtual void DisableHitDetection()
         {
             _isActive = false;
@@ -45,58 +32,33 @@ namespace _02.Scripts.Common
 
         protected virtual void OnTriggerEnter(Collider other)
         {
-            if (!_isActive) return;
-
-            ProcessHit(other);
+            if (_isActive) ProcessHit(other);
         }
 
-        /// <summary>
-        /// 히트 처리
-        /// </summary>
         protected virtual void ProcessHit(Collider other)
         {
-            // 중복 히트 방지
             if (_hitTargets.Contains(other)) return;
-
-            // 무시해야 할 대상 체크
             if (ShouldIgnore(other)) return;
 
-            // IDamageable 컴포넌트 찾기
-            var damageable = other.GetComponent<IDamageable>();
-            if (damageable == null)
-            {
-                damageable = other.GetComponentInParent<IDamageable>();
-            }
+            var damageable = other.GetComponent<IDamageable>()
+                          ?? other.GetComponentInParent<IDamageable>();
 
             if (damageable != null)
             {
                 _hitTargets.Add(other);
                 damageable.TakeDamage(_damage, GetOwner());
                 OnHit?.Invoke(damageable, _damage);
-
                 OnHitSuccess(other, damageable);
             }
         }
 
-        /// <summary>
-        /// 무시해야 할 대상인지 체크
-        /// 하위 클래스에서 구현
-        /// </summary>
+        // 무시 대상 체크 (하위 클래스 구현)
         protected abstract bool ShouldIgnore(Collider other);
 
-        /// <summary>
-        /// 히트 성공 시 추가 처리
-        /// 하위 클래스에서 오버라이드 가능
-        /// </summary>
+        // 히트 성공 후 추가 처리
         protected virtual void OnHitSuccess(Collider other, IDamageable damageable) { }
 
-        /// <summary>
-        /// 공격자 GameObject 반환
-        /// 하위 클래스에서 오버라이드
-        /// </summary>
-        protected virtual GameObject GetOwner()
-        {
-            return transform.root.gameObject;
-        }
+        // 공격자 반환
+        protected virtual GameObject GetOwner() => transform.root.gameObject;
     }
 }

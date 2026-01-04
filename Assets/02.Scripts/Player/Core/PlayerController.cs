@@ -7,10 +7,7 @@ using _02.Scripts.Player.StateMachine.States;
 
 namespace _02.Scripts.Player.Core
 {
-    /// <summary>
-    /// 플레이어 메인 컨트롤러
-    /// FSM 기반 상태 관리
-    /// </summary>
+    // 플레이어 메인 컨트롤러 (FSM 기반)
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerInputHandler))]
     [RequireComponent(typeof(PlayerMovement))]
@@ -21,15 +18,12 @@ namespace _02.Scripts.Player.Core
         [SerializeField] private PlayerCombat _combat;
         [SerializeField] private CrescentSkill _crescent;
 
-        // 컴포넌트 참조
         public PlayerInputHandler Input { get; private set; }
         public PlayerMovement Movement { get; private set; }
         public PlayerCombat Combat => _combat;
         public CrescentSkill Crescent => _crescent;
         public CharacterController CharacterController { get; private set; }
         public PlayerRuntimeStats Stats { get; private set; }
-
-        // State Machine
         public PlayerStateMachine StateMachine { get; private set; }
 
         private void Awake()
@@ -39,26 +33,12 @@ namespace _02.Scripts.Player.Core
             CharacterController = GetComponent<CharacterController>();
             Stats = GetComponent<PlayerRuntimeStats>();
 
-            if (_combat == null)
-            {
-                _combat = GetComponent<PlayerCombat>();
-            }
+            if (_combat == null) _combat = GetComponent<PlayerCombat>();
+            if (_crescent == null) _crescent = GetComponent<CrescentSkill>();
 
-            if (_crescent == null)
-            {
-                _crescent = GetComponent<CrescentSkill>();
-            }
-
-            // Stats 주입
             Movement.Initialize(Stats);
-            if (_combat != null)
-            {
-                _combat.Initialize(Stats);
-            }
-            if (_crescent != null)
-            {
-                _crescent.Initialize(Stats);
-            }
+            _combat?.Initialize(Stats);
+            _crescent?.Initialize(Stats);
 
             InitializeStateMachine();
             LockCursor();
@@ -73,14 +53,10 @@ namespace _02.Scripts.Player.Core
         private void InitializeStateMachine()
         {
             StateMachine = new PlayerStateMachine();
-
-            // 상태 등록
             StateMachine.RegisterState(new IdleState(this, StateMachine));
             StateMachine.RegisterState(new MoveState(this, StateMachine));
             StateMachine.RegisterState(new AttackState(this, StateMachine));
             StateMachine.RegisterState(new DashAttackState(this, StateMachine));
-
-            // 초기 상태
             StateMachine.Initialize<IdleState>();
         }
 
@@ -100,51 +76,27 @@ namespace _02.Scripts.Player.Core
             Input.OnCrescentPerformed -= HandleCrescent;
         }
 
-        private void Update()
-        {
-            StateMachine.Update();
-        }
+        private void Update() => StateMachine.Update();
+        private void FixedUpdate() => StateMachine.FixedUpdate();
 
-        private void FixedUpdate()
-        {
-            StateMachine.FixedUpdate();
-        }
-
-        private void HandleJump()
-        {
-            // 점프는 모든 상태에서 가능 (공중 체크는 Movement에서)
-            Movement.Jump();
-        }
+        private void HandleJump() => Movement.Jump();
 
         private void HandleDashAttack()
         {
-            // 질풍참 가능할 때만 상태 전환
             if (Movement.CanDash && !StateMachine.IsCurrentState<DashAttackState>())
-            {
                 StateMachine.ChangeState<DashAttackState>();
-            }
         }
 
         private void HandleAttack()
         {
-            // 공격 가능할 때만 상태 전환
-            if (_combat != null &&
-                _combat.CanAttack &&
-                !Movement.IsDashing &&
-                !StateMachine.IsCurrentState<AttackState>() &&
-                !StateMachine.IsCurrentState<DashAttackState>())
-            {
+            if (_combat != null && _combat.CanAttack && !Movement.IsDashing &&
+                !StateMachine.IsCurrentState<AttackState>() && !StateMachine.IsCurrentState<DashAttackState>())
                 StateMachine.ChangeState<AttackState>();
-            }
         }
 
         private void HandleCrescent()
         {
-            // 크레센트 발사 (상태 전환 없이 즉시 발사)
-            if (_crescent != null && _crescent.CanUse)
-            {
-                _crescent.Use();
-            }
+            if (_crescent != null && _crescent.CanUse) _crescent.Use();
         }
     }
 }

@@ -2,52 +2,30 @@ using UnityEngine;
 
 namespace _02.Scripts.Player.Data
 {
-    /// <summary>
-    /// 플레이어 기본 스탯 (ScriptableObject)
-    /// 에디터에서 스탯 프리셋 관리
-    /// </summary>
+    // 플레이어 기본 스탯 (ScriptableObject)
     [CreateAssetMenu(fileName = "PlayerStats", menuName = "Overcome/Player Base Stats")]
     public class PlayerBaseStats : ScriptableObject
     {
-        [Header("기본 스탯")]
-        [Tooltip("최대 체력")]
+        [Header("기본")]
         public float maxHp = 100f;
-
-        [Tooltip("공격력")]
         public float attackDamage = 10f;
-
-        [Tooltip("방어력")]
         public float defense = 5f;
 
-        [Header("이동 스탯")]
-        [Tooltip("이동 속도")]
+        [Header("이동")]
         public float moveSpeed = 8f;
-
-        [Tooltip("점프력")]
         public float jumpForce = 10f;
 
-        [Header("스킬 스탯 - 질풍참")]
-        [Tooltip("질풍참 이동 거리")]
+        [Header("질풍참")]
         public float dashDistance = 10f;
-
-        [Tooltip("질풍참 쿨타임")]
         public float dashCooldown = 3f;
 
-        [Header("스킬 스탯 - 용검")]
-        [Tooltip("기본 공격 쿨타임")]
+        [Header("용검")]
         public float attackCooldown = 0.5f;
 
-        [Header("스킬 스탯 - 크레센트")]
-        [Tooltip("크레센트 데미지")]
+        [Header("크레센트")]
         public float crescentDamage = 15f;
-
-        [Tooltip("크레센트 속도")]
         public float crescentSpeed = 20f;
-
-        [Tooltip("크레센트 사거리")]
         public float crescentRange = 30f;
-
-        [Tooltip("크레센트 쿨타임")]
         public float crescentCooldown = 1f;
     }
 }

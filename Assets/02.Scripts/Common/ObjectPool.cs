@@ -1,13 +1,9 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace _02.Scripts.Common
 {
-    /// <summary>
-    /// 제너릭 오브젝트 풀
-    /// 프로젝타일 등 자주 생성/파괴되는 객체 재사용
-    /// </summary>
+    // 제너릭 오브젝트 풀
     public class ObjectPool<T> where T : Component
     {
         private readonly T _prefab;
@@ -22,94 +18,60 @@ namespace _02.Scripts.Common
         {
             _prefab = prefab;
             _parent = parent;
-
-            if (initialSize > 0)
-            {
-                Prewarm(initialSize);
-            }
+            if (initialSize > 0) Prewarm(initialSize);
         }
 
-        /// <summary>
-        /// 풀에서 객체 가져오기
-        /// </summary>
+        // 풀에서 꺼내기
         public T Get()
         {
-            T item;
-
-            if (_pool.Count > 0)
-            {
-                item = _pool.Dequeue();
-            }
-            else
-            {
-                item = UnityEngine.Object.Instantiate(_prefab, _parent);
-            }
+            T item = _pool.Count > 0
+                ? _pool.Dequeue()
+                : Object.Instantiate(_prefab, _parent);
 
             item.gameObject.SetActive(true);
             _activeObjects.Add(item);
-
             return item;
         }
 
-        /// <summary>
-        /// 객체를 풀에 반환
-        /// </summary>
+        // 풀에 반환
         public void Return(T item)
         {
-            if (item == null) return;
-            if (!_activeObjects.Contains(item)) return;
+            if (item == null || !_activeObjects.Contains(item)) return;
 
             _activeObjects.Remove(item);
             item.gameObject.SetActive(false);
             _pool.Enqueue(item);
         }
 
-        /// <summary>
-        /// 풀 미리 채우기
-        /// </summary>
+        // 미리 생성
         public void Prewarm(int count)
         {
             for (int i = 0; i < count; i++)
             {
-                var item = UnityEngine.Object.Instantiate(_prefab, _parent);
+                var item = Object.Instantiate(_prefab, _parent);
                 item.gameObject.SetActive(false);
                 _pool.Enqueue(item);
             }
         }
 
-        /// <summary>
-        /// 모든 활성 객체 반환
-        /// </summary>
+        // 모든 활성 객체 반환
         public void ReturnAll()
         {
-            var activeList = new List<T>(_activeObjects);
-            foreach (var item in activeList)
-            {
+            foreach (var item in new List<T>(_activeObjects))
                 Return(item);
-            }
         }
 
-        /// <summary>
-        /// 풀 초기화 (모든 객체 파괴)
-        /// </summary>
+        // 풀 정리
         public void Clear()
         {
             foreach (var item in _activeObjects)
-            {
-                if (item != null)
-                {
-                    UnityEngine.Object.Destroy(item.gameObject);
-                }
-            }
+                if (item != null) Object.Destroy(item.gameObject);
             _activeObjects.Clear();
 
             while (_pool.Count > 0)
             {
                 var item = _pool.Dequeue();
-                if (item != null)
-                {
-                    UnityEngine.Object.Destroy(item.gameObject);
-                }
+                if (item != null) Object.Destroy(item.gameObject);
             }
         }
     }

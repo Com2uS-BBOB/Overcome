@@ -1,9 +1,6 @@
 namespace _02.Scripts.Common
 {
-    /// <summary>
-    /// 게임 내 태그 상수 정의
-    /// 매직 스트링 제거를 위한 중앙 관리
-    /// </summary>
+    // 태그 상수
     public static class GameTags
     {
         public const string Player = "Player";

@@ -4,16 +4,12 @@ using UnityEngine.InputSystem;
 
 namespace _02.Scripts.Player.Core
 {
-    /// <summary>
-    /// C# Events 방식 입력 처리기
-    /// InputActionAsset 직접 참조
-    /// </summary>
+    // 입력 처리기 (InputActionAsset 사용)
     public class PlayerInputHandler : MonoBehaviour
     {
         [Header("Input Actions Asset")]
         [SerializeField] private InputActionAsset _inputActions;
 
-        // Input Actions
         private InputAction _moveAction;
         private InputAction _lookAction;
         private InputAction _attackAction;
@@ -21,48 +17,25 @@ namespace _02.Scripts.Player.Core
         private InputAction _jumpAction;
         private InputAction _crescentAction;
 
-        // 입력 값
         public Vector2 MoveInput { get; private set; }
         public Vector2 LookInput { get; private set; }
 
-        // 입력 이벤트
         public event Action OnAttackStarted;
         public event Action OnAttackPerformed;
         public event Action OnDashAttackPerformed;
         public event Action OnJumpPerformed;
         public event Action OnCrescentPerformed;
 
-        private void Awake()
-        {
-            SetupActions();
-        }
-
-        private void OnEnable()
-        {
-            EnableActions();
-            SubscribeEvents();
-        }
-
-        private void OnDisable()
-        {
-            UnsubscribeEvents();
-            DisableActions();
-        }
+        private void Awake() => SetupActions();
+        private void OnEnable() { EnableActions(); SubscribeEvents(); }
+        private void OnDisable() { UnsubscribeEvents(); DisableActions(); }
 
         private void SetupActions()
         {
-            if (_inputActions == null)
-            {
-                Debug.LogError("[PlayerInputHandler] InputActionAsset이 할당되지 않았습니다!");
-                return;
-            }
+            if (_inputActions == null) return;
 
             var playerMap = _inputActions.FindActionMap("Player");
-            if (playerMap == null)
-            {
-                Debug.LogError("[PlayerInputHandler] 'Player' ActionMap을 찾을 수 없습니다!");
-                return;
-            }
+            if (playerMap == null) return;
 
             _moveAction = playerMap.FindAction("Move");
             _lookAction = playerMap.FindAction("Look");
@@ -94,127 +67,22 @@ namespace _02.Scripts.Player.Core
 
         private void SubscribeEvents()
         {
-            if (_moveAction != null)
-            {
-                _moveAction.performed += OnMovePerformed;
-                _moveAction.canceled += OnMoveCanceled;
-            }
-
-            if (_lookAction != null)
-            {
-                _lookAction.performed += OnLookPerformed;
-                _lookAction.canceled += OnLookCanceled;
-            }
-
-            if (_attackAction != null)
-            {
-                _attackAction.started += OnAttackStartedCallback;
-                _attackAction.performed += OnAttackPerformedCallback;
-            }
-
-            if (_sprintAction != null)
-            {
-                _sprintAction.performed += OnSprintPerformed;
-            }
-
-            if (_jumpAction != null)
-            {
-                _jumpAction.performed += OnJumpPerformedCallback;
-            }
-
-            if (_crescentAction != null)
-            {
-                _crescentAction.performed += OnCrescentPerformedCallback;
-            }
+            if (_moveAction != null) { _moveAction.performed += ctx => MoveInput = ctx.ReadValue<Vector2>(); _moveAction.canceled += _ => MoveInput = Vector2.zero; }
+            if (_lookAction != null) { _lookAction.performed += ctx => LookInput = ctx.ReadValue<Vector2>(); _lookAction.canceled += _ => LookInput = Vector2.zero; }
+            if (_attackAction != null) { _attackAction.started += _ => OnAttackStarted?.Invoke(); _attackAction.performed += _ => OnAttackPerformed?.Invoke(); }
+            if (_sprintAction != null) _sprintAction.performed += _ => OnDashAttackPerformed?.Invoke();
+            if (_jumpAction != null) _jumpAction.performed += _ => OnJumpPerformed?.Invoke();
+            if (_crescentAction != null) _crescentAction.performed += _ => OnCrescentPerformed?.Invoke();
         }
 
         private void UnsubscribeEvents()
         {
-            if (_moveAction != null)
-            {
-                _moveAction.performed -= OnMovePerformed;
-                _moveAction.canceled -= OnMoveCanceled;
-            }
-
-            if (_lookAction != null)
-            {
-                _lookAction.performed -= OnLookPerformed;
-                _lookAction.canceled -= OnLookCanceled;
-            }
-
-            if (_attackAction != null)
-            {
-                _attackAction.started -= OnAttackStartedCallback;
-                _attackAction.performed -= OnAttackPerformedCallback;
-            }
-
-            if (_sprintAction != null)
-            {
-                _sprintAction.performed -= OnSprintPerformed;
-            }
-
-            if (_jumpAction != null)
-            {
-                _jumpAction.performed -= OnJumpPerformedCallback;
-            }
-
-            if (_crescentAction != null)
-            {
-                _crescentAction.performed -= OnCrescentPerformedCallback;
-            }
+            _moveAction?.Disable();
+            _lookAction?.Disable();
+            _attackAction?.Disable();
+            _sprintAction?.Disable();
+            _jumpAction?.Disable();
+            _crescentAction?.Disable();
         }
-
-        #region Input Callbacks
-
-        private void OnMovePerformed(InputAction.CallbackContext ctx)
-        {
-            MoveInput = ctx.ReadValue<Vector2>();
-        }
-
-        private void OnMoveCanceled(InputAction.CallbackContext ctx)
-        {
-            MoveInput = Vector2.zero;
-        }
-
-        private void OnLookPerformed(InputAction.CallbackContext ctx)
-        {
-            LookInput = ctx.ReadValue<Vector2>();
-        }
-
-        private void OnLookCanceled(InputAction.CallbackContext ctx)
-        {
-            LookInput = Vector2.zero;
-        }
-
-        private void OnAttackStartedCallback(InputAction.CallbackContext ctx)
-        {
-            OnAttackStarted?.Invoke();
-        }
-
-        private void OnAttackPerformedCallback(InputAction.CallbackContext ctx)
-        {
-            Debug.Log("[Input] Attack (용검)");
-            OnAttackPerformed?.Invoke();
-        }
-
-        private void OnSprintPerformed(InputAction.CallbackContext ctx)
-        {
-            Debug.Log("[Input] DashAttack (질풍참)");
-            OnDashAttackPerformed?.Invoke();
-        }
-
-        private void OnJumpPerformedCallback(InputAction.CallbackContext ctx)
-        {
-            Debug.Log("[Input] Jump");
-            OnJumpPerformed?.Invoke();
-        }
-
-        private void OnCrescentPerformedCallback(InputAction.CallbackContext ctx)
-        {
-            Debug.Log("[Input] Crescent (크레센트)");
-            OnCrescentPerformed?.Invoke();
-        }
-
-        #endregion
     }
 }
