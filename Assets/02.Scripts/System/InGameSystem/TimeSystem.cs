@@ -5,16 +5,11 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
 {
     protected override bool DontDestroy => false;
 
-    [Header("시간 제한")]
-    [SerializeField] private float _startTime;
-    [SerializeField] private bool _hasTimeLimit;
-
-    [Header("시간 관련 설정")]
-    [SerializeField] private float _maxPlayTime;
-    [SerializeField] private float _difficultyOffset;
-    [SerializeField] private float _timeDecayStartTime = 120.0f;
-    [SerializeField] private float _decayRatio = 0.5f;
-
+    [Header("난이도 설정")]
+    [SerializeField] private DifficultyConfigData _difficultyConfigData;
+    [SerializeField] private EDifficultyType _currentDifficulty = EDifficultyType.Normal;
+    private DifficultyConfig _difficultyConfig;
+    
     // Ingame Data
     private float _remainTime;
     private float _playTime;
@@ -37,6 +32,14 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     protected override void Init()
     {
         SetInfoByDifficulty();
+    }
+    
+    private void SetInfoByDifficulty()
+    {
+        _difficultyConfig = _difficultyConfigData.GetConfig(_currentDifficulty);
+        _remainTime = (_difficultyConfig.HasTimeLimit) ? _difficultyConfig.StartTime : float.MaxValue;
+        _prevRemainTimeInt = Mathf.FloorToInt(_remainTime);
+        _prevPlayTimeInt = Mathf.FloorToInt(_playTime);
     }
 
     private void Update()
@@ -72,7 +75,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
 
     private void CheckGameOver()
     {
-        if (!_hasTimeLimit) return;
+        if (!_difficultyConfig.HasTimeLimit) return;
         if (_isGameOver) return;
         if (_remainTime > 0f) return;
 
@@ -80,22 +83,14 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         OnGameOver?.Invoke();
     }
 
-    private void SetInfoByDifficulty()
-    {
-        // todo. 난이도에 따른 초기 값 설정
-        _remainTime = (_hasTimeLimit) ? _startTime : float.MaxValue;
-        _prevRemainTimeInt = Mathf.FloorToInt(_remainTime);
-        _prevPlayTimeInt = Mathf.FloorToInt(_playTime);
-    }
-
     public void AddTimeLimit(float additionalTime)
     {
-        if (!_hasTimeLimit) return;
+        if (!_difficultyConfig.HasTimeLimit) return;
 
-        float additionalValue = additionalTime + _difficultyOffset;
-        if (_playTime >= _timeDecayStartTime)
+        float additionalValue = additionalTime + _difficultyConfig.TimeAdjustment;
+        if (_playTime >= _difficultyConfig.AdjustmentDecayStart)
         {
-            additionalValue *= _decayRatio;
+            additionalValue *= _difficultyConfig.AdjustmentDecayRatio;
         }
 
         _remainTime += additionalValue;
@@ -106,7 +101,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
 
     public void SubtractTimeLimit(float reducedTime)
     {
-        if (!_hasTimeLimit) return;
+        if (!_difficultyConfig.HasTimeLimit) return;
 
         _remainTime -= reducedTime;
 
