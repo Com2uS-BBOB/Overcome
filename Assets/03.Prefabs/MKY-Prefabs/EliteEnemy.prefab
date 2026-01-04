@@ -13,6 +13,8 @@ GameObject:
   - component: {fileID: 9107366382558538416}
   - component: {fileID: 933362062976253205}
   - component: {fileID: 211374651718498087}
+  - component: {fileID: 7941721044486324764}
+  - component: {fileID: -6883950643001174605}
   m_Layer: 0
   m_Name: EliteEnemy
   m_TagString: Untagged
@@ -130,6 +132,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BigEnemy
   EnemyStatData: {fileID: 11400000, guid: 79485fb519b6c35428186994de8564d5, type: 2}
   _spawnHeight: 2
+--- !u!114 &7941721044486324764
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258497289072480065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2168a6bf35c73774e980742615f6e366, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
+  _detectRange: 6
+--- !u!114 &-6883950643001174605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258497289072480065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ae850c4419471e489ee7014c8f704ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
+  EnemyStatData: {fileID: 11400000, guid: 79485fb519b6c35428186994de8564d5, type: 2}
 --- !u!1 &2034843775096569668
 GameObject:
   m_ObjectHideFlags: 0

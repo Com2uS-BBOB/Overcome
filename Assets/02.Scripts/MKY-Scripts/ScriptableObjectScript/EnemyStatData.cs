@@ -10,6 +10,7 @@ public class EnemyStatData : ScriptableObject
     [SerializeField] private float _moveSpeed;
 
     public float MaxHealth => _maxHealth;
+    public float MoveSpeed => _moveSpeed;
 
     [Header("보상")]
     [SerializeField] private int _score;

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7946054587704062493}
   - component: {fileID: 4947560064648773671}
   - component: {fileID: 9243648425913167}
+  - component: {fileID: -2663029545220124248}
   m_Layer: 0
   m_Name: SmallEnemy
   m_TagString: Untagged
@@ -128,6 +129,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SmallEnemy
   EnemyStatData: {fileID: 11400000, guid: 18794bed0c3dcb24eba55ab29c144215, type: 2}
   _spawnHeight: 2
+--- !u!114 &-2663029545220124248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1045832139059423618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2168a6bf35c73774e980742615f6e366, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
+  _detectRange: 6
 --- !u!1 &1324163215023126718
 GameObject:
   m_ObjectHideFlags: 0
