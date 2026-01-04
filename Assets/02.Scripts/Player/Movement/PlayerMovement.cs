@@ -231,8 +231,8 @@ namespace _02.Scripts.Player.Movement
 
             Debug.Log("[Movement] 질풍참 시작!");
 
-            // 대시 방향 (캐릭터 전방)
-            Vector3 dashDirection = transform.forward;
+            // 대시 방향 (카메라 방향 - 위/아래 포함)
+            Vector3 dashDirection = _cameraTransform.forward;
             float dashSpeed = DashDistance / _dashDuration;
 
             float elapsed = 0f;

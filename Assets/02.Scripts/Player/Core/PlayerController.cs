@@ -61,6 +61,13 @@ namespace _02.Scripts.Player.Core
             }
 
             InitializeStateMachine();
+            LockCursor();
+        }
+
+        private void LockCursor()
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
 
         private void InitializeStateMachine()
