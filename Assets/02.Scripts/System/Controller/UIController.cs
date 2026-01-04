@@ -1,21 +1,16 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class UIController : SingletonBehaviour<UIController>
 {
-    private readonly Dictionary<string, BaseUI> _uiObjects = new Dictionary<string, BaseUI>();
-    private readonly Dictionary<string, BaseUI> _openUIObjects = new Dictionary<string, BaseUI>();
-    private Stack<BaseUI> _activUIObjects;
+    private readonly Dictionary<Type, BaseUI> _uiObjects = new Dictionary<Type, BaseUI>();
+    private readonly List<BaseUI> _activeUIObjects = new List<BaseUI>();
 
-    private int _sortLayerIndex = -20;
     private int _pauseGameCount;
     private int _showCursorCount;
-
-    protected override void Init()
-    {
-        _activUIObjects = new Stack<BaseUI>();
-    }
 
     private void OnEnable()
     {
@@ -32,147 +27,115 @@ public class UIController : SingletonBehaviour<UIController>
         ClearAllUI();
     }
 
-    public void RegisterUI(string key, BaseUI baseUI)
+    public void RegisterUI<T>(T ui) where T : BaseUI
     {
-        _uiObjects.TryAdd(key, baseUI);
+        _uiObjects.TryAdd(typeof(T), ui);
     }
 
-    public void UnregisterUI(string key)
+    public void UnregisterUI(BaseUI ui)
     {
-        if (_openUIObjects.ContainsKey(key))
+        if (ui == null)
         {
-            CloseUI(key);
+            return;
         }
 
-        _uiObjects.Remove(key);
+        Type type = ui.GetType();
+        if (_activeUIObjects.Contains(ui))
+        {
+            CloseUI(ui);
+        }
+        _uiObjects.Remove(type);
     }
 
     private void ClearAllUI()
     {
         CloseAllUI();
-
         _uiObjects.Clear();
-        _sortLayerIndex = -20;
+        _activeUIObjects.Clear();
         _pauseGameCount = 0;
         _showCursorCount = 0;
     }
 
-    public void TryOpenUI(string key)
+    public void TryOpenUI<T>() where T : BaseUI
     {
-        if (_openUIObjects.ContainsKey(key)) return;
-        if (!_uiObjects.TryGetValue(key, out BaseUI ui)) return;
+        Type type = typeof(T);
+        if (IsUIOpen<T>()) return;
+        if (!_uiObjects.TryGetValue(type, out BaseUI ui)) return;
 
-        _openUIObjects.Add(key, ui);
-        _activUIObjects.Push(ui);
+        _activeUIObjects.Add(ui);
+        ui.BringToFront();
 
-        ui.SetSortingOrder(_sortLayerIndex++);
-
-        SetupOpenCallback(ui);
-
+        var openEvent = new BaseUIEvent
+        {
+            OnOpenComplete = () => HandleOpenEvent(ui.Config)
+        };
+        ui.UIEventHandler = openEvent;
         ui.OnOpen();
     }
 
-    private void SetupOpenCallback(BaseUI baseUI)
+    public void CloseUI<T>() where T : BaseUI
     {
-        baseUI.UIEventHandler = new BaseUIEvent
-        {
-            OnOpenComplete = () =>
-            {
-                OpenUIEvent(baseUI.Config);
-                baseUI.UIEventHandler = null;
-            }
-        };
+        Type type = typeof(T);
+        BaseUI ui = _activeUIObjects.FirstOrDefault(u => u.GetType() == type);
+        if (ui == null) return;
+        CloseUI(ui);
     }
 
-    private void OpenUIEvent(UIConfig config)
+    private void CloseUI(BaseUI ui)
     {
-        if (config.PauseGame)
-        {
-            _pauseGameCount++;
-            if (_pauseGameCount == 1)
-            {
-                Time.timeScale = 0f;
-            }
-        }
-
-        if (config.ShowCursor)
-        {
-            _showCursorCount++;
-            if (_showCursorCount == 1)
-            {
-                Cursor.visible = true;
-                Cursor.lockState = CursorLockMode.None;
-            }
-        }
-    }
-
-    public void CloseUI(string key)
-    {
-        if (!_openUIObjects.TryGetValue(key, out BaseUI ui)) return;
-
-        SetupCloseCallback(ui, key);
-
-        ui.OnClose();
-    }
-
-    private void SetupCloseCallback(BaseUI baseUI, string key)
-    {
-        baseUI.UIEventHandler = new BaseUIEvent
+        var closeEvent = new BaseUIEvent
         {
             OnCloseComplete = () =>
             {
-                CloseUIEvent(baseUI.Config);
-                RemoveUIFromStack(baseUI);
-                _openUIObjects.Remove(key);
-                baseUI.UIEventHandler = null;
+                HandleCloseEvent(ui.Config);
+                _activeUIObjects.Remove(ui);
             }
         };
-    }
-
-    private void RemoveUIFromStack(BaseUI baseUI)
-    {
-        if (_activUIObjects.Count > 0 && _activUIObjects.Peek() == baseUI)
-        {
-            _activUIObjects.Pop();
-        }
-    }
-
-    private void CloseUIEvent(UIConfig config)
-    {
-        if (config.PauseGame)
-        {
-            _pauseGameCount--;
-            if (_pauseGameCount <= 0)
-            {
-                _pauseGameCount = 0;
-                Time.timeScale = 1f;
-            }
-        }
-
-        if (config.ShowCursor)
-        {
-            _showCursorCount--;
-            if (_showCursorCount <= 0)
-            {
-                _showCursorCount = 0;
-                Cursor.visible = false;
-                Cursor.lockState = CursorLockMode.Locked;
-            }
-        }
+        ui.UIEventHandler = closeEvent;
+        ui.OnClose();
     }
 
     public void CloseAllUI()
     {
-        var keys = new List<string>(_openUIObjects.Keys);
+        var uiList = new List<BaseUI>(_activeUIObjects);
 
-        foreach (string key in keys)
+        foreach (var ui in uiList)
         {
-            CloseUI(key);
+            CloseUI(ui);
         }
     }
 
-    public T GetUI<T>(string key) where T : BaseUI
+    private void HandleOpenEvent(UIConfig config)
     {
-        return _uiObjects.TryGetValue(key, out BaseUI ui) ? ui as T : null;
+        if (config.PauseGame && ++_pauseGameCount == 1)
+        {
+            Time.timeScale = 0f;
+        }
+        if (config.ShowCursor && ++_showCursorCount == 1)
+        {
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
     }
+
+    private void HandleCloseEvent(UIConfig config)
+    {
+        if (config.PauseGame && --_pauseGameCount <= 0)
+        {
+            _pauseGameCount = 0;
+            Time.timeScale = 1f;
+        }
+        if (config.ShowCursor && --_showCursorCount <= 0)
+        {
+            _showCursorCount = 0;
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+    }
+
+    public T GetUI<T>() where T :  BaseUI => _uiObjects.TryGetValue(typeof(T), out BaseUI ui) ? ui as T : null;
+    public int GetActiveUICount() => _activeUIObjects.Count;
+    public BaseUI GetTopActiveUI() => _activeUIObjects.Count > 0 ? _activeUIObjects[^1] : null;
+    public bool IsUIActive(BaseUI ui) => _activeUIObjects.Contains(ui);
+    public bool IsUIOpen<T>() where T : BaseUI => _activeUIObjects.Any(ui => ui.GetType() == typeof(T));
 }

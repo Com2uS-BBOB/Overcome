@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 
 public class BaseUIEvent
@@ -8,22 +7,21 @@ public class BaseUIEvent
     public Action OnCloseComplete;
 }
 
-public class BaseUI : MonoBehaviour
+public abstract class BaseUI : MonoBehaviour
 {
     public UIConfig Config;
-    [SerializeField] private Canvas _canvas;
 
     public BaseUIEvent UIEventHandler;
 
-    private void Start()
+    protected virtual void Start()
     {
-        UIController.Instance.RegisterUI(Config.UIName, this);
+        UIController.Instance.RegisterUI(this);
         gameObject.SetActive(false);
     }
 
-    private void OnDestroy()
+    protected virtual void OnDestroy()
     {
-        UIController.Instance?.UnregisterUI(Config.UIName);
+        UIController.Instance.UnregisterUI(this);
     }
 
     public virtual void OnOpen()
@@ -32,7 +30,7 @@ public class BaseUI : MonoBehaviour
 
         if (Config.UseTransition)
         {
-            StartCoroutine(OpenAnimationCoroutine());
+            PlayOpenAnimation();
         }
         else
         {
@@ -44,7 +42,7 @@ public class BaseUI : MonoBehaviour
     {
         if (Config.UseTransition)
         {
-            StartCoroutine(CloseAnimationCoroutine());
+            PlayCloseAnimation();
         }
         else
         {
@@ -53,23 +51,12 @@ public class BaseUI : MonoBehaviour
         }
     }
 
-    protected virtual IEnumerator OpenAnimationCoroutine()
-    {
-        // todo. UI 활성화 애니메이션 또는 VFX 추가
-        UIEventHandler?.OnOpenComplete?.Invoke();
-        yield break;
-    }
+    protected virtual void PlayOpenAnimation() { }
 
-    protected virtual IEnumerator CloseAnimationCoroutine()
-    {
-        // todo. UI 비활성화 애니메이션 또는 VFX 추가
-        UIEventHandler?.OnCloseComplete?.Invoke();
-        gameObject.SetActive(false);
-        yield break;
-    }
+    protected virtual void PlayCloseAnimation() { }
 
-    public void SetSortingOrder(int order)
+    public void BringToFront()
     {
-        _canvas.sortingOrder = order;
+        transform.SetAsLastSibling();
     }
 }
