@@ -44,8 +44,8 @@ public class EnemyLogic : MonoBehaviour
                 Idle();
                 break;
 
-            case EEnemyState.Chase:
-                Chase();
+            case EEnemyState.Trace:
+                Trace();
                 break;
             case EEnemyState.Return:
                 Return();
@@ -63,11 +63,11 @@ public class EnemyLogic : MonoBehaviour
         if (IsPlayerInRange())
         {
             Debug.Log("Idle -> Trace");
-            ChangeState(EEnemyState.Chase);
+            ChangeState(EEnemyState.Trace);
         }
     }
 
-    private void Chase()
+    private void Trace()
     {
         if (!_canMove || player == null)
         {
@@ -79,6 +79,13 @@ public class EnemyLogic : MonoBehaviour
         {
             Debug.Log("Trace -> Return");
             ChangeState(EEnemyState.Return);
+            return;
+        }
+
+        if (IsPlayerInAttack())
+        {
+            Debug.Log("Trace -> Attack");
+            ChangeState(EEnemyState.Attack);
             return;
         }
 
@@ -116,13 +123,14 @@ public class EnemyLogic : MonoBehaviour
         {
             _attack.Stop();
             Debug.Log("Attack -> Trace");
-            ChangeState(EEnemyState.Chase);
+            ChangeState(EEnemyState.Trace);
             return;
         }
 
-        if (IsPlayerInAttack())
+        var damageable = player.GetComponent<IDamageable>();
+        if (damageable != null)
         {
-            _attack.TryAttack(player.position);
+            _attack.TryAttack(damageable);
         }
     }
 
@@ -138,6 +146,11 @@ public class EnemyLogic : MonoBehaviour
     // 상태 진입 시 처리
     private void OnEnterState(EEnemyState state)
     {
+        if (state == EEnemyState.Attack)
+        {
+            _attack.StartAttack();
+        }
+
         if (state == EEnemyState.Idle)
         {
             _movement?.Stop();
@@ -147,7 +160,7 @@ public class EnemyLogic : MonoBehaviour
     // 상태 종료 시 처리
     private void OnExitState(EEnemyState state)
     {
-        if (state == EEnemyState.Chase)
+        if (state == EEnemyState.Trace)
         {
             _movement.Stop();
         }

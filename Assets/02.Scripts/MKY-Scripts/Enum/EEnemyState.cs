@@ -1,7 +1,7 @@
 public enum EEnemyState
 {
     Idle,
-    Chase,
+    Trace,
     Return,
     Attack
 }

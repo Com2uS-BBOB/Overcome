@@ -2,31 +2,40 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
-    [Header("공격 옵션")]  // 임의의 값, 필요시 EnemyStatData로 이동
+    [Header("공격 옵션")]
     [SerializeField] private float _attackDamage = 4f;
-    [SerializeField] private float _attackRange = 6f;
     [SerializeField] private float _attackCooldown = 4f;
 
-    private bool _isAttack;
-    private Vector3 _targetPosition;
+    private float _cooldownTimer;
+    private bool _isAttacking;
 
-    public void TryAttack(Vector3 target)
+    private void Update()
     {
-        _targetPosition = target;
-        _isAttack = true;
+        if (!_isAttacking) return;
 
-        Attack();
+        if (_cooldownTimer > 0f)
+        {
+            _cooldownTimer -= Time.deltaTime;
+        }
     }
 
-    private void Attack()
+    public void TryAttack(IDamageable target)
     {
-        if (!_isAttack) return;
+        if (_cooldownTimer > 0f) return;
 
-        // 플레이어 공격
+        _cooldownTimer = _attackCooldown;
+
+        Debug.Log("적 공격!");
+        target.TakeDamage(_attackDamage, gameObject);
+    }
+
+    public void StartAttack()
+    {
+        _isAttacking = true;
     }
 
     public void Stop()
     {
-        _isAttack = false;
+        _isAttacking = false;
     }
 }
