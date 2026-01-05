@@ -110,7 +110,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -161,6 +161,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   EnemyStatData: {fileID: 11400000, guid: e04ebbf4bcfd10b41bb31d5b1f9a5db5, type: 2}
+  _maxDistance: 1.2
+  _minDistance: 0.001
 --- !u!1 &2665287069355016370
 GameObject:
   m_ObjectHideFlags: 0

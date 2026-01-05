@@ -70,13 +70,15 @@ public class EnemyLogic : MonoBehaviour
 
     private void Trace()
     {
-        if (!_canMove || _player == null)
+        if (_player == null)
         {
             ChangeState(EEnemyState.Idle);
             return;
         }
 
-        if (IsPlayerOutRange())  // 플레이어가 탐지 범위를 벗어나면 Return 전환
+        _movement.EnablePlayerSeparation(_player);  // 플레이어와 일정 간격 두기 활성화
+
+        if (IsPlayerOutRange() && _canReturn)  // 플레이어가 탐지 범위를 벗어나면 Return 전환
         {
             Debug.Log("Trace -> Return");
             ChangeState(EEnemyState.Return);
@@ -95,11 +97,13 @@ public class EnemyLogic : MonoBehaviour
 
     private void Return()
     {
-        if (!_canReturn || _player == null)
+        if (_player == null)
         {
             ChangeState(EEnemyState.Idle);
             return;
         }
+
+        _movement.DisablePlayerSeparation();  // 플레이어와 일정 간격 두기 비활성화
 
         Vector3 returnPosition = _enemy.GetSpawnBasePosition();
         _movement.MoveTo(returnPosition);
@@ -114,7 +118,7 @@ public class EnemyLogic : MonoBehaviour
 
     private void Attack()
     {
-        if (!_canAttack || _player == null)
+        if (_player == null)
         {
             ChangeState(EEnemyState.Idle);
             return;

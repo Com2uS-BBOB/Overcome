@@ -6,14 +6,17 @@ public class EnemyMovement : MonoBehaviour
     public EnemyStatData EnemyStatData;
 
     [Header("플레이어와의 간격")]
-    [SerializeField] private float _maxDistance = 1.2f;
+    [SerializeField] private float _maxDistance = 1.4f;
     [SerializeField] private float _minDistance = 0.001f;
 
     private float _moveSpeed;
     private float _stopMagnitude = 0.01f;
 
     private bool _isMoving;
+    private bool _usePlayerSeparation;
+
     private Vector3 _targetPosition;
+    private Transform _separationTarget;
 
     private void Start()
     {
@@ -30,7 +33,10 @@ public class EnemyMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        ApplyPlayerSeparation();
+        if (_usePlayerSeparation)
+        {
+            ApplyPlayerSeparation();
+        }
     }
 
     // 목표 지점으로 이동 시작
@@ -63,24 +69,6 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    // 플레이어와 일정 거리 유지
-    private void ApplyPlayerSeparation()
-    {
-        if (_targetPosition == null) return;
-
-        Vector3 different = transform.position - _targetPosition;
-        different.y = 0f;
-
-        float distance = different.magnitude;
-        if (distance < _maxDistance && distance > _minDistance)
-        {
-            Vector3 direction = different.normalized;
-            float pushAmount = (_maxDistance - distance);
-
-            transform.position += direction * pushAmount;
-        }
-    }
-
     public void Stop()
     {
         _isMoving = false;
@@ -92,5 +80,33 @@ public class EnemyMovement : MonoBehaviour
         Vector3 different = target - transform.position;
         different.y = 0f;
         return different.sqrMagnitude <= stopDistance * stopDistance;
+    }
+
+    // 플레이어와 일정 거리 유지 활성화
+    public void EnablePlayerSeparation(Transform target)
+    {
+        _separationTarget = target;
+        _usePlayerSeparation = true;
+    }
+
+    public void DisablePlayerSeparation()
+    {
+        _usePlayerSeparation = false;
+        _separationTarget = null;
+    }
+
+    // 플레이어와 일정 거리 유지
+    private void ApplyPlayerSeparation()
+    {
+        if (_separationTarget == null) return;
+
+        Vector3 different = transform.position - _separationTarget.position;
+        different.y = 0f;
+
+        float distance = different.magnitude;
+        if (distance < _maxDistance && distance > _minDistance)
+        {
+            transform.position += different.normalized * (_maxDistance - distance);
+        }
     }
 }
