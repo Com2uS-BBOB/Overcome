@@ -11,25 +11,23 @@ namespace _02.Scripts.Player.Data
         [SerializeField] private PlayerBaseStats _baseStats;
 
         public float CurrentHp { get; private set; }
-        public float MaxHp => _baseStats.maxHp;
+        public float MaxHp => _baseStats.MaxHp;
         public bool IsDead => CurrentHp <= 0;
         public bool IsAlive => CurrentHp > 0;
         public float HpRatio => MaxHp > 0 ? CurrentHp / MaxHp : 0f;
 
         // 기본 스탯
-        public float AttackDamage => _baseStats.attackDamage;
-        public float Defense => _baseStats.defense;
-        public float MoveSpeed => _baseStats.moveSpeed;
-        public float JumpForce => _baseStats.jumpForce;
-        public float DashDistance => _baseStats.dashDistance;
-        public float DashCooldown => _baseStats.dashCooldown;
-        public float AttackCooldown => _baseStats.attackCooldown;
+        public float AttackDamage => _baseStats.AttackDamage;
+        public float MoveSpeed => _baseStats.MoveSpeed;
+        public float JumpForce => _baseStats.JumpForce;
+        public float DashDistance => _baseStats.DashDistance;
+        public float DashCooldown => _baseStats.DashCooldown;
+        public float AttackCooldown => _baseStats.AttackCooldown;
 
         // 크레센트 스탯
-        public float CrescentDamage => _baseStats.crescentDamage;
-        public float CrescentSpeed => _baseStats.crescentSpeed;
-        public float CrescentRange => _baseStats.crescentRange;
-        public float CrescentCooldown => _baseStats.crescentCooldown;
+        public float CrescentDamage => _baseStats.CrescentDamage;
+        public float CrescentSpeed => _baseStats.CrescentSpeed;
+        public float CrescentRange => _baseStats.CrescentRange;
 
         public event Action<float, float> OnHpChanged;
         public event Action OnDeath;
@@ -43,8 +41,7 @@ namespace _02.Scripts.Player.Data
         {
             if (IsDead) return;
 
-            float actualDamage = Mathf.Max(0, damage - Defense);
-            CurrentHp = Mathf.Max(0, CurrentHp - actualDamage);
+            CurrentHp = Mathf.Max(0, CurrentHp - damage);
             OnHpChanged?.Invoke(CurrentHp, MaxHp);
 
             if (CurrentHp <= 0) OnDeath?.Invoke();
