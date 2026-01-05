@@ -844,7 +844,7 @@ MonoBehaviour:
   TargetOffset: {x: 0, y: 0, z: 0}
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 0.01, y: 0.01, z: 0.01}
+    PositionDamping: {x: 0.05, y: 0.05, z: 0.05}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
@@ -1080,9 +1080,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00507a6f309ed42b9ad2eb15c7884a9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Core.PlayerController
-  _combat: {fileID: 1089555352}
-  _crescent: {fileID: 0}
-  _dashAttack: {fileID: 0}
+  _dragonSwordSkill: {fileID: 1089555352}
+  _crescent: {fileID: 1089555354}
+  _dashAttack: {fileID: 1089555355}
 --- !u!114 &1089555349
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -21,7 +21,7 @@ namespace _02.Scripts.Player.StateMachine
             StateMachine = stateMachine;
             Input = controller.Input;
             Movement = controller.Movement;
-            Combat = controller.Combat;
+            Combat = controller.DragonSwordSkill;
             CharacterController = controller.CharacterController;
         }
 

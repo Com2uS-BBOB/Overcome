@@ -15,13 +15,13 @@ namespace _02.Scripts.Player.Core
     public class PlayerController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private DragonSwordSkill _combat;
+        [SerializeField] private DragonSwordSkill _dragonSwordSkill;
         [SerializeField] private CrescentSkill _crescent;
         [SerializeField] private DashAttackSkill _dashAttack;
 
         public PlayerInputHandler Input { get; private set; }
         public PlayerMovement Movement { get; private set; }
-        public DragonSwordSkill Combat => _combat;
+        public DragonSwordSkill DragonSwordSkill => _dragonSwordSkill;
         public CrescentSkill Crescent => _crescent;
         public DashAttackSkill DashAttack => _dashAttack;
         public CharacterController CharacterController { get; private set; }
@@ -35,12 +35,12 @@ namespace _02.Scripts.Player.Core
             CharacterController = GetComponent<CharacterController>();
             Stats = GetComponent<PlayerStats>();
 
-            if (_combat == null) _combat = GetComponent<DragonSwordSkill>();
+            if (_dragonSwordSkill == null) _dragonSwordSkill = GetComponent<DragonSwordSkill>();
             if (_crescent == null) _crescent = GetComponent<CrescentSkill>();
             if (_dashAttack == null) _dashAttack = GetComponent<DashAttackSkill>();
 
             Movement.Initialize(Stats);
-            _combat?.Initialize(Stats);
+            _dragonSwordSkill?.Initialize(Stats);
             _crescent?.Initialize(Stats);
             _dashAttack?.Initialize(Stats);
 
@@ -93,7 +93,7 @@ namespace _02.Scripts.Player.Core
 
         private void HandleAttack()
         {
-            if (_combat != null && _combat.CanAttack &&
+            if (_dragonSwordSkill != null && _dragonSwordSkill.CanAttack &&
                 (_dashAttack == null || !_dashAttack.IsDashing) &&
                 !StateMachine.IsCurrentState<DragonSwordState>() && !StateMachine.IsCurrentState<DashAttackState>())
                 StateMachine.ChangeState<DragonSwordState>();
