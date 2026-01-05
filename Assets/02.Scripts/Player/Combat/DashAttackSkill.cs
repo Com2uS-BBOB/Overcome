@@ -41,7 +41,6 @@ namespace _02.Scripts.Player.Combat
         private void Awake()
         {
             _controller = GetComponent<CharacterController>();
-            _stats = GetComponent<PlayerStats>();
             _cooldownManager = new CooldownManager();
 
             if (_cameraTransform == null) _cameraTransform = Camera.main?.transform;

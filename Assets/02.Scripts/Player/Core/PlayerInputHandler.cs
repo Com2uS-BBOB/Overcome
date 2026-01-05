@@ -72,24 +72,37 @@ namespace _02.Scripts.Player.Core
 
         private void SubscribeEvents()
         {
-            if (_moveAction != null) { _moveAction.performed += ctx => MoveInput = ctx.ReadValue<Vector2>(); _moveAction.canceled += _ => MoveInput = Vector2.zero; }
-            if (_lookAction != null) { _lookAction.performed += ctx => LookInput = ctx.ReadValue<Vector2>(); _lookAction.canceled += _ => LookInput = Vector2.zero; }
-            if (_attackAction != null) { _attackAction.started += _ => OnAttackStarted?.Invoke(); _attackAction.performed += _ => OnAttackPerformed?.Invoke(); }
-            if (_sprintAction != null) _sprintAction.performed += _ => OnDashAttackPerformed?.Invoke();
-            if (_jumpAction != null) _jumpAction.performed += _ => OnJumpPerformed?.Invoke();
-            if (_crescentAction != null) _crescentAction.performed += _ => OnCrescentPerformed?.Invoke();
-            if (_overDriveAction != null) _overDriveAction.performed += _ => OnOverDrivePerformed?.Invoke();
+            if (_moveAction != null) { _moveAction.performed += OnMovePerformed; _moveAction.canceled += OnMoveCanceled; }
+            if (_lookAction != null) { _lookAction.performed += OnLookPerformed; _lookAction.canceled += OnLookCanceled; }
+            if (_attackAction != null) { _attackAction.started += OnAttackActionStarted; _attackAction.performed += OnAttackActionPerformed; }
+            if (_sprintAction != null) _sprintAction.performed += OnSprintPerformed;
+            if (_jumpAction != null) _jumpAction.performed += OnJumpActionPerformed;
+            if (_crescentAction != null) _crescentAction.performed += OnCrescentActionPerformed;
+            if (_overDriveAction != null) _overDriveAction.performed += OnOverDriveActionPerformed;
         }
 
         private void UnsubscribeEvents()
         {
-            _moveAction?.Disable();
-            _lookAction?.Disable();
-            _attackAction?.Disable();
-            _sprintAction?.Disable();
-            _jumpAction?.Disable();
-            _crescentAction?.Disable();
-            _overDriveAction?.Disable();
+            if (_moveAction != null) { _moveAction.performed -= OnMovePerformed; _moveAction.canceled -= OnMoveCanceled; }
+            if (_lookAction != null) { _lookAction.performed -= OnLookPerformed; _lookAction.canceled -= OnLookCanceled; }
+            if (_attackAction != null) { _attackAction.started -= OnAttackActionStarted; _attackAction.performed -= OnAttackActionPerformed; }
+            if (_sprintAction != null) _sprintAction.performed -= OnSprintPerformed;
+            if (_jumpAction != null) _jumpAction.performed -= OnJumpActionPerformed;
+            if (_crescentAction != null) _crescentAction.performed -= OnCrescentActionPerformed;
+            if (_overDriveAction != null) _overDriveAction.performed -= OnOverDriveActionPerformed;
         }
+
+        #region Event Handlers
+        private void OnMovePerformed(InputAction.CallbackContext ctx) => MoveInput = ctx.ReadValue<Vector2>();
+        private void OnMoveCanceled(InputAction.CallbackContext _) => MoveInput = Vector2.zero;
+        private void OnLookPerformed(InputAction.CallbackContext ctx) => LookInput = ctx.ReadValue<Vector2>();
+        private void OnLookCanceled(InputAction.CallbackContext _) => LookInput = Vector2.zero;
+        private void OnAttackActionStarted(InputAction.CallbackContext _) => OnAttackStarted?.Invoke();
+        private void OnAttackActionPerformed(InputAction.CallbackContext _) => OnAttackPerformed?.Invoke();
+        private void OnSprintPerformed(InputAction.CallbackContext _) => OnDashAttackPerformed?.Invoke();
+        private void OnJumpActionPerformed(InputAction.CallbackContext _) => OnJumpPerformed?.Invoke();
+        private void OnCrescentActionPerformed(InputAction.CallbackContext _) => OnCrescentPerformed?.Invoke();
+        private void OnOverDriveActionPerformed(InputAction.CallbackContext _) => OnOverDrivePerformed?.Invoke();
+        #endregion
     }
 }

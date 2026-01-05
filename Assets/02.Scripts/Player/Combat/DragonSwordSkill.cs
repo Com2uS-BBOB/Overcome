@@ -38,7 +38,6 @@ namespace _02.Scripts.Player.Combat
 
         private void Awake()
         {
-            _stats = GetComponent<PlayerStats>();
             _cooldownManager = new CooldownManager();
         }
 

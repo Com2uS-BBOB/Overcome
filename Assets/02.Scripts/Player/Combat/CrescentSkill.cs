@@ -39,8 +39,6 @@ namespace _02.Scripts.Player.Combat
 
         private void Awake()
         {
-            _stats = GetComponent<PlayerStats>();
-
             if (_projectilePrefab != null)
             {
                 _projectilePool = new ObjectPool<CrescentProjectile>(_projectilePrefab, _poolContainer, PoolInitialSize);
