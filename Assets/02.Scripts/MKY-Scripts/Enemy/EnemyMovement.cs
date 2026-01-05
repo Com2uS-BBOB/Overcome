@@ -16,6 +16,7 @@ public class EnemyMovement : MonoBehaviour
         _moveSpeed = EnemyStatData.MoveSpeed;
     }
 
+    // 목표 지점으로 이동 시작
     public void MoveTo(Vector3 target)
     {
         _targetPosition = target;
@@ -60,6 +61,7 @@ public class EnemyMovement : MonoBehaviour
         _isMoving = false;
     }
 
+    // 목표 지점에 도착했는지 확인
     public bool IsArrived(Vector3 target, float stopDistance)
     {
         Vector3 different = target - transform.position;

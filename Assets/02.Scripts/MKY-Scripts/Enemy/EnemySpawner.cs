@@ -56,7 +56,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy(EEnemyType type, Vector3 basePosition)
     {
-        Vector3 finalPosition = basePosition + GetSpawnHeight(type);
+        Vector3 finalPosition = basePosition + GetSpawnHeight(type);  // 높이 조정 (땅 위치 고려)
 
         EnemyBase enemy = _enemyPool.SpawnEnemy(
             type,
@@ -65,14 +65,16 @@ public class EnemySpawner : MonoBehaviour
         );
 
         enemy.SetSpawner(this);
-        enemy.SetSpawnBasePosition(basePosition); // 리스폰용 (높이 재설정 제외)
+        enemy.SetSpawnBasePosition(basePosition);  // 리스폰용 (높이 재설정 제외)
     }
+
     private Vector3 GetSpawnHeight(EEnemyType type)
     {
-        EnemyBase prefab = _enemyPool.GetPrefab(type);
+        EnemyBase prefab = _enemyPool.GetPrefab(type);  // 풀에서 프리팹 참조 가져오기
         return Vector3.up * prefab.GetSpawnHeight();
     }
 
+    // 리스폰 요청 처리
     public void RequestRespawn(EnemyBase enemy)
     {
         StartCoroutine(RespawnEnemy_Coroutine(enemy));

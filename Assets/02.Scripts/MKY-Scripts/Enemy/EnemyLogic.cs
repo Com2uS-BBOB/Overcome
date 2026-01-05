@@ -12,7 +12,7 @@ public class EnemyLogic : MonoBehaviour
     private bool _canReturn => _enemy.EnemyType != EEnemyType.Small;
     // private bool _canAttack => _enemy.EnemyType == EEnemyType.Elite;
 
-    private Transform player => PlayerLocator.Player;
+    private Transform player => PlayerLocator.Player;  // PlayerLocator를 플레이어에게 부착시켜 플레이어 위치를 가져옴
 
     [Header("Trace 관련 옵션")]
     [SerializeField] private float _detectRange = 6f;
@@ -98,22 +98,6 @@ public class EnemyLogic : MonoBehaviour
         }
     }
 
-    private bool IsPlayerInRange()
-    {
-        if (player == null) return false;
-
-        float distance = Vector3.Distance(transform.position, player.position);
-        return distance <= _detectRange;
-    }
-
-    private bool IsPlayerOutRange()
-    {
-        if (player == null) return false;
-
-        float distance = Vector3.Distance(transform.position, player.position);
-        return distance >= _outRange;
-    }
-
     private void ChangeState(EEnemyState newState)
     {
         if (_currentState == newState) return;
@@ -123,6 +107,7 @@ public class EnemyLogic : MonoBehaviour
         OnEnterState(_currentState);
     }
 
+    // 상태 진입 시 처리
     private void OnEnterState(EEnemyState state)
     {
         if (state == EEnemyState.Idle)
@@ -131,11 +116,30 @@ public class EnemyLogic : MonoBehaviour
         }
     }
 
+    // 상태 종료 시 처리
     private void OnExitState(EEnemyState state)
     {
         if (state == EEnemyState.Chase)
         {
             _movement.Stop();
         }
+    }
+
+    // 감지 범위 내에 플레이어가 있는지 확인
+    private bool IsPlayerInRange()
+    {
+        if (player == null) return false;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        return distance <= _detectRange;
+    }
+
+    // 플레이어가 추적 범위를 벗어났는지 확인
+    private bool IsPlayerOutRange()
+    {
+        if (player == null) return false;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        return distance >= _outRange;
     }
 }

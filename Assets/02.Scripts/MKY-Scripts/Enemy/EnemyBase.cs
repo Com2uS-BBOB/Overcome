@@ -7,24 +7,22 @@ public abstract class EnemyBase : MonoBehaviour
     public EnemyStatData EnemyStatData;
 
     protected float _currentHealth;
-    // protected EnemyMovement _movement;
 
     [Header("스폰 높이")]
-    [SerializeField] private float _spawnHeight = 1f;
+    [SerializeField] private float _spawnHeight = 1f;  // 바닥과 적의 중심 높이 차이
 
     public EEnemyType EnemyType { get; private set; }
 
     private EnemyPool _pool;
     private EnemySpawner _spawner;
 
-    private Vector3 _spawnBasePosition;
+    private Vector3 _spawnBasePosition;  // 최초 스폰 위치 저장용 (리스폰 때 사용)
 
-    public event Action<float, float> OnHealthChanged;
-    public static event Action<EnemyStatData> OnEnemyKilled;
+    public event Action<float, float> OnHealthChanged;  // 체력UI 갱신용 이벤트 
+    public static event Action<EnemyStatData> OnEnemyKilled;  // 적이 죽었을 때 보상 제공용 이벤트
 
     protected virtual void OnEnable()
     {
-        // _movement = GetComponent<EnemyMovement>();
         _currentHealth = EnemyStatData.MaxHealth;
         OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
     }
@@ -50,6 +48,7 @@ public abstract class EnemyBase : MonoBehaviour
         _spawnBasePosition = basePosition;
     }
 
+    // 리스폰 위치 반환 + 높이 보정
     public Vector3 GetSpawnBasePosition()
     {
         return _spawnBasePosition;
@@ -77,7 +76,7 @@ public abstract class EnemyBase : MonoBehaviour
     {
         Debug.Log($"적이 죽었습니다.");
 
-        OnEnemyKilled?.Invoke(EnemyStatData);  // 보상 알림
+        OnEnemyKilled?.Invoke(EnemyStatData);  // EnemyReward에 보상 제공 알림
 
         _spawner.RequestRespawn(this);
         _pool.Despawn(EnemyType, this);

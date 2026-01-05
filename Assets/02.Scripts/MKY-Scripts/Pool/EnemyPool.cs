@@ -30,6 +30,7 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
         return enemy;
     }
 
+    // 스포너에서 프리팹 참조용 메서드
     public EnemyBase GetPrefab(EEnemyType type)
     {
         if (_prefabs.TryGetValue(type, out EnemyBase prefab))

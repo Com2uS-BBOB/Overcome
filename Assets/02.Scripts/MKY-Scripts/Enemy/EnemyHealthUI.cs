@@ -57,6 +57,7 @@ public class EnemyHealthUI : MonoBehaviour
         _delayCoroutine = StartCoroutine(SmoothDelay_Coroutine(_healthDelay, target));
     }
 
+    // 체력 바 먼저 부드럽게 이동
     private IEnumerator SmoothFill_Coroutine(Image image, float target, float speed)
     {
         while (!Mathf.Approximately(image.fillAmount, target))
@@ -68,6 +69,7 @@ public class EnemyHealthUI : MonoBehaviour
         image.fillAmount = target;
     }
 
+    // 흰 잔상 체력 바는 딜레이 후 부드럽게 이동
     private IEnumerator SmoothDelay_Coroutine(Image image, float target)
     {
         yield return new WaitForSeconds(_delayTime);
