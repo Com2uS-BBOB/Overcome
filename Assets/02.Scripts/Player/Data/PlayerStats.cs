@@ -4,8 +4,8 @@ using _02.Scripts.Interfaces;
 
 namespace _02.Scripts.Player.Data
 {
-    // 플레이어 런타임 스탯 (IDamageable 구현)
-    public class PlayerRuntimeStats : MonoBehaviour, IDamageable
+    // 플레이어 스탯 (IDamageable 구현)
+    public class PlayerStats : MonoBehaviour, IDamageable
     {
         [Header("Base Stats")]
         [SerializeField] private PlayerBaseStats _baseStats;

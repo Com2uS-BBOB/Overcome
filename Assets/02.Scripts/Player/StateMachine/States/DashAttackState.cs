@@ -9,10 +9,10 @@ namespace _02.Scripts.Player.StateMachine.States
 
         public override void Enter()
         {
-            if (Movement.CanDash)
+            if (Controller.DashAttack != null && Controller.DashAttack.CanUse)
             {
-                Movement.OnDashEnded += OnDashEnded;
-                Movement.DashAttack();
+                Controller.DashAttack.OnDashEnded += OnDashEnded;
+                Controller.DashAttack.Use();
             }
             else
             {
@@ -20,7 +20,7 @@ namespace _02.Scripts.Player.StateMachine.States
             }
         }
 
-        public override void Exit() => Movement.OnDashEnded -= OnDashEnded;
+        public override void Exit() => Controller.DashAttack.OnDashEnded -= OnDashEnded;
 
         private void OnDashEnded() => ReturnToPreviousState();
 

@@ -11,19 +11,21 @@ namespace _02.Scripts.Player.Core
     [RequireComponent(typeof(CharacterController))]
     [RequireComponent(typeof(PlayerInputHandler))]
     [RequireComponent(typeof(PlayerMovement))]
-    [RequireComponent(typeof(PlayerRuntimeStats))]
+    [RequireComponent(typeof(PlayerStats))]
     public class PlayerController : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private PlayerCombat _combat;
         [SerializeField] private CrescentSkill _crescent;
+        [SerializeField] private DashAttackSkill _dashAttack;
 
         public PlayerInputHandler Input { get; private set; }
         public PlayerMovement Movement { get; private set; }
         public PlayerCombat Combat => _combat;
         public CrescentSkill Crescent => _crescent;
+        public DashAttackSkill DashAttack => _dashAttack;
         public CharacterController CharacterController { get; private set; }
-        public PlayerRuntimeStats Stats { get; private set; }
+        public PlayerStats Stats { get; private set; }
         public PlayerStateMachine StateMachine { get; private set; }
 
         private void Awake()
@@ -31,14 +33,16 @@ namespace _02.Scripts.Player.Core
             Input = GetComponent<PlayerInputHandler>();
             Movement = GetComponent<PlayerMovement>();
             CharacterController = GetComponent<CharacterController>();
-            Stats = GetComponent<PlayerRuntimeStats>();
+            Stats = GetComponent<PlayerStats>();
 
             if (_combat == null) _combat = GetComponent<PlayerCombat>();
             if (_crescent == null) _crescent = GetComponent<CrescentSkill>();
+            if (_dashAttack == null) _dashAttack = GetComponent<DashAttackSkill>();
 
             Movement.Initialize(Stats);
             _combat?.Initialize(Stats);
             _crescent?.Initialize(Stats);
+            _dashAttack?.Initialize(Stats);
 
             InitializeStateMachine();
             LockCursor();
@@ -83,13 +87,14 @@ namespace _02.Scripts.Player.Core
 
         private void HandleDashAttack()
         {
-            if (Movement.CanDash && !StateMachine.IsCurrentState<DashAttackState>())
+            if (_dashAttack != null && _dashAttack.CanUse && !StateMachine.IsCurrentState<DashAttackState>())
                 StateMachine.ChangeState<DashAttackState>();
         }
 
         private void HandleAttack()
         {
-            if (_combat != null && _combat.CanAttack && !Movement.IsDashing &&
+            if (_combat != null && _combat.CanAttack &&
+                (_dashAttack == null || !_dashAttack.IsDashing) &&
                 !StateMachine.IsCurrentState<AttackState>() && !StateMachine.IsCurrentState<DashAttackState>())
                 StateMachine.ChangeState<AttackState>();
         }

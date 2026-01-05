@@ -18,7 +18,7 @@ namespace _02.Scripts.Player.Combat
         [SerializeField] private Transform _cameraTransform;
         [SerializeField] private Transform _poolContainer;
 
-        private PlayerRuntimeStats _stats;
+        private PlayerStats _stats;
         private CooldownManager _cooldownManager;
         private ObjectPool<CrescentProjectile> _projectilePool;
 
@@ -36,7 +36,7 @@ namespace _02.Scripts.Player.Combat
 
         private void Awake()
         {
-            _stats = GetComponent<PlayerRuntimeStats>();
+            _stats = GetComponent<PlayerStats>();
             _cooldownManager = new CooldownManager();
 
             if (_projectilePrefab != null)
@@ -49,7 +49,7 @@ namespace _02.Scripts.Player.Combat
         }
 
         // 외부 Stats 주입
-        public void Initialize(PlayerRuntimeStats stats) => _stats = stats;
+        public void Initialize(PlayerStats stats) => _stats = stats;
 
         public void Use() => Fire();
 

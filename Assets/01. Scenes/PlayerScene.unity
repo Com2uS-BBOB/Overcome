@@ -844,7 +844,7 @@ MonoBehaviour:
   TargetOffset: {x: 0, y: 0, z: 0}
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 0.1, y: 0.1, z: 0.1}
+    PositionDamping: {x: 0.01, y: 0.01, z: 0.01}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
@@ -963,9 +963,10 @@ GameObject:
   - component: {fileID: 1089555352}
   - component: {fileID: 1089555353}
   - component: {fileID: 1089555354}
+  - component: {fileID: 1089555355}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1081,6 +1082,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Core.PlayerController
   _combat: {fileID: 1089555352}
   _crescent: {fileID: 0}
+  _dashAttack: {fileID: 0}
 --- !u!114 &1089555349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1094,12 +1096,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Movement.PlayerMovement
   _rotationSpeed: 10
-  _dashDuration: 0.3
-  _gravity: -20
-  _groundCheckDistance: 0.2
-  _groundLayer:
-    serializedVersion: 2
-    m_Bits: 64
+  _gravity: -30
   _cameraTransform: {fileID: 937650199}
 --- !u!114 &1089555350
 MonoBehaviour:
@@ -1182,6 +1179,20 @@ MonoBehaviour:
   _firePoint: {fileID: 1441109180}
   _cameraTransform: {fileID: 937650199}
   _poolContainer: {fileID: 652988629}
+--- !u!114 &1089555355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089555343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcb8f97e7160941aea83e7d6c17c3bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.DashAttackSkill
+  _dashDuration: 0.3
+  _cameraTransform: {fileID: 937650199}
 --- !u!1 &1285544714
 GameObject:
   m_ObjectHideFlags: 0

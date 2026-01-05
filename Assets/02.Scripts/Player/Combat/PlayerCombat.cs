@@ -18,7 +18,7 @@ namespace _02.Scripts.Player.Combat
         [Header("References")]
         [SerializeField] private MeleeHitbox _hitbox;
 
-        private PlayerRuntimeStats _stats;
+        private PlayerStats _stats;
         private CooldownManager _cooldownManager;
         private bool _isAttacking;
 
@@ -38,11 +38,11 @@ namespace _02.Scripts.Player.Combat
 
         private void Awake()
         {
-            _stats = GetComponent<PlayerRuntimeStats>();
+            _stats = GetComponent<PlayerStats>();
             _cooldownManager = new CooldownManager();
         }
 
-        public void Initialize(PlayerRuntimeStats stats) => _stats = stats;
+        public void Initialize(PlayerStats stats) => _stats = stats;
 
         private void OnEnable() { if (_hitbox != null) _hitbox.OnHit += HandleHit; }
         private void OnDisable() { if (_hitbox != null) _hitbox.OnHit -= HandleHit; }
