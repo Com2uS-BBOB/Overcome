@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace _02.Scripts.Interfaces
+namespace _02.Scripts.Player.Interfaces
 {
     // 피격 가능 객체 (Player, Enemy)
     public interface IDamageable

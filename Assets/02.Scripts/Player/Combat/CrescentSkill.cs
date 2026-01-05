@@ -1,15 +1,15 @@
 using System;
 using UnityEngine;
 using _02.Scripts.Player.Common;
-using _02.Scripts.Interfaces;
+using _02.Scripts.Player.Interfaces;
 using _02.Scripts.Player.Data;
+using _02.Scripts.Player.Gauge;
 
 namespace _02.Scripts.Player.Combat
 {
-    // 크레센트 원거리 스킬 (오브젝트 풀링 적용)
-    public class CrescentSkill : MonoBehaviour, ISkill
+    // 크레센트 원거리 스킬 (게이지 기반)
+    public class CrescentSkill : MonoBehaviour, ISkill, IOverDriveAffected
     {
-        private const string CooldownKey = "Crescent";
         private const int PoolInitialSize = 5;
 
         [Header("References")]
@@ -19,13 +19,16 @@ namespace _02.Scripts.Player.Combat
         [SerializeField] private Transform _poolContainer;
 
         private PlayerStats _stats;
-        private CooldownManager _cooldownManager;
+        private GaugeManager _gaugeManager;
         private ObjectPool<CrescentProjectile> _projectilePool;
 
         // ISkill
         public string SkillName => "크레센트";
-        public float Cooldown => _stats != null ? _stats.CrescentCooldown : 1f;
-        public bool CanUse => _cooldownManager.IsReady(CooldownKey, Cooldown);
+        public float Cooldown => 0f;
+        public bool CanUse => _gaugeManager != null && _gaugeManager.CanUseCrescent;
+
+        // IOverDriveAffected
+        public bool IsOverDriveActive { get; set; }
 
         private float Damage => _stats != null ? _stats.CrescentDamage : 15f;
         private float Speed => _stats != null ? _stats.CrescentSpeed : 20f;
@@ -37,7 +40,6 @@ namespace _02.Scripts.Player.Combat
         private void Awake()
         {
             _stats = GetComponent<PlayerStats>();
-            _cooldownManager = new CooldownManager();
 
             if (_projectilePrefab != null)
             {
@@ -48,8 +50,12 @@ namespace _02.Scripts.Player.Combat
             if (_cameraTransform == null) _cameraTransform = Camera.main?.transform;
         }
 
-        // 외부 Stats 주입
-        public void Initialize(PlayerStats stats) => _stats = stats;
+        // 외부 Stats 및 GaugeManager 주입
+        public void Initialize(PlayerStats stats, GaugeManager gaugeManager)
+        {
+            _stats = stats;
+            _gaugeManager = gaugeManager;
+        }
 
         public void Use() => Fire();
 
@@ -58,7 +64,9 @@ namespace _02.Scripts.Player.Combat
         {
             if (!CanUse || _projectilePool == null) return;
 
-            _cooldownManager.Use(CooldownKey);
+            // 오버드라이브 중이 아닐 때만 게이지 소모
+            if (!IsOverDriveActive)
+                _gaugeManager.ConsumeCrescent();
 
             Vector3 direction = _cameraTransform.forward;
             CrescentProjectile projectile = _projectilePool.Get();

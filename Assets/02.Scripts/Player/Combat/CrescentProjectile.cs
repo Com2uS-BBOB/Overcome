@@ -4,7 +4,7 @@ using _02.Scripts.Player.Common;
 
 namespace _02.Scripts.Player.Combat
 {
-    // 크레센트 프로젝타일 (관통, 풀링 지원)
+    // 검기
     public class CrescentProjectile : HitboxBase
     {
         private float _speed;

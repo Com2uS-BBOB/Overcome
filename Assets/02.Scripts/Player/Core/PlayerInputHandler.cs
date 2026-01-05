@@ -16,6 +16,7 @@ namespace _02.Scripts.Player.Core
         private InputAction _sprintAction;
         private InputAction _jumpAction;
         private InputAction _crescentAction;
+        private InputAction _overDriveAction;
 
         public Vector2 MoveInput { get; private set; }
         public Vector2 LookInput { get; private set; }
@@ -25,6 +26,7 @@ namespace _02.Scripts.Player.Core
         public event Action OnDashAttackPerformed;
         public event Action OnJumpPerformed;
         public event Action OnCrescentPerformed;
+        public event Action OnOverDrivePerformed;
 
         private void Awake() => SetupActions();
         private void OnEnable() { EnableActions(); SubscribeEvents(); }
@@ -43,6 +45,7 @@ namespace _02.Scripts.Player.Core
             _sprintAction = playerMap.FindAction("Sprint");
             _jumpAction = playerMap.FindAction("Jump");
             _crescentAction = playerMap.FindAction("Crescent");
+            _overDriveAction = playerMap.FindAction("OverDrive");
         }
 
         private void EnableActions()
@@ -53,6 +56,7 @@ namespace _02.Scripts.Player.Core
             _sprintAction?.Enable();
             _jumpAction?.Enable();
             _crescentAction?.Enable();
+            _overDriveAction?.Enable();
         }
 
         private void DisableActions()
@@ -63,6 +67,7 @@ namespace _02.Scripts.Player.Core
             _sprintAction?.Disable();
             _jumpAction?.Disable();
             _crescentAction?.Disable();
+            _overDriveAction?.Disable();
         }
 
         private void SubscribeEvents()
@@ -73,6 +78,7 @@ namespace _02.Scripts.Player.Core
             if (_sprintAction != null) _sprintAction.performed += _ => OnDashAttackPerformed?.Invoke();
             if (_jumpAction != null) _jumpAction.performed += _ => OnJumpPerformed?.Invoke();
             if (_crescentAction != null) _crescentAction.performed += _ => OnCrescentPerformed?.Invoke();
+            if (_overDriveAction != null) _overDriveAction.performed += _ => OnOverDrivePerformed?.Invoke();
         }
 
         private void UnsubscribeEvents()
@@ -83,6 +89,7 @@ namespace _02.Scripts.Player.Core
             _sprintAction?.Disable();
             _jumpAction?.Disable();
             _crescentAction?.Disable();
+            _overDriveAction?.Disable();
         }
     }
 }

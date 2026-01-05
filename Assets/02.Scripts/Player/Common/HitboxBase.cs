@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using _02.Scripts.Interfaces;
+using _02.Scripts.Player.Interfaces;
 
 namespace _02.Scripts.Player.Common
 {

@@ -964,6 +964,7 @@ GameObject:
   - component: {fileID: 1089555353}
   - component: {fileID: 1089555354}
   - component: {fileID: 1089555355}
+  - component: {fileID: 1089555356}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1083,6 +1084,7 @@ MonoBehaviour:
   _dragonSwordSkill: {fileID: 1089555352}
   _crescent: {fileID: 1089555354}
   _dashAttack: {fileID: 1089555355}
+  _gaugeManager: {fileID: 0}
 --- !u!114 &1089555349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1193,6 +1195,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.DashAttackSkill
   _dashDuration: 0.3
   _cameraTransform: {fileID: 937650199}
+--- !u!114 &1089555356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089555343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e23a53ec489b47bc87e6bb432f963138, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Gauge.GaugeManager
+  _settings: {fileID: 11400000, guid: 529c6ca658aaf4b59862b5ee87110ffb, type: 2}
+  _affectedSkills:
+  - {fileID: 1089555355}
+  - {fileID: 1089555354}
 --- !u!1 &1285544714
 GameObject:
   m_ObjectHideFlags: 0

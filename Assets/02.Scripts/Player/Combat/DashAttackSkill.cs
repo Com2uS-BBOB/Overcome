@@ -2,13 +2,13 @@ using System;
 using System.Collections;
 using UnityEngine;
 using _02.Scripts.Player.Common;
-using _02.Scripts.Interfaces;
+using _02.Scripts.Player.Interfaces;
 using _02.Scripts.Player.Data;
 
 namespace _02.Scripts.Player.Combat
 {
     // 질풍참 (대시 공격 스킬)
-    public class DashAttackSkill : MonoBehaviour, ISkill
+    public class DashAttackSkill : MonoBehaviour, ISkill, IOverDriveAffected
     {
         private const string CooldownKey = "DashAttack";
 
@@ -26,8 +26,11 @@ namespace _02.Scripts.Player.Combat
         // ISkill
         public string SkillName => "질풍참";
         public float Cooldown => _stats != null ? _stats.DashCooldown : 3f;
-        public bool CanUse => !_isDashing && _cooldownManager.IsReady(CooldownKey, Cooldown);
+        public bool CanUse => !_isDashing && (IsOverDriveActive || _cooldownManager.IsReady(CooldownKey, Cooldown));
         public bool IsDashing => _isDashing;
+
+        // IOverDriveAffected
+        public bool IsOverDriveActive { get; set; }
 
         private float DashDistance => _stats != null ? _stats.DashDistance : 10f;
 
