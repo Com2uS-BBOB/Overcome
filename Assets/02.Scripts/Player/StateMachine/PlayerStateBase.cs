@@ -12,7 +12,7 @@ namespace _02.Scripts.Player.StateMachine
         protected readonly PlayerStateMachine StateMachine;
         protected readonly PlayerInputHandler Input;
         protected readonly PlayerMovement Movement;
-        protected readonly PlayerCombat Combat;
+        protected readonly DragonSwordSkill Combat;
         protected readonly CharacterController CharacterController;
 
         protected PlayerStateBase(PlayerController controller, PlayerStateMachine stateMachine)

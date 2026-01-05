@@ -8,7 +8,7 @@ using _02.Scripts.Player.Data;
 namespace _02.Scripts.Player.Combat
 {
     // 용검 (기본 공격) 스킬
-    public class PlayerCombat : MonoBehaviour, ISkill
+    public class DragonSwordSkill : MonoBehaviour, ISkill
     {
         private const string CooldownKey = "Attack";
 

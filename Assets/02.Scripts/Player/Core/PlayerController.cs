@@ -15,13 +15,13 @@ namespace _02.Scripts.Player.Core
     public class PlayerController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private PlayerCombat _combat;
+        [SerializeField] private DragonSwordSkill _combat;
         [SerializeField] private CrescentSkill _crescent;
         [SerializeField] private DashAttackSkill _dashAttack;
 
         public PlayerInputHandler Input { get; private set; }
         public PlayerMovement Movement { get; private set; }
-        public PlayerCombat Combat => _combat;
+        public DragonSwordSkill Combat => _combat;
         public CrescentSkill Crescent => _crescent;
         public DashAttackSkill DashAttack => _dashAttack;
         public CharacterController CharacterController { get; private set; }
@@ -35,7 +35,7 @@ namespace _02.Scripts.Player.Core
             CharacterController = GetComponent<CharacterController>();
             Stats = GetComponent<PlayerStats>();
 
-            if (_combat == null) _combat = GetComponent<PlayerCombat>();
+            if (_combat == null) _combat = GetComponent<DragonSwordSkill>();
             if (_crescent == null) _crescent = GetComponent<CrescentSkill>();
             if (_dashAttack == null) _dashAttack = GetComponent<DashAttackSkill>();
 
@@ -59,7 +59,7 @@ namespace _02.Scripts.Player.Core
             StateMachine = new PlayerStateMachine();
             StateMachine.RegisterState(new IdleState(this, StateMachine));
             StateMachine.RegisterState(new MoveState(this, StateMachine));
-            StateMachine.RegisterState(new AttackState(this, StateMachine));
+            StateMachine.RegisterState(new DragonSwordState(this, StateMachine));
             StateMachine.RegisterState(new DashAttackState(this, StateMachine));
             StateMachine.Initialize<IdleState>();
         }
@@ -95,8 +95,8 @@ namespace _02.Scripts.Player.Core
         {
             if (_combat != null && _combat.CanAttack &&
                 (_dashAttack == null || !_dashAttack.IsDashing) &&
-                !StateMachine.IsCurrentState<AttackState>() && !StateMachine.IsCurrentState<DashAttackState>())
-                StateMachine.ChangeState<AttackState>();
+                !StateMachine.IsCurrentState<DragonSwordState>() && !StateMachine.IsCurrentState<DashAttackState>())
+                StateMachine.ChangeState<DragonSwordState>();
         }
 
         private void HandleCrescent()

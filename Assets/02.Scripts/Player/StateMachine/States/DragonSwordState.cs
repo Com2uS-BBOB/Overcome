@@ -2,9 +2,9 @@ using _02.Scripts.Player.Core;
 
 namespace _02.Scripts.Player.StateMachine.States
 {
-    public class AttackState : PlayerStateBase
+    public class DragonSwordState : PlayerStateBase
     {
-        public AttackState(PlayerController controller, PlayerStateMachine stateMachine)
+        public DragonSwordState(PlayerController controller, PlayerStateMachine stateMachine)
             : base(controller, stateMachine) { }
 
         public override void Enter()
