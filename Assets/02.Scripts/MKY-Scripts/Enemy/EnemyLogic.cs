@@ -90,9 +90,8 @@ public class EnemyLogic : MonoBehaviour
         Vector3 returnPosition = _enemy.GetSpawnBasePosition();
         _movement.MoveTo(returnPosition);
 
-        
-        float distance = Vector3.Distance(transform.position, returnPosition);
-        if (distance < _stopDistance)
+
+        if (_movement.IsArrived(returnPosition, _stopDistance))
         {
             Debug.Log("Return -> Idle");
             ChangeState(EEnemyState.Idle);

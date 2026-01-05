@@ -59,4 +59,11 @@ public class EnemyMovement : MonoBehaviour
     {
         _isMoving = false;
     }
+
+    public bool IsArrived(Vector3 target, float stopDistance)
+    {
+        Vector3 different = target - transform.position;
+        different.y = 0f;
+        return different.sqrMagnitude <= stopDistance * stopDistance;
+    }
 }
