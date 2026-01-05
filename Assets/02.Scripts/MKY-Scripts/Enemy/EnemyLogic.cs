@@ -1,4 +1,5 @@
 using UnityEngine;
+using _02.Scripts.Player.Interfaces;
 
 public class EnemyLogic : MonoBehaviour
 {
@@ -171,7 +172,7 @@ public class EnemyLogic : MonoBehaviour
     {
         if (_player == null) return false;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, _player.position);
         return distance <= _detectRange;
     }
 
@@ -180,7 +181,7 @@ public class EnemyLogic : MonoBehaviour
     {
         if (_player == null) return false;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, _player.position);
         return distance > _outRange;
     }
 
@@ -189,7 +190,7 @@ public class EnemyLogic : MonoBehaviour
     {
         if (_player == null) return false;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, _player.position);
         return distance <= _attackRange;
     }
 
@@ -198,7 +199,7 @@ public class EnemyLogic : MonoBehaviour
     {
         if (_player == null) return false;
 
-        float distance = Vector3.Distance(transform.position, player.position);
+        float distance = Vector3.Distance(transform.position, _player.position);
         return distance > _attackRange;
     }
 }

@@ -1,5 +1,6 @@
-using System;
 using UnityEngine;
+using System;
+using _02.Scripts.Player.Interfaces;
 
 public class EnemyAttackTester : MonoBehaviour, IDamageable
 {

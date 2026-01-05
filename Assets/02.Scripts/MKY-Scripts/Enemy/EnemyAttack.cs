@@ -1,4 +1,5 @@
 using UnityEngine;
+using _02.Scripts.Player.Interfaces;
 
 public class EnemyAttack : MonoBehaviour
 {
