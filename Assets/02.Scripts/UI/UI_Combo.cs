@@ -1,15 +1,17 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class TestComboUI : MonoBehaviour
+public class UI_Combo : MonoBehaviour
 {
-    public Text ComboText;
+    [SerializeField] private TextMeshProUGUI _comboText;
+    [SerializeField] private TextMeshProUGUI _gradeText;
     private ComboSystem _comboSystem;
     
     private void Start()
     {
         _comboSystem = ComboSystem.Instance;
         _comboSystem.OnComboChanged += UpdateComboUI;
+        ClearComboUI();
     }
 
     private void OnDestroy()
@@ -17,8 +19,21 @@ public class TestComboUI : MonoBehaviour
         _comboSystem.OnComboChanged -= UpdateComboUI;
     }
 
-    public void UpdateComboUI()
+    private void UpdateComboUI()
     {
-        ComboText.text = $"Combo : {_comboSystem.ComboCount}\n {_comboSystem.ComboText}";
+        if (_comboSystem.ComboCount == 0)
+        {
+            ClearComboUI();
+            return;
+        }
+        
+        _comboText.text = $"{_comboSystem.ComboCount} Combo!";
+        _gradeText.text = _comboSystem.ComboText;
+    }
+
+    private void ClearComboUI()
+    {
+        _comboText.text = "";
+        _gradeText.text = "";
     }
 }

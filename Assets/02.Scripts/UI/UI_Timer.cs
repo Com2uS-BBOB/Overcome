@@ -1,58 +1,81 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class TestTimerUI : MonoBehaviour
+public class UI_Timer : MonoBehaviour
 {
-    public Text PlayerTimeText;
-    public Text ChangeValueText;
-    public Text RemainTimeText;
+    [SerializeField] private TextMeshProUGUI _playTimeText;
+    [SerializeField] private TextMeshProUGUI _changedValueText;
+    [SerializeField] private TextMeshProUGUI _remainTimeText;
 
     private TimeSystem _timeSystem;
+    private Coroutine _changeValueCoroutine;
+    [SerializeField] private float _changeValueDuration;
     private void Start()
     {
         _timeSystem = TimeSystem.Instance;
-        _timeSystem.OnPlayTimeChanged += UpdatePlayerTimeUI;
-        _timeSystem.OnRemainTimeChanged += UpdateRemainTimeUI;
         _timeSystem.OnRemainTimeDelta += UpdateChangeValueUI;
-        UpdatePlayerTimeUI();
-        UpdateRemainTimeUI();
-        UpdateChangeValueUI(0);
+        ResetChangeValue();
     }
 
+    private void Update()
+    {
+        UpdateRemainTimeUI();
+        UpdatePlayerTimeUI();
+    }
+    
     private void OnDestroy()
     {
-       _timeSystem.OnPlayTimeChanged -= UpdatePlayerTimeUI;
-       _timeSystem.OnRemainTimeChanged -= UpdateRemainTimeUI;
        _timeSystem.OnRemainTimeDelta -= UpdateChangeValueUI;
     }
 
-    public void UpdateRemainTimeUI()
+    private void UpdateRemainTimeUI()
     {
-        int value = Mathf.RoundToInt(_timeSystem.RemainTime);
-        RemainTimeText.text = $"{value}";
+        _remainTimeText.text = $"{_timeSystem.RemainTime:F2}s";
     }
 
-    public void UpdatePlayerTimeUI()
+    private void UpdatePlayerTimeUI()
     {
-        int value = Mathf.RoundToInt(_timeSystem.PlayTime);
-        PlayerTimeText.text = $"{value}";
+        _playTimeText.text = $"{_timeSystem.PlayTime:F2}s";
     }
 
-    public void UpdateChangeValueUI(float value)
+    private void UpdateChangeValueUI(float value)
+    {
+        if (_changeValueCoroutine != null)
+        {
+            StopCoroutine(_changeValueCoroutine);
+            _changeValueCoroutine = null;
+        }
+        _changeValueCoroutine = StartCoroutine(ChangeValueCoroutine(value));
+    }
+
+    private void SetChangeValue(float value)
     {
         if (value > 0)
         {
-            ChangeValueText.text = $"+{value}";
-            ChangeValueText.color = Color.lawnGreen;
+            _changedValueText.text = $"+{value:F1}s";
+            _changedValueText.color = Color.lawnGreen;
         }
         else if (value < 0)
         {
-            ChangeValueText.text = $"{value}";
-            ChangeValueText.color = Color.red;
+            _changedValueText.text = $"{value:F1}s";
+            _changedValueText.color = Color.red;
         }
         else
         {
-            ChangeValueText.text = "";
+            ResetChangeValue();
         }
+    }
+
+    private void ResetChangeValue()
+    {
+        _changedValueText.text = "";
+    }
+
+    private IEnumerator ChangeValueCoroutine(float value)
+    {
+        SetChangeValue(value);
+        yield return new WaitForSeconds(_changeValueDuration);
+        ResetChangeValue();
     }
 }
