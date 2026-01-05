@@ -4,13 +4,13 @@ public class EnemyLogic : MonoBehaviour
 {
     private EnemyBase _enemy;
     private EnemyMovement _movement;
-    // private EnemyAttack _attack;
+    private EnemyAttack _attack;
 
     private EEnemyState _currentState;
 
     private bool _canMove => _enemy.EnemyType != EEnemyType.Small;
     private bool _canReturn => _enemy.EnemyType != EEnemyType.Small;
-    // private bool _canAttack => _enemy.EnemyType == EEnemyType.Elite;
+    private bool _canAttack => _enemy.EnemyType == EEnemyType.Elite;
 
     private Transform player => PlayerLocator.Player;  // PlayerLocator를 플레이어에게 부착시켜 플레이어 위치를 가져옴
 
@@ -21,11 +21,14 @@ public class EnemyLogic : MonoBehaviour
     [SerializeField] private float _outRange = 12f;
     [SerializeField] private float _stopDistance = 0.1f;
 
+    [Header("Attack 관련 옵션")]
+    [SerializeField] private float _attackRange = 3f;
+
     private void Awake()
     {
         _enemy = GetComponent<EnemyBase>();
         _movement = GetComponent<EnemyMovement>();
-        // _attack = GetComponent<EnemyAttack>(); // 엘리트 몬스터 전용
+        _attack = GetComponent<EnemyAttack>(); // 엘리트 몬스터 전용
     }
 
     private void Start()
@@ -46,6 +49,9 @@ public class EnemyLogic : MonoBehaviour
                 break;
             case EEnemyState.Return:
                 Return();
+                break;
+            case EEnemyState.Attack:
+                Attack();
                 break;
         }
     }
@@ -98,6 +104,28 @@ public class EnemyLogic : MonoBehaviour
         }
     }
 
+    private void Attack()
+    {
+        if (!_canAttack || player == null)
+        {
+            ChangeState(EEnemyState.Idle);
+            return;
+        }
+
+        if (IsPlayerOutAttack())
+        {
+            _attack.Stop();
+            Debug.Log("Attack -> Trace");
+            ChangeState(EEnemyState.Chase);
+            return;
+        }
+
+        if (IsPlayerInAttack())
+        {
+            _attack.TryAttack(player.position);
+        }
+    }
+
     private void ChangeState(EEnemyState newState)
     {
         if (_currentState == newState) return;
@@ -140,6 +168,24 @@ public class EnemyLogic : MonoBehaviour
         if (player == null) return false;
 
         float distance = Vector3.Distance(transform.position, player.position);
-        return distance >= _outRange;
+        return distance > _outRange;
+    }
+
+    // 공격 범위 내에 플레이어가 있는지 확인
+    private bool IsPlayerInAttack()
+    {
+        if (player == null) return false;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        return distance <= _attackRange;
+    }
+
+    // 플레이어가 공격 범위를 벗어났는지 확인
+    private bool IsPlayerOutAttack()
+    {
+        if (player == null) return false;
+
+        float distance = Vector3.Distance(transform.position, player.position);
+        return distance > _attackRange;
     }
 }

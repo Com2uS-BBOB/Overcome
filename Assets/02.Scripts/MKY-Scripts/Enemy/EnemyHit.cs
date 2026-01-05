@@ -11,18 +11,12 @@ public class EnemyHit : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_enemy != null)
-        {
-            _enemy.OnEnemyHit += HandleHit;
-        }
+        _enemy.OnEnemyHit += HandleHit;
     }
 
     private void OnDisable()
     {
-        if (_enemy != null)
-        {
-            _enemy.OnEnemyHit -= HandleHit;
-        }
+        _enemy.OnEnemyHit -= HandleHit;
     }
 
     private void HandleHit(float damage)
