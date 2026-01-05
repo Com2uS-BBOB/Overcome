@@ -82,7 +82,7 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
-        if (IsPlayerInAttack())
+        if (IsPlayerInAttack() && _canAttack)
         {
             Debug.Log("Trace -> Attack");
             ChangeState(EEnemyState.Attack);
@@ -148,7 +148,7 @@ public class EnemyLogic : MonoBehaviour
     {
         if (state == EEnemyState.Attack)
         {
-            _attack.StartAttack();
+            _attack?.StartAttack();
         }
 
         if (state == EEnemyState.Idle)
