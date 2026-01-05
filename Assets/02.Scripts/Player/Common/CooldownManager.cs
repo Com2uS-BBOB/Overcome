@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace _02.Scripts.Common
+namespace _02.Scripts.Player.Common
 {
     // 쿨타임 중앙 관리
     public class CooldownManager

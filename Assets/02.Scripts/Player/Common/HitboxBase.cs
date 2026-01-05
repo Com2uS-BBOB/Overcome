@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using _02.Scripts.Interfaces;
 
-namespace _02.Scripts.Common
+namespace _02.Scripts.Player.Common
 {
     // 히트박스 공통 로직 (MeleeHitbox, CrescentProjectile 상속)
     [RequireComponent(typeof(Collider))]
@@ -52,7 +52,7 @@ namespace _02.Scripts.Common
             }
         }
 
-        // 무시 대상 체크 (하위 클래스 구현)
+        // 무시 대상 체크
         protected abstract bool ShouldIgnore(Collider other);
 
         // 히트 성공 후 추가 처리

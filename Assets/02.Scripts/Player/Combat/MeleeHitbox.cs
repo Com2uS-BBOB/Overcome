@@ -1,5 +1,5 @@
 using UnityEngine;
-using _02.Scripts.Common;
+using _02.Scripts.Player.Common;
 
 namespace _02.Scripts.Player.Combat
 {

@@ -1,4 +1,4 @@
-namespace _02.Scripts.Common
+namespace _02.Scripts.Player.Common
 {
     // 태그 상수
     public static class GameTags

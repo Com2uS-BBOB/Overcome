@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace _02.Scripts.Common
+namespace _02.Scripts.Player.Common
 {
     // 제너릭 오브젝트 풀
     public class ObjectPool<T> where T : Component

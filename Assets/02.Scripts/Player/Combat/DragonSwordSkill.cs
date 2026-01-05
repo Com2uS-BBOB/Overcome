@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using _02.Scripts.Common;
+using _02.Scripts.Player.Common;
 using _02.Scripts.Interfaces;
 using _02.Scripts.Player.Data;
 
