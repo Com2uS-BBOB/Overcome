@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4947560064648773671}
   - component: {fileID: 9243648425913167}
   - component: {fileID: -2663029545220124248}
+  - component: {fileID: -3666630144614001360}
   m_Layer: 0
   m_Name: SmallEnemy
   m_TagString: Untagged
@@ -145,6 +146,33 @@ MonoBehaviour:
   _outRange: 12
   _stopDistance: 0.1
   _attackRange: 3
+--- !u!54 &-3666630144614001360
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1045832139059423618}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1324163215023126718
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,7 +1,8 @@
 using UnityEngine;
 using System;
+using _02.Scripts.Player.Interfaces;
 
-public abstract class EnemyBase : MonoBehaviour
+public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
     [Header("스탯")]
     public EnemyStatData EnemyStatData;
@@ -18,14 +19,19 @@ public abstract class EnemyBase : MonoBehaviour
 
     private Vector3 _spawnBasePosition;  // 최초 스폰 위치 저장용 (리스폰 때 사용)
 
-    public event Action<float, float> OnHealthChanged;  // 체력UI 갱신용 이벤트
-    public event Action<float> OnEnemyHit;              // 적이 맞았을 때 이벤트
-    public event Action<EnemyStatData> OnEnemyKilled;  // 적이 죽었을 때 보상 제공용 이벤트
+    public float CurrentHp => _currentHealth;
+    public float MaxHp => EnemyStatData.MaxHealth;
+    public bool IsDead => _currentHealth <= 0;
+
+    public event Action<float, float> OnHpChanged;     // 적의 체력 변화 이벤트
+    public event Action<float> OnEnemyHit;             // 적이 맞았을 때 이벤트
+    public event Action<EnemyStatData> OnEnemyKilled;  // 적이 죽었을 때  보상용 이벤트
+    public event Action OnDeath;                       // 적이 죽었을 때 이벤트
 
     protected virtual void OnEnable()
     {
         _currentHealth = EnemyStatData.MaxHealth;
-        OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
+        OnHpChanged?.Invoke(_currentHealth, MaxHp);
     }
 
     public void SetPool(EnemyPool pool)
@@ -60,13 +66,15 @@ public abstract class EnemyBase : MonoBehaviour
     }
 
 
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, GameObject attacker = null)
     {
+        if (IsDead) return;
+
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(_currentHealth, 0);
 
         OnEnemyHit?.Invoke(damage);  // 적이 맞았을 때 이벤트 호출
-        OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);  // 체력UI 갱신
+        OnHpChanged?.Invoke(_currentHealth, MaxHp);
 
         if (_currentHealth <= 0)
         {
@@ -79,6 +87,7 @@ public abstract class EnemyBase : MonoBehaviour
         Debug.Log($"적이 죽었습니다.");
 
         OnEnemyKilled?.Invoke(EnemyStatData);  // EnemyReward에 보상 제공 알림
+        OnDeath?.Invoke();
 
         _spawner.RequestRespawn(this);
         _pool.Despawn(EnemyType, this);

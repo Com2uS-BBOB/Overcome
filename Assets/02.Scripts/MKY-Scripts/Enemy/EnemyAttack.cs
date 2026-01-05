@@ -27,7 +27,7 @@ public class EnemyAttack : MonoBehaviour
         _cooldownTimer = _attackCooldown;
 
         Debug.Log("적 공격!");
-        target.TakeDamage(_attackDamage, gameObject);
+        target.TakeDamage(_attackDamage, gameObject);  // 추후 점수 시스템에 연결 (일단 위치만)
     }
 
     public void StartAttack()

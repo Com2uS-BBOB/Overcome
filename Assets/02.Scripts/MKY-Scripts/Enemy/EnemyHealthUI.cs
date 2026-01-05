@@ -27,7 +27,7 @@ public class EnemyHealthUI : MonoBehaviour
     {
         if (_enemy != null)
         {
-            _enemy.OnHealthChanged += OnHealthChanged;
+            _enemy.OnHpChanged += OnHealthChanged;
         }
     }
 
@@ -35,7 +35,7 @@ public class EnemyHealthUI : MonoBehaviour
     {
         if (_enemy != null)
         {
-            _enemy.OnHealthChanged -= OnHealthChanged;
+            _enemy.OnHpChanged -= OnHealthChanged;
         }
     }
 
