@@ -76,14 +76,14 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
-        if (IsPlayerOutRange())
+        if (IsPlayerOutRange())  // 플레이어가 탐지 범위를 벗어나면 Return 전환
         {
             Debug.Log("Trace -> Return");
             ChangeState(EEnemyState.Return);
             return;
         }
 
-        if (IsPlayerInAttack() && _canAttack)
+        if (IsPlayerInAttack() && _canAttack)  // 공격 범위에 들어오면 공격 상태로 전환 (엘리트 전용)
         {
             Debug.Log("Trace -> Attack");
             ChangeState(EEnemyState.Attack);
@@ -105,7 +105,7 @@ public class EnemyLogic : MonoBehaviour
         _movement.MoveTo(returnPosition);
 
 
-        if (_movement.IsArrived(returnPosition, _stopDistance))
+        if (_movement.IsArrived(returnPosition, _stopDistance))  // 스폰 위치에 도착하면 Idle 전환
         {
             Debug.Log("Return -> Idle");
             ChangeState(EEnemyState.Idle);
@@ -120,7 +120,7 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
-        if (IsPlayerOutAttack())
+        if (IsPlayerOutAttack())  // 플레이어가 공격 범위를 벗어나면 Trace 전환
         {
             _attack.Stop();
             Debug.Log("Attack -> Trace");
@@ -167,7 +167,6 @@ public class EnemyLogic : MonoBehaviour
         }
     }
 
-    // 감지 범위 내에 플레이어가 있는지 확인
     private bool IsPlayerInRange()
     {
         if (_player == null) return false;
@@ -176,7 +175,6 @@ public class EnemyLogic : MonoBehaviour
         return distance <= _detectRange;
     }
 
-    // 플레이어가 추적 범위를 벗어났는지 확인
     private bool IsPlayerOutRange()
     {
         if (_player == null) return false;
@@ -185,7 +183,6 @@ public class EnemyLogic : MonoBehaviour
         return distance > _outRange;
     }
 
-    // 공격 범위 내에 플레이어가 있는지 확인
     private bool IsPlayerInAttack()
     {
         if (_player == null) return false;
@@ -194,7 +191,6 @@ public class EnemyLogic : MonoBehaviour
         return distance <= _attackRange;
     }
 
-    // 플레이어가 공격 범위를 벗어났는지 확인
     private bool IsPlayerOutAttack()
     {
         if (_player == null) return false;

@@ -311,7 +311,7 @@ GameObject:
   - component: {fileID: 766418082}
   - component: {fileID: 766418083}
   m_Layer: 0
-  m_Name: TestSpawner
+  m_Name: EnemySpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -366,7 +366,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &781773134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -406,6 +406,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1146956386}
   - component: {fileID: 1146956387}
+  - component: {fileID: 1146956388}
   m_Layer: 0
   m_Name: Manager
   m_TagString: Untagged
@@ -440,6 +441,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2ded70c28fcc824c87a0d27e99b69e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PoolManager
+--- !u!114 &1146956388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146956384}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e23a53ec489b47bc87e6bb432f963138, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Gauge.GaugeManager
+  _settings: {fileID: 0}
+  _affectedSkills: []
 --- !u!1 &1244512418
 GameObject:
   m_ObjectHideFlags: 0
@@ -453,7 +468,15 @@ GameObject:
   - component: {fileID: 1244512420}
   - component: {fileID: 1244512419}
   - component: {fileID: 1244512423}
+  - component: {fileID: 1244512425}
   - component: {fileID: 1244512424}
+  - component: {fileID: 1244512432}
+  - component: {fileID: 1244512431}
+  - component: {fileID: 1244512430}
+  - component: {fileID: 1244512429}
+  - component: {fileID: 1244512428}
+  - component: {fileID: 1244512427}
+  - component: {fileID: 1244512426}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -573,12 +596,137 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1244512418}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e36700b99efa3c340a691c7f5c1de801, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c3582a718848482b8a6653cbb111331, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyAttackTester
-  _maxHp: 60
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Movement.PlayerMovement
+  _rotationSpeed: 10
+  _gravity: -30
+  _cameraTransform: {fileID: 2040839884}
+--- !u!143 &1244512425
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244512418}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Height: 1
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1244512426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244512418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f290d3376df1445e8658b0dd90d0215, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.MeleeHitbox
+--- !u!114 &1244512427
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244512418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c0b21b9940874d6986e9f80223aae4c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.DragonSwordSkill
+  _attackDuration: 0.3
+  _hitbox: {fileID: 1244512426}
+--- !u!114 &1244512428
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244512418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bcb8f97e7160941aea83e7d6c17c3bd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.DashAttackSkill
+  _dashDuration: 0.3
+  _cameraTransform: {fileID: 2040839884}
+--- !u!114 &1244512429
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244512418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0030aa212c73949b7a5d3eec10705853, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.CrescentSkill
+  _projectilePrefab: {fileID: 5555896469636686190, guid: 90608efcaac7e4bf7bb4ffe905db7674, type: 3}
+  _firePoint: {fileID: 0}
+  _cameraTransform: {fileID: 0}
+  _poolContainer: {fileID: 0}
+--- !u!114 &1244512430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244512418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00507a6f309ed42b9ad2eb15c7884a9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Core.PlayerController
+  _dragonSwordSkill: {fileID: 1244512427}
+  _crescent: {fileID: 1244512429}
+  _dashAttack: {fileID: 1244512428}
+  _gaugeManager: {fileID: 0}
+--- !u!114 &1244512431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244512418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8e593e52b9f44a282f6fe3b32df7e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Data.PlayerStats
+  _baseStats: {fileID: 0}
+--- !u!114 &1244512432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244512418}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a304ca99af78472bb28e0c92e542168, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Core.PlayerInputHandler
+  _inputActions: {fileID: 0}
 --- !u!1 &1618476517
 GameObject:
   m_ObjectHideFlags: 0
