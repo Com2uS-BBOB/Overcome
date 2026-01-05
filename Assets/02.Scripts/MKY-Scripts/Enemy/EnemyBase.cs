@@ -18,8 +18,9 @@ public abstract class EnemyBase : MonoBehaviour
 
     private Vector3 _spawnBasePosition;  // 최초 스폰 위치 저장용 (리스폰 때 사용)
 
-    public event Action<float, float> OnHealthChanged;  // 체력UI 갱신용 이벤트 
-    public static event Action<EnemyStatData> OnEnemyKilled;  // 적이 죽었을 때 보상 제공용 이벤트
+    public event Action<float, float> OnHealthChanged;  // 체력UI 갱신용 이벤트
+    public event Action<float> OnEnemyHit;              // 적이 맞았을 때 이벤트
+    public event Action<EnemyStatData> OnEnemyKilled;  // 적이 죽었을 때 보상 제공용 이벤트
 
     protected virtual void OnEnable()
     {
@@ -64,7 +65,8 @@ public abstract class EnemyBase : MonoBehaviour
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(_currentHealth, 0);
 
-        OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);
+        OnEnemyHit?.Invoke(damage);  // 적이 맞았을 때 이벤트 호출
+        OnHealthChanged?.Invoke(_currentHealth, EnemyStatData.MaxHealth);  // 체력UI 갱신
 
         if (_currentHealth <= 0)
         {

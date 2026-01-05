@@ -6,14 +6,21 @@ public class EnemyRewardTester : MonoBehaviour
     [SerializeField] private int _totalScore;
     [SerializeField] private int _totalTime;
 
+    private EnemyBase _enemy;
+
+    private void Awake()
+    {
+        _enemy = GetComponent<EnemyBase>();
+    }
+
     private void OnEnable()
     {
-        EnemyBase.OnEnemyKilled += OnEnemyKilled;
+        _enemy.OnEnemyKilled += OnEnemyKilled;
     }
 
     private void OnDisable()
     {
-        EnemyBase.OnEnemyKilled -= OnEnemyKilled;
+        _enemy.OnEnemyKilled -= OnEnemyKilled;
     }
 
     private void OnEnemyKilled(EnemyStatData stat)

@@ -2,17 +2,24 @@ using UnityEngine;
 
 public class EnemyReward : MonoBehaviour
 {
+    private EnemyBase _enemy;
+
     private int _score;
     private float _remainingTime;
-    
+
+    private void Awake()
+    {
+        _enemy = GetComponent<EnemyBase>();
+    }
+
     private void OnEnable()
     {
-        EnemyBase.OnEnemyKilled += HandleEnemyKilled;
+        _enemy.OnEnemyKilled += HandleEnemyKilled;
     }
 
     private void OnDisable()
     {
-        EnemyBase.OnEnemyKilled -= HandleEnemyKilled;
+        _enemy.OnEnemyKilled -= HandleEnemyKilled;
     }
 
     private void HandleEnemyKilled(EnemyStatData stat)
