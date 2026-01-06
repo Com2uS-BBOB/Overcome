@@ -1,15 +1,19 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_Gauge : MonoBehaviour
 {
+    [Header("UI References")]
     [SerializeField] private Image _gaugeFillImage;
     [SerializeField] private Image _gaugeEffectImage;
+    [SerializeField] private Image _gaugeOutlineImage;
     [SerializeField] private Image _overDriveIcon;
     [SerializeField] private TextMeshProUGUI _gaugePercentText;
     
-    // Test Code
+    [Space(10)]
+    [Header("Test Settings")]
     [SerializeField] private float _chargingAmount;
     
     private void Start()
