@@ -12,11 +12,10 @@ public class UI_Skill : MonoBehaviour
     private int _lastDisplayTime;
     private bool _processCoolDown;
     
-    
     // Test Code
     [Header("Test Settings")]
     [SerializeField] private float _coolDownDuration = 5f;
-    private bool _canUse = true;
+    [SerializeField] private bool _canUse = true;
     private float _elapsedTime = 0f;
 
     private void Start()
@@ -74,18 +73,17 @@ public class UI_Skill : MonoBehaviour
         HideCooldownUI();
     }
 
-    
     private void ShowCooldownUI()
     {
-        _coolDownBackground.gameObject.SetActive(true);
-        _coolDownGauge.gameObject.SetActive(true);
-        _coolDownCountText.gameObject.SetActive(true);
+        _coolDownBackground?.gameObject.SetActive(true);
+        _coolDownGauge?.gameObject.SetActive(true);
+        _coolDownCountText?.gameObject.SetActive(true);
     }
 
     private void HideCooldownUI()
     {
-        _coolDownBackground.gameObject.SetActive(false);
-        _coolDownGauge.gameObject.SetActive(false);
-        _coolDownCountText.gameObject.SetActive(false);
+        _coolDownBackground?.gameObject.SetActive(false);
+        _coolDownGauge?.gameObject.SetActive(false);
+        _coolDownCountText?.gameObject.SetActive(false);
     }
 }
