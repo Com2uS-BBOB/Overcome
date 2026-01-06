@@ -16,7 +16,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public virtual bool CanMove => true;
     public virtual bool CanReturn => true;
-    public virtual bool CanAttack => false;
+    public virtual bool CanAttack => true;
 
     private EnemyPool _pool;
     private EnemySpawner _spawner;

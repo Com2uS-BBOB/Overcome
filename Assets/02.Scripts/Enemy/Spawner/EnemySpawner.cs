@@ -13,6 +13,7 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private int _aroundCount = 20;
     [SerializeField] private float _spawnRadius = 10f;
     [SerializeField] private float _respawnDelay = 3f;
+    [SerializeField] private float _randomSpawnRate = 0.5f;
 
     [Header("자연스러운 배치 설정")]
     [SerializeField] private float _randomDegree = 6f;
@@ -44,9 +45,7 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             // 일반 혹은 소형 랜덤 스폰
-            EEnemyType type = Random.value < 0.5f
-                ? EEnemyType.Normal
-                : EEnemyType.Small;
+            EEnemyType type = RandomEnemySelect();
 
             // 약간의 랜덤 각도 및 반경 변동 추가 (자연스러운 배치)
             float angleDegree = angleStep * i + Random.Range(-_randomDegree, _randomDegree);
@@ -63,6 +62,13 @@ public class EnemySpawner : MonoBehaviour
             Vector3 spawnPosition = center + offset;
             SpawnEnemy(type, spawnPosition);
         }
+    }
+
+    private EEnemyType RandomEnemySelect()
+    {
+        return Random.value < _randomSpawnRate
+            ? EEnemyType.Small
+            : EEnemyType.Normal;
     }
 
     private void SpawnEnemy(EEnemyType type, Vector3 basePosition)
@@ -98,7 +104,7 @@ public class EnemySpawner : MonoBehaviour
     private IEnumerator RespawnEnemy_Coroutine(EnemyBase enemy)
     {
         Vector3 respawnPosition = enemy.GetSpawnBasePosition();
-        EEnemyType type = enemy.EnemyType;
+        EEnemyType type = RandomEnemySelect();
 
         yield return new WaitForSeconds(_respawnDelay);
 
