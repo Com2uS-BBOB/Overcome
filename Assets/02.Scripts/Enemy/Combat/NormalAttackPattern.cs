@@ -1,0 +1,146 @@
+using UnityEngine;
+using _02.Scripts.Player.Core;
+
+public class NormalAttackPattern : IEnemyAttackPattern
+{
+    private readonly Transform _enemy;
+    private readonly EnemyMovement _movement;
+    private readonly Transform _player;
+
+    private ENormalAttackPhase _phase;
+
+    [Header("돌진 공격 옵션")]
+    private float _dashSpeed = 8f;
+    private float _dashDuration = 0.6f;
+    private float _dashTimer;
+    private Vector3 _dashDirection;
+
+    [Header("공격 대기 옵션")]
+    private float _minWaitDuration = 1f;
+    private float _maxWaitDuration = 3f;
+    private float _waitTimer;
+    private float _waitDuration;
+
+    [Header("휘두르기 공격 옵션")]
+    private float _swingDuration = 1.5f;
+    private float _swingTimer;
+
+    private bool _isFinished;
+
+    public bool IsFinished => _isFinished;
+
+    public NormalAttackPattern(
+        Transform enemy,
+        EnemyMovement movement,
+        Transform player)
+    {
+        _enemy = enemy;
+        _movement = movement;
+        _player = player;
+    }
+
+    public void Start()
+    {
+        _isFinished = false;
+        EnterDash();
+    }
+
+    public void Update()
+    {
+        if (_isFinished) return;
+
+        switch (_phase)
+        {
+            case ENormalAttackPhase.Dash:
+                UpdateDash();
+                break;
+
+            case ENormalAttackPhase.Wait:
+                UpdateWait();
+                break;
+
+            case ENormalAttackPhase.Swing:
+                UpdateSwing();
+                break;
+        }
+    }
+
+    private void EnterDash()
+    {
+        _phase = ENormalAttackPhase.Dash;
+        _dashTimer = 0f;
+
+        _dashDirection = (_player.position - _enemy.position).normalized;
+        _dashDirection.y = 0f;
+
+        _movement.Stop();
+        _enemy.rotation = Quaternion.LookRotation(_dashDirection);
+    }
+
+    private void UpdateDash()
+    {
+        // 플레이어가 공중이라면 돌진 실패
+        // if (IsPlayerInDoubleJump())
+        // {
+        //     EnterWait();
+        //     return;
+        // }
+
+        _dashTimer += Time.deltaTime;
+        _enemy.position += _dashDirection * _dashSpeed * Time.deltaTime;
+
+        if (_dashTimer >= _dashDuration)
+        {
+            EnterWait();
+        }
+    }
+
+    // private bool IsPlayerInDoubleJump()
+    // {
+    //     var controller = _player.GetComponent<PlayerController>();
+    //     return controller != null && controller.IsJumpingTwice;
+    // }
+
+    private void EnterWait()
+    {
+        _phase = ENormalAttackPhase.Wait;
+        _waitTimer = 0f;
+        _waitDuration = Random.Range(_minWaitDuration, _maxWaitDuration);
+    }
+
+    private void UpdateWait()
+    {
+        _waitTimer += Time.deltaTime;
+
+        if (_waitTimer >= _waitDuration)
+        {
+            EnterSwing();
+        }
+    }
+    private void EnterSwing()
+    {
+        _phase = ENormalAttackPhase.Swing;
+        _swingTimer = 0f;
+
+        // animator.SetTrigger("Swing");
+    }
+
+    private void UpdateSwing()
+    {
+        _swingTimer += Time.deltaTime;
+
+        // 공격 판정은 애니메이션 이벤트로 처리
+        // OnSwingHit();
+
+        // 다시 대기로 → 반복
+        if (_swingTimer >= _swingDuration)
+        {
+            EnterWait();
+        }
+    }
+
+    public void Stop()
+    {
+        _isFinished = true;
+    }
+}

@@ -1,4 +1,3 @@
-using _02.Scripts.Player.Interfaces;
 using UnityEngine;
 
 public class EnemyLogic : MonoBehaviour
@@ -81,16 +80,19 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
-        _movement.EnablePlayerSeparation(_player);  // 플레이어와 일정 간격 두기 활성화
+        // 플레이어와 일정 간격 두기 활성화
+        _movement.EnablePlayerSeparation(_player);
 
-        if (IsPlayerOutRange() && _canReturn)  // 플레이어가 탐지 범위를 벗어나면 Return 전환
+        // 플레이어가 탐지 범위를 벗어나면 Return 전환
+        if (IsPlayerOutRange() && _canReturn)
         {
             Debug.Log("Trace -> Return");
             ChangeState(EEnemyState.Return);
             return;
         }
 
-        if (IsPlayerInAttack() && _canAttack)  // 공격 범위에 들어오면 공격 상태로 전환 (엘리트 전용)
+        // 공격 범위에 들어오면 공격 상태로 전환
+        if (IsPlayerInAttack() && _canAttack)
         {
             Debug.Log("Trace -> Attack");
             ChangeState(EEnemyState.Attack);
@@ -108,13 +110,14 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
-        _movement.DisablePlayerSeparation();  // 플레이어와 일정 간격 두기 비활성화
+        // 플레이어와 일정 간격 두기 비활성화
+        _movement.DisablePlayerSeparation();
 
         Vector3 returnPosition = _enemy.GetSpawnBasePosition();
         _movement.MoveTo(returnPosition);
 
-
-        if (_movement.IsArrived(returnPosition, _stopDistance))  // 스폰 위치에 도착하면 Idle 전환
+        // 스폰 위치에 도착하면 Idle 전환
+        if (_movement.IsArrived(returnPosition, _stopDistance))
         {
             Debug.Log("Return -> Idle");
             ChangeState(EEnemyState.Idle);
@@ -129,18 +132,11 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
-        if (IsPlayerOutAttack())  // 플레이어가 공격 범위를 벗어나면 Trace 전환
-        {
-            _attack.Stop();
-            Debug.Log("Attack -> Trace");
-            ChangeState(EEnemyState.Trace);
-            return;
-        }
+        _attack.UpdateAttack();
 
-        var damageable = _player.GetComponent<IDamageable>();
-        if (damageable != null)
+        if (_attack.IsAttackFinished)
         {
-            _attack.TryAttack(damageable);
+            ChangeState(EEnemyState.Idle);
         }
     }
 
@@ -198,13 +194,5 @@ public class EnemyLogic : MonoBehaviour
 
         float distance = Vector3.Distance(transform.position, _player.position);
         return distance <= _attackRange;
-    }
-
-    private bool IsPlayerOutAttack()
-    {
-        if (_player == null) return false;
-
-        float distance = Vector3.Distance(transform.position, _player.position);
-        return distance > _attackRange;
     }
 }
