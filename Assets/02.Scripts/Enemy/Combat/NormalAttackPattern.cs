@@ -5,13 +5,14 @@ public class NormalAttackPattern : IEnemyAttackPattern
 {
     private readonly Transform _enemy;
     private readonly EnemyMovement _movement;
+    private readonly DashKnockbackHitbox _dashHitbox;
     private readonly Transform _player;
 
     private ENormalAttackPhase _phase;
 
     [Header("돌진 공격 옵션")]
-    private float _dashSpeed = 8f;
-    private float _dashDuration = 0.6f;
+    private float _dashSpeed = 14f;
+    private float _dashDuration = 0.8f;
     private float _dashTimer;
     private Vector3 _dashDirection;
 
@@ -32,10 +33,12 @@ public class NormalAttackPattern : IEnemyAttackPattern
     public NormalAttackPattern(
         Transform enemy,
         EnemyMovement movement,
+        DashKnockbackHitbox dashHitbox,
         Transform player)
     {
         _enemy = enemy;
         _movement = movement;
+        _dashHitbox = dashHitbox;
         _player = player;
     }
 
@@ -75,6 +78,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
         _movement.Stop();
         _enemy.rotation = Quaternion.LookRotation(_dashDirection);
+
+        _dashHitbox.EnableKnockback();
     }
 
     private void UpdateDash()
@@ -103,6 +108,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
     private void EnterWait()
     {
+        _dashHitbox.DisableKnockback();
+
         _phase = ENormalAttackPhase.Wait;
         _waitTimer = 0f;
         _waitDuration = Random.Range(_minWaitDuration, _maxWaitDuration);

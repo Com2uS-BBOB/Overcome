@@ -4,6 +4,7 @@ public class EnemyAttack : MonoBehaviour
 {
     private EnemyBase _enemy;
     private EnemyMovement _movement;
+    private DashKnockbackHitbox _dashHitbox;
     private Transform _player;
 
     private IEnemyAttackPattern _currentPattern;
@@ -12,6 +13,7 @@ public class EnemyAttack : MonoBehaviour
     {
         _enemy = GetComponent<EnemyBase>();
         _movement = GetComponent<EnemyMovement>();
+        _dashHitbox = GetComponentInChildren<DashKnockbackHitbox>();
     }
 
     public void Initialize(Transform player)
@@ -44,11 +46,12 @@ public class EnemyAttack : MonoBehaviour
                 _currentPattern = new NormalAttackPattern(
                     transform,
                     _movement,
+                    _dashHitbox,
                     _player
                 );
                 break;
         }
     }
 
-    public bool IsAttackFinished => _currentPattern != null && _currentPattern.IsFinished;
+    public bool IsAttackFinished => _currentPattern == null || _currentPattern.IsFinished;
 }
