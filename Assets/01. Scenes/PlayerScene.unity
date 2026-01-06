@@ -272,8 +272,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 18113530}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.29995537, y: -0.000000015767693, z: 0.0000000049578994, w: 0.95395327}
-  m_LocalPosition: {x: 0, y: 4.669487, z: 0.022650957}
+  m_LocalRotation: {x: 0.31622773, y: 0.0000000018702233, z: -6.2340766e-10, w: 0.9486833}
+  m_LocalPosition: {x: 0, y: 3.5, z: 1.8478701}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -793,8 +793,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937650197}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.29995537, y: -0.000000015767691, z: 0.000000004957898, w: 0.95395327}
-  m_LocalPosition: {x: 0, y: 4.669487, z: 0.022650957}
+  m_LocalRotation: {x: 0.31622773, y: 0.0000000018702249, z: -6.234126e-10, w: 0.9486833}
+  m_LocalPosition: {x: 0, y: 3.5, z: 1.8478701}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -849,7 +849,7 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   OrbitStyle: 0
-  Radius: 4
+  Radius: 2
   Orbits:
     Top:
       Radius: 5
@@ -873,9 +873,9 @@ MonoBehaviour:
       Time: 2
     Restrictions: 0
   VerticalAxis:
-    Value: 17
-    Center: 17
-    Range: {x: -40, y: 80}
+    Value: 0
+    Center: 0
+    Range: {x: -80, y: 50}
     Wrap: 0
     Recentering:
       Enabled: 0
@@ -1577,6 +1577,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 2e60b91038cc54bca9e5c4d3d6133664, type: 2}
+    - target: {fileID: 6383173606538424679, guid: 5fa8ae4931df17e40ab87f3ad8f6c757, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7487135000413568453, guid: 5fa8ae4931df17e40ab87f3ad8f6c757, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: -4.304656
