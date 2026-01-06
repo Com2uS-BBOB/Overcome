@@ -30,13 +30,15 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
         return enemy;
     }
 
-    // 스포너에서 프리팹 참조용 메서드
-    public EnemyBase GetPrefab(EEnemyType type)
+    // 스포너에서 스폰 높이 참고 메서드
+    public float GetSpawnHeightForType(EEnemyType type)
     {
         if (_prefabs.TryGetValue(type, out EnemyBase prefab))
-            return prefab;
+        {
+            return prefab.GetSpawnHeight();
+        }
 
         Debug.LogError($"적 프리팹을 찾을 수 없습니다: {type}");
-        return null;
+        return 0f;
     }
 }

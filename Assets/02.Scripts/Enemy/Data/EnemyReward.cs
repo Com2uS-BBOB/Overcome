@@ -22,11 +22,11 @@ public class EnemyReward : MonoBehaviour
         _enemy.OnEnemyKilled -= HandleEnemyKilled;
     }
 
-    private void HandleEnemyKilled(EnemyStatData stat)
+    private void HandleEnemyKilled(int score, int playtime)
     {
-        _score += stat.Score;
-        _remainingTime += stat.Playtime;
+        _score += score;
+        _remainingTime += playtime;
 
-        Debug.Log($"보상 획득 → Score +{stat.Score}, Time +{stat.Playtime}");
+        Debug.Log($"보상 획득 → Score +{score}, Time +{playtime}");
     }
 }

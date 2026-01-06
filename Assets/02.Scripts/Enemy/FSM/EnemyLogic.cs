@@ -1,5 +1,5 @@
-using UnityEngine;
 using _02.Scripts.Player.Interfaces;
+using UnityEngine;
 
 public class EnemyLogic : MonoBehaviour
 {
@@ -9,11 +9,11 @@ public class EnemyLogic : MonoBehaviour
 
     private EEnemyState _currentState;
 
-    private bool _canMove => _enemy.EnemyType != EEnemyType.Small;
-    private bool _canReturn => _enemy.EnemyType != EEnemyType.Small;
-    private bool _canAttack => _enemy.EnemyType == EEnemyType.Elite;
+    private bool _canMove => _enemy.CanMove;
+    private bool _canReturn => _enemy.CanReturn;
+    private bool _canAttack => _enemy.CanAttack;
 
-    private Transform _player => PlayerLocator.Player;  // PlayerLocator를 플레이어에게 부착시켜 플레이어 정보를 가져옴
+    private Transform _player;
 
     [Header("Trace 관련 옵션")]
     [SerializeField] private float _detectRange = 6f;
@@ -55,6 +55,11 @@ public class EnemyLogic : MonoBehaviour
                 Attack();
                 break;
         }
+    }
+
+    public void Initialize(Transform player)
+    {
+        _player = player;
     }
 
     private void Idle()

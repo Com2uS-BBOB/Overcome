@@ -3,6 +3,9 @@ using System.Collections;
 
 public class EnemySpawner : MonoBehaviour
 {
+    [Header("플레이어")]
+    [SerializeField] private Transform _player;
+
     [Header("풀링")]
     [SerializeField] private EnemyPool _enemyPool;
 
@@ -18,6 +21,14 @@ public class EnemySpawner : MonoBehaviour
     private void Start()
     {
         SpawnInitialEnemies();
+    }
+
+    private void HandleEnemyDespawn(EnemyBase enemy)
+    {
+        enemy.OnDespawn -= HandleEnemyDespawn;
+
+        _enemyPool.Despawn(enemy.EnemyType, enemy);
+        RequestRespawn(enemy);
     }
 
     private void SpawnInitialEnemies()
@@ -66,12 +77,16 @@ public class EnemySpawner : MonoBehaviour
 
         enemy.SetSpawner(this);
         enemy.SetSpawnBasePosition(basePosition);  // 리스폰용 (높이 재설정 제외)
+
+        enemy.OnDespawn += HandleEnemyDespawn;
+
+        EnemyLogic logic = enemy.GetComponent<EnemyLogic>();
+        logic.Initialize(_player);
     }
 
     private Vector3 GetSpawnHeight(EEnemyType type)
     {
-        EnemyBase prefab = _enemyPool.GetPrefab(type);  // 풀에서 프리팹 참조 가져오기
-        return Vector3.up * prefab.GetSpawnHeight();
+        return Vector3.up * _enemyPool.GetSpawnHeightForType(type);
     }
 
     // 리스폰 요청 처리

@@ -14,6 +14,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public EEnemyType EnemyType { get; private set; }
 
+    public virtual bool CanMove => true;
+    public virtual bool CanReturn => true;
+    public virtual bool CanAttack => false;
+
     private EnemyPool _pool;
     private EnemySpawner _spawner;
 
@@ -23,10 +27,15 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public float MaxHp => EnemyStatData.MaxHealth;
     public bool IsDead => _currentHealth <= 0;
 
-    public event Action<float, float> OnHpChanged;     // 적의 체력 변화 이벤트
-    public event Action<float> OnEnemyHit;             // 적이 맞았을 때 이벤트
-    public event Action<EnemyStatData> OnEnemyKilled;  // 적이 죽었을 때  보상용 이벤트
-    public event Action OnDeath;                       // 적이 죽었을 때 이벤트
+    public int Score => EnemyStatData.Score;
+    public int Playtime => EnemyStatData.Playtime;
+
+    public event Action<float, float> OnHpChanged;
+    public event Action<float> OnEnemyHit;
+
+    public event Action<int, int> OnEnemyKilled;
+    public event Action OnDeath;
+    public event Action<EnemyBase> OnDespawn;
 
     protected virtual void OnEnable()
     {
@@ -86,10 +95,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         Debug.Log($"적이 죽었습니다.");
 
-        OnEnemyKilled?.Invoke(EnemyStatData);  // EnemyReward에 보상 제공 알림
+        OnEnemyKilled?.Invoke(Score, Playtime);
         OnDeath?.Invoke();
-
-        _spawner.RequestRespawn(this);
-        _pool.Despawn(EnemyType, this);
+        OnDespawn?.Invoke(this);
     }
 }

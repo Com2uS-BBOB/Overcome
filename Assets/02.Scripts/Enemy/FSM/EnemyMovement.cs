@@ -15,11 +15,14 @@ public class EnemyMovement : MonoBehaviour
     private bool _isMoving;
     private bool _usePlayerSeparation;
 
+    private Rigidbody _rigidbody;
+
     private Vector3 _targetPosition;
     private Transform _separationTarget;
 
     private void Start()
     {
+        _rigidbody = GetComponent<Rigidbody>();
         _moveSpeed = EnemyStatData.MoveSpeed;
     }
 
