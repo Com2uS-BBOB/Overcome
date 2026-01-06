@@ -2,18 +2,23 @@ using UnityEngine;
 
 public class EnemyAttack : MonoBehaviour
 {
+    private Transform _player;
     private EnemyBase _enemy;
+    private float _damage;
     private EnemyMovement _movement;
     private DashKnockbackHitbox _dashHitbox;
-    private Transform _player;
+    private SwingAttackHitbox _swingHitbox;
+
 
     private IEnemyAttackPattern _currentPattern;
 
     private void Awake()
     {
         _enemy = GetComponent<EnemyBase>();
+        _damage = _enemy.EnemyStatData.Damage;
         _movement = GetComponent<EnemyMovement>();
         _dashHitbox = GetComponentInChildren<DashKnockbackHitbox>();
+        _swingHitbox = GetComponentInChildren<SwingAttackHitbox>();
     }
 
     public void Initialize(Transform player)
@@ -44,10 +49,12 @@ public class EnemyAttack : MonoBehaviour
         {
             case EEnemyType.Normal:
                 _currentPattern = new NormalAttackPattern(
+                    _player,
                     transform,
+                    _damage,
                     _movement,
                     _dashHitbox,
-                    _player
+                    _swingHitbox
                 );
                 break;
         }

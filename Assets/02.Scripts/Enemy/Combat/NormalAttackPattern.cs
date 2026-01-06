@@ -1,12 +1,13 @@
 using UnityEngine;
-using _02.Scripts.Player.Core;
 
 public class NormalAttackPattern : IEnemyAttackPattern
 {
+    private readonly Transform _player;
     private readonly Transform _enemy;
+    private readonly float _damage;
     private readonly EnemyMovement _movement;
     private readonly DashKnockbackHitbox _dashHitbox;
-    private readonly Transform _player;
+    private readonly SwingAttackHitbox _swingHitbox;
 
     private ENormalAttackPhase _phase;
 
@@ -31,15 +32,20 @@ public class NormalAttackPattern : IEnemyAttackPattern
     public bool IsFinished => _isFinished;
 
     public NormalAttackPattern(
+        Transform player,
         Transform enemy,
+        float damage,
         EnemyMovement movement,
         DashKnockbackHitbox dashHitbox,
-        Transform player)
+        SwingAttackHitbox swingHitbox
+        )
     {
+        _player = player;
         _enemy = enemy;
+        _damage = damage;
         _movement = movement;
         _dashHitbox = dashHitbox;
-        _player = player;
+        _swingHitbox = swingHitbox;
     }
 
     public void Start()
@@ -130,18 +136,47 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _swingTimer = 0f;
 
         // animator.SetTrigger("Swing");
+        OnSwingStart();
+    }
+
+    // 애니메이션 시작 프레임 때 호출
+    private void OnSwingStart()
+    {
+        // 공격 판정 활성화
+    }
+
+    private void OnSwingHitStart()
+    {
+        _swingHitbox.Enable(_damage);
+    }
+
+    private void OnSwingHitEnd()
+    {
+        _swingHitbox.Disable();
+    }
+
+    private void OnSwingEnd()
+    {
+        _swingHitbox.Disable();
     }
 
     private void UpdateSwing()
     {
         _swingTimer += Time.deltaTime;
 
-        // 공격 판정은 애니메이션 이벤트로 처리
-        // OnSwingHit();
+        // 공격 판정은 애니메이션 이벤트로 처리. 일단 임시로 타격 프레임
+        if (_swingTimer >= 0.3f && _swingTimer <= 0.6f)
+        {
+            OnSwingHitStart();
+        }
+        else
+        {
+            OnSwingHitEnd();
+        }
 
-        // 다시 대기로 → 반복
         if (_swingTimer >= _swingDuration)
         {
+            OnSwingEnd();
             EnterWait();
         }
     }
