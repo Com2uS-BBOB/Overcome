@@ -31,6 +31,12 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     private void SetInfoByDifficulty()
     {
         _difficultyConfig = _difficultyConfigData.GetConfig(_currentDifficulty);
+        if (_difficultyConfig == null)
+        {
+            Debug.LogError($"[TimeSystem] {_currentDifficulty} Difficulty Config not found");
+            enabled = false;
+            return;
+        }
         _remainTime = (_difficultyConfig.HasTimeLimit) ? _difficultyConfig.StartTime : float.MaxValue;
     }
 

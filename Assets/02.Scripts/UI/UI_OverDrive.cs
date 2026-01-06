@@ -1,9 +1,8 @@
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_Gauge : MonoBehaviour
+public class UI_OverDrive : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private Image _gaugeFillImage;
@@ -23,6 +22,7 @@ public class UI_Gauge : MonoBehaviour
 
     public void ImproveGauge()
     {
+        // todo. Player 정보 기반 내용으로 수정
         float fillAmount = _gaugeFillImage.fillAmount;
         if (fillAmount >= 1.0f) return;
         fillAmount = Mathf.Clamp01(fillAmount + _chargingAmount);

@@ -68,7 +68,11 @@ public class SceneController : SingletonBehaviour<SceneController>
 
     private void OnActiveSceneChanged(Scene previousScene, Scene newScene)
     {
-        if (!Enum.TryParse(newScene.name, out ESceneType sceneType)) return;
+        if (!Enum.TryParse(newScene.name, out ESceneType sceneType))
+        {
+            Debug.LogWarning($"[SceneController] '{newScene.name}' is not defined in ESceneType enum.");
+            return;
+        }
         _currentScene = sceneType;
         OnSceneChanged?.Invoke(sceneType);
     }

@@ -17,7 +17,7 @@ public class ComboSystem : SingletonBehaviour<ComboSystem>
     public int ComboCount => _comboCount;
     public string ComboText => _currentComboConfig?.ComboText;
     public float ComboDuration => _comboConfigData.ComboDuration;
-    public float DamageMultiplier => _currentComboConfig.DamageMultiplier;
+    public float DamageMultiplier => _currentComboConfig?.DamageMultiplier ?? 1.0f;
 
     public event Action OnComboChanged;
     

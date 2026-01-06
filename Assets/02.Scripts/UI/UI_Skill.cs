@@ -44,6 +44,7 @@ public class UI_Skill : MonoBehaviour
     {
         if (!_processCoolDown) return;
         
+        // todo. Player 정보 기반 내용으로 수정
         _elapsedTime += Time.deltaTime;
         float progress = Mathf.Clamp01(_elapsedTime / _coolDownDuration);
         UpdateCoolDownUI(progress);
