@@ -8,6 +8,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly EnemyMovement _movement;
     private readonly DashKnockbackHitbox _dashHitbox;
     private readonly SwingAttackHitbox _swingHitbox;
+    private readonly EnemyAttack _attack;
 
     private ENormalAttackPhase _phase;
 
@@ -26,6 +27,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
     [Header("휘두르기 공격 옵션")]
     private float _swingDuration = 1.5f;
     private float _swingTimer;
+    private int _swingCount;
+    private int _maxSwingCount = 50;
 
     private bool _isFinished;
 
@@ -37,7 +40,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
         float damage,
         EnemyMovement movement,
         DashKnockbackHitbox dashHitbox,
-        SwingAttackHitbox swingHitbox
+        SwingAttackHitbox swingHitbox,
+        EnemyAttack attack
         )
     {
         _player = player;
@@ -46,12 +50,21 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _movement = movement;
         _dashHitbox = dashHitbox;
         _swingHitbox = swingHitbox;
+        _attack = attack;
     }
 
     public void Start()
     {
         _isFinished = false;
-        EnterDash();
+        if (_attack.HasDashedOnce)
+        {
+            EnterWait();
+        }
+        else
+        {
+            _attack.MarkDashed();
+            EnterDash();
+        }
     }
 
     public void Update()
@@ -177,12 +190,24 @@ public class NormalAttackPattern : IEnemyAttackPattern
         if (_swingTimer >= _swingDuration)
         {
             OnSwingEnd();
-            EnterWait();
+            _swingCount++;
+
+            if (_swingCount >= _maxSwingCount)
+            {
+                _isFinished = true;
+            }
+            else
+            {
+                EnterWait();
+            }
         }
     }
 
     public void Stop()
     {
         _isFinished = true;
+
+        _dashHitbox.DisableKnockback();
+        _swingHitbox.Disable();
     }
 }

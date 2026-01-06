@@ -1,7 +1,7 @@
+using UnityEngine;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Core;
 using _02.Scripts.Player.Interfaces;
-using UnityEngine;
 
 public class DashKnockbackHitbox : HitboxBase
 {

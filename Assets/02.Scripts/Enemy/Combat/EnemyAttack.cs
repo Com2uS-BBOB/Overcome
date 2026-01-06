@@ -9,6 +9,11 @@ public class EnemyAttack : MonoBehaviour
     private DashKnockbackHitbox _dashHitbox;
     private SwingAttackHitbox _swingHitbox;
 
+    private bool _hasDashedOnce;
+
+    public bool HasDashedOnce => _hasDashedOnce;
+    public void MarkDashed() => _hasDashedOnce = true;
+
 
     private IEnemyAttackPattern _currentPattern;
 
@@ -28,6 +33,8 @@ public class EnemyAttack : MonoBehaviour
 
     public void StartAttack()
     {
+        if (_currentPattern != null) return;
+
         SelectPattern();
         _currentPattern?.Start();
     }
@@ -41,6 +48,7 @@ public class EnemyAttack : MonoBehaviour
     {
         _currentPattern?.Stop();
         _currentPattern = null;
+        _hasDashedOnce = false;
     }
 
     private void SelectPattern()
@@ -54,7 +62,8 @@ public class EnemyAttack : MonoBehaviour
                     _damage,
                     _movement,
                     _dashHitbox,
-                    _swingHitbox
+                    _swingHitbox,
+                    this
                 );
                 break;
         }

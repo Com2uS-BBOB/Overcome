@@ -15,14 +15,14 @@ public class EnemyLogic : MonoBehaviour
     private Transform _player;
 
     [Header("Trace 관련 옵션")]
-    [SerializeField] private float _detectRange = 10f;
+    [SerializeField] private float _detectRange = 16f;
 
     [Header("Return 관련 옵션")]
-    [SerializeField] private float _outRange = 16f;
+    [SerializeField] private float _outRange = 24f;
     [SerializeField] private float _stopDistance = 0.1f;
 
     [Header("Attack 관련 옵션")]
-    [SerializeField] private float _attackRange = 8f;
+    [SerializeField] private float _attackRange = 10f;
 
     private void Awake()
     {
@@ -129,18 +129,25 @@ public class EnemyLogic : MonoBehaviour
     {
         if (_player == null)
         {
+            _attack.Stop();
             ChangeState(EEnemyState.Idle);
             return;
         }
 
-        if (!IsPlayerInAttack())
+        _attack.UpdateAttack();
+
+        if (_attack.IsAttackFinished)
         {
-            _attack.Stop();
             ChangeState(EEnemyState.Trace);
-            return;
         }
 
-        _attack.UpdateAttack();
+        if (IsPlayerOutRange() && _canReturn)
+        {
+            _attack.Stop();
+            Debug.Log("Attack -> Return");
+            ChangeState(EEnemyState.Return);
+            return;
+        }
     }
 
     private void ChangeState(EEnemyState newState)
