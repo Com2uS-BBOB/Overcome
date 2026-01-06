@@ -24,6 +24,11 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private float _waitTimer;
     private float _waitDuration;
 
+    [Header("대기 중 맴돌기 옵션")]
+    private float _orbitRadius = 2.6f;
+    private float _orbitSpeed = 120f;
+    private float _currentOrbitAngle;
+
     [Header("휘두르기 공격 옵션")]
     private float _swingDuration = 1.5f;
     private float _swingTimer;
@@ -132,14 +137,31 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _phase = ENormalAttackPhase.Wait;
         _waitTimer = 0f;
         _waitDuration = Random.Range(_minWaitDuration, _maxWaitDuration);
+
+        // 플레이어 기준 거리 유지 ON
+        _movement.EnablePlayerSeparation(_player);
+
+        Vector3 direction = _enemy.position - _player.position;
+        direction.y = 0f;
+        _currentOrbitAngle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
     }
 
     private void UpdateWait()
     {
         _waitTimer += Time.deltaTime;
 
+        // 각도 증가 → 원형 이동
+        _currentOrbitAngle += _orbitSpeed * Time.deltaTime;
+
+        float rad = _currentOrbitAngle * Mathf.Deg2Rad;
+        Vector3 offset = new Vector3(Mathf.Cos(rad),0f,Mathf.Sin(rad)) * _orbitRadius;
+
+        Vector3 targetPosition = _player.position + offset;
+        _movement.MoveTo(targetPosition);
+
         if (_waitTimer >= _waitDuration)
         {
+            _movement.DisablePlayerSeparation();
             EnterSwing();
         }
     }
