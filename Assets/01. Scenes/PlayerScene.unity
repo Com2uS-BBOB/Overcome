@@ -965,6 +965,7 @@ GameObject:
   - component: {fileID: 1089555354}
   - component: {fileID: 1089555355}
   - component: {fileID: 1089555356}
+  - component: {fileID: 1089555357}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1086,6 +1087,7 @@ MonoBehaviour:
   _crescent: {fileID: 1089555354}
   _dashAttack: {fileID: 1089555355}
   _gaugeManager: {fileID: 1089555356}
+  _playerAnimator: {fileID: 1089555357}
 --- !u!114 &1089555349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1212,6 +1214,19 @@ MonoBehaviour:
   _affectedSkills:
   - {fileID: 1089555355}
   - {fileID: 1089555354}
+--- !u!114 &1089555357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089555343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59157ddc455ca493598c377938eca5a8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Animation.PlayerAnimator
+  _animator: {fileID: 1451165497}
 --- !u!1 &1285544714
 GameObject:
   m_ObjectHideFlags: 0
@@ -1594,6 +1609,11 @@ PrefabInstance:
 --- !u!4 &1451165496 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1041943706537749277, guid: 5fa8ae4931df17e40ab87f3ad8f6c757, type: 3}
+  m_PrefabInstance: {fileID: 1451165495}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &1451165497 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 6383173606538424679, guid: 5fa8ae4931df17e40ab87f3ad8f6c757, type: 3}
   m_PrefabInstance: {fileID: 1451165495}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1479426646

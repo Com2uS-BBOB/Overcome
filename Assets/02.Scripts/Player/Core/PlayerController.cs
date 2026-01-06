@@ -1,4 +1,5 @@
 using UnityEngine;
+using _02.Scripts.Player.Animation;
 using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Data;
 using _02.Scripts.Player.Gauge;
@@ -21,6 +22,9 @@ namespace _02.Scripts.Player.Core
         [SerializeField] private CrescentSkill _crescent;
         [SerializeField] private DashAttackSkill _dashAttack;
         [SerializeField] private GaugeManager _gaugeManager;
+
+        [Header("Animation")]
+        [SerializeField] private PlayerAnimator _playerAnimator;
 
         public PlayerInputHandler Input { get; private set; }
         public PlayerMovement Movement { get; private set; }
@@ -66,6 +70,10 @@ namespace _02.Scripts.Player.Core
             StateMachine.RegisterState(new MoveState(this, StateMachine));
             StateMachine.RegisterState(new DragonSwordState(this, StateMachine));
             StateMachine.RegisterState(new DashAttackState(this, StateMachine));
+
+            // PlayerAnimator 초기화 (State 변경 구독)
+            _playerAnimator?.Initialize(StateMachine);
+
             StateMachine.Initialize<IdleState>();
         }
 
@@ -115,7 +123,11 @@ namespace _02.Scripts.Player.Core
 
         private void HandleCrescent()
         {
-            if (_crescent != null && _crescent.CanUse) _crescent.Use();
+            if (_crescent != null && _crescent.CanUse)
+            {
+                _crescent.Use();
+                _playerAnimator?.PlayCrescent();
+            }
         }
 
         // 오버드라이브 발동
