@@ -165,6 +165,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
             EnterSwing();
         }
     }
+
     private void EnterSwing()
     {
         _phase = ENormalAttackPhase.Swing;

@@ -70,4 +70,13 @@ public class EnemyAttack : MonoBehaviour
     }
 
     public bool IsAttackFinished => _currentPattern == null || _currentPattern.IsFinished;
+
+    public void RestartAttackIfNeeded()
+    {
+        if (_currentPattern == null || _currentPattern.IsFinished)
+        {
+            SelectPattern();
+            _currentPattern?.Start();
+        }
+    }
 }

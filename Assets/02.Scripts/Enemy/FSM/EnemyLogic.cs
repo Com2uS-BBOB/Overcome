@@ -135,6 +135,7 @@ public class EnemyLogic : MonoBehaviour
         }
 
         _attack.UpdateAttack();
+        _attack.RestartAttackIfNeeded();
 
         if (_attack.IsAttackFinished)
         {
@@ -146,7 +147,6 @@ public class EnemyLogic : MonoBehaviour
             _attack.Stop();
             Debug.Log("Attack -> Return");
             ChangeState(EEnemyState.Return);
-            return;
         }
     }
 
