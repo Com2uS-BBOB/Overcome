@@ -9,6 +9,8 @@ namespace _02.Scripts.Player.StateMachine.States
 
         public override void Enter()
         {
+            Movement.RotateToCamera();
+
             if (Combat != null)
             {
                 Combat.OnAttackEnded += OnAttackEnded;

@@ -157,6 +157,7 @@ namespace _02.Scripts.Player.Core
         {
             if (_crescent != null && _crescent.CanUse)
             {
+                Movement.RotateToCamera();
                 _crescent.Use();
                 _playerAnimator?.PlayCrescent();
             }

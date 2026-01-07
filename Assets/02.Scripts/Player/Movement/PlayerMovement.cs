@@ -53,6 +53,21 @@ namespace _02.Scripts.Player.Movement
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
 
+        /// <summary>
+        /// 카메라 방향으로 즉시 회전 (공격/스킬 사용 시)
+        /// </summary>
+        public void RotateToCamera()
+        {
+            if (_cameraTransform == null) return;
+
+            Vector3 forward = _cameraTransform.forward;
+            forward.y = 0f;
+            forward.Normalize();
+
+            if (forward.sqrMagnitude > 0.01f)
+                transform.rotation = Quaternion.LookRotation(forward);
+        }
+
         // 카메라 기준 이동
         public void Move(Vector2 input)
         {
