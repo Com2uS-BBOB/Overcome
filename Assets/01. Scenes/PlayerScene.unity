@@ -1162,7 +1162,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
   _attack1Duration: 0.9
   _attack2Duration: 0.9
-  _comboWindowStart: 0.3
+  _comboWindowStart: 0.4
   _comboGraceTime: 0.1
   _hitboxStartTime: 0.15
   _hitboxDuration: 0.3
@@ -1192,6 +1192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0030aa212c73949b7a5d3eec10705853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.CrescentSkill
+  _skillDuration: 0.6
   _projectilePrefab: {fileID: 5555896469636686190, guid: 90608efcaac7e4bf7bb4ffe905db7674, type: 3}
   _firePoint: {fileID: 1441109180}
   _cameraTransform: {fileID: 937650199}

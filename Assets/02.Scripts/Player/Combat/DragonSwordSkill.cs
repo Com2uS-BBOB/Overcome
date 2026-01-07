@@ -9,7 +9,7 @@ namespace _02.Scripts.Player.Combat
 {
     // 용검 (기본 공격) 스킬 - 2타 콤보
     // 콤보 윈도우 + 콤보 유예 시스템
-    // 콤보 윈도우 1타 (0.3 ~ 1.83(즉발)+0.1(유예)) + 2타(1초)
+    // 콤보 윈도우 1타 (0.3 ~ 0.9(즉발)+0.1(유예)) + 2타(0.9초)
     public class DragonSwordSkill : MonoBehaviour, ISkill
     {
         private const string CooldownKey = "Attack";

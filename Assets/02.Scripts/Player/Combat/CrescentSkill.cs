@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Interfaces;
@@ -12,6 +13,9 @@ namespace _02.Scripts.Player.Combat
     {
         private const int PoolInitialSize = 5;
 
+        [Header("Duration Settings")]
+        [SerializeField] private float _skillDuration = 0.6f;
+
         [Header("References")]
         [SerializeField] private CrescentProjectile _projectilePrefab;
         [SerializeField] private Transform _firePoint;
@@ -22,10 +26,15 @@ namespace _02.Scripts.Player.Combat
         private GaugeManager _gaugeManager;
         private ObjectPool<CrescentProjectile> _projectilePool;
 
+        // 상태
+        private bool _isUsing;
+        private Coroutine _skillCoroutine;
+
         // ISkill
         public string SkillName => "크레센트";
         public float Cooldown => 0f;
-        public bool CanUse => _gaugeManager != null && _gaugeManager.CanUseCrescent;
+        public bool CanUse => !_isUsing && _gaugeManager != null && _gaugeManager.CanUseCrescent;
+        public bool IsUsing => _isUsing;
 
         // IOverDriveAffected
         public bool IsOverDriveActive { get; set; }
@@ -35,6 +44,7 @@ namespace _02.Scripts.Player.Combat
         private float Range => _stats != null ? _stats.CrescentRange : 30f;
 
         public event Action OnSkillUsed;
+        public event Action OnCrescentEnded;
         public event Action<IDamageable, float> OnEnemyHit;
 
         private void Awake()
@@ -72,7 +82,21 @@ namespace _02.Scripts.Player.Combat
             projectile.Initialize(Damage, Speed, Range, direction, gameObject, ReturnProjectile);
             projectile.OnHit += HandleProjectileHit;
 
+            // 스킬 지속 시간 코루틴 시작
+            if (_skillCoroutine != null)
+                StopCoroutine(_skillCoroutine);
+            _skillCoroutine = StartCoroutine(SkillDurationCoroutine());
+
             OnSkillUsed?.Invoke();
+        }
+
+        private IEnumerator SkillDurationCoroutine()
+        {
+            _isUsing = true;
+            yield return new WaitForSeconds(_skillDuration);
+            _isUsing = false;
+            _skillCoroutine = null;
+            OnCrescentEnded?.Invoke();
         }
 
         // 풀 반환

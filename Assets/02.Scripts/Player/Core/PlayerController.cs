@@ -71,6 +71,7 @@ namespace _02.Scripts.Player.Core
             StateMachine.RegisterState(new MoveState(this, StateMachine));
             StateMachine.RegisterState(new DragonSwordState(this, StateMachine));
             StateMachine.RegisterState(new DashAttackState(this, StateMachine));
+            StateMachine.RegisterState(new CrescentState(this, StateMachine));
 
             // PlayerAnimator 초기화 (State 변경 구독)
             _playerAnimator?.Initialize(StateMachine);
@@ -161,9 +162,9 @@ namespace _02.Scripts.Player.Core
 
         private void HandleCrescent()
         {
-            if (_crescent != null && _crescent.CanUse)
+            if (_crescent != null && _crescent.CanUse && !StateMachine.IsCurrentState<CrescentState>())
             {
-                Movement.RotateToCamera();
+                StateMachine.ChangeState<CrescentState>();
                 _crescent.Use();
                 _playerAnimator?.PlayCrescent(Movement.IsGrounded);
             }

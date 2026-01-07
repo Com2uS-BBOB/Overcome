@@ -13,6 +13,7 @@ namespace _02.Scripts.Player.StateMachine
         protected readonly PlayerInputHandler Input;
         protected readonly PlayerMovement Movement;
         protected readonly DragonSwordSkill Combat;
+        protected readonly CrescentSkill Crescent;
         protected readonly CharacterController CharacterController;
 
         protected PlayerStateBase(PlayerController controller, PlayerStateMachine stateMachine)
@@ -22,6 +23,7 @@ namespace _02.Scripts.Player.StateMachine
             Input = controller.Input;
             Movement = controller.Movement;
             Combat = controller.DragonSwordSkill;
+            Crescent = controller.Crescent;
             CharacterController = controller.CharacterController;
         }
 
