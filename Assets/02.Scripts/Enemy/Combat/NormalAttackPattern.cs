@@ -13,30 +13,33 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private ENormalAttackPhase _phase;
 
     [Header("돌진 공격 옵션")]
-    private float _dashSpeed = 20f;
-    private float _dashDuration = 0.44f;
+    [SerializeField] private float _dashSpeed = 20f;
+    [SerializeField] private float _dashDuration = 0.44f;
     private float _dashTimer;
     private Vector3 _dashDirection;
 
     [Header("공격 대기 옵션")]
-    private float _minWaitDuration = 3f;
-    private float _maxWaitDuration = 5f;
+    [SerializeField] private float _minWaitDuration = 3f;
+    [SerializeField] private float _maxWaitDuration = 5f;
     private float _waitTimer;
     private float _waitDuration;
 
     [Header("대기 중 맴돌기 옵션")]
-    private float _orbitRadius = 2.6f;
-    private float _orbitSpeed = 120f;
+    [SerializeField] private float _orbitRadius = 2.6f;
+    [SerializeField] private float _orbitSpeed = 120f;
     private float _currentOrbitAngle;
 
     [Header("서성임 연출")]
     private float _aroundTimer;
     private float _aroundDuration;
+    [SerializeField] private float _minAroundDuration = 0.3f;
+    [SerializeField] private float _maxAroundDuration = 0.6f;
+    [SerializeField] private float _aroundSpeedMultiplier = 0.6f;
     private float _aroundChance = 0.01f; // 프레임당 확률
     private bool _isAround;
 
     [Header("휘두르기 공격 옵션")]
-    private float _swingDuration = 1.5f;
+    [SerializeField] private float _swingDuration = 1.5f;
     private float _swingTimer;
     private int _swingCount;
     private int _maxSwingCount = 50;
@@ -189,9 +192,9 @@ public class NormalAttackPattern : IEnemyAttackPattern
     {
         _isAround = true;
         _aroundTimer = 0f;
-        _aroundDuration = Random.Range(0.3f, 0.8f);
+        _aroundDuration = Random.Range(_minAroundDuration, _maxAroundDuration);
 
-        _movement.SetSpeedMultiplier(0.6f);
+        _movement.SetSpeedMultiplier(_aroundSpeedMultiplier);
     }
 
     private void ExitAround()
