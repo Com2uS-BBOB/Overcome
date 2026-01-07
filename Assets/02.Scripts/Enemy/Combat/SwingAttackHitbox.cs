@@ -4,9 +4,6 @@ using _02.Scripts.Player.Interfaces;
 
 public class SwingAttackHitbox : HitboxBase
 {
-    [Header("무시 대상")]
-    [SerializeField] private LayerMask _ignoreLayers;
-
     protected override void Awake()
     {
         base.Awake();
@@ -28,9 +25,6 @@ public class SwingAttackHitbox : HitboxBase
     {
         // 자기 자신
         if (other.transform.root == transform.root) return true;
-
-        // 레이어 무시
-        if ((_ignoreLayers.value & (1 << other.gameObject.layer)) != 0) return true;
 
         return false;
     }

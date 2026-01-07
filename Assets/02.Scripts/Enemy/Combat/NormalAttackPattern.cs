@@ -13,14 +13,14 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private ENormalAttackPhase _phase;
 
     [Header("돌진 공격 옵션")]
-    private float _dashSpeed = 14f;
-    private float _dashDuration = 0.8f;
+    private float _dashSpeed = 20f;
+    private float _dashDuration = 0.44f;
     private float _dashTimer;
     private Vector3 _dashDirection;
 
     [Header("공격 대기 옵션")]
-    private float _minWaitDuration = 1f;
-    private float _maxWaitDuration = 3f;
+    private float _minWaitDuration = 3f;
+    private float _maxWaitDuration = 5f;
     private float _waitTimer;
     private float _waitDuration;
 
@@ -28,6 +28,12 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private float _orbitRadius = 2.6f;
     private float _orbitSpeed = 120f;
     private float _currentOrbitAngle;
+
+    [Header("서성임 연출")]
+    private float _aroundTimer;
+    private float _aroundDuration;
+    private float _aroundChance = 0.01f; // 프레임당 확률
+    private bool _isAround;
 
     [Header("휘두르기 공격 옵션")]
     private float _swingDuration = 1.5f;
@@ -140,6 +146,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
         // 플레이어 기준 거리 유지 ON
         _movement.EnablePlayerSeparation(_player);
+        _movement.SetRotationToLookAt(_player);
 
         Vector3 direction = _enemy.position - _player.position;
         direction.y = 0f;
@@ -150,20 +157,57 @@ public class NormalAttackPattern : IEnemyAttackPattern
     {
         _waitTimer += Time.deltaTime;
 
-        // 각도 증가 → 원형 이동
-        _currentOrbitAngle += _orbitSpeed * Time.deltaTime;
+        if (_isAround)
+        {
+            _aroundTimer += Time.deltaTime;
+            AroundPlayer();
 
-        float rad = _currentOrbitAngle * Mathf.Deg2Rad;
-        Vector3 offset = new Vector3(Mathf.Cos(rad),0f,Mathf.Sin(rad)) * _orbitRadius;
+            if (_aroundTimer >= _aroundDuration)
+            {
+                ExitAround();
+            }
+        }
+        else
+        {
+            AroundPlayer();
 
-        Vector3 targetPosition = _player.position + offset;
-        _movement.MoveTo(targetPosition);
+            if (Random.value < _aroundChance)
+            {
+                EnterAround();
+            }
+        }
 
         if (_waitTimer >= _waitDuration)
         {
             _movement.DisablePlayerSeparation();
+            _movement.ResetSpeedMultiplier();
             EnterSwing();
         }
+    }
+
+    private void EnterAround()
+    {
+        _isAround = true;
+        _aroundTimer = 0f;
+        _aroundDuration = Random.Range(0.3f, 0.8f);
+
+        _movement.SetSpeedMultiplier(0.6f);
+    }
+
+    private void ExitAround()
+    {
+        _isAround = false;
+        _movement.ResetSpeedMultiplier();
+    }
+
+    private void AroundPlayer()
+    {
+        _currentOrbitAngle += _orbitSpeed * Time.deltaTime;
+
+        float rad = _currentOrbitAngle * Mathf.Deg2Rad;
+        Vector3 offset = new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * _orbitRadius;
+
+        _movement.MoveTo(_player.position + offset);
     }
 
     private void EnterSwing()

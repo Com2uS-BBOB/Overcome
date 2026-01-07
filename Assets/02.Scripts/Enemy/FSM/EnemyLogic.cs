@@ -15,10 +15,10 @@ public class EnemyLogic : MonoBehaviour
     private Transform _player;
 
     [Header("Trace 관련 옵션")]
-    [SerializeField] private float _detectRange = 16f;
+    [SerializeField] private float _detectRange = 10f;
 
     [Header("Return 관련 옵션")]
-    [SerializeField] private float _outRange = 24f;
+    [SerializeField] private float _outRange = 18f;
     [SerializeField] private float _stopDistance = 0.1f;
 
     [Header("Attack 관련 옵션")]
@@ -47,9 +47,11 @@ public class EnemyLogic : MonoBehaviour
             case EEnemyState.Trace:
                 Trace();
                 break;
+
             case EEnemyState.Return:
                 Return();
                 break;
+
             case EEnemyState.Attack:
                 Attack();
                 break;
@@ -81,9 +83,6 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
-        // 플레이어와 일정 간격 두기 활성화
-        _movement.EnablePlayerSeparation(_player);
-
         // 플레이어가 탐지 범위를 벗어나면 Return 전환
         if (IsPlayerOutRange() && _canReturn)
         {
@@ -100,7 +99,7 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
-        _movement.MoveTo(_player.position);
+        transform.rotation = Quaternion.LookRotation(_player.position);
     }
 
     private void Return()
@@ -115,6 +114,9 @@ public class EnemyLogic : MonoBehaviour
         _movement.DisablePlayerSeparation();
 
         Vector3 returnPosition = _enemy.GetSpawnBasePosition();
+
+        _movement.SetRotationToMoveDirection();
+        _movement.MoveTo(_player.position);
         _movement.MoveTo(returnPosition);
 
         // 스폰 위치에 도착하면 Idle 전환

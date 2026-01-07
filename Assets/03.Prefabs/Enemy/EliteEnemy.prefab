@@ -146,10 +146,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2168a6bf35c73774e980742615f6e366, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
-  _detectRange: 6
-  _outRange: 12
+  _detectRange: 4
+  _outRange: 8
   _stopDistance: 0.1
-  _attackRange: 3
+  _attackRange: 2
 --- !u!114 &-6883950643001174605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,8 +177,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af8d5fbc2139f540ba0ccefb6ec8b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
-  EnemyStatData: {fileID: 11400000, guid: 79485fb519b6c35428186994de8564d5, type: 2}
-  _attackCooldown: 4
 --- !u!54 &5666727357644055194
 Rigidbody:
   m_ObjectHideFlags: 0

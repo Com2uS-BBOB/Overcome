@@ -6,8 +6,8 @@ using _02.Scripts.Player.Interfaces;
 public class DashKnockbackHitbox : HitboxBase
 {
     [Header("넉백 옵션")]
-    [SerializeField] private float _knockbackPower = 6f;
-    [SerializeField] private float _knockbackDuration = 0.15f;
+    [SerializeField] private float _knockbackPower = 14f;
+    [SerializeField] private float _knockbackDuration = 0.22f;
 
     protected override bool ShouldIgnore(Collider other)
     {
@@ -21,8 +21,7 @@ public class DashKnockbackHitbox : HitboxBase
         var player = other.GetComponent<PlayerController>();
         if (player == null) return;
 
-        Vector3 direction =
-            (player.transform.position - transform.position).normalized;
+        Vector3 direction = (player.transform.position - transform.position).normalized;
         direction.y = 0f;
 
         ApplyKnockback(player, direction);

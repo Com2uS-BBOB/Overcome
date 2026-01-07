@@ -9,8 +9,17 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float _maxDistance = 1.4f;
     [SerializeField] private float _minDistance = 0.001f;
 
+    [Header("바라보는 방향")]
+    private ERotationMode _rotationMode = ERotationMode.MoveDirection;
+    private Transform _lookTarget;
+
     private float _moveSpeed;
     private float _stopMagnitude = 0.01f;
+
+    [Header("속도 배율 관련")]
+    [SerializeField] private float _speedLerpSpeed = 6f;
+    private float _speedMultiplier = 1f;
+    private float _targetSpeedMultiplier = 1f;
 
     private bool _isMoving;
     private bool _usePlayerSeparation;
@@ -28,6 +37,8 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
+        _speedMultiplier = Mathf.Lerp(_speedMultiplier,_targetSpeedMultiplier,Time.deltaTime * _speedLerpSpeed);
+
         if (_isMoving)
         {
             Move();
@@ -63,18 +74,63 @@ public class EnemyMovement : MonoBehaviour
         }
 
         Vector3 moveDirection = direction.normalized;
-        transform.position += moveDirection * _moveSpeed * Time.deltaTime;
+        transform.position += moveDirection * (_moveSpeed * _speedMultiplier) * Time.deltaTime;
 
         // 회전 설정
-        if (moveDirection != Vector3.zero)
-        {
-            transform.rotation = Quaternion.LookRotation(moveDirection);
-        }
+        ApplyRotation(moveDirection);
     }
 
     public void Stop()
     {
         _isMoving = false;
+    }
+
+    private void ApplyRotation(Vector3 moveDirection)
+    {
+        switch (_rotationMode)
+        {
+            case ERotationMode.MoveDirection:
+                if (moveDirection != Vector3.zero)
+                {
+                    transform.rotation = Quaternion.LookRotation(moveDirection);
+                }
+                break;
+
+            case ERotationMode.LookAtTarget:
+                if (_lookTarget == null) return;
+
+                Vector3 lookDirection = _lookTarget.position - transform.position;
+                lookDirection.y = 0f;
+
+                if (lookDirection != Vector3.zero)
+                {
+                    transform.rotation = Quaternion.LookRotation(lookDirection.normalized);
+                }
+                break;
+        }
+    }
+
+    public void SetRotationToMoveDirection()
+    {
+        _rotationMode = ERotationMode.MoveDirection;
+        _lookTarget = null;
+    }
+
+    public void SetRotationToLookAt(Transform target)
+    {
+        _rotationMode = ERotationMode.LookAtTarget;
+        _lookTarget = target;
+    }
+
+    // 이동 속도 배율 설정
+    public void SetSpeedMultiplier(float multiplier)
+    {
+        _targetSpeedMultiplier = Mathf.Max(0f, multiplier);
+    }
+
+    public void ResetSpeedMultiplier()
+    {
+        _targetSpeedMultiplier = 1f;
     }
 
     // 목표 지점에 도착했는지 확인
@@ -109,7 +165,10 @@ public class EnemyMovement : MonoBehaviour
         float distance = different.magnitude;
         if (distance < _maxDistance && distance > _minDistance)
         {
-            transform.position += different.normalized * (_maxDistance - distance);
+            float push = (_maxDistance - distance);
+            push = Mathf.Min(push, 0.5f);
+
+            transform.position += different.normalized * push * Time.deltaTime;
         }
     }
 }
