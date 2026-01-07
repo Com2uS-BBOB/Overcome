@@ -4,7 +4,7 @@ using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Core;
 using _02.Scripts.Player.Interfaces;
 
-public class SwingAttackHitbox : HitboxBase
+public class BiteAttackHitbox : HitboxBase
 {
     [Header("넉백 옵션")]
     [SerializeField] private bool _useKnockback = true;

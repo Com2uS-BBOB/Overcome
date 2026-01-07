@@ -6,8 +6,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly Transform _enemy;
     private readonly float _damage;
     private readonly EnemyMovement _movement;
-    private readonly DashKnockbackHitbox _dashHitbox;
-    private readonly SwingAttackHitbox _swingHitbox;
+    private readonly DashAttackHitbox _dashHitbox;
+    private readonly BiteAttackHitbox _biteHitbox;
     private readonly EnemyAttack _attack;
 
     private ENormalAttackPhase _phase;
@@ -48,8 +48,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
         Transform enemy,
         float damage,
         EnemyMovement movement,
-        DashKnockbackHitbox dashHitbox,
-        SwingAttackHitbox swingHitbox,
+        DashAttackHitbox dashHitbox,
+        BiteAttackHitbox biteHitbox,
         EnemyAttack attack
         )
     {
@@ -58,7 +58,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _damage = damage;
         _movement = movement;
         _dashHitbox = dashHitbox;
-        _swingHitbox = swingHitbox;
+        _biteHitbox = biteHitbox;
         _attack = attack;
     }
 
@@ -90,8 +90,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
                 UpdateWait();
                 break;
 
-            case ENormalAttackPhase.Swing:
-                UpdateSwing();
+            case ENormalAttackPhase.Bite:
+                UpdateBite();
                 break;
         }
     }
@@ -179,7 +179,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         {
             _movement.DisablePlayerSeparation();
             _movement.ResetSpeedMultiplier();
-            EnterSwing();
+            EnterBite();
         }
     }
 
@@ -208,9 +208,9 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _movement.MoveTo(_player.position + offset);
     }
 
-    private void EnterSwing()
+    private void EnterBite()
     {
-        _phase = ENormalAttackPhase.Swing;
+        _phase = ENormalAttackPhase.Bite;
 
         _movement.Stop();
         _movement.DisablePlayerSeparation();
@@ -222,35 +222,35 @@ public class NormalAttackPattern : IEnemyAttackPattern
             _enemy.rotation = Quaternion.LookRotation(direction);
         }
 
-        // animator.SetTrigger("Swing");
+        // animator.SetTrigger("Bite");
     }
 
     // 애니메이션 시작 프레임 때 호출
-    private void OnSwingStart()
+    private void OnBiteStart()
     {
         // 공격 판정 활성화
     }
 
     // 애니메이션 타격 시작 때 호출
-    private void OnSwingHitStart()
+    private void OnBiteHitStart()
     {
-        _swingHitbox.Enable(_damage);
+        _biteHitbox.Enable(_damage);
     }
 
     // 애니메이션 타격 끝날 때 호출
-    private void OnSwingHitEnd()
+    private void OnBiteHitEnd()
     {
-        _swingHitbox.Disable();
+        _biteHitbox.Disable();
     }
 
     // 애니메이션 마지막 프레임 때 호출
-    private void OnSwingEnd()
+    private void OnBiteEnd()
     {
-        _swingHitbox.Disable();
+        _biteHitbox.Disable();
         EnterWait();
     }
 
-    private void UpdateSwing()
+    private void UpdateBite()
     {
         // 대기 상태로 전환은 애니메이션 이벤트에서 처리
     }
@@ -260,6 +260,6 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _isFinished = true;
 
         _dashHitbox.DisableKnockback();
-        _swingHitbox.Disable();
+        _biteHitbox.Disable();
     }
 }

@@ -4,7 +4,7 @@ using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Core;
 using _02.Scripts.Player.Interfaces;
 
-public class DashKnockbackHitbox : HitboxBase
+public class DashAttackHitbox : HitboxBase
 {
     [Header("넉백 옵션")]
     [SerializeField] private float _knockbackPower = 8f;

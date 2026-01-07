@@ -6,8 +6,8 @@ public class EnemyAttack : MonoBehaviour
     private EnemyBase _enemy;
     private float _damage;
     private EnemyMovement _movement;
-    private DashKnockbackHitbox _dashHitbox;
-    private SwingAttackHitbox _swingHitbox;
+    private DashAttackHitbox _dashHitbox;
+    private BiteAttackHitbox _swingHitbox;
 
     private bool _hasDashedOnce;
 
@@ -22,8 +22,8 @@ public class EnemyAttack : MonoBehaviour
         _enemy = GetComponent<EnemyBase>();
         _damage = _enemy.EnemyStatData.Damage;
         _movement = GetComponent<EnemyMovement>();
-        _dashHitbox = GetComponentInChildren<DashKnockbackHitbox>();
-        _swingHitbox = GetComponentInChildren<SwingAttackHitbox>();
+        _dashHitbox = GetComponentInChildren<DashAttackHitbox>();
+        _swingHitbox = GetComponentInChildren<BiteAttackHitbox>();
     }
 
     public void Initialize(Transform player)
