@@ -99,6 +99,7 @@ public class EnemyLogic : MonoBehaviour
             return;
         }
 
+        _movement.MoveTo(_player.position);
         transform.rotation = Quaternion.LookRotation(_player.position);
     }
 
