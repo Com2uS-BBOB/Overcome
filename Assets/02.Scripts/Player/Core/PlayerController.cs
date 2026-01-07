@@ -35,6 +35,7 @@ namespace _02.Scripts.Player.Core
         public CharacterController CharacterController { get; private set; }
         public PlayerStats Stats { get; private set; }
         public PlayerStateMachine StateMachine { get; private set; }
+        public PlayerAnimator PlayerAnimator => _playerAnimator;
 
         private void Awake()
         {
@@ -88,6 +89,9 @@ namespace _02.Scripts.Player.Core
             // 오버드라이브 게이지 충전 연결
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnEnemyHit += HandleEnemyHitForOverDrive;
             if (_crescent != null) _crescent.OnEnemyHit += HandleEnemyHitForOverDrive;
+
+            // 콤보 애니메이션 연결
+            if (_dragonSwordSkill != null) _dragonSwordSkill.OnComboAttack += HandleComboAttack;
         }
 
         private void OnDisable()
@@ -100,12 +104,29 @@ namespace _02.Scripts.Player.Core
 
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnEnemyHit -= HandleEnemyHitForOverDrive;
             if (_crescent != null) _crescent.OnEnemyHit -= HandleEnemyHitForOverDrive;
+
+            // 콤보 애니메이션 연결 해제
+            if (_dragonSwordSkill != null) _dragonSwordSkill.OnComboAttack -= HandleComboAttack;
         }
 
-        private void Update() => StateMachine.Update();
+        private void Update()
+        {
+            StateMachine.Update();
+
+            // 지면 상태 동기화
+            _playerAnimator?.SetGrounded(Movement.IsGrounded);
+        }
+
         private void FixedUpdate() => StateMachine.FixedUpdate();
 
-        private void HandleJump() => Movement.Jump();
+        private void HandleJump()
+        {
+            if (Movement.IsGrounded)
+            {
+                Movement.Jump();
+                _playerAnimator?.PlayJump();
+            }
+        }
 
         private void HandleDashAttack()
         {
@@ -115,10 +136,21 @@ namespace _02.Scripts.Player.Core
 
         private void HandleAttack()
         {
-            if (_dragonSwordSkill != null && _dragonSwordSkill.CanAttack &&
-                (_dashAttack == null || !_dashAttack.IsDashing) &&
-                !StateMachine.IsCurrentState<DragonSwordState>() && !StateMachine.IsCurrentState<DashAttackState>())
+            if (_dragonSwordSkill == null) return;
+            if (_dashAttack != null && _dashAttack.IsDashing) return;
+            if (StateMachine.IsCurrentState<DashAttackState>()) return;
+
+            // 첫 공격 또는 콤보 입력
+            if (_dragonSwordSkill.CanAttack)
+            {
                 StateMachine.ChangeState<DragonSwordState>();
+                _dragonSwordSkill.Attack();
+            }
+            else if (_dragonSwordSkill.CanQueueCombo)
+            {
+                // 콤보 큐잉
+                _dragonSwordSkill.Attack();
+            }
         }
 
         private void HandleCrescent()
@@ -135,5 +167,8 @@ namespace _02.Scripts.Player.Core
 
         // 적 적중 시 오버드라이브 게이지 충전
         private void HandleEnemyHitForOverDrive(IDamageable target, float damage) => _gaugeManager?.ChargeOverDriveOnHit();
+
+        // 콤보 공격 애니메이션
+        private void HandleComboAttack(int comboStep) => _playerAnimator?.PlayAttack(comboStep);
     }
 }

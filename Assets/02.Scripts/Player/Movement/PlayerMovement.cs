@@ -72,6 +72,18 @@ namespace _02.Scripts.Player.Movement
 
             IsMoving = true;
 
+            Vector3 moveDirection = GetWorldMoveDirection(input);
+            _controller.Move(moveDirection * MoveSpeed * Time.deltaTime);
+        }
+
+        /// <summary>
+        /// 월드 이동 방향 계산 (카메라 기준)
+        /// </summary>
+        public Vector3 GetWorldMoveDirection(Vector2 input)
+        {
+            if (input.sqrMagnitude < 0.01f)
+                return Vector3.zero;
+
             Vector3 forward = _cameraTransform.forward;
             Vector3 right = _cameraTransform.right;
             forward.y = 0f;
@@ -79,8 +91,21 @@ namespace _02.Scripts.Player.Movement
             forward.Normalize();
             right.Normalize();
 
-            Vector3 moveDirection = forward * input.y + right * input.x;
-            _controller.Move(moveDirection * MoveSpeed * Time.deltaTime);
+            return (forward * input.y + right * input.x).normalized;
+        }
+
+        /// <summary>
+        /// 캐릭터 로컬 기준 속도 계산 (Blend Tree용, 8방향)
+        /// </summary>
+        public Vector2 GetLocalVelocity(Vector2 input)
+        {
+            if (input.sqrMagnitude < 0.01f)
+                return Vector2.zero;
+
+            Vector3 worldDir = GetWorldMoveDirection(input);
+            Vector3 localDir = transform.InverseTransformDirection(worldDir);
+
+            return new Vector2(localDir.x, localDir.z);
         }
 
         public void Jump()
