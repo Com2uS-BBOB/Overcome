@@ -18,7 +18,9 @@ public class ComboSystem : SingletonBehaviour<ComboSystem>
     public string ComboText => _currentComboConfig?.ComboText;
     public float ComboDuration => _comboConfigData.ComboDuration;
     public float DamageMultiplier => _currentComboConfig?.DamageMultiplier ?? 1.0f;
-
+    public Color ComboColor => _currentComboConfig?.ComboColor??Color.black;
+    public Color GradeColor => _currentComboConfig?.GradeColor??Color.black;
+    
     public event Action OnComboChanged;
     
     protected override void Init()

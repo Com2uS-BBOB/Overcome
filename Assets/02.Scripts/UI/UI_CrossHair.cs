@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-// using DG.Tweening;
+using DG.Tweening;
 
 public class UI_CrossHair : MonoBehaviour
 {
@@ -37,91 +37,42 @@ public class UI_CrossHair : MonoBehaviour
 
     public void OnEnemyHit()
     {
-        // PlayHitFeedback_DOTween();
-        PlayHitFeedback_Test();
+        ProcessHitFeedback();
     }
 
-    // todo. DOTween을 적용 이후 사용
-    // private void PlayHitFeedback_DOTween()
-    // {
-    //     Sequence hitSequence = DOTween.Sequence();
-    //
-    //     foreach (var line in _lines)
-    //     {
-    //         line.Transform.DOKill();
-    //
-    //         Vector2 targetPos = line.OriginalPos + line.SpreadDirection * _spreadDistance;
-    //
-    //         hitSequence.Join(
-    //             line.Transform.DOAnchorPos(targetPos, _hitDuration)
-    //                 .SetEase(Ease.OutBack)
-    //         );
-    //     }
-    //
-    //     foreach (var line in _lines)
-    //     {
-    //         hitSequence.Join(
-    //             line.Transform.DOAnchorPos(line.OriginalPos, _returnDuration)
-    //                 .SetEase(Ease.InOutQuad)
-    //         );
-    //     }
-    // }
-
-    #region TestCode
-    
-    private void PlayHitFeedback_Test()
+    private void ProcessHitFeedback()
     {
-        StopAllCoroutines();
-        StartCoroutine(HitFeedbackCoroutine());
-    }
+        Sequence hitSequence = DOTween.Sequence();
 
-    private IEnumerator HitFeedbackCoroutine()
-    {
-        Vector2[] targetPositions = new Vector2[_lines.Length];
-        for (int i = 0; i < _lines.Length; i++)
+        // 먼저 모든 라인을 동시에 벌어지게 함
+        foreach (var line in _lines)
         {
-            targetPositions[i] = _lines[i].OriginalPos + _lines[i].SpreadDirection * _spreadDistance;
+            line.Transform.DOKill();
+
+            Vector2 targetPos = line.OriginalPos + line.SpreadDirection * _spreadDistance;
+
+            hitSequence.Join(
+                line.Transform.DOAnchorPos(targetPos, _hitDuration)
+                    .SetEase(Ease.OutBack)
+            );
         }
 
-        float elapsed = 0f;
-
-        while (elapsed < _hitDuration)
+        // 그 다음 모든 라인을 동시에 원래 위치로 돌아오게 함
+        bool isFirst = true;
+        foreach (var line in _lines)
         {
-            elapsed += Time.deltaTime;
-            float t = elapsed / _hitDuration;
+            var returnTween = line.Transform.DOAnchorPos(line.OriginalPos, _returnDuration)
+                .SetEase(Ease.InOutQuad);
 
-            for (int i = 0; i < _lines.Length; i++)
+            if (isFirst)
             {
-                _lines[i].Transform.anchoredPosition = Vector2.Lerp(_lines[i].OriginalPos, targetPositions[i], t);
+                hitSequence.Append(returnTween); // 첫 번째는 Append (순차 실행)
+                isFirst = false;
             }
-
-            yield return null;
-        }
-
-        for (int i = 0; i < _lines.Length; i++)
-        {
-            _lines[i].Transform.anchoredPosition = targetPositions[i];
-        }
-
-        elapsed = 0f;
-
-        while (elapsed < _returnDuration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / _returnDuration;
-
-            for (int i = 0; i < _lines.Length; i++)
+            else
             {
-                _lines[i].Transform.anchoredPosition = Vector2.Lerp(targetPositions[i], _lines[i].OriginalPos, t);
+                hitSequence.Join(returnTween); // 나머지는 Join (동시 실행)
             }
-
-            yield return null;
-        }
-        
-        for (int i = 0; i < _lines.Length; i++)
-        {
-            _lines[i].Transform.anchoredPosition = _lines[i].OriginalPos;
         }
     }
-    #endregion
 }

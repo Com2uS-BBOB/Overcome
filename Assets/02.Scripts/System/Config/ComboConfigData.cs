@@ -45,16 +45,8 @@ public class ComboConfig
     public int MaxComboInclusive;
     public string ComboText;
     public float DamageMultiplier;
-    
-    [Header("Combo Effects")]
-    public ComboEffectData EffectData;
-}
 
-[System.Serializable]
-public class ComboEffectData
-{
-    public float TextPunchScale = 1.2f;
-    public float PunchDuration = 0.3f;
-    public Color TextColor = Color.white;
-    // todo. Ease Data 추가
+    [Header("Combo Effects")]
+    public Color ComboColor;
+    public Color GradeColor;
 }
