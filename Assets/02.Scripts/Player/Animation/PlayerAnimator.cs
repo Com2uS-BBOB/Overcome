@@ -14,8 +14,7 @@ namespace _02.Scripts.Player.Animation
         private const int CombatLayerIndex = 2;
 
         // Animator 파라미터 해시 - Locomotion
-        private static readonly int VelocityXHash = Animator.StringToHash("VelocityX");
-        private static readonly int VelocityZHash = Animator.StringToHash("VelocityZ");
+        private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
         private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
 
@@ -45,22 +44,9 @@ namespace _02.Scripts.Player.Animation
         #region Locomotion
 
         /// <summary>
-        /// 4방향 Blend Tree 업데이트 (캐릭터 로컬 기준 속도)
+        /// 이동 상태 설정 (Idle ↔ Run 전환)
         /// </summary>
-        public void UpdateMovement(Vector2 localVelocity)
-        {
-            _animator.SetFloat(VelocityXHash, localVelocity.x, 0.1f, Time.deltaTime);
-            _animator.SetFloat(VelocityZHash, localVelocity.y, 0.1f, Time.deltaTime);
-        }
-
-        /// <summary>
-        /// 이동 애니메이션 정지 (Idle로 블렌딩)
-        /// </summary>
-        public void StopMovement()
-        {
-            _animator.SetFloat(VelocityXHash, 0f, 0.15f, Time.deltaTime);
-            _animator.SetFloat(VelocityZHash, 0f, 0.15f, Time.deltaTime);
-        }
+        public void SetMoving(bool isMoving) => _animator.SetBool(IsMovingHash, isMoving);
 
         /// <summary>
         /// 점프 애니메이션 트리거

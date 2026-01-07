@@ -42,23 +42,15 @@ namespace _02.Scripts.Player.Movement
         {
             CheckGround();
             ApplyGravity();
-            RotateToCamera();
         }
 
-        // 카메라 방향으로 회전
-        private void RotateToCamera()
+        // 이동 방향으로 회전
+        private void RotateToMoveDirection(Vector3 moveDirection)
         {
-            if (_cameraTransform == null) return;
+            if (moveDirection.sqrMagnitude < 0.01f) return;
 
-            Vector3 forward = _cameraTransform.forward;
-            forward.y = 0f;
-            forward.Normalize();
-
-            if (forward.sqrMagnitude > 0.01f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(forward);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
-            }
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotationSpeed * Time.deltaTime);
         }
 
         // 카메라 기준 이동
@@ -74,6 +66,9 @@ namespace _02.Scripts.Player.Movement
 
             Vector3 moveDirection = GetWorldMoveDirection(input);
             _controller.Move(moveDirection * MoveSpeed * Time.deltaTime);
+
+            // 이동 방향으로 회전
+            RotateToMoveDirection(moveDirection);
         }
 
         /// <summary>
