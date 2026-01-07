@@ -15,7 +15,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
     [Header("돌진 공격 옵션")]
     [SerializeField] private float _dashSpeed = 20f;
-    [SerializeField] private float _dashDuration = 0.44f;
+    [SerializeField] private float _dashDuration = 0.54f;
     private float _dashTimer;
     private Vector3 _dashDirection;
 

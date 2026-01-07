@@ -7,8 +7,10 @@ using _02.Scripts.Player.Interfaces;
 public class DashAttackHitbox : HitboxBase
 {
     [Header("넉백 옵션")]
-    [SerializeField] private float _knockbackPower = 8f;
     [SerializeField] private float _knockbackDuration = 0.2f;
+    [SerializeField] private float _totalDistance = 2f;
+
+    private Coroutine _knockbackRoutine;
 
     protected override bool ShouldIgnore(Collider other)
     {
@@ -30,20 +32,31 @@ public class DashAttackHitbox : HitboxBase
 
     private void ApplyKnockback(PlayerController player, Vector3 direction)
     {
-        var controller = player.CharacterController;
-        if (controller == null) return;
+        if (_knockbackRoutine != null)
+        {
+            player.StopCoroutine(_knockbackRoutine);
+        }
 
-        player.StartCoroutine(Knockback_Coroutine(controller, direction));
+        _knockbackRoutine = player.StartCoroutine(Knockback_Coroutine(player.CharacterController, direction));
     }
 
     private IEnumerator Knockback_Coroutine(CharacterController controller,Vector3 direction)
     {
-        float timer = 0f;
+        float elapsed = 0f;
+        float movedDistance = 0f;
 
-        while (timer < _knockbackDuration)
+        while (elapsed < _knockbackDuration && movedDistance < _totalDistance)
         {
-            controller.Move(direction * _knockbackPower * Time.deltaTime);
-            timer += Time.deltaTime;
+            float step = (_totalDistance / _knockbackDuration) * Time.deltaTime;
+            Vector3 move = direction * step;
+
+            Vector3 before = controller.transform.position;
+            controller.Move(move);
+            Vector3 after = controller.transform.position;
+
+            movedDistance += Vector3.Distance(before, after);
+
+            elapsed += Time.deltaTime;
             yield return null;
         }
     }
