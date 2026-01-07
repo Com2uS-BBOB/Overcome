@@ -140,7 +140,19 @@ namespace _02.Scripts.Player.Core
             if (_dashAttack != null && _dashAttack.IsDashing) return;
             if (StateMachine.IsCurrentState<DashAttackState>()) return;
 
+            // Case 1: 첫 공격
             if (_dragonSwordSkill.CanAttack)
+            {
+                StateMachine.ChangeState<DragonSwordState>();
+                _dragonSwordSkill.Attack();
+            }
+            // Case 2: 콤보 큐잉 (1타 진행 중)
+            else if (_dragonSwordSkill.CanQueueCombo)
+            {
+                _dragonSwordSkill.Attack();
+            }
+            // Case 3: 콤보 유예 (1타 끝난 직후)
+            else if (_dragonSwordSkill.CanComboGrace)
             {
                 StateMachine.ChangeState<DragonSwordState>();
                 _dragonSwordSkill.Attack();
