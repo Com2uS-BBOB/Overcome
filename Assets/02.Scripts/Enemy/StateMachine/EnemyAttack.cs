@@ -8,6 +8,7 @@ public class EnemyAttack : MonoBehaviour
     private EnemyMovement _movement;
     private DashAttackHitbox _dashHitbox;
     private BiteAttackHitbox _swingHitbox;
+    private  Animator _animator;
 
     private bool _hasDashedOnce;
 
@@ -24,6 +25,7 @@ public class EnemyAttack : MonoBehaviour
         _movement = GetComponent<EnemyMovement>();
         _dashHitbox = GetComponentInChildren<DashAttackHitbox>();
         _swingHitbox = GetComponentInChildren<BiteAttackHitbox>();
+        _animator = GetComponent<Animator>();
     }
 
     public void Initialize(Transform player)
@@ -63,7 +65,8 @@ public class EnemyAttack : MonoBehaviour
                     _movement,
                     _dashHitbox,
                     _swingHitbox,
-                    this
+                    this,
+                    _animator
                 );
                 break;
         }
@@ -78,5 +81,25 @@ public class EnemyAttack : MonoBehaviour
             SelectPattern();
             _currentPattern?.Start();
         }
+    }
+
+    public void Anim_OnBiteStart()
+    {
+        (_currentPattern as NormalAttackPattern)?.OnBiteStart();
+    }
+
+    public void Anim_OnBiteHitStart()
+    {
+        (_currentPattern as NormalAttackPattern)?.OnBiteHitStart();
+    }
+
+    public void Anim_OnBiteHitEnd()
+    {
+        (_currentPattern as NormalAttackPattern)?.OnBiteHitEnd();
+    }
+
+    public void Anim_OnBiteEnd()
+    {
+        (_currentPattern as NormalAttackPattern)?.OnBiteEnd();
     }
 }

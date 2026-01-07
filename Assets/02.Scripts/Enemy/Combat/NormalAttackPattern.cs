@@ -9,6 +9,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly DashAttackHitbox _dashHitbox;
     private readonly BiteAttackHitbox _biteHitbox;
     private readonly EnemyAttack _attack;
+    private readonly Animator _animator;
 
     private ENormalAttackPhase _phase;
 
@@ -50,7 +51,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
         EnemyMovement movement,
         DashAttackHitbox dashHitbox,
         BiteAttackHitbox biteHitbox,
-        EnemyAttack attack
+        EnemyAttack attack,
+        Animator animator
         )
     {
         _player = player;
@@ -60,6 +62,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _dashHitbox = dashHitbox;
         _biteHitbox = biteHitbox;
         _attack = attack;
+        _animator = animator;
     }
 
     public void Start()
@@ -222,29 +225,29 @@ public class NormalAttackPattern : IEnemyAttackPattern
             _enemy.rotation = Quaternion.LookRotation(direction);
         }
 
-        // animator.SetTrigger("Bite");
+        _animator.SetTrigger("AttackTest");  // 테스트용 애니메이션 트리거
     }
 
     // 애니메이션 시작 프레임 때 호출
-    private void OnBiteStart()
+    public void OnBiteStart()
     {
         // 공격 판정 활성화
     }
 
     // 애니메이션 타격 시작 때 호출
-    private void OnBiteHitStart()
+    public void OnBiteHitStart()
     {
         _biteHitbox.Enable(_damage);
     }
 
     // 애니메이션 타격 끝날 때 호출
-    private void OnBiteHitEnd()
+    public void OnBiteHitEnd()
     {
         _biteHitbox.Disable();
     }
 
     // 애니메이션 마지막 프레임 때 호출
-    private void OnBiteEnd()
+    public void OnBiteEnd()
     {
         _biteHitbox.Disable();
         EnterWait();
