@@ -19,13 +19,13 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private Vector3 _dashDirection;
 
     [Header("공격 대기 옵션")]
-    [SerializeField] private float _minWaitDuration = 3f;
-    [SerializeField] private float _maxWaitDuration = 5f;
+    [SerializeField] private float _minWaitDuration = 1f;
+    [SerializeField] private float _maxWaitDuration = 3f;
     private float _waitTimer;
     private float _waitDuration;
 
     [Header("대기 중 맴돌기 옵션")]
-    [SerializeField] private float _orbitRadius = 2.6f;
+    [SerializeField] private float _orbitRadius = 5f;
     [SerializeField] private float _orbitSpeed = 120f;
     private float _currentOrbitAngle;
 
@@ -38,11 +38,6 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private float _aroundChance = 0.01f; // 프레임당 확률
     private bool _isAround;
 
-    [Header("휘두르기 공격 옵션")]
-    [SerializeField] private float _swingDuration = 1.5f;
-    private float _swingTimer;
-    private int _swingCount;
-    private int _maxSwingCount = 50;
 
     private bool _isFinished;
 
@@ -216,10 +211,18 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private void EnterSwing()
     {
         _phase = ENormalAttackPhase.Swing;
-        _swingTimer = 0f;
+
+        _movement.Stop();
+        _movement.DisablePlayerSeparation();
+
+        Vector3 direction = _player.position - _enemy.position;
+        direction.y = 0f;
+        if (direction.sqrMagnitude > 0.01f)
+        {
+            _enemy.rotation = Quaternion.LookRotation(direction);
+        }
 
         // animator.SetTrigger("Swing");
-        OnSwingStart();
     }
 
     // 애니메이션 시작 프레임 때 호출
@@ -228,49 +231,28 @@ public class NormalAttackPattern : IEnemyAttackPattern
         // 공격 판정 활성화
     }
 
+    // 애니메이션 타격 시작 때 호출
     private void OnSwingHitStart()
     {
         _swingHitbox.Enable(_damage);
     }
 
+    // 애니메이션 타격 끝날 때 호출
     private void OnSwingHitEnd()
     {
         _swingHitbox.Disable();
     }
 
+    // 애니메이션 마지막 프레임 때 호출
     private void OnSwingEnd()
     {
         _swingHitbox.Disable();
+        EnterWait();
     }
 
     private void UpdateSwing()
     {
-        _swingTimer += Time.deltaTime;
-
-        // 공격 판정은 애니메이션 이벤트로 처리. 일단 임시로 타격 프레임
-        if (_swingTimer >= 0.3f && _swingTimer <= 0.6f)
-        {
-            OnSwingHitStart();
-        }
-        else
-        {
-            OnSwingHitEnd();
-        }
-
-        if (_swingTimer >= _swingDuration)
-        {
-            OnSwingEnd();
-            _swingCount++;
-
-            if (_swingCount >= _maxSwingCount)
-            {
-                _isFinished = true;
-            }
-            else
-            {
-                EnterWait();
-            }
-        }
+        // 대기 상태로 전환은 애니메이션 이벤트에서 처리
     }
 
     public void Stop()

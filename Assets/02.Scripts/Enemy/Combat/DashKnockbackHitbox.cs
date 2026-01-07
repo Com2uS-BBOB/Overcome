@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Core;
 using _02.Scripts.Player.Interfaces;
@@ -6,8 +7,8 @@ using _02.Scripts.Player.Interfaces;
 public class DashKnockbackHitbox : HitboxBase
 {
     [Header("넉백 옵션")]
-    [SerializeField] private float _knockbackPower = 14f;
-    [SerializeField] private float _knockbackDuration = 0.22f;
+    [SerializeField] private float _knockbackPower = 8f;
+    [SerializeField] private float _knockbackDuration = 0.2f;
 
     protected override bool ShouldIgnore(Collider other)
     {
@@ -32,10 +33,10 @@ public class DashKnockbackHitbox : HitboxBase
         var controller = player.CharacterController;
         if (controller == null) return;
 
-        player.StartCoroutine(KnockbackCoroutine(controller, direction));
+        player.StartCoroutine(Knockback_Coroutine(controller, direction));
     }
 
-    private System.Collections.IEnumerator KnockbackCoroutine(CharacterController controller,Vector3 direction)
+    private IEnumerator Knockback_Coroutine(CharacterController controller,Vector3 direction)
     {
         float timer = 0f;
 
