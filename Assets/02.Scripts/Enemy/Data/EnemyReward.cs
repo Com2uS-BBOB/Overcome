@@ -5,28 +5,23 @@ public class EnemyReward : MonoBehaviour
     private EnemyBase _enemy;
 
     private int _score;
-    private float _remainingTime;
-
-    private void Awake()
-    {
-        _enemy = GetComponent<EnemyBase>();
-    }
+    private float _playtime;
 
     private void OnEnable()
     {
-        _enemy.OnEnemyKilled += HandleEnemyKilled;
+        EnemyEventController.Enemy.OnKilled += HandleEnemyKilled;
     }
 
     private void OnDisable()
     {
-        _enemy.OnEnemyKilled -= HandleEnemyKilled;
+        EnemyEventController.Enemy.OnKilled -= HandleEnemyKilled;
     }
 
-    private void HandleEnemyKilled(int score, int playtime)
+    private void HandleEnemyKilled(EnemyKilledEvent e)
     {
-        _score += score;
-        _remainingTime += playtime;
+        _score += e.Score;
+        _playtime += e.Playtime;
 
-        Debug.Log($"보상 획득 → Score +{score}, Time +{playtime}");
+        Debug.Log($"보상 획득 → Score +{e.Score}, Time +{e.Playtime}");
     }
 }

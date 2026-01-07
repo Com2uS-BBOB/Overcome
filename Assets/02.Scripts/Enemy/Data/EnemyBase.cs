@@ -31,9 +31,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public int Playtime => EnemyStatData.Playtime;
 
     public event Action<float, float> OnHpChanged;
-    public event Action<float> OnEnemyHit;
-
-    public event Action<int, int> OnEnemyKilled;
     public event Action OnDeath;
     public event Action<EnemyBase> OnDespawn;
 
@@ -41,6 +38,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         _currentHealth = EnemyStatData.MaxHealth;
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
+
+        EnemyEventController.Enemy.RaiseSpawned(new EnemySpawnedEvent(this));
     }
 
     public void SetPool(EnemyPool pool)
@@ -74,7 +73,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         return _spawnHeight;
     }
 
-
     public virtual void TakeDamage(float damage, GameObject attacker = null)
     {
         if (IsDead) return;
@@ -82,7 +80,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(_currentHealth, 0);
 
-        OnEnemyHit?.Invoke(damage);  // 적이 맞았을 때 이벤트 호출
+        EnemyEventController.Enemy.RaiseHit(new EnemyHitEvent(this, damage));
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
 
         if (_currentHealth <= 0)
@@ -95,7 +93,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         Debug.Log($"적이 죽었습니다.");
 
-        OnEnemyKilled?.Invoke(Score, Playtime);
+        EnemyEventController.Enemy.RaiseKilled(new EnemyKilledEvent(this));
         OnDeath?.Invoke();
         OnDespawn?.Invoke(this);
     }

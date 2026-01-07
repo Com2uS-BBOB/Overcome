@@ -2,25 +2,18 @@ using UnityEngine;
 
 public class EnemyHit : MonoBehaviour
 {
-    private EnemyBase _enemy;
-
-    private void Awake()
-    {
-        _enemy = GetComponent<EnemyBase>();
-    }
-
     private void OnEnable()
     {
-        _enemy.OnEnemyHit += HandleHit;
+        EnemyEventController.Enemy.OnHit += HandleHit;
     }
 
     private void OnDisable()
     {
-        _enemy.OnEnemyHit -= HandleHit;
+        EnemyEventController.Enemy.OnHit -= HandleHit;
     }
 
-    private void HandleHit(float damage)
+    private void HandleHit(EnemyHitEvent e)
     {
-        Debug.Log($"적 피격! Damage: {damage}");
+        Debug.Log($"적 피격! {e.Enemy.name}, Damage: {e.Damage}");
     }
 }
