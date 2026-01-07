@@ -140,15 +140,9 @@ namespace _02.Scripts.Player.Core
             if (_dashAttack != null && _dashAttack.IsDashing) return;
             if (StateMachine.IsCurrentState<DashAttackState>()) return;
 
-            // 첫 공격 또는 콤보 입력
             if (_dragonSwordSkill.CanAttack)
             {
                 StateMachine.ChangeState<DragonSwordState>();
-                _dragonSwordSkill.Attack();
-            }
-            else if (_dragonSwordSkill.CanQueueCombo)
-            {
-                // 콤보 큐잉
                 _dragonSwordSkill.Attack();
             }
         }
@@ -159,7 +153,7 @@ namespace _02.Scripts.Player.Core
             {
                 Movement.RotateToCamera();
                 _crescent.Use();
-                _playerAnimator?.PlayCrescent();
+                _playerAnimator?.PlayCrescent(Movement.IsGrounded);
             }
         }
 
@@ -170,6 +164,6 @@ namespace _02.Scripts.Player.Core
         private void HandleEnemyHitForOverDrive(IDamageable target, float damage) => _gaugeManager?.ChargeOverDriveOnHit();
 
         // 콤보 공격 애니메이션
-        private void HandleComboAttack(int comboStep) => _playerAnimator?.PlayAttack(comboStep);
+        private void HandleComboAttack(int comboStep) => _playerAnimator?.PlayAttack(comboStep, Movement.IsGrounded);
     }
 }

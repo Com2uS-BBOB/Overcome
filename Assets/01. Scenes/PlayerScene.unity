@@ -171,7 +171,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.5, y: 1, z: 2}
+  m_Size: {x: 1, y: 1, z: 2}
   m_Center: {x: 0, y: 0, z: 1}
 --- !u!114 &7904193
 MonoBehaviour:
@@ -272,8 +272,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 18113530}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.31622773, y: 0.0000000018702233, z: -6.2340766e-10, w: 0.9486833}
-  m_LocalPosition: {x: 0, y: 3.5, z: 1.8478701}
+  m_LocalRotation: {x: 0.22975294, y: -1.826293e-16, z: 4.3112928e-17, w: 0.973249}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0.8478701}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -793,8 +793,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937650197}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.31622773, y: 0.0000000018702249, z: -6.234126e-10, w: 0.9486833}
-  m_LocalPosition: {x: 0, y: 3.5, z: 1.8478701}
+  m_LocalRotation: {x: 0.22975291, y: -1.905946e-16, z: 7.6854615e-17, w: 0.973249}
+  m_LocalPosition: {x: 0, y: 3.4, z: 0.8478701}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -849,7 +849,7 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   OrbitStyle: 0
-  Radius: 2
+  Radius: 3
   Orbits:
     Top:
       Radius: 5
@@ -1062,7 +1062,7 @@ Transform:
   m_GameObject: {fileID: 1089555343}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2, z: 3.84787}
+  m_LocalPosition: {x: 0, y: 1.9, z: 3.84787}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1102,6 +1102,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Movement.PlayerMovement
   _rotationSpeed: 10
   _gravity: -30
+  _groundedGravity: -5
+  _groundCheckDistance: 0.3
+  _groundCheckRadius: 0.2
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _coyoteTime: 0.1
   _cameraTransform: {fileID: 937650199}
 --- !u!114 &1089555350
 MonoBehaviour:
@@ -1153,9 +1160,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0b21b9940874d6986e9f80223aae4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
-  _attackDuration: 1
-  _comboWindowStart: 0.2
-  _comboResetTime: 0.8
+  _attack1Duration: 0.8
+  _attack2Duration: 0.9
+  _comboWindowStart: 0.35
+  _comboResetTime: 1
+  _hitboxStartTime: 0.15
+  _hitboxDuration: 0.3
   _hitbox: {fileID: 7904193}
 --- !u!114 &1089555353
 MonoBehaviour:
@@ -1759,7 +1769,7 @@ Transform:
   m_GameObject: {fileID: 1587291321}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.11, z: 0}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

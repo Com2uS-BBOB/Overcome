@@ -13,10 +13,14 @@ namespace _02.Scripts.Player.Combat
         private const string CooldownKey = "Attack";
         private const int MaxCombo = 2;
 
-        [Header("Settings")]
-        [SerializeField] private float _attackDuration = 0.3f;
-        [SerializeField] private float _comboWindowStart = 0.2f;  // 콤보 입력 시작 시점
-        [SerializeField] private float _comboResetTime = 0.8f;    // 콤보 리셋 시간
+        [Header("Duration Settings")]
+        [SerializeField] private float _attack1Duration = 0.8f;   // Attack1 애니메이션 길이
+        [SerializeField] private float _attack2Duration = 0.9f;   // Attack2 애니메이션 길이
+        [SerializeField] private float _comboResetTime = 1.0f;    // 콤보 리셋 시간
+
+        [Header("Hitbox Timing")]
+        [SerializeField] private float _hitboxStartTime = 0.15f;  // 히트박스 활성화 시작
+        [SerializeField] private float _hitboxDuration = 0.3f;    // 히트박스 활성화 시간
 
         [Header("References")]
         [SerializeField] private MeleeHitbox _hitbox;
@@ -24,8 +28,7 @@ namespace _02.Scripts.Player.Combat
         private PlayerStats _stats;
         private CooldownManager _cooldownManager;
         private bool _isAttacking;
-        private int _comboCount;
-        private bool _comboQueued;
+        private int _comboCount;  // 0: 대기, 1: 1타 가능, 2: 2타 가능
         private Coroutine _comboResetCoroutine;
 
         // ISkill
@@ -35,14 +38,15 @@ namespace _02.Scripts.Player.Combat
         public bool CanAttack => !_isAttacking && _cooldownManager.IsReady(CooldownKey, Cooldown);
         public bool IsAttacking => _isAttacking;
         public int ComboCount => _comboCount;
-        public bool CanQueueCombo => _isAttacking && _comboCount < MaxCombo && !_comboQueued;
 
         private float AttackDamage => _stats != null ? _stats.AttackDamage : 10f;
+        private int CurrentComboStep => _comboCount + 1;  // 실행할 콤보 단계 (1 또는 2)
+        private float CurrentAttackDuration => CurrentComboStep == 1 ? _attack1Duration : _attack2Duration;
 
         public event Action OnSkillUsed;
         public event Action OnAttackStarted;
         public event Action OnAttackEnded;
-        public event Action<int> OnComboAttack;  // 콤보 단계 전달
+        public event Action<int> OnComboAttack;
         public event Action<IDamageable, float> OnEnemyHit;
 
         private void Awake()
@@ -57,61 +61,56 @@ namespace _02.Scripts.Player.Combat
 
         public void Use() => Attack();
 
+        /// <summary>
+        /// 공격 실행 - 콤보 카운트에 따라 1타 또는 2타 실행
+        /// </summary>
         public void Attack()
         {
-            // 콤보 입력 (공격 중일 때)
-            if (_isAttacking && CanQueueCombo)
-            {
-                _comboQueued = true;
-                return;
-            }
-
-            // 첫 공격
-            if (!_isAttacking && _cooldownManager.IsReady(CooldownKey, Cooldown))
-            {
-                _comboCount = 1;
-                StartCoroutine(AttackCoroutine());
-            }
-        }
-
-        private IEnumerator AttackCoroutine()
-        {
-            _isAttacking = true;
-            _comboQueued = false;
-            _cooldownManager.Use(CooldownKey);
+            if (!CanAttack) return;
 
             // 콤보 리셋 타이머 취소
             if (_comboResetCoroutine != null)
                 StopCoroutine(_comboResetCoroutine);
 
+            StartCoroutine(AttackCoroutine());
+        }
+
+        private IEnumerator AttackCoroutine()
+        {
+            _isAttacking = true;
+            _cooldownManager.Use(CooldownKey);
+
+            int comboStep = CurrentComboStep;  // 현재 실행할 콤보 단계 (1 또는 2)
+            float duration = CurrentAttackDuration;
+
             OnAttackStarted?.Invoke();
             OnSkillUsed?.Invoke();
-            OnComboAttack?.Invoke(_comboCount);
+            OnComboAttack?.Invoke(comboStep);
 
+            // Phase 1: 히트박스 시작 전 대기
+            yield return new WaitForSeconds(_hitboxStartTime);
+
+            // Phase 2: 히트박스 활성화
             if (_hitbox != null) _hitbox.EnableHitDetection(AttackDamage);
 
-            // 콤보 입력 윈도우 대기
-            yield return new WaitForSeconds(_comboWindowStart);
-
-            // 나머지 공격 시간
-            yield return new WaitForSeconds(_attackDuration - _comboWindowStart);
-
+            // Phase 3: 히트박스 종료까지 대기
+            yield return new WaitForSeconds(_hitboxDuration);
             if (_hitbox != null) _hitbox.DisableHitDetection();
+
+            // Phase 4: 공격 종료까지 대기
+            float remainingTime = duration - _hitboxStartTime - _hitboxDuration;
+            if (remainingTime > 0)
+                yield return new WaitForSeconds(remainingTime);
 
             _isAttacking = false;
 
-            // 콤보 입력이 있으면 다음 콤보 실행
-            if (_comboQueued && _comboCount < MaxCombo)
-            {
-                _comboCount++;
-                StartCoroutine(AttackCoroutine());
-            }
-            else
-            {
-                // 콤보 리셋 타이머 시작
-                _comboResetCoroutine = StartCoroutine(ResetComboAfterDelay());
-                OnAttackEnded?.Invoke();
-            }
+            // 콤보 카운트 증가 (최대치 도달 시 리셋)
+            _comboCount = (_comboCount + 1) % MaxCombo;
+
+            // 콤보 리셋 타이머 시작
+            _comboResetCoroutine = StartCoroutine(ResetComboAfterDelay());
+
+            OnAttackEnded?.Invoke();
         }
 
         private IEnumerator ResetComboAfterDelay()
@@ -123,7 +122,6 @@ namespace _02.Scripts.Player.Combat
         public void ResetCombo()
         {
             _comboCount = 0;
-            _comboQueued = false;
             if (_comboResetCoroutine != null)
                 StopCoroutine(_comboResetCoroutine);
         }
