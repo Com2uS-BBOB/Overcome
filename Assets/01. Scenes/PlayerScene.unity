@@ -1107,7 +1107,7 @@ MonoBehaviour:
   _groundCheckRadius: 0.2
   _groundLayer:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 64
   _coyoteTime: 0.1
   _cameraTransform: {fileID: 937650199}
 --- !u!114 &1089555350
@@ -1162,7 +1162,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
   _attack1Duration: 0.8
   _attack2Duration: 0.9
-  _comboWindowStart: 0.35
   _comboResetTime: 1
   _hitboxStartTime: 0.15
   _hitboxDuration: 0.3
@@ -1208,7 +1207,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcb8f97e7160941aea83e7d6c17c3bd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.DashAttackSkill
-  _dashDuration: 0.3
+  _dashDuration: 0.2
   _cameraTransform: {fileID: 937650199}
 --- !u!114 &1089555356
 MonoBehaviour:
