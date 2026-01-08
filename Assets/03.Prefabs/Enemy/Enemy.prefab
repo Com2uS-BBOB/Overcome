@@ -13,11 +13,12 @@ GameObject:
   - component: {fileID: 6194353949675159188}
   - component: {fileID: 5777162210533364487}
   - component: {fileID: 1986956077294670782}
-  - component: {fileID: 6202954596607363622}
   - component: {fileID: -1422018696626397053}
   - component: {fileID: -2531178561615523393}
   - component: {fileID: 4591095365771022443}
+  - component: {fileID: -2894533006315810285}
   - component: {fileID: 3365919557704155484}
+  - component: {fileID: 8755920709041629067}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -138,22 +139,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NormalEnemy
   EnemyStatData: {fileID: 11400000, guid: e04ebbf4bcfd10b41bb31d5b1f9a5db5, type: 2}
   _spawnHeight: 1
---- !u!114 &6202954596607363622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 791294729206217090}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2168a6bf35c73774e980742615f6e366, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
-  _detectRange: 10
-  _outRange: 14
-  _stopDistance: 0.1
-  _attackRange: 10
 --- !u!114 &-1422018696626397053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -209,6 +194,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af8d5fbc2139f540ba0ccefb6ec8b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
+--- !u!114 &-2894533006315810285
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791294729206217090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56f7fe0cecdb42045bc6dd703591ef41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
+  _detectRange: 10
+  _outRange: 18
+  _stopDistance: 0.1
+  _attackRange: 10
 --- !u!95 &3365919557704155484
 Animator:
   serializedVersion: 7
@@ -231,6 +232,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8755920709041629067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 791294729206217090}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ba1985b2ebdc1f4f9d92375e2de2d0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimationEventReceiver
 --- !u!1 &1889792228766348922
 GameObject:
   m_ObjectHideFlags: 0

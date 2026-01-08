@@ -1,7 +1,6 @@
 public enum EEliteAttackPhase
 {
-    Dash,
+    Rush,
     Wait,
-    Scratch,
     Rip
 }

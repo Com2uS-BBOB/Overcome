@@ -14,13 +14,10 @@ public class EliteAttackPattern : MonoBehaviour
 
         switch (_phase)
         {
-            case EEliteAttackPhase.Dash:
+            case EEliteAttackPhase.Rush:
                 break;
 
             case EEliteAttackPhase.Wait:
-                break;
-
-            case EEliteAttackPhase.Scratch:
                 break;
 
             case EEliteAttackPhase.Rip:

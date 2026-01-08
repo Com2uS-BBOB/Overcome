@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyLogic : MonoBehaviour
+public class EnemyState : MonoBehaviour
 {
     private EnemyBase _enemy;
     private EnemyMovement _movement;

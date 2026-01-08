@@ -83,23 +83,19 @@ public class EnemyAttack : MonoBehaviour
         }
     }
 
-    public void Anim_OnBiteStart()
+    // 이벤트 호출용 메서드
+    public void OnBiteHitStart()
     {
-        (_currentPattern as NormalAttackPattern)?.OnBiteStart();
+        (_currentPattern as NormalAttackPattern)?.ForwardBiteHitStart();
     }
 
-    public void Anim_OnBiteHitStart()
+    public void OnBiteHitEnd()
     {
-        (_currentPattern as NormalAttackPattern)?.OnBiteHitStart();
+        (_currentPattern as NormalAttackPattern)?.ForwardBiteHitEnd();
     }
 
-    public void Anim_OnBiteHitEnd()
+    public void OnBiteEnd()
     {
-        (_currentPattern as NormalAttackPattern)?.OnBiteHitEnd();
-    }
-
-    public void Anim_OnBiteEnd()
-    {
-        (_currentPattern as NormalAttackPattern)?.OnBiteEnd();
+        (_currentPattern as NormalAttackPattern)?.ForwardBiteEnd();
     }
 }

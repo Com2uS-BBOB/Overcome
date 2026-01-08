@@ -86,7 +86,7 @@ public class EnemySpawner : MonoBehaviour
 
         enemy.OnDespawn += HandleEnemyDespawn;
 
-        EnemyLogic logic = enemy.GetComponent<EnemyLogic>();
+        EnemyState logic = enemy.GetComponent<EnemyState>();
         logic.Initialize(_player);
     }
 

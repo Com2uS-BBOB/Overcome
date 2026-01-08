@@ -2,47 +2,27 @@ using UnityEngine;
 
 public class NormalAttackPattern : IEnemyAttackPattern
 {
+    // 공용 컨텍스트
     private readonly Transform _player;
     private readonly Transform _enemy;
     private readonly float _damage;
     private readonly EnemyMovement _movement;
     private readonly RushAttackHitbox _rushHitbox;
     private readonly BiteAttackHitbox _biteHitbox;
-    private readonly EnemyAttack _attack;
     private readonly Animator _animator;
 
-    private ENormalAttackPhase _phase;
+    private IEnemyAction _currentAction;
 
-    [Header("돌진 공격 옵션")]
-    [SerializeField] private float _rushSpeed = 20f;
-    [SerializeField] private float _rushDuration = 0.54f;
-    private float _rushTimer;
-    private Vector3 _rushDirection;
+    // 수치 데이터
+    private readonly float _rushSpeed = 20f;
+    private readonly float _rushDuration = 0.54f;
 
-    [Header("공격 대기 옵션")]
-    [SerializeField] private float _minWaitDuration = 1f;
-    [SerializeField] private float _maxWaitDuration = 3f;
-    private float _waitTimer;
-    private float _waitDuration;
-
-    [Header("대기 중 맴돌기 옵션")]
-    [SerializeField] private float _orbitRadius = 5f;
-    [SerializeField] private float _orbitSpeed = 120f;
-    private float _currentOrbitAngle;
-
-    [Header("서성임 연출")]
-    private float _aroundTimer;
-    private float _aroundDuration;
-    [SerializeField] private float _minAroundDuration = 0.3f;
-    [SerializeField] private float _maxAroundDuration = 0.6f;
-    [SerializeField] private float _aroundSpeedMultiplier = 0.6f;
-    private float _aroundChance = 0.01f; // 프레임당 확률
-    private bool _isAround;
-
-
-    private bool _isFinished;
-
-    public bool IsFinished => _isFinished;
+    private readonly float _minWait = 1f;
+    private readonly float _maxWait = 3f;
+    private readonly float _orbitRadius = 5f;
+    private readonly float _orbitSpeed = 120f;
+    private readonly float _aroundChance = 0.01f;
+    private readonly float _aroundSpeedMurtiplier = 0.6f;
 
     public NormalAttackPattern(
         Transform player,
@@ -53,7 +33,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         BiteAttackHitbox biteHitbox,
         EnemyAttack attack,
         Animator animator
-        )
+    )
     {
         _player = player;
         _enemy = enemy;
@@ -61,208 +41,105 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _movement = movement;
         _rushHitbox = rushHitbox;
         _biteHitbox = biteHitbox;
-        _attack = attack;
         _animator = animator;
     }
 
     public void Start()
     {
-        _isFinished = false;
-        if (_attack.HasRushedOnce)
-        {
-            EnterWait();
-        }
-        else
-        {
-            _attack.MarkRushed();
-            EnterRush();
-        }
+        StartRush();
     }
 
     public void Update()
     {
-        if (_isFinished) return;
+        _currentAction?.Update();
 
-        switch (_phase)
+        if (_currentAction != null && _currentAction.IsFinished)
         {
-            case ENormalAttackPhase.Rush:
-                UpdateRush();
-                break;
-
-            case ENormalAttackPhase.Wait:
-                UpdateWait();
-                break;
-
-            case ENormalAttackPhase.Bite:
-                UpdateBite();
-                break;
+            ChangeAction();
         }
     }
 
-    private void EnterRush()
+    private void ChangeAction()
     {
-        _phase = ENormalAttackPhase.Rush;
-        _rushTimer = 0f;
+        _currentAction.Exit();
 
-        _rushDirection = (_player.position - _enemy.position).normalized;
-        _rushDirection.y = 0f;
-
-        _movement.Stop();
-        _enemy.rotation = Quaternion.LookRotation(_rushDirection);
-
-        _rushHitbox.EnableKnockback();
-    }
-
-    private void UpdateRush()
-    {
-        // 플레이어가 공중이라면 돌진 실패
-        // if (IsPlayerInDoubleJump())
-        // {
-        //     EnterWait();
-        //     return;
-        // }
-
-        _rushTimer += Time.deltaTime;
-        _enemy.position += _rushDirection * _rushSpeed * Time.deltaTime;
-
-        if (_rushTimer >= _rushDuration)
+        if (_currentAction is RushAction)
         {
-            EnterWait();
+            StartWait();
+        }
+
+        else if (_currentAction is AttackWaitAction)
+        {
+            StartBite();
+        }
+
+        else if (_currentAction is BiteAction)
+        {
+            StartWait();
         }
     }
 
-    // private bool IsPlayerInDoubleJump()
-    // {
-    //     var controller = _player.GetComponent<PlayerController>();
-    //     return controller != null && controller.IsJumpingTwice;
-    // }
-
-    private void EnterWait()
+    private void StartRush()
     {
-        _rushHitbox.DisableKnockback();
-
-        _phase = ENormalAttackPhase.Wait;
-        _waitTimer = 0f;
-        _waitDuration = Random.Range(_minWaitDuration, _maxWaitDuration);
-
-        // 플레이어 기준 거리 유지 ON
-        _movement.EnablePlayerSeparation(_player);
-        _movement.SetRotationToLookAt(_player);
-
-        Vector3 direction = _enemy.position - _player.position;
-        direction.y = 0f;
-        _currentOrbitAngle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
+        _currentAction = new RushAction(
+            _enemy,
+            _player,
+            _movement,
+            _rushHitbox,
+            _rushSpeed,
+            _rushDuration
+        );
+        _currentAction.Enter();
     }
 
-    private void UpdateWait()
+    private void StartWait()
     {
-        _waitTimer += Time.deltaTime;
-
-        if (_isAround)
-        {
-            _aroundTimer += Time.deltaTime;
-            AroundPlayer();
-
-            if (_aroundTimer >= _aroundDuration)
-            {
-                ExitAround();
-            }
-        }
-        else
-        {
-            AroundPlayer();
-
-            if (Random.value < _aroundChance)
-            {
-                EnterAround();
-            }
-        }
-
-        if (_waitTimer >= _waitDuration)
-        {
-            _movement.DisablePlayerSeparation();
-            _movement.ResetSpeedMultiplier();
-            EnterBite();
-        }
+        _currentAction = new AttackWaitAction(
+            _enemy,
+            _player,
+            _movement,
+            _minWait,
+            _maxWait,
+            _orbitRadius,
+            _orbitSpeed,
+            _aroundChance,
+            _aroundSpeedMurtiplier
+        );
+        _currentAction.Enter();
     }
 
-    private void EnterAround()
+    private void StartBite()
     {
-        _isAround = true;
-        _aroundTimer = 0f;
-        _aroundDuration = Random.Range(_minAroundDuration, _maxAroundDuration);
-
-        _movement.SetSpeedMultiplier(_aroundSpeedMultiplier);
-    }
-
-    private void ExitAround()
-    {
-        _isAround = false;
-        _movement.ResetSpeedMultiplier();
-    }
-
-    private void AroundPlayer()
-    {
-        _currentOrbitAngle += _orbitSpeed * Time.deltaTime;
-
-        float rad = _currentOrbitAngle * Mathf.Deg2Rad;
-        Vector3 offset = new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * _orbitRadius;
-
-        _movement.MoveTo(_player.position + offset);
-    }
-
-    private void EnterBite()
-    {
-        _phase = ENormalAttackPhase.Bite;
-
-        _movement.Stop();
-        _movement.DisablePlayerSeparation();
-
-        Vector3 direction = _player.position - _enemy.position;
-        direction.y = 0f;
-        if (direction.sqrMagnitude > 0.01f)
-        {
-            _enemy.rotation = Quaternion.LookRotation(direction);
-        }
-
-        _animator.SetTrigger("AttackTest");  // 테스트용 애니메이션 트리거
-    }
-
-    // 애니메이션 시작 프레임 때 호출
-    public void OnBiteStart()
-    {
-        // 공격 판정 활성화
-    }
-
-    // 애니메이션 타격 시작 때 호출
-    public void OnBiteHitStart()
-    {
-        _biteHitbox.Enable(_damage);
-    }
-
-    // 애니메이션 타격 끝날 때 호출
-    public void OnBiteHitEnd()
-    {
-        _biteHitbox.Disable();
-    }
-
-    // 애니메이션 마지막 프레임 때 호출
-    public void OnBiteEnd()
-    {
-        _biteHitbox.Disable();
-        EnterWait();
-    }
-
-    private void UpdateBite()
-    {
-        // 대기 상태로 전환은 애니메이션 이벤트에서 처리
+        _currentAction = new BiteAction(
+            _enemy,
+            _player,
+            _biteHitbox,
+            _animator,
+            _damage
+        );
+        _currentAction.Enter();
     }
 
     public void Stop()
     {
-        _isFinished = true;
-
-        _rushHitbox.DisableKnockback();
-        _biteHitbox.Disable();
+        _currentAction?.Exit();
+        _currentAction = null;
     }
+
+    public void ForwardBiteHitStart()
+    {
+        (_currentAction as BiteAction)?.OnHitStart();
+    }
+
+    public void ForwardBiteHitEnd()
+    {
+        (_currentAction as BiteAction)?.OnHitEnd();
+    }
+
+    public void ForwardBiteEnd()
+    {
+        (_currentAction as BiteAction)?.OnAnimEnd();
+    }
+
+    public bool IsFinished => false; // 반복 패턴
 }
