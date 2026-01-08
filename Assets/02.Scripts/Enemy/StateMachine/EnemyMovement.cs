@@ -142,9 +142,9 @@ public class EnemyMovement : MonoBehaviour
     // 목표 지점에 도착했는지 확인
     public bool IsArrived(Vector3 target, float stopDistance)
     {
-        Vector3 different = target - transform.position;
-        different.y = 0f;
-        return different.sqrMagnitude <= stopDistance * stopDistance;
+        Vector3 difference = target - transform.position;
+        difference.y = 0f;
+        return difference.sqrMagnitude <= stopDistance * stopDistance;
     }
 
     // 플레이어와 일정 거리 유지 활성화
@@ -165,16 +165,16 @@ public class EnemyMovement : MonoBehaviour
     {
         if (_separationTarget == null) return;
 
-        Vector3 different = transform.position - _separationTarget.position;
-        different.y = 0f;
+        Vector3 difference = transform.position - _separationTarget.position;
+        difference.y = 0f;
 
-        float distance = different.magnitude;
+        float distance = difference.magnitude;
         if (distance < _maxDistance && distance > _minDistance)
         {
             float push = (_maxDistance - distance);
             push = Mathf.Min(push, 0.5f);
 
-            transform.position += different.normalized * push * Time.deltaTime;
+            transform.position += difference.normalized * push * Time.deltaTime;
         }
     }
 

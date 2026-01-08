@@ -73,10 +73,10 @@ public class AttackWaitAction : IEnemyAction
         _timer += Time.deltaTime;
         _strafeTimer += Time.deltaTime;
 
-        Vector3 different = _enemy.position - _player.position;
-        different.y = 0f; // 수평 거리만 확인
+        Vector3 difference = _enemy.position - _player.position;
+        difference.y = 0f; // 수평 거리만 확인
 
-        if (different.sqrMagnitude >= _playerFarDistance * _playerFarDistance)
+        if (difference.sqrMagnitude >= _playerFarDistance * _playerFarDistance)
         {
             _movement.ResetSpeedMultiplier();
             _timer = 0f;

@@ -51,7 +51,7 @@ public class BiteAttackHitbox : HitboxBase
         var player = other.GetComponent<PlayerController>();
         if (player == null) return;
 
-        Vector3 direction = (transform.position - other.transform.position);
+        Vector3 direction = (other.transform.position - transform.position);
         direction.y = 0f;
         direction.Normalize();
 
