@@ -29,17 +29,16 @@ public class UI_CrescentGauge : MonoBehaviour
 
     public void SetGaugeValue(float value)
     {
+        if (_gaugeFillImage == null) return;
+        if (Mathf.Approximately(_gaugeFillImage.fillAmount, value)) return;
         _remainValue = Mathf.Clamp01(value);
         UpdateGaugeUI();
     }
     
     private void UpdateGaugeUI()
     {
-        if (_gaugeFillImage == null) return;
-        if (Mathf.Approximately(_gaugeFillImage.fillAmount, _remainValue)) return;
-
-        if (_tweener == null) return;
         _tweener.ChangeStartValue(_gaugeFillImage.fillAmount);
         _tweener.ChangeEndValue(_remainValue);
+        _tweener.Restart();
     }
 }

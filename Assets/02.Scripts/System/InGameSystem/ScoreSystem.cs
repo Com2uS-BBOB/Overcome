@@ -23,23 +23,26 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
         _highScore = _testHighScore;
     }
     
-    private void IncreaseScore(EnemyStatData enemyData)
+    private void IncreaseScore(int score)
     {
-        _currentScore += enemyData.Score;
+        _currentScore += score;
+        UpdateHighScore();
         OnScoreChanged?.Invoke(_currentScore, _highScore);
-        if (!_isHighScore && _currentScore > _highScore)
+    }
+
+    private void UpdateHighScore()
+    {
+        if (_currentScore < _highScore) return;
+        if (!_isHighScore)
         {
+            _isHighScore = true;
             BreakHighScore?.Invoke();
         }
+        _highScore = _currentScore;
     }
 
     public void TestIncrease()
     {
-        _currentScore += 10000;
-        if (_currentScore > _highScore)
-        {
-            _highScore = _currentScore;
-        }
-        OnScoreChanged?.Invoke(_currentScore, _highScore);
+        IncreaseScore(1000);
     }
 }
