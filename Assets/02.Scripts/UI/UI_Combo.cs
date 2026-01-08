@@ -10,27 +10,13 @@ public class UI_Combo : MonoBehaviour
     private ComboSystem _comboSystem;
 
     [Header("Animation")]
-    [SerializeField] private DOTweenAnimation _animation;
-    [SerializeField] private RectTransform _comboTextTransform;
-    [SerializeField] private RectTransform _gradeTextTransform;
-
+    [SerializeField] private DOTweenAnimation _openComboPanelAnimation;
+    [SerializeField] private DOTweenAnimation _increaseComboAnimation;
+    
     private void Awake()
     {
-        if (_animation == null)
-        {
-            _animation = GetComponent<DOTweenAnimation>();
-        }
-        _animation.autoKill = false;
-
-        // RectTransform 자동 설정
-        if (_comboTextTransform == null && _comboText != null)
-        {
-            _comboTextTransform = _comboText.GetComponent<RectTransform>();
-        }
-        if (_gradeTextTransform == null && _gradeText != null)
-        {
-            _gradeTextTransform = _gradeText.GetComponent<RectTransform>();
-        }
+        _openComboPanelAnimation.autoKill = false;
+        _increaseComboAnimation.autoKill = false;
     }
 
     private void Start()
@@ -55,21 +41,22 @@ public class UI_Combo : MonoBehaviour
         if (_canvasGroup.alpha == 0)
         {
             _canvasGroup.alpha = 1;
-            _animation.DORestart();
+            _openComboPanelAnimation.DORestart();
         }
 
         _comboText.text = _comboSystem.ComboCount.ToString();
-        _comboText.color = _comboSystem.ComboColor;
+        _comboText.colorGradient = _comboSystem.ComboColorGradient;
         _gradeText.text = _comboSystem.ComboText;
-        _gradeText.color = _comboSystem.GradeColor;
+        _gradeText.colorGradient = _comboSystem.GradeColorGradient;
+        _increaseComboAnimation.DORestart();
     }
 
     private void ClearComboUI()
     {
         _comboText.text = "";
-        _comboText.color = Color.black;
+        _comboText.colorGradient = new VertexGradient(Color.black);
         _gradeText.text = "";
-        _gradeText.color = Color.black;
+        _gradeText.colorGradient = new VertexGradient(Color.black);
         _canvasGroup.alpha = 0;
     }
 }

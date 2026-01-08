@@ -30,6 +30,8 @@ public class KillLogItem : MonoBehaviour
     
     public void Initialize(Sprite skillIcon, Sprite enemyIcon, float lifetime)
     {
+        transform.localScale = Vector3.one;
+        
         _lifetime = lifetime;
 
         _skillIcon.sprite = skillIcon;

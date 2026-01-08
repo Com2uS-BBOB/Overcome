@@ -1,10 +1,11 @@
 using System;
+using TMPro;
 using UnityEngine;
 
 public class ComboSystem : SingletonBehaviour<ComboSystem>
 {
     protected override bool DontDestroy => false;
-    
+
     [Header("Combo Configs")]
     [SerializeField] private ComboConfigData _comboConfigData;
 
@@ -18,8 +19,8 @@ public class ComboSystem : SingletonBehaviour<ComboSystem>
     public string ComboText => _currentComboConfig?.ComboText;
     public float ComboDuration => _comboConfigData.ComboDuration;
     public float DamageMultiplier => _currentComboConfig?.DamageMultiplier ?? 1.0f;
-    public Color ComboColor => _currentComboConfig?.ComboColor??Color.black;
-    public Color GradeColor => _currentComboConfig?.GradeColor??Color.black;
+    public VertexGradient ComboColorGradient => _currentComboConfig?.GetComboVertexGradient() ?? new VertexGradient(Color.white);
+    public VertexGradient GradeColorGradient => _currentComboConfig?.GetGradeVertexGradient() ?? new VertexGradient(Color.black);
     
     public event Action OnComboChanged;
     
