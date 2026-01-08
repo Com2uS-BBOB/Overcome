@@ -24,7 +24,7 @@ namespace _02.Scripts.Player.Core
         [SerializeField] private GaugeManager _gaugeManager;
 
         [Header("Animation")]
-        [SerializeField] private PlayerAnimator _playerAnimator;
+        [SerializeField] private PlayerAnimatorController _playerAnimatorController;
 
         public PlayerInputHandler Input { get; private set; }
         public PlayerMovement Movement { get; private set; }
@@ -35,7 +35,7 @@ namespace _02.Scripts.Player.Core
         public CharacterController CharacterController { get; private set; }
         public PlayerStats Stats { get; private set; }
         public PlayerStateMachine StateMachine { get; private set; }
-        public PlayerAnimator PlayerAnimator => _playerAnimator;
+        public PlayerAnimatorController PlayerAnimatorController => _playerAnimatorController;
 
         private void Awake()
         {
@@ -74,7 +74,7 @@ namespace _02.Scripts.Player.Core
             StateMachine.RegisterState(new CrescentState(this, StateMachine));
 
             // PlayerAnimator 초기화 (State 변경 구독)
-            _playerAnimator?.Initialize(StateMachine);
+            _playerAnimatorController?.Initialize(StateMachine);
 
             StateMachine.Initialize<IdleState>();
         }
@@ -115,7 +115,7 @@ namespace _02.Scripts.Player.Core
             StateMachine.Update();
 
             // 지면 상태 동기화
-            _playerAnimator?.SetGrounded(Movement.IsGrounded);
+            _playerAnimatorController?.SetGrounded(Movement.IsGrounded);
         }
 
         private void FixedUpdate() => StateMachine.FixedUpdate();
@@ -125,7 +125,7 @@ namespace _02.Scripts.Player.Core
             if (Movement.IsGrounded)
             {
                 Movement.Jump();
-                _playerAnimator?.PlayJump();
+                _playerAnimatorController?.PlayJump();
             }
         }
 
@@ -166,7 +166,7 @@ namespace _02.Scripts.Player.Core
             {
                 StateMachine.ChangeState<CrescentState>();
                 _crescent.Use();
-                _playerAnimator?.PlayCrescent(Movement.IsGrounded);
+                _playerAnimatorController?.PlayCrescent(Movement.IsGrounded);
             }
         }
 
@@ -177,6 +177,6 @@ namespace _02.Scripts.Player.Core
         private void HandleEnemyHitForOverDrive(IDamageable target, float damage) => _gaugeManager?.ChargeOverDriveOnHit();
 
         // 콤보 공격 애니메이션
-        private void HandleComboAttack(int comboStep) => _playerAnimator?.PlayAttack(comboStep, Movement.IsGrounded);
+        private void HandleComboAttack(int comboStep) => _playerAnimatorController?.PlayAttack(comboStep, Movement.IsGrounded);
     }
 }

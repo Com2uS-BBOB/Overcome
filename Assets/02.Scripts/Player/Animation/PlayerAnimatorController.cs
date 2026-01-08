@@ -9,7 +9,7 @@ namespace _02.Scripts.Player.Animation
     // Layer 0: Locomotion (이동, 점프)
     // Layer 1: UpperCombat (공중 상체 공격)
     // Layer 2: Combat (지상 전신 공격)
-    public class PlayerAnimator : MonoBehaviour
+    public class PlayerAnimatorController : MonoBehaviour
     {
         [SerializeField] private Animator _animator;
 

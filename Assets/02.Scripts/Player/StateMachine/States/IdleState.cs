@@ -9,7 +9,7 @@ namespace _02.Scripts.Player.StateMachine.States
 
         public override void Enter()
         {
-            Controller.PlayerAnimator?.SetMoving(false);
+            Controller.PlayerAnimatorController?.SetMoving(false);
         }
 
         public override void Update()
