@@ -50,7 +50,6 @@ public class EnemyAttack : MonoBehaviour
     {
         _currentPattern?.Stop();
         _currentPattern = null;
-        _hasRushedOnce = false;
     }
 
     private void SelectPattern()
@@ -81,6 +80,11 @@ public class EnemyAttack : MonoBehaviour
             SelectPattern();
             _currentPattern?.Start();
         }
+    }
+
+    public void ResetRush()
+    {
+        _hasRushedOnce = false;
     }
 
     // 이벤트 호출용 메서드

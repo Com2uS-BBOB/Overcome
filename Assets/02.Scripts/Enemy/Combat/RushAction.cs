@@ -100,7 +100,7 @@ public class RushAction : IEnemyAction
 
         if (_agent.pathPending || _agent.isPathStale) return;
 
-        if (_movement.IsArrived(_arrived) || _timer >= _maxDuration)
+        if (_timer >= _maxDuration || (!_agent.pathPending && _agent.remainingDistance <= _arrived))
         {
             _isFinished = true;
         }

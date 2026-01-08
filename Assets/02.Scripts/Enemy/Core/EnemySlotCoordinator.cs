@@ -36,18 +36,21 @@ public class EnemySlotCoordinator : MonoBehaviour
     {
         for (int i = 0; i < _slotCount; i++)
         {
-            if (!_occupiedSlots.ContainsKey(i))
+            if (_occupiedSlots[i] == null)
             {
                 _occupiedSlots[i] = enemy;
                 return i;
             }
         }
 
-        return -1; // 자리 없음
+        return -1;  // 자리 없음
     }
 
     public void ReleaseSlot(int slotIndex)
     {
-        _occupiedSlots.Remove(slotIndex);
+        if (_occupiedSlots.ContainsKey(slotIndex))
+        {
+            _occupiedSlots[slotIndex] = null;
+        }
     }
 }

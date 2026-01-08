@@ -9,6 +9,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly float _damage;
     private readonly EnemyMovement _movement;
     private readonly EnemyKnockbackHitbox _knockbackHitbox;
+    private readonly EnemyAttack _attack;
     private readonly Animator _animator;
     private readonly EnemySlotCoordinator _slotCoordinator;
     private readonly NavMeshAgent _agent;
@@ -39,6 +40,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _damage = damage;
         _movement = movement;
         _knockbackHitbox = knockbackHitbox;
+        _attack = attack;
         _animator = animator;
         _slotCoordinator = slotCoordinator;
         _agent = enemy.GetComponent<NavMeshAgent>();
@@ -46,7 +48,15 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
     public void Start()
     {
-        StartRush();
+        if (!_attack.HasRushedOnce)
+        {
+            StartRush();
+            _attack.MarkRushed();
+        }
+        else
+        {
+            StartWait();
+        }
     }
 
     public void Update()
@@ -67,12 +77,10 @@ public class NormalAttackPattern : IEnemyAttackPattern
         {
             StartWait();
         }
-
         else if (_currentAction is AttackWaitAction)
         {
             StartBite();
         }
-
         else if (_currentAction is BiteAction)
         {
             StartWait();

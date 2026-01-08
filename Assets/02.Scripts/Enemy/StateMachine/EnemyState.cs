@@ -49,6 +49,7 @@ public class EnemyState : MonoBehaviour
                 break;
 
             case EEnemyState.Return:
+                _attack.ResetRush();
                 UpdateReturn();
                 break;
 
@@ -123,12 +124,6 @@ public class EnemyState : MonoBehaviour
         }
 
         _attack.UpdateAttack();
-
-        if (_attack.IsAttackFinished)
-        {
-            ChangeState(EEnemyState.Trace);
-            return;
-        }
 
         if (IsPlayerOutOfRange() && _canReturn)
         {
