@@ -9,7 +9,7 @@ public class EnemyAttack : MonoBehaviour
     private RushAttackHitbox _rushHitbox;
     private BiteAttackHitbox _swingHitbox;
     private Animator _animator;
-    [SerializeField] private EnemySlotCoordinator _slotCoordinator;
+    private EnemySlotCoordinator _slotCoordinator;
 
     private bool _hasRushedOnce;
 
@@ -22,7 +22,6 @@ public class EnemyAttack : MonoBehaviour
     private void Awake()
     {
         _enemy = GetComponent<EnemyBase>();
-        _damage = _enemy.EnemyStatData.Damage;
         _movement = GetComponent<EnemyMovement>();
         _rushHitbox = GetComponentInChildren<RushAttackHitbox>();
         _swingHitbox = GetComponentInChildren<BiteAttackHitbox>();
@@ -32,6 +31,8 @@ public class EnemyAttack : MonoBehaviour
     public void Initialize(Transform player)
     {
         _player = player;
+        _damage = _enemy.EnemyStatData.Damage;
+        _slotCoordinator = player.GetComponent<EnemySlotCoordinator>();
     }
 
     public void StartAttack()

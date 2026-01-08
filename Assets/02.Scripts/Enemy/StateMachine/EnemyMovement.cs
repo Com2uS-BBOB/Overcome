@@ -4,7 +4,8 @@ using UnityEngine.AI;
 public class EnemyMovement : MonoBehaviour
 {
     [Header("스탯")]
-    [SerializeField] private EnemyStatData _enemyStatData;
+    private EnemyStatData _enemyStatData;
+    private EnemyBase _enemy;
 
     [Header("회전 옵션")]
     [SerializeField] private ERotationMode _rotationMode = ERotationMode.MoveDirection;
@@ -23,10 +24,16 @@ public class EnemyMovement : MonoBehaviour
     private void Awake()
     {
         _agent = GetComponent<NavMeshAgent>();
+        _enemy = GetComponent<EnemyBase>();
 
-        _agent.speed = _enemyStatData.MoveSpeed;
         _agent.updateRotation = false;
         _agent.updateUpAxis = false;
+    }
+
+    public void Initialize()
+    {
+        _enemyStatData = _enemy.EnemyStatData;
+        _agent.speed = _enemyStatData.MoveSpeed;
     }
 
     private void Update()
@@ -111,11 +118,9 @@ public class EnemyMovement : MonoBehaviour
 
     private void UpdateSpeed()
     {
-        _currentSpeedMultiplier = Mathf.Lerp(
-            _currentSpeedMultiplier,
-            _targetSpeedMultiplier,
-            Time.deltaTime * _speedLerpSpeed
-        );
+        if (_enemyStatData == null) return;
+
+        _currentSpeedMultiplier = Mathf.Lerp(_currentSpeedMultiplier, _targetSpeedMultiplier, Time.deltaTime * _speedLerpSpeed);
 
         _agent.speed = _enemyStatData.MoveSpeed * _currentSpeedMultiplier;
     }

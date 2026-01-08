@@ -22,10 +22,6 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
     private readonly float _minWait = 1f;
     private readonly float _maxWait = 3f;
-    private readonly float _baseDistance = 2f;
-    private readonly float _strafeRange = 0.2f;
-    private readonly float _strafeChangeMin = 0.2f;
-    private readonly float _strafeChangeMax = 0.6f;
     private readonly float _waitSpeedMurtiplier = 0.1f;
 
     public NormalAttackPattern(

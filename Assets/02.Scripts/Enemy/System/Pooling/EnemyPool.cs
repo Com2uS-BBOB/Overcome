@@ -8,6 +8,7 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
     {
         public EEnemyType Type;
         public EnemyBase Prefab;
+        public EnemyStatData StatData;
         public int InitialSize;
     }
 
@@ -25,9 +26,35 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
     public EnemyBase SpawnEnemy(EEnemyType type, Vector3 position, Quaternion rotation)
     {
         EnemyBase enemy = Spawn(type, position, rotation);
+
         enemy.SetPool(this);
         enemy.SetEnemyType(type);
+
+        EnemyStatData statData = GetStatData(type);
+        if (statData == null)
+        {
+            Debug.LogError($"[EnemyPool] StatData가 null입니다! Type: {type} - 스폰 취소");
+            Despawn(type, enemy);
+            return null;
+        }
+
+        enemy.Initialize(statData);
+
+        enemy.GetComponent<EnemyMovement>()?.Initialize();
+
         return enemy;
+    }
+
+    private EnemyStatData GetStatData(EEnemyType type)
+    {
+        foreach (var data in _enemyPools)
+        {
+            if (data.Type == type)
+                return data.StatData;
+        }
+
+        Debug.LogError($"StatData not found for type: {type}");
+        return null;
     }
 
     // 스포너에서 스폰 높이 참고 메서드

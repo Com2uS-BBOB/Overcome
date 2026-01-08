@@ -4,15 +4,14 @@ using _02.Scripts.Player.Interfaces;
 
 public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
-    [Header("스탯")]
-    public EnemyStatData EnemyStatData;
+    public EEnemyType EnemyType { get; private set; }
+
+    public EnemyStatData EnemyStatData { get; private set; }
 
     protected float _currentHealth;
 
     [Header("스폰 높이")]
     [SerializeField] private float _spawnHeight = 1f;  // 바닥과 적의 중심 높이 차이
-
-    public EEnemyType EnemyType { get; private set; }
 
     public virtual bool CanMove => true;
     public virtual bool CanReturn => true;
@@ -34,11 +33,24 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public event Action OnDeath;
     public event Action<EnemyBase> OnDespawn;
 
+    public void Initialize(EnemyStatData statData)
+    {
+        if (statData == null)
+        {
+            Debug.LogError($"[EnemyBase] Initialize: statData가 null입니다! EnemyType: {EnemyType}");
+            return;
+        }
+
+        EnemyStatData = statData;
+        _currentHealth = EnemyStatData.MaxHealth;
+    }
+
     protected virtual void OnEnable()
     {
+        if (EnemyStatData == null) return;
+
         _currentHealth = EnemyStatData.MaxHealth;
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
-
         EnemyEventController.Enemy.RaiseSpawned(new EnemySpawnedEvent(this));
     }
 
