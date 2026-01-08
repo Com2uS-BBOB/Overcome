@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: ComboConfigData
+  m_EditorClassIdentifier: Assembly-CSharp::ComboConfigData
+  MaxCombo: 10
+  ComboDuration: 6
+  Configs:
+  - MinCombo: 0
+    MaxComboInclusive: 3
+    ComboText: NICE
+    DamageMultiplier: 1
+    EffectData:
+      TextPunchScale: 1.2
+      PunchDuration: 0.3
+      TextColor: {r: 1, g: 1, b: 1, a: 1}
+  - MinCombo: 4
+    MaxComboInclusive: 5
+    ComboText: GREAT
+    DamageMultiplier: 1.2
+    EffectData:
+      TextPunchScale: 1.2
+      PunchDuration: 0.3
+      TextColor: {r: 1, g: 1, b: 1, a: 1}
+  - MinCombo: 6
+    MaxComboInclusive: 8
+    ComboText: EXCELLENT
+    DamageMultiplier: 1.5
+    EffectData:
+      TextPunchScale: 1.2
+      PunchDuration: 0.3
+      TextColor: {r: 1, g: 1, b: 1, a: 1}
+  - MinCombo: 9
+    MaxComboInclusive: 10
+    ComboText: PERFECT
+    DamageMultiplier: 2
+    EffectData:
+      TextPunchScale: 1.2
+      PunchDuration: 0.3
+      TextColor: {r: 1, g: 1, b: 1, a: 1}
