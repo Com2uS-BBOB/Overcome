@@ -1,6 +1,6 @@
 public enum ENormalAttackPhase
 {
-    Dash,
+    Rush,
     Wait,
     Bite
 }

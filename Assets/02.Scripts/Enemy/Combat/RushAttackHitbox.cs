@@ -4,7 +4,7 @@ using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Core;
 using _02.Scripts.Player.Interfaces;
 
-public class DashAttackHitbox : HitboxBase
+public class RushAttackHitbox : HitboxBase
 {
     [Header("넉백 옵션")]
     [SerializeField] private float _knockbackDuration = 0.2f;

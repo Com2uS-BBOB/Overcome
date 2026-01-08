@@ -6,7 +6,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly Transform _enemy;
     private readonly float _damage;
     private readonly EnemyMovement _movement;
-    private readonly DashAttackHitbox _dashHitbox;
+    private readonly RushAttackHitbox _rushHitbox;
     private readonly BiteAttackHitbox _biteHitbox;
     private readonly EnemyAttack _attack;
     private readonly Animator _animator;
@@ -14,10 +14,10 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private ENormalAttackPhase _phase;
 
     [Header("돌진 공격 옵션")]
-    [SerializeField] private float _dashSpeed = 20f;
-    [SerializeField] private float _dashDuration = 0.54f;
-    private float _dashTimer;
-    private Vector3 _dashDirection;
+    [SerializeField] private float _rushSpeed = 20f;
+    [SerializeField] private float _rushDuration = 0.54f;
+    private float _rushTimer;
+    private Vector3 _rushDirection;
 
     [Header("공격 대기 옵션")]
     [SerializeField] private float _minWaitDuration = 1f;
@@ -49,7 +49,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         Transform enemy,
         float damage,
         EnemyMovement movement,
-        DashAttackHitbox dashHitbox,
+        RushAttackHitbox rushHitbox,
         BiteAttackHitbox biteHitbox,
         EnemyAttack attack,
         Animator animator
@@ -59,7 +59,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _enemy = enemy;
         _damage = damage;
         _movement = movement;
-        _dashHitbox = dashHitbox;
+        _rushHitbox = rushHitbox;
         _biteHitbox = biteHitbox;
         _attack = attack;
         _animator = animator;
@@ -68,14 +68,14 @@ public class NormalAttackPattern : IEnemyAttackPattern
     public void Start()
     {
         _isFinished = false;
-        if (_attack.HasDashedOnce)
+        if (_attack.HasRushedOnce)
         {
             EnterWait();
         }
         else
         {
-            _attack.MarkDashed();
-            EnterDash();
+            _attack.MarkRushed();
+            EnterRush();
         }
     }
 
@@ -85,8 +85,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
         switch (_phase)
         {
-            case ENormalAttackPhase.Dash:
-                UpdateDash();
+            case ENormalAttackPhase.Rush:
+                UpdateRush();
                 break;
 
             case ENormalAttackPhase.Wait:
@@ -99,21 +99,21 @@ public class NormalAttackPattern : IEnemyAttackPattern
         }
     }
 
-    private void EnterDash()
+    private void EnterRush()
     {
-        _phase = ENormalAttackPhase.Dash;
-        _dashTimer = 0f;
+        _phase = ENormalAttackPhase.Rush;
+        _rushTimer = 0f;
 
-        _dashDirection = (_player.position - _enemy.position).normalized;
-        _dashDirection.y = 0f;
+        _rushDirection = (_player.position - _enemy.position).normalized;
+        _rushDirection.y = 0f;
 
         _movement.Stop();
-        _enemy.rotation = Quaternion.LookRotation(_dashDirection);
+        _enemy.rotation = Quaternion.LookRotation(_rushDirection);
 
-        _dashHitbox.EnableKnockback();
+        _rushHitbox.EnableKnockback();
     }
 
-    private void UpdateDash()
+    private void UpdateRush()
     {
         // 플레이어가 공중이라면 돌진 실패
         // if (IsPlayerInDoubleJump())
@@ -122,10 +122,10 @@ public class NormalAttackPattern : IEnemyAttackPattern
         //     return;
         // }
 
-        _dashTimer += Time.deltaTime;
-        _enemy.position += _dashDirection * _dashSpeed * Time.deltaTime;
+        _rushTimer += Time.deltaTime;
+        _enemy.position += _rushDirection * _rushSpeed * Time.deltaTime;
 
-        if (_dashTimer >= _dashDuration)
+        if (_rushTimer >= _rushDuration)
         {
             EnterWait();
         }
@@ -139,7 +139,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
     private void EnterWait()
     {
-        _dashHitbox.DisableKnockback();
+        _rushHitbox.DisableKnockback();
 
         _phase = ENormalAttackPhase.Wait;
         _waitTimer = 0f;
@@ -262,7 +262,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
     {
         _isFinished = true;
 
-        _dashHitbox.DisableKnockback();
+        _rushHitbox.DisableKnockback();
         _biteHitbox.Disable();
     }
 }

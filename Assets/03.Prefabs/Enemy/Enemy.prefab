@@ -300,8 +300,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SwingAttackHitbox
   _useKnockback: 1
-  _knockbackPower: 8
   _knockbackDuration: 0.2
+  _totalDistance: 2
 --- !u!1 &2190441330224371555
 GameObject:
   m_ObjectHideFlags: 0
@@ -314,7 +314,7 @@ GameObject:
   - component: {fileID: 204808772961457264}
   - component: {fileID: 6262625229708288512}
   m_Layer: 0
-  m_Name: DashAttackHitbox
+  m_Name: RushAttackHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -370,8 +370,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d6e5035da5e290b41988b3df3915d38a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DashKnockbackHitbox
-  _knockbackPower: 10
   _knockbackDuration: 0.2
+  _totalDistance: 2
 --- !u!1 &2665287069355016370
 GameObject:
   m_ObjectHideFlags: 0

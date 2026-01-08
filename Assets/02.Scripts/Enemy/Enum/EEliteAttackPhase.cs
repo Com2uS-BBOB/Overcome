@@ -3,5 +3,5 @@ public enum EEliteAttackPhase
     Dash,
     Wait,
     Scratch,
-    Slash
+    Rip
 }

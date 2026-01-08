@@ -6,14 +6,14 @@ public class EnemyAttack : MonoBehaviour
     private EnemyBase _enemy;
     private float _damage;
     private EnemyMovement _movement;
-    private DashAttackHitbox _dashHitbox;
+    private RushAttackHitbox _rushHitbox;
     private BiteAttackHitbox _swingHitbox;
     private  Animator _animator;
 
-    private bool _hasDashedOnce;
+    private bool _hasRushedOnce;
 
-    public bool HasDashedOnce => _hasDashedOnce;
-    public void MarkDashed() => _hasDashedOnce = true;
+    public bool HasRushedOnce => _hasRushedOnce;
+    public void MarkRushed() => _hasRushedOnce = true;
 
 
     private IEnemyAttackPattern _currentPattern;
@@ -23,7 +23,7 @@ public class EnemyAttack : MonoBehaviour
         _enemy = GetComponent<EnemyBase>();
         _damage = _enemy.EnemyStatData.Damage;
         _movement = GetComponent<EnemyMovement>();
-        _dashHitbox = GetComponentInChildren<DashAttackHitbox>();
+        _rushHitbox = GetComponentInChildren<RushAttackHitbox>();
         _swingHitbox = GetComponentInChildren<BiteAttackHitbox>();
         _animator = GetComponent<Animator>();
     }
@@ -50,7 +50,7 @@ public class EnemyAttack : MonoBehaviour
     {
         _currentPattern?.Stop();
         _currentPattern = null;
-        _hasDashedOnce = false;
+        _hasRushedOnce = false;
     }
 
     private void SelectPattern()
@@ -63,7 +63,7 @@ public class EnemyAttack : MonoBehaviour
                     transform,
                     _damage,
                     _movement,
-                    _dashHitbox,
+                    _rushHitbox,
                     _swingHitbox,
                     this,
                     _animator

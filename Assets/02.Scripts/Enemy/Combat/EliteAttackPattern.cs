@@ -23,7 +23,7 @@ public class EliteAttackPattern : MonoBehaviour
             case EEliteAttackPhase.Scratch:
                 break;
 
-            case EEliteAttackPhase.Slash:
+            case EEliteAttackPhase.Rip:
                 break;
         }
     }
