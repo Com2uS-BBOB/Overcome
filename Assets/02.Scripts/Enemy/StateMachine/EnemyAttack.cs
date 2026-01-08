@@ -6,8 +6,7 @@ public class EnemyAttack : MonoBehaviour
     private EnemyBase _enemy;
     private float _damage;
     private EnemyMovement _movement;
-    private RushAttackHitbox _rushHitbox;
-    private BiteAttackHitbox _swingHitbox;
+    private EnemyKnockbackHitbox _knockbackHitbox;
     private Animator _animator;
     private EnemySlotCoordinator _slotCoordinator;
 
@@ -23,8 +22,7 @@ public class EnemyAttack : MonoBehaviour
     {
         _enemy = GetComponent<EnemyBase>();
         _movement = GetComponent<EnemyMovement>();
-        _rushHitbox = GetComponentInChildren<RushAttackHitbox>();
-        _swingHitbox = GetComponentInChildren<BiteAttackHitbox>();
+        _knockbackHitbox = GetComponentInChildren<EnemyKnockbackHitbox>();
         _animator = GetComponent<Animator>();
     }
 
@@ -65,8 +63,7 @@ public class EnemyAttack : MonoBehaviour
                     transform,
                     _damage,
                     _movement,
-                    _rushHitbox,
-                    _swingHitbox,
+                    _knockbackHitbox,
                     this,
                     _animator,
                     _slotCoordinator

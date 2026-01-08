@@ -8,8 +8,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly Transform _enemy;
     private readonly float _damage;
     private readonly EnemyMovement _movement;
-    private readonly RushAttackHitbox _rushHitbox;
-    private readonly BiteAttackHitbox _biteHitbox;
+    private readonly EnemyKnockbackHitbox _knockbackHitbox;
     private readonly Animator _animator;
     private readonly EnemySlotCoordinator _slotCoordinator;
     private readonly NavMeshAgent _agent;
@@ -18,7 +17,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
     // 수치 데이터
     private readonly float _rushDuration = 0.54f;
-    private readonly float _rushDistance = 4f;
+    private readonly float _rushDistance = 10f;
 
     private readonly float _minWait = 1f;
     private readonly float _maxWait = 3f;
@@ -29,8 +28,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         Transform enemy,
         float damage,
         EnemyMovement movement,
-        RushAttackHitbox rushHitbox,
-        BiteAttackHitbox biteHitbox,
+        EnemyKnockbackHitbox knockbackHitbox,
         EnemyAttack attack,
         Animator animator,
         EnemySlotCoordinator slotCoordinator
@@ -40,8 +38,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _enemy = enemy;
         _damage = damage;
         _movement = movement;
-        _rushHitbox = rushHitbox;
-        _biteHitbox = biteHitbox;
+        _knockbackHitbox = knockbackHitbox;
         _animator = animator;
         _slotCoordinator = slotCoordinator;
         _agent = enemy.GetComponent<NavMeshAgent>();
@@ -88,10 +85,11 @@ public class NormalAttackPattern : IEnemyAttackPattern
             _enemy,
             _player,
             _movement,
-            _rushHitbox,
+            _knockbackHitbox,
             _enemy.GetComponent<NavMeshAgent>(),
+            _rushDistance,
             _rushDuration,
-            _rushDistance
+            _damage
         );
         _currentAction.Enter();
     }
@@ -116,7 +114,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _currentAction = new BiteAction(
             _enemy,
             _player,
-            _biteHitbox,
+            _knockbackHitbox,
             _animator,
             _enemy.GetComponent<NavMeshAgent>(),
             _damage

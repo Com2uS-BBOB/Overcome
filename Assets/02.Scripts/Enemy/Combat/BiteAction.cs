@@ -5,7 +5,7 @@ public class BiteAction : IEnemyAction
 {
     private readonly Transform _enemy;
     private readonly Transform _player;
-    private readonly BiteAttackHitbox _hitbox;
+    private readonly EnemyKnockbackHitbox _hitbox;
     private readonly Animator _animator;
     private readonly NavMeshAgent _agent;
 
@@ -17,7 +17,7 @@ public class BiteAction : IEnemyAction
     public BiteAction(
         Transform enemy,
         Transform player,
-        BiteAttackHitbox hitbox,
+        EnemyKnockbackHitbox hitbox,
         Animator animator,
         NavMeshAgent agent,
         float damage
@@ -53,12 +53,30 @@ public class BiteAction : IEnemyAction
 
     public void Exit()
     {
-        _hitbox.Disable();
+        if (_hitbox != null)
+        {
+            _hitbox.Disable();
+        }
     }
 
     // Animation Events
     public void OnAnimStart() { }
-    public void OnHitStart() => _hitbox.Enable(_damage);
-    public void OnHitEnd() => _hitbox.Disable();
+    
+    public void OnHitStart()
+    {
+        if (_hitbox != null)
+        {
+            _hitbox.Enable(_damage);
+        }
+    }
+    
+    public void OnHitEnd()
+    {
+        if (_hitbox != null)
+        {
+            _hitbox.Disable();
+        }
+    }
+    
     public void OnAnimEnd() => _isFinished = true;
 }

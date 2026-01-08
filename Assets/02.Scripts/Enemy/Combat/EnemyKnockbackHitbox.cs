@@ -1,10 +1,10 @@
-using UnityEngine;
-using System.Collections;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Core;
 using _02.Scripts.Player.Interfaces;
+using System.Collections;
+using UnityEngine;
 
-public class BiteAttackHitbox : HitboxBase
+public class EnemyKnockbackHitbox : HitboxBase
 {
     [Header("넉백 옵션")]
     [SerializeField] private bool _useKnockback = true;
@@ -44,7 +44,7 @@ public class BiteAttackHitbox : HitboxBase
     protected override void OnHitSuccess(Collider other, IDamageable damageable)
     {
         // TODO: 히트 이펙트, 사운드, 경직 등
-        Debug.Log($"휘두르기 피격: {other.name}");
+        Debug.Log($"피격: {other.name}");
 
         if (!_useKnockback) return;
 
@@ -63,7 +63,7 @@ public class BiteAttackHitbox : HitboxBase
         _knockbackRoutine = player.StartCoroutine(Knockback_Coroutine(player.CharacterController, direction));
     }
 
-    private IEnumerator Knockback_Coroutine(CharacterController controller,Vector3 direction)
+    private IEnumerator Knockback_Coroutine(CharacterController controller, Vector3 direction)
     {
         float elapsed = 0f;
         float movedDistance = 0f;

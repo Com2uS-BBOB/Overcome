@@ -137,7 +137,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26a93de93ee9bc341a98eaf42b2d7eec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NormalEnemy
-  EnemyStatData: {fileID: 11400000, guid: e04ebbf4bcfd10b41bb31d5b1f9a5db5, type: 2}
   _spawnHeight: 1
 --- !u!114 &-1422018696626397053
 MonoBehaviour:
@@ -151,7 +150,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ae850c4419471e489ee7014c8f704ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  _enemyStatData: {fileID: 0}
   _rotationMode: 0
   _speedLerpSpeed: 6
 --- !u!54 &-2531178561615523393
@@ -193,7 +191,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af8d5fbc2139f540ba0ccefb6ec8b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
-  _slotCoordinator: {fileID: 0}
 --- !u!114 &-2894533006315810285
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,7 +261,7 @@ GameObject:
   m_Component:
   - component: {fileID: 9036878028524386185}
   - component: {fileID: 4608919677309041413}
-  - component: {fileID: 5754674876772559299}
+  - component: {fileID: 4356407818194440971}
   m_Layer: 0
   m_Name: BiteAttackHitbox
   m_TagString: Untagged
@@ -310,7 +307,7 @@ CapsuleCollider:
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0.8}
---- !u!114 &5754674876772559299
+--- !u!114 &4356407818194440971
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -319,9 +316,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1889792228766348922}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fbdf5ee6fc959b34da40b01044f55593, type: 3}
+  m_Script: {fileID: 11500000, guid: 1908e5a768471c94f92b5a89b68004dd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SwingAttackHitbox
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockbackHitbox
   _useKnockback: 1
   _knockbackDuration: 0.2
   _totalDistance: 2
@@ -335,7 +332,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2853815737847424684}
   - component: {fileID: 204808772961457264}
-  - component: {fileID: 6262625229708288512}
+  - component: {fileID: 7416821247574110286}
   m_Layer: 0
   m_Name: RushAttackHitbox
   m_TagString: Untagged
@@ -381,7 +378,7 @@ CapsuleCollider:
   m_Height: 2.2
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &6262625229708288512
+--- !u!114 &7416821247574110286
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -390,9 +387,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 2190441330224371555}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6e5035da5e290b41988b3df3915d38a, type: 3}
+  m_Script: {fileID: 11500000, guid: 1908e5a768471c94f92b5a89b68004dd, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DashKnockbackHitbox
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockbackHitbox
+  _useKnockback: 1
   _knockbackDuration: 0.2
   _totalDistance: 2
 --- !u!1 &2665287069355016370
