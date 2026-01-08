@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class UI_Timer : MonoBehaviour
 {
+    // Unity Color에 없는 lawnGreen 색상 정의 (RGB: 124, 252, 0)
+    private static readonly Color LawnGreen = new Color32(124, 252, 0, 255);
+    
     [SerializeField] private TextMeshProUGUI _playTimeText;
     [SerializeField] private TextMeshProUGUI _changedValueText;
     [SerializeField] private TextMeshProUGUI _remainTimeText;
@@ -54,7 +57,7 @@ public class UI_Timer : MonoBehaviour
         if (value > 0)
         {
             _changedValueText.text = $"+{value:F1}s";
-            _changedValueText.color = Color.lawnGreen;
+            _changedValueText.color = LawnGreen;
         }
         else if (value < 0)
         {
