@@ -5,10 +5,17 @@ using System.Collections.Generic;
 public class EnemySlotCoordinator : MonoBehaviour
 {
     [SerializeField] private Transform _player;
-    [SerializeField] private float _radius = 2.5f;
+    [SerializeField] private float _radius = 2f;
     [SerializeField] private int _slotCount = 6;
 
     private Dictionary<int, Transform> _occupiedSlots = new();
+    private void Awake()
+    {
+        for (int i = 0; i < _slotCount; i++)
+        {
+            _occupiedSlots.Add(i, null);
+        }
+    }
 
     public Vector3 GetSlotPosition(int slotIndex)
     {
@@ -29,26 +36,18 @@ public class EnemySlotCoordinator : MonoBehaviour
     {
         for (int i = 0; i < _slotCount; i++)
         {
-            if (_occupiedSlots[i] == null)
-            {
-                _occupiedSlots.Remove(i);
-                return i;
-            }
-
             if (!_occupiedSlots.ContainsKey(i))
             {
                 _occupiedSlots[i] = enemy;
                 return i;
             }
         }
+
         return -1; // 자리 없음
     }
 
     public void ReleaseSlot(int slotIndex)
     {
-        if (_occupiedSlots.ContainsKey(slotIndex))
-        {
-            _occupiedSlots.Remove(slotIndex);
-        }
+        _occupiedSlots.Remove(slotIndex);
     }
 }

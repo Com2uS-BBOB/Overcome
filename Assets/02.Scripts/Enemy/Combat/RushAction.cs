@@ -65,6 +65,8 @@ public class RushAction : IEnemyAction
 
         _movement.SetRotationToMoveDirection();
         _hitbox.EnableKnockback();
+
+        Debug.Log("돌진 공격 시도");
     }
 
     public void Update()

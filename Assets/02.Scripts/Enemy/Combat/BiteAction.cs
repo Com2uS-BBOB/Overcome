@@ -46,6 +46,7 @@ public class BiteAction : IEnemyAction
         }
 
         _animator.SetTrigger("AttackTest");
+        Debug.Log("깨물기 공격 시도");
     }
 
     public void Update() { }
