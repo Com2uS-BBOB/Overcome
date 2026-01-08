@@ -19,10 +19,11 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
     private readonly float _minWait = 1f;
     private readonly float _maxWait = 3f;
-    private readonly float _orbitRadius = 5f;
-    private readonly float _orbitSpeed = 120f;
-    private readonly float _aroundChance = 0.01f;
-    private readonly float _aroundSpeedMurtiplier = 0.6f;
+    private readonly float _baseDistance = 2f;
+    private readonly float _strafeRange = 0.2f;
+    private readonly float _strafeChangeMin = 0.2f;
+    private readonly float _strafeChangeMax = 0.6f;
+    private readonly float _waitSpeedMurtiplier = 0.1f;
 
     public NormalAttackPattern(
         Transform player,
@@ -100,10 +101,11 @@ public class NormalAttackPattern : IEnemyAttackPattern
             _movement,
             _minWait,
             _maxWait,
-            _orbitRadius,
-            _orbitSpeed,
-            _aroundChance,
-            _aroundSpeedMurtiplier
+            _baseDistance,
+            _strafeRange,
+            _strafeChangeMin,
+            _strafeChangeMax,
+            _waitSpeedMurtiplier
         );
         _currentAction.Enter();
     }

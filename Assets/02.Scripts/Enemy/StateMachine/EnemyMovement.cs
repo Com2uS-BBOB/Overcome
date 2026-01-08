@@ -29,6 +29,10 @@ public class EnemyMovement : MonoBehaviour
     private Vector3 _targetPosition;
     private Transform _separationTarget;
 
+    [Header("적 사이의 간격")]
+    [SerializeField] private float _enemySeparationRadius = 0.8f;
+    [SerializeField] private float _enemySeparationStrength = 1f;
+
     private void Start()
     {
         _rigidbody = GetComponent<Rigidbody>();
@@ -51,6 +55,8 @@ public class EnemyMovement : MonoBehaviour
         {
             ApplyPlayerSeparation();
         }
+
+        ApplyEnemySeparation();
     }
 
     // 목표 지점으로 이동 시작
@@ -169,6 +175,41 @@ public class EnemyMovement : MonoBehaviour
             push = Mathf.Min(push, 0.5f);
 
             transform.position += different.normalized * push * Time.deltaTime;
+        }
+    }
+
+    // 적들 사이의 간격 유지
+    private void ApplyEnemySeparation()
+    {
+        Collider[] colliders = Physics.OverlapSphere(
+            transform.position,
+            _enemySeparationRadius
+        );
+
+        Vector3 pushDirection = Vector3.zero;
+        int count = 0;
+
+        foreach (var collider in colliders)
+        {
+            if (collider.transform == transform) continue;
+
+            // 적인지 판별
+            if (!collider.TryGetComponent<EnemyBase>(out var enemy)) continue;
+
+            Vector3 diff = transform.position - collider.transform.position;
+            diff.y = 0f;
+
+            float dist = diff.magnitude;
+            if (dist <= 0.001f) continue;
+
+            pushDirection += diff.normalized / dist;
+            count++;
+        }
+
+        if (count > 0)
+        {
+            pushDirection /= count;
+            transform.position += pushDirection * _enemySeparationStrength * Time.deltaTime;
         }
     }
 }

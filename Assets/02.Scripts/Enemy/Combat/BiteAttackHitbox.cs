@@ -35,7 +35,8 @@ public class BiteAttackHitbox : HitboxBase
         // 자기 자신
         if (other.transform.root == transform.root) return true;
 
-        if (other.GetComponent<PlayerController>() == null) return true;
+        // 적
+        if (other.transform.root.GetComponent<EnemyBase>()) return true;
 
         return false;
     }
@@ -50,7 +51,7 @@ public class BiteAttackHitbox : HitboxBase
         var player = other.GetComponent<PlayerController>();
         if (player == null) return;
 
-        Vector3 direction = (other.transform.position - transform.position);
+        Vector3 direction = (transform.position - other.transform.position);
         direction.y = 0f;
         direction.Normalize();
 

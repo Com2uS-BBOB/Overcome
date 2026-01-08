@@ -8,16 +8,24 @@ public class AttackWaitAction : IEnemyAction
 
     private readonly float _minWait;
     private readonly float _maxWait;
-    private readonly float _orbitRadius;
-    private readonly float _orbitSpeed;
-    private readonly float _aroundChance;
-    private readonly float _aroundSpeedMultiplier;
+    private readonly float _baseDistance;      // 플레이어와 기본 거리
+    private readonly float _strafeRange;       // 좌우 이동 폭
+    private readonly float _strafeChangeMin;
+    private readonly float _strafeChangeMax;
+    private readonly float _waitSpeedMultiplier;
 
     private float _timer;
     private float _duration;
-    private float _orbitAngle;
+    private float _playerFarDistance = 3f;
 
-    private bool _isAround;
+    private float _strafeTimer;
+    private float _strafeDuration;
+    private int _strafeDirection;
+
+    private float _half = 0.5f;
+
+    private float _toEnemyMinSqrDistance = 0.01f;
+
     private bool _isFinished;
 
     public bool IsFinished => _isFinished;
@@ -28,21 +36,24 @@ public class AttackWaitAction : IEnemyAction
         EnemyMovement movement,
         float minWait,
         float maxWait,
-        float orbitRadius,
-        float orbitSpeed,
-        float aroundChance,
-        float aroundSpeedMultiplier
+        float baseDistance,
+        float strafeRange,
+        float strafeChangeMin,
+        float strafeChangeMax,
+        float waitSpeedMultiplier
     )
     {
         _enemy = enemy;
         _player = player;
         _movement = movement;
+
         _minWait = minWait;
         _maxWait = maxWait;
-        _orbitRadius = orbitRadius;
-        _orbitSpeed = orbitSpeed;
-        _aroundChance = aroundChance;
-        _aroundSpeedMultiplier = aroundSpeedMultiplier;
+        _baseDistance = baseDistance;
+        _strafeRange = strafeRange;
+        _strafeChangeMin = strafeChangeMin;
+        _strafeChangeMax = strafeChangeMax;
+        _waitSpeedMultiplier = waitSpeedMultiplier;
     }
 
     public void Enter()
@@ -54,15 +65,34 @@ public class AttackWaitAction : IEnemyAction
         _movement.EnablePlayerSeparation(_player);
         _movement.SetRotationToLookAt(_player);
 
-        Vector3 direction = _enemy.position - _player.position;
-        direction.y = 0f;
-        _orbitAngle = Mathf.Atan2(direction.z, direction.x) * Mathf.Rad2Deg;
+        PickNewStrafe();
     }
 
     public void Update()
     {
         _timer += Time.deltaTime;
-        AroundPlayer();
+        _strafeTimer += Time.deltaTime;
+
+        Vector3 different = _enemy.position - _player.position;
+        different.y = 0f; // 수평 거리만 확인
+
+        if (different.sqrMagnitude >= _playerFarDistance * _playerFarDistance)
+        {
+            _movement.ResetSpeedMultiplier();
+            _timer = 0f;
+            _strafeTimer = 0f;
+        }
+        else
+        {
+            _movement.SetSpeedMultiplier(_waitSpeedMultiplier);
+        }
+
+        StrafeAroundPlayer();
+
+        if (_strafeTimer >= _strafeDuration)
+        {
+            PickNewStrafe();
+        }
 
         if (_timer >= _duration)
         {
@@ -70,14 +100,30 @@ public class AttackWaitAction : IEnemyAction
         }
     }
 
-    private void AroundPlayer()
+    // 플레이어 근처 서성임 로직
+    private void PickNewStrafe()
     {
-        _orbitAngle += _orbitSpeed * Time.deltaTime;
-        float rad = _orbitAngle * Mathf.Deg2Rad;
+        _strafeTimer = 0f;
+        _strafeDuration = Random.Range(_strafeChangeMin, _strafeChangeMax);
+        _strafeDirection = Random.value < _half ? -1 : 1;
+    }
 
-        Vector3 offset = new Vector3(Mathf.Cos(rad), 0f, Mathf.Sin(rad)) * _orbitRadius;
+    private void StrafeAroundPlayer()
+    {
+        Vector3 toEnemy = _enemy.position - _player.position;
+        toEnemy.y = 0f;
 
-        _movement.MoveTo(_player.position + offset);
+        if (toEnemy.sqrMagnitude < _toEnemyMinSqrDistance) return;
+
+        toEnemy.Normalize();
+
+        // 좌우 방향 (플레이어 기준)
+        Vector3 lateral = Vector3.Cross(Vector3.up, toEnemy) * _strafeDirection;
+
+        // 목표 위치 계산
+        Vector3 targetPosition =_player.position + toEnemy * _baseDistance + lateral * _strafeRange;
+
+        _movement.MoveTo(targetPosition);
     }
 
     public void Exit()
