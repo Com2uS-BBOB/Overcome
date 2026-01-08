@@ -13,29 +13,29 @@ MonoBehaviour:
   m_Name: ComboConfigData
   m_EditorClassIdentifier: Assembly-CSharp::ComboConfigData
   MaxCombo: 10
-  ComboDuration: 6
+  ComboDuration: 2
   Configs:
   - MinCombo: 0
     MaxComboInclusive: 3
     ComboText: NICE
     DamageMultiplier: 1
     ComboColor: {r: 0, g: 0, b: 0, a: 1}
-    GradeColor: {r: 0, g: 0, b: 0, a: 1}
+    GradeColor: {r: 1, g: 1, b: 0, a: 1}
   - MinCombo: 4
     MaxComboInclusive: 5
     ComboText: GREAT
     DamageMultiplier: 1.2
-    ComboColor: {r: 0.33333334, g: 0, b: 0, a: 1}
-    GradeColor: {r: 0, g: 1, b: 0, a: 1}
+    ComboColor: {r: 0, g: 0, b: 0, a: 1}
+    GradeColor: {r: 1, g: 0.5019608, b: 0, a: 1}
   - MinCombo: 6
     MaxComboInclusive: 8
     ComboText: EXCELLENT
     DamageMultiplier: 1.5
-    ComboColor: {r: 0.6666667, g: 0, b: 0, a: 1}
-    GradeColor: {r: 0, g: 0, b: 1, a: 1}
+    ComboColor: {r: 0, g: 0, b: 0, a: 1}
+    GradeColor: {r: 1, g: 0, b: 0, a: 1}
   - MinCombo: 9
     MaxComboInclusive: 10
     ComboText: PERFECT
     DamageMultiplier: 2
-    ComboColor: {r: 1, g: 0, b: 0, a: 1}
-    GradeColor: {r: 1, g: 0, b: 0, a: 1}
+    ComboColor: {r: 0, g: 0, b: 0, a: 1}
+    GradeColor: {r: 0, g: 1, b: 1, a: 1}
