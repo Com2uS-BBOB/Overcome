@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class NormalAttackPattern : IEnemyAttackPattern
 {
@@ -10,12 +11,14 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly RushAttackHitbox _rushHitbox;
     private readonly BiteAttackHitbox _biteHitbox;
     private readonly Animator _animator;
+    private readonly EnemySlotCoordinator _slotCoordinator;
+    private readonly NavMeshAgent _agent;
 
     private IEnemyAction _currentAction;
 
     // 수치 데이터
-    private readonly float _rushSpeed = 20f;
     private readonly float _rushDuration = 0.54f;
+    private readonly float _rushDistance = 4f;
 
     private readonly float _minWait = 1f;
     private readonly float _maxWait = 3f;
@@ -33,7 +36,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
         RushAttackHitbox rushHitbox,
         BiteAttackHitbox biteHitbox,
         EnemyAttack attack,
-        Animator animator
+        Animator animator,
+        EnemySlotCoordinator slotCoordinator
     )
     {
         _player = player;
@@ -43,6 +47,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _rushHitbox = rushHitbox;
         _biteHitbox = biteHitbox;
         _animator = animator;
+        _slotCoordinator = slotCoordinator;
+        _agent = enemy.GetComponent<NavMeshAgent>();
     }
 
     public void Start()
@@ -87,8 +93,9 @@ public class NormalAttackPattern : IEnemyAttackPattern
             _player,
             _movement,
             _rushHitbox,
-            _rushSpeed,
-            _rushDuration
+            _enemy.GetComponent<NavMeshAgent>(),
+            _rushDuration,
+            _rushDistance
         );
         _currentAction.Enter();
     }
@@ -99,12 +106,10 @@ public class NormalAttackPattern : IEnemyAttackPattern
             _enemy,
             _player,
             _movement,
+            _slotCoordinator,
+            _agent,
             _minWait,
             _maxWait,
-            _baseDistance,
-            _strafeRange,
-            _strafeChangeMin,
-            _strafeChangeMax,
             _waitSpeedMurtiplier
         );
         _currentAction.Enter();
@@ -117,6 +122,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
             _player,
             _biteHitbox,
             _animator,
+            _enemy.GetComponent<NavMeshAgent>(),
             _damage
         );
         _currentAction.Enter();

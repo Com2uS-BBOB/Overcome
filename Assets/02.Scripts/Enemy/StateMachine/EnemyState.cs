@@ -19,7 +19,7 @@ public class EnemyState : MonoBehaviour
 
     [Header("Return 관련 옵션")]
     [SerializeField] private float _outRange = 18f;
-    [SerializeField] private float _stopDistance = 0.1f;
+    [SerializeField] private float _returnStopDistance = 0.3f;
 
     [Header("Attack 관련 옵션")]
     [SerializeField] private float _attackRange = 10f;
@@ -28,7 +28,7 @@ public class EnemyState : MonoBehaviour
     {
         _enemy = GetComponent<EnemyBase>();
         _movement = GetComponent<EnemyMovement>();
-        _attack = GetComponent<EnemyAttack>(); // 엘리트 몬스터 전용
+        _attack = GetComponent<EnemyAttack>();
     }
 
     private void Start()
@@ -41,19 +41,19 @@ public class EnemyState : MonoBehaviour
         switch (_currentState)
         {
             case EEnemyState.Idle:
-                Idle();
+                UpdateIdle();
                 break;
 
             case EEnemyState.Trace:
-                Trace();
+                UpdateTrace();
                 break;
 
             case EEnemyState.Return:
-                Return();
+                UpdateReturn();
                 break;
 
             case EEnemyState.Attack:
-                Attack();
+                UpdateAttack();
                 break;
         }
     }
@@ -64,18 +64,19 @@ public class EnemyState : MonoBehaviour
         _attack?.Initialize(player);
     }
 
-    private void Idle()
-    {
-        if (!_canMove) return;
+    #region State Updates
 
-        if (IsPlayerInRange())
+    private void UpdateIdle()
+    {
+        if (!_canMove || _player == null) return;
+
+        if (IsPlayerInDetectRange())
         {
-            Debug.Log("Idle -> Trace");
             ChangeState(EEnemyState.Trace);
         }
     }
 
-    private void Trace()
+    private void UpdateTrace()
     {
         if (_player == null)
         {
@@ -83,52 +84,36 @@ public class EnemyState : MonoBehaviour
             return;
         }
 
-        // 플레이어가 탐지 범위를 벗어나면 Return 전환
-        if (IsPlayerOutRange() && _canReturn)
+        if (IsPlayerOutOfRange() && _canReturn)
         {
-            Debug.Log("Trace -> Return");
             ChangeState(EEnemyState.Return);
             return;
         }
 
-        // 공격 범위에 들어오면 공격 상태로 전환
-        if (IsPlayerInAttack() && _canAttack)
+        if (IsPlayerInAttackRange() && _canAttack)
         {
-            Debug.Log("Trace -> Attack");
             ChangeState(EEnemyState.Attack);
             return;
         }
 
+        _movement.SetRotationToLookAt(_player);
         _movement.MoveTo(_player.position);
-        transform.rotation = Quaternion.LookRotation(_player.position);
     }
 
-    private void Return()
+    private void UpdateReturn()
     {
-        if (_player == null)
-        {
-            ChangeState(EEnemyState.Idle);
-            return;
-        }
-
-        // 플레이어와 일정 간격 두기 비활성화
-        _movement.DisablePlayerSeparation();
-
-        Vector3 returnPosition = _enemy.GetSpawnBasePosition();
+        Vector3 returnPos = _enemy.GetSpawnBasePosition();
 
         _movement.SetRotationToMoveDirection();
-        _movement.MoveTo(_player.position);
-        _movement.MoveTo(returnPosition);
+        _movement.MoveTo(returnPos);
 
-        // 스폰 위치에 도착하면 Idle 전환
-        if (_movement.IsArrived(returnPosition, _stopDistance))
+        if (_movement.IsArrived(_returnStopDistance))
         {
-            Debug.Log("Return -> Idle");
             ChangeState(EEnemyState.Idle);
         }
     }
 
-    private void Attack()
+    private void UpdateAttack()
     {
         if (_player == null)
         {
@@ -142,69 +127,80 @@ public class EnemyState : MonoBehaviour
         if (_attack.IsAttackFinished)
         {
             ChangeState(EEnemyState.Trace);
+            return;
         }
 
-        if (IsPlayerOutRange() && _canReturn)
+        if (IsPlayerOutOfRange() && _canReturn)
         {
             _attack.Stop();
-            Debug.Log("Attack -> Return");
             ChangeState(EEnemyState.Return);
         }
     }
+
+    #endregion
+
+    #region State Transition
 
     private void ChangeState(EEnemyState newState)
     {
         if (_currentState == newState) return;
 
-        OnExitState(_currentState);
+        ExitState(_currentState);
         _currentState = newState;
-        OnEnterState(_currentState);
+        EnterState(_currentState);
     }
 
-    // 상태 진입 시 처리
-    private void OnEnterState(EEnemyState state)
+    private void EnterState(EEnemyState state)
     {
-        if (state == EEnemyState.Attack)
+        switch (state)
         {
-            _attack?.StartAttack();
-        }
+            case EEnemyState.Idle:
+                _movement.Stop();
+                break;
 
-        if (state == EEnemyState.Idle)
+            case EEnemyState.Trace:
+                _movement.SetRotationToLookAt(_player);
+                break;
+
+            case EEnemyState.Attack:
+                _movement.Stop();
+                _attack?.StartAttack();
+                break;
+
+            case EEnemyState.Return:
+                _movement.SetRotationToMoveDirection();
+                break;
+        }
+    }
+
+    private void ExitState(EEnemyState state)
+    {
+        switch (state)
         {
-            _movement?.Stop();
+            case EEnemyState.Trace:
+                _movement.Stop();
+                break;
         }
     }
 
-    // 상태 종료 시 처리
-    private void OnExitState(EEnemyState state)
+    #endregion
+
+    #region Range Checks
+
+    private bool IsPlayerInDetectRange()
     {
-        if (state == EEnemyState.Trace)
-        {
-            _movement.Stop();
-        }
+        return _player != null && Vector3.Distance(transform.position, _player.position) <= _detectRange;
     }
 
-    private bool IsPlayerInRange()
+    private bool IsPlayerOutOfRange()
     {
-        if (_player == null) return false;
-
-        float distance = Vector3.Distance(transform.position, _player.position);
-        return distance <= _detectRange;
+        return _player != null && Vector3.Distance(transform.position, _player.position) > _outRange;
     }
 
-    private bool IsPlayerOutRange()
+    private bool IsPlayerInAttackRange()
     {
-        if (_player == null) return false;
-
-        float distance = Vector3.Distance(transform.position, _player.position);
-        return distance > _outRange;
+        return _player != null && Vector3.Distance(transform.position, _player.position) <= _attackRange;
     }
 
-    private bool IsPlayerInAttack()
-    {
-        if (_player == null) return false;
-
-        float distance = Vector3.Distance(transform.position, _player.position);
-        return distance <= _attackRange;
-    }
+    #endregion
 }

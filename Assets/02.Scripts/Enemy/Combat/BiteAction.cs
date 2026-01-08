@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class BiteAction : IEnemyAction
 {
@@ -6,6 +7,7 @@ public class BiteAction : IEnemyAction
     private readonly Transform _player;
     private readonly BiteAttackHitbox _hitbox;
     private readonly Animator _animator;
+    private readonly NavMeshAgent _agent;
 
     private readonly float _damage;
     private bool _isFinished;
@@ -17,6 +19,7 @@ public class BiteAction : IEnemyAction
         Transform player,
         BiteAttackHitbox hitbox,
         Animator animator,
+        NavMeshAgent agent,
         float damage
     )
     {
@@ -24,12 +27,16 @@ public class BiteAction : IEnemyAction
         _player = player;
         _hitbox = hitbox;
         _animator = animator;
+        _agent = agent;
         _damage = damage;
     }
 
     public void Enter()
     {
         _isFinished = false;
+
+        _agent.isStopped = true;
+        _agent.ResetPath();
 
         Vector3 direction = _player.position - _enemy.position;
         direction.y = 0f;
@@ -41,23 +48,15 @@ public class BiteAction : IEnemyAction
         _animator.SetTrigger("AttackTest");
     }
 
-    public void Start()
-    {
-        // 애니메이션 이벤트로 시작
-    }
-
-    public void Update()
-    {
-        // 애니메이션 이벤트로 종료
-    }
+    public void Update() { }
 
     public void Exit()
     {
         _hitbox.Disable();
     }
 
-    // 애니메이션 이벤트
-    public void OnAnimStart() => Start();
+    // Animation Events
+    public void OnAnimStart() { }
     public void OnHitStart() => _hitbox.Enable(_damage);
     public void OnHitEnd() => _hitbox.Disable();
     public void OnAnimEnd() => _isFinished = true;

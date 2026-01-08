@@ -8,7 +8,8 @@ public class EnemyAttack : MonoBehaviour
     private EnemyMovement _movement;
     private RushAttackHitbox _rushHitbox;
     private BiteAttackHitbox _swingHitbox;
-    private  Animator _animator;
+    private Animator _animator;
+    [SerializeField] private EnemySlotCoordinator _slotCoordinator;
 
     private bool _hasRushedOnce;
 
@@ -66,7 +67,8 @@ public class EnemyAttack : MonoBehaviour
                     _rushHitbox,
                     _swingHitbox,
                     this,
-                    _animator
+                    _animator,
+                    _slotCoordinator
                 );
                 break;
         }
