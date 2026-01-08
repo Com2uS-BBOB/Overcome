@@ -58,8 +58,7 @@ public class AttackWaitAction : IEnemyAction
 
     public void Update()
     {
-        if (_mySlotIndex < 0)
-            return;
+        if (_mySlotIndex < 0) return;
 
         Vector3 slotPosition = _slotCoordinator.GetSlotPosition(_mySlotIndex);
         _agent.SetDestination(slotPosition);
@@ -67,13 +66,13 @@ public class AttackWaitAction : IEnemyAction
         // 아직 슬롯에 도착하지 못함
         if (_agent.remainingDistance > _agent.stoppingDistance)
         {
-            _movement.SetSpeedMultiplier(_waitSpeedMultiplier);
+            _movement.ResetSpeedMultiplier();
             _timer = 0f;
             return;
         }
 
         // 슬롯에 도착한 상태
-        _movement.ResetSpeedMultiplier();
+        _movement.SetSpeedMultiplier(_waitSpeedMultiplier);
         _timer += Time.deltaTime;
 
         if (_timer >= _duration)

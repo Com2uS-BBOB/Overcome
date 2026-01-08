@@ -45,6 +45,7 @@ public class EnemyState : MonoBehaviour
                 break;
 
             case EEnemyState.Trace:
+                _movement.ResetSpeedMultiplier();
                 UpdateTrace();
                 break;
 
@@ -96,17 +97,16 @@ public class EnemyState : MonoBehaviour
             ChangeState(EEnemyState.Attack);
             return;
         }
-
         _movement.SetRotationToLookAt(_player);
         _movement.MoveTo(_player.position);
     }
 
     private void UpdateReturn()
     {
-        Vector3 returnPos = _enemy.GetSpawnBasePosition();
+        Vector3 returnPosition = _enemy.GetSpawnBasePosition();
 
         _movement.SetRotationToMoveDirection();
-        _movement.MoveTo(returnPos);
+        _movement.MoveTo(returnPosition);
 
         if (_movement.IsArrived(_returnStopDistance))
         {
