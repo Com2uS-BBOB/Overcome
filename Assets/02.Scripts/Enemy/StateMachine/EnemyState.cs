@@ -24,6 +24,8 @@ public class EnemyState : MonoBehaviour
     [Header("Attack 관련 옵션")]
     [SerializeField] private float _attackRange = 10f;
 
+    private EnemyAttackDirector _attackDirector;
+
     private void Awake()
     {
         _enemy = GetComponent<EnemyBase>();
@@ -64,6 +66,7 @@ public class EnemyState : MonoBehaviour
     {
         _player = player;
         _attack?.Initialize(player);
+        _attackDirector = player.GetComponent<EnemyAttackDirector>();
     }
 
     #region State Updates
@@ -94,8 +97,11 @@ public class EnemyState : MonoBehaviour
 
         if (IsPlayerInAttackRange() && _canAttack)
         {
-            ChangeState(EEnemyState.Attack);
-            return;
+            if (_attackDirector == null || _attackDirector.TryReserve(transform))
+            {
+                ChangeState(EEnemyState.Attack);
+                return;
+            }
         }
         _movement.SetRotationToLookAt(_player);
         _movement.MoveTo(_player.position);
@@ -119,6 +125,7 @@ public class EnemyState : MonoBehaviour
         if (_player == null)
         {
             _attack.Stop();
+            _attackDirector?.Release(transform);
             ChangeState(EEnemyState.Idle);
             return;
         }
@@ -128,6 +135,7 @@ public class EnemyState : MonoBehaviour
         if (IsPlayerOutOfRange() && _canReturn)
         {
             _attack.Stop();
+            _attackDirector?.Release(transform);
             ChangeState(EEnemyState.Return);
         }
     }
@@ -174,6 +182,10 @@ public class EnemyState : MonoBehaviour
         {
             case EEnemyState.Trace:
                 _movement.Stop();
+                break;
+
+            case EEnemyState.Attack:
+                _attackDirector?.Release(transform);
                 break;
         }
     }
