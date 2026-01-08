@@ -12,6 +12,8 @@ public class AttackWaitAction : IEnemyAction
     private readonly float _minWait;
     private readonly float _maxWait;
     private readonly float _waitSpeedMultiplier;
+    private readonly bool _releaseSlotOnExit;
+    private readonly int _fixedSlotIndex;
 
     private float _timer;
     private float _duration;
@@ -30,6 +32,7 @@ public class AttackWaitAction : IEnemyAction
     private float _navSampleRadius = 1.5f;
 
     public bool IsFinished => _isFinished;
+    public int SlotIndex => _mySlotIndex;
 
     public AttackWaitAction(
         Transform enemy,
@@ -39,7 +42,9 @@ public class AttackWaitAction : IEnemyAction
         NavMeshAgent agent,
         float minWait,
         float maxWait,
-        float waitSpeedMultiplier
+        float waitSpeedMultiplier,
+        bool releaseSlotOnExit = true,
+        int fixedSlotIndex = -1
     )
     {
         _enemy = enemy;
@@ -51,6 +56,8 @@ public class AttackWaitAction : IEnemyAction
         _minWait = minWait;
         _maxWait = maxWait;
         _waitSpeedMultiplier = waitSpeedMultiplier;
+        _releaseSlotOnExit = releaseSlotOnExit;
+        _fixedSlotIndex = fixedSlotIndex;
     }
 
     public void Enter()
@@ -59,8 +66,15 @@ public class AttackWaitAction : IEnemyAction
         _timer = 0f;
         _duration = Random.Range(_minWait, _maxWait);
 
-        // 슬롯 점유
-        _mySlotIndex = _slotCoordinator.ClaimSlot(_enemy);
+        // 슬롯 점유 (이미 슬롯이 있으면 그 슬롯 사용)
+        if (_fixedSlotIndex >= 0)
+        {
+            _mySlotIndex = _fixedSlotIndex;
+        }
+        else
+        {
+            _mySlotIndex = _slotCoordinator.ClaimSlot(_enemy);
+        }
 
         _agent.isStopped = false;
         _movement.SetRotationToLookAt(_player);
@@ -140,25 +154,29 @@ public class AttackWaitAction : IEnemyAction
 
                     Vector3 raw = _player.position + shuffledDir * toEnemy.magnitude;
 
-                    if (UnityEngine.AI.NavMesh.SamplePosition(raw, out var hit, _navSampleRadius, UnityEngine.AI.NavMesh.AllAreas))
+                    if (NavMesh.SamplePosition(raw, out var hit, _navSampleRadius, NavMesh.AllAreas))
+                    {
                         return hit.position;
+                    }
 
                     return slotPosition;
                 }
 
             case EEnemyProbeMode.Feint:
                 {
-                    // 플레이어 방향으로 살짝 전진/후퇴
-                    Vector3 dir = (_player.position - _enemy.position);
-                    dir.y = 0f;
-                    if (dir.sqrMagnitude < 0.01f) return slotPosition;
-                    dir.Normalize();
+                    // 플레이어 방향으로 살짝 전진 혹은 후퇴
+                    Vector3 direction = (_player.position - _enemy.position);
+                    direction.y = 0f;
+                    if (direction.sqrMagnitude < 0.01f) return slotPosition;
+                    direction.Normalize();
 
                     float sign = Random.value < 0.5f ? 1f : -1f;
-                    Vector3 raw = _enemy.position + dir * (_feintDistance * sign);
+                    Vector3 raw = _enemy.position + direction * (_feintDistance * sign);
 
-                    if (UnityEngine.AI.NavMesh.SamplePosition(raw, out var hit, _navSampleRadius, UnityEngine.AI.NavMesh.AllAreas))
+                    if (NavMesh.SamplePosition(raw, out var hit, _navSampleRadius, NavMesh.AllAreas))
+                    {
                         return hit.position;
+                    }
 
                     return slotPosition;
                 }
@@ -169,12 +187,20 @@ public class AttackWaitAction : IEnemyAction
 
     public void Exit()
     {
+        if (_releaseSlotOnExit)
+        {
+            ReleaseSlotNow();
+        }
+
+        _movement.ResetSpeedMultiplier();
+    }
+
+    public void ReleaseSlotNow()
+    {
         if (_mySlotIndex >= 0)
         {
             _slotCoordinator.ReleaseSlot(_mySlotIndex);
             _mySlotIndex = -1;
         }
-
-        _movement.ResetSpeedMultiplier();
     }
 }

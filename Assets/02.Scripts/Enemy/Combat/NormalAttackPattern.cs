@@ -9,20 +9,20 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly float _damage;
     private readonly EnemyMovement _movement;
     private readonly EnemyKnockbackHitbox _knockbackHitbox;
-    private readonly EnemyAttack _attack;
     private readonly Animator _animator;
-    private readonly EnemySlotCoordinator _slotCoordinator;
     private readonly NavMeshAgent _agent;
+    private readonly EnemySlotCoordinator _slotCoordinator;
 
     private IEnemyAction _currentAction;
+    private bool _isFinished;
+
+    public bool IsFinished => _isFinished;
 
     // 수치 데이터
-    private readonly float _rushDuration = 0.54f;
-    private readonly float _rushDistance = 10f;
-
     private readonly float _minWait = 1f;
     private readonly float _maxWait = 3f;
-    private readonly float _waitSpeedMurtiplier = 0.1f;
+    private readonly float _windupSpeed = 0.15f;
+    private readonly int _slotIndex;
 
     public NormalAttackPattern(
         Transform player,
@@ -32,7 +32,8 @@ public class NormalAttackPattern : IEnemyAttackPattern
         EnemyKnockbackHitbox knockbackHitbox,
         EnemyAttack attack,
         Animator animator,
-        EnemySlotCoordinator slotCoordinator
+        EnemySlotCoordinator slotCoordinator,
+        int slotIndex
     )
     {
         _player = player;
@@ -40,70 +41,16 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _damage = damage;
         _movement = movement;
         _knockbackHitbox = knockbackHitbox;
-        _attack = attack;
         _animator = animator;
-        _slotCoordinator = slotCoordinator;
         _agent = enemy.GetComponent<NavMeshAgent>();
+        _slotCoordinator = slotCoordinator;
+        _slotIndex = slotIndex;
     }
 
     public void Start()
     {
-        if (!_attack.HasRushedOnce)
-        {
-            StartRush();
-            _attack.MarkRushed();
-        }
-        else
-        {
-            StartWait();
-        }
-    }
+        _isFinished = false;
 
-    public void Update()
-    {
-        _currentAction?.Update();
-
-        if (_currentAction != null && _currentAction.IsFinished)
-        {
-            ChangeAction();
-        }
-    }
-
-    private void ChangeAction()
-    {
-        _currentAction.Exit();
-
-        if (_currentAction is RushAction)
-        {
-            StartWait();
-        }
-        else if (_currentAction is AttackWaitAction)
-        {
-            StartBite();
-        }
-        else if (_currentAction is BiteAction)
-        {
-            StartWait();
-        }
-    }
-
-    private void StartRush()
-    {
-        _currentAction = new RushAction(
-            _enemy,
-            _player,
-            _movement,
-            _knockbackHitbox,
-            _enemy.GetComponent<NavMeshAgent>(),
-            _rushDistance,
-            _rushDuration,
-            _damage
-        );
-        _currentAction.Enter();
-    }
-
-    private void StartWait()
-    {
         _currentAction = new AttackWaitAction(
             _enemy,
             _player,
@@ -112,28 +59,51 @@ public class NormalAttackPattern : IEnemyAttackPattern
             _agent,
             _minWait,
             _maxWait,
-            _waitSpeedMurtiplier
+            _windupSpeed,
+            fixedSlotIndex: _slotIndex,
+            releaseSlotOnExit: false
         );
+
         _currentAction.Enter();
     }
 
-    private void StartBite()
+    public void Update()
     {
-        _currentAction = new BiteAction(
-            _enemy,
-            _player,
-            _knockbackHitbox,
-            _animator,
-            _enemy.GetComponent<NavMeshAgent>(),
-            _damage
-        );
-        _currentAction.Enter();
+        if (_isFinished) return;
+
+        _currentAction?.Update();
+
+        if (_currentAction != null && _currentAction.IsFinished)
+        {
+            _currentAction.Exit();
+
+            if (_currentAction is AttackWaitAction)
+            {
+                _currentAction = new BiteAction(
+                    _enemy,
+                    _player,
+                    _knockbackHitbox,
+                    _animator,
+                    _enemy.GetComponent<NavMeshAgent>(),
+                    _damage
+                    );
+                _currentAction.Enter();
+                return;
+            }
+
+            if (_currentAction is BiteAction)
+            {
+                _currentAction.Exit();
+                _isFinished = true;
+            }
+        }
     }
 
     public void Stop()
     {
         _currentAction?.Exit();
         _currentAction = null;
+        _isFinished = true;
     }
 
     public void ForwardBiteStart()
@@ -155,6 +125,4 @@ public class NormalAttackPattern : IEnemyAttackPattern
     {
         (_currentAction as BiteAction)?.OnAnimEnd();
     }
-
-    public bool IsFinished => false; // 반복 패턴
 }

@@ -15,6 +15,9 @@ public class EnemyAttack : MonoBehaviour
     public bool HasRushedOnce => _hasRushedOnce;
     public void MarkRushed() => _hasRushedOnce = true;
 
+    private int _currentSlotIndex = -1;
+    public void SetCurrentSlotIndex(int slotIndex) => _currentSlotIndex = slotIndex;
+
 
     private IEnemyAttackPattern _currentPattern;
 
@@ -65,7 +68,8 @@ public class EnemyAttack : MonoBehaviour
                     _knockbackHitbox,
                     this,
                     _animator,
-                    _slotCoordinator
+                    _slotCoordinator,
+                    _currentSlotIndex
                 );
                 break;
         }
