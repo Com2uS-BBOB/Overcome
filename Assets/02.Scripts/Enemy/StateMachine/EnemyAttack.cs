@@ -84,6 +84,11 @@ public class EnemyAttack : MonoBehaviour
     }
 
     // 이벤트 호출용 메서드
+    public void OnBiteStart()
+    {
+        (_currentPattern as NormalAttackPattern)?.ForwardBiteStart();
+    }
+
     public void OnBiteHitStart()
     {
         (_currentPattern as NormalAttackPattern)?.ForwardBiteHitStart();

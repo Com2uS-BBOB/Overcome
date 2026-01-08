@@ -138,7 +138,6 @@ public class EnemyState : MonoBehaviour
         }
 
         _attack.UpdateAttack();
-        _attack.RestartAttackIfNeeded();
 
         if (_attack.IsAttackFinished)
         {

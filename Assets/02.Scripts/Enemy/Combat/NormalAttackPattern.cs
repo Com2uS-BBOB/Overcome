@@ -126,6 +126,11 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _currentAction = null;
     }
 
+    public void ForwardBiteStart()
+    {
+        (_currentAction as BiteAction)?.OnAnimStart();
+    }
+
     public void ForwardBiteHitStart()
     {
         (_currentAction as BiteAction)?.OnHitStart();

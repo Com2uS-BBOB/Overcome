@@ -41,6 +41,11 @@ public class BiteAction : IEnemyAction
         _animator.SetTrigger("AttackTest");
     }
 
+    public void Start()
+    {
+        // 애니메이션 이벤트로 시작
+    }
+
     public void Update()
     {
         // 애니메이션 이벤트로 종료
@@ -52,6 +57,7 @@ public class BiteAction : IEnemyAction
     }
 
     // 애니메이션 이벤트
+    public void OnAnimStart() => Start();
     public void OnHitStart() => _hitbox.Enable(_damage);
     public void OnHitEnd() => _hitbox.Disable();
     public void OnAnimEnd() => _isFinished = true;
