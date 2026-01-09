@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -35,7 +36,7 @@ public class UI_Minimap : MonoBehaviour
     private float _minimapRadius;
     private float _scale;
 
-    private void Start()
+    private void Init()
     {
         if (_player == null)
         {
@@ -49,9 +50,21 @@ public class UI_Minimap : MonoBehaviour
         
         _minimapRadius = Mathf.Min(_minimapRect.rect.width, _minimapRect.rect.height) / 2f;
         _scale = _minimapRadius / _presentArea;
-
+        
         InitializePool();
-        // TestRegisterAllEnemies();
+    }
+
+    private void Awake()
+    {
+        Init();
+        EnemyEventController.Enemy.OnSpawned += RegisterEnemy;
+        EnemyEventController.Enemy.OnKilled += UnregisterEnemy;
+    }
+
+    private void OnDestroy()
+    {
+        EnemyEventController.Enemy.OnSpawned -= RegisterEnemy;
+        EnemyEventController.Enemy.OnKilled -= UnregisterEnemy;
     }
 
     private void LateUpdate()
@@ -100,15 +113,22 @@ public class UI_Minimap : MonoBehaviour
     }
     #endregion
     
-    public void RegisterEnemy(Transform enemy)
+    private void RegisterEnemy(EnemySpawnedEvent enemy)
     {
-        if (_enemyIcons.ContainsKey(enemy)) return;
+        Transform enemyTransform = enemy.Enemy.transform;
+        if (_enemyIcons.ContainsKey(enemyTransform)) return;
 
         EnemyIcon icon = GetIcon();
-        _enemyIcons[enemy] = icon;
+        _enemyIcons[enemyTransform] = icon;
     }
 
-    public void UnregisterEnemy(Transform enemy)
+    private void UnregisterEnemy(EnemyKilledEvent enemy)
+    {
+        Transform enemyTransform = enemy.Enemy.transform;
+        RemoveEnemy(enemyTransform);
+    }
+
+    private void RemoveEnemy(Transform enemy)
     {
         if (!_enemyIcons.TryGetValue(enemy, out EnemyIcon icon)) return;
 
@@ -151,23 +171,9 @@ public class UI_Minimap : MonoBehaviour
     {
         foreach (Transform enemy in _enemiesToRemove)
         {
-            UnregisterEnemy(enemy);
+            RemoveEnemy(enemy);
         }
 
         _enemiesToRemove.Clear();
     }
-    
-    #region Test Code
-
-    private void TestRegisterAllEnemies()
-    {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-
-        foreach (GameObject enemy in enemies)
-        {
-            RegisterEnemy(enemy.transform);
-        }
-    }
-
-    #endregion
 }

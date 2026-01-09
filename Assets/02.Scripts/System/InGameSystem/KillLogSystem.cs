@@ -7,16 +7,27 @@ public class KillLogSystem : SingletonBehaviour<KillLogSystem>
     protected override bool DontDestroy => false;
 
     public event Action<KillLogConfig> OnKillLogged;
-    private Dictionary<EEnemyType, int> _killLogs = new Dictionary<EEnemyType, int>();
+    private readonly Dictionary<EEnemyType, int> _killLogs = new Dictionary<EEnemyType, int>();
+
+    private void OnEnable()
+    {
+        EnemyEventController.Enemy.OnKilled += LogKill;
+    }
+
+    private void OnDisable()
+    {
+        EnemyEventController.Enemy.OnKilled -= LogKill;
+    }
     
-    public void LogKill()
+    private void LogKill(EnemyKilledEvent killedEvent)
     {
         // todo. EnemyData를 받아 출력할 수 있게 수정 필요
-        // todo. _killLogs에 죽인 몬스터 수를 기록하는 코드 추가
+        // todo. KillLog 기록 로직 추가
+        
         var killLogConfig = new KillLogConfig
         {
             SkillName = "",
-            DeathEnemy = EEnemyType.Normal
+            DeathEnemy = killedEvent.Enemy.EnemyType
         };
 
         OnKillLogged?.Invoke(killLogConfig);

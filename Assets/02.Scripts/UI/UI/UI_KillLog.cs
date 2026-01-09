@@ -16,7 +16,6 @@ public class UI_KillLog : MonoBehaviour
     private readonly List<KillLogItem> _activeItems = new List<KillLogItem>();
     
     [SerializeField] private Sprite[] _skillIcon;
-    [SerializeField] private Sprite[] _enemyIcon;
 
     private void Awake()
     {
@@ -50,9 +49,9 @@ public class UI_KillLog : MonoBehaviour
 
         // todo. 실제 각각의 정보에 맞는 Icon 정보 필요
         Sprite skillIcon = _skillIcon[UnityEngine.Random.Range(0, _skillIcon.Length)];
-        Sprite enemyIcon = _enemyIcon[UnityEngine.Random.Range(0, _enemyIcon.Length)];
+        var enemyName = config.DeathEnemy.ToString();
         
-        item.Initialize(skillIcon, enemyIcon, _itemLifetime);
+        item.Initialize(skillIcon, enemyName, _itemLifetime);
         _activeItems.Add(item);
         item.transform.SetAsFirstSibling();
     }

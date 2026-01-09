@@ -33,9 +33,20 @@ public class UI_CrossHair : MonoBehaviour
             new CrosshairLine { Transform = _leftLine, OriginalPos = _leftLine.anchoredPosition, SpreadDirection = Vector2.left },
             new CrosshairLine { Transform = _rightLine, OriginalPos = _rightLine.anchoredPosition, SpreadDirection = Vector2.right }
         };
+        
     }
 
-    public void OnEnemyHit()
+    private void OnEnable()
+    {
+        EnemyEventController.Enemy.OnHit += OnEnemyHit;
+    }
+
+    private void OnDisable()
+    {
+        EnemyEventController.Enemy.OnHit -= OnEnemyHit;
+    }
+    
+    private void OnEnemyHit(EnemyHitEvent hitEvent)
     {
         ProcessHitFeedback();
     }

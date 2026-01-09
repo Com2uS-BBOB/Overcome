@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,7 +9,7 @@ public class KillLogItem : MonoBehaviour
 {
     [Header("UI References")]
     [SerializeField] private Image _skillIcon;
-    [SerializeField] private Image _enemyIcon;
+    [SerializeField] private TextMeshProUGUI _enemyName;
     [SerializeField] private CanvasGroup _canvasGroup;
 
     [Space(10)]
@@ -28,14 +29,14 @@ public class KillLogItem : MonoBehaviour
         }
     }
     
-    public void Initialize(Sprite skillIcon, Sprite enemyIcon, float lifetime)
+    public void Initialize(Sprite skillIcon, string enemyName, float lifetime)
     {
         transform.localScale = Vector3.one;
         
         _lifetime = lifetime;
 
         _skillIcon.sprite = skillIcon;
-        _enemyIcon.sprite = enemyIcon;
+        _enemyName.text = enemyName;
 
         _canvasGroup.alpha = 1f;
         gameObject.SetActive(true);

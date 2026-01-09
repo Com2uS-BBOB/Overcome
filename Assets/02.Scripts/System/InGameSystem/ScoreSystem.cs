@@ -21,12 +21,21 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     protected override void Init()
     {
         _highScore = _testHighScore;
-        // todo. Enemy Die Event에 Increase Score 함수 바인딩
     }
     
-    private void IncreaseScore(int score)
+    private void OnEnable()
     {
-        _currentScore += score;
+        EnemyEventController.Enemy.OnKilled += IncreaseScore;
+    }
+
+    private void OnDisable()
+    {
+        EnemyEventController.Enemy.OnKilled -= IncreaseScore;
+    }
+    
+    private void IncreaseScore(EnemyKilledEvent killedEvent)
+    {
+        _currentScore += killedEvent.Score;
         UpdateHighScore();
         OnScoreChanged?.Invoke(_currentScore, _highScore);
     }
@@ -40,10 +49,5 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
             BreakHighScore?.Invoke();
         }
         _highScore = _currentScore;
-    }
-
-    public void TestIncrease()
-    {
-        IncreaseScore(1000);
     }
 }

@@ -35,6 +35,16 @@ public class ComboSystem : SingletonBehaviour<ComboSystem>
         _currentComboConfig = _comboConfigData.GetConfig(_comboCount);
     }
     
+    private void OnEnable()
+    {
+        EnemyEventController.Enemy.OnHit += AddCombo;
+    }
+
+    private void OnDisable()
+    {
+        EnemyEventController.Enemy.OnHit -= AddCombo;
+    }
+    
     private void Update()
     {
         if (_comboCount <= 0) return;
@@ -45,7 +55,7 @@ public class ComboSystem : SingletonBehaviour<ComboSystem>
         ResetCombo();
     }
  
-    public void AddCombo()
+    private void AddCombo(EnemyHitEvent hitEvent)
     {
         _comboCount = Mathf.Min(_comboCount + 1, _comboConfigData.MaxCombo);
         _comboTimer = _comboConfigData.ComboDuration;

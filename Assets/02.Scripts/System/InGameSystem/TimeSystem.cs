@@ -28,6 +28,16 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         SetInfoByDifficulty();
     }
     
+    private void OnEnable()
+    {
+        EnemyEventController.Enemy.OnKilled += KillEnemy;
+    }
+
+    private void OnDisable()
+    {
+        EnemyEventController.Enemy.OnKilled -= KillEnemy;
+    }
+    
     private void SetInfoByDifficulty()
     {
         _difficultyConfig = _difficultyConfigData.GetConfig(_currentDifficulty);
@@ -63,6 +73,11 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         OnGameOver?.Invoke();
     }
 
+    private void KillEnemy(EnemyKilledEvent killedEvent)
+    {
+        AddTimeLimit(killedEvent.Playtime);
+    }
+    
     public void AddTimeLimit(float additionalTime)
     {
         if (!_difficultyConfig.HasTimeLimit) return;
