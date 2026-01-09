@@ -17,11 +17,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly float _biteCooldownMax = 5f;
     private readonly float _biteTouchDelay = 0.2f;
 
-    private IEnemyAction _currentAction;
-
     public bool IsFinished => false;
-
-    private readonly int _slotIndex;
 
     public NormalAttackPattern(
         EnemyAttackPatternContext context,

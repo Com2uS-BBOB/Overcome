@@ -10,11 +10,7 @@ public class AttackWaitAction : IEnemyAction
     private readonly NavMeshAgent _agent;
     private readonly AttackWaitActionConfig _actionConfig;
 
-    private readonly float _minWait;
-    private readonly float _maxWait;
     private readonly float _waitSpeedMultiplier;
-    private readonly bool _releaseSlotOnExit;
-    private readonly int _fixedSlotIndex;
 
     private float _timer;
     private float _duration;
@@ -32,9 +28,6 @@ public class AttackWaitAction : IEnemyAction
     private float _shuffleAngle = 35f;     // 원호 이동 각도
     private float _feintDistance = 0.8f;
     private float _navSampleRadius = 1.5f;
-
-    private float _arrivedThreshold = 0.2f;
-    private float _minStoppingDistance = 0.1f;
 
     private float _shuffleModeValue = 0.40f;
     private float _feintModeValue = 0.70f;
@@ -67,17 +60,12 @@ public class AttackWaitAction : IEnemyAction
     {
         _isFinished = false;
         _timer = 0f;
-        _duration = Random.Range(_minWait, _maxWait);
+        _duration = Random.Range(_actionConfig.MinWait, _actionConfig.MaxWait);
 
         // 슬롯 점유 (이미 슬롯이 있으면 그 슬롯 사용)
-        if (_fixedSlotIndex >= 0)
-        {
-            _mySlotIndex = _fixedSlotIndex;
-        }
-        else
-        {
-            _mySlotIndex = _slotCoordinator.ClaimSlot(_enemy);
-        }
+        _mySlotIndex = (_actionConfig.FixedSlotIndex >= 0)
+            ? _actionConfig.FixedSlotIndex
+            : _slotCoordinator.ClaimSlot(_enemy);
 
         _agent.isStopped = false;
         _movement.SetRotationToLookAt(_player);
@@ -102,7 +90,8 @@ public class AttackWaitAction : IEnemyAction
         float flat = Vector3.Distance(new Vector3(_enemy.position.x, 0, _enemy.position.z),new Vector3(destination.x, 0, destination.z));
         
         // 슬롯 근처 또는 모드 목적지 근처면 대기 타이머 진행
-        bool arrived = flat <= _arrivedThreshold || (!_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, _minStoppingDistance));
+        bool arrived = flat <= _actionConfig.ArrivedThreshold ||
+            (!_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, _actionConfig.MinStoppingDistance));
 
         if (!arrived)
         {
@@ -192,7 +181,7 @@ public class AttackWaitAction : IEnemyAction
 
     public void Exit()
     {
-        if (_releaseSlotOnExit)
+        if (_actionConfig.ReleaseSlotOnExit)
         {
             ReleaseSlotNow();
         }
