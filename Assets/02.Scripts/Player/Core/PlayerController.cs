@@ -173,8 +173,12 @@ namespace _02.Scripts.Player.Core
         // 오버드라이브 발동
         private void HandleOverDrive() => _gaugeManager?.TryActivateOverDrive();
 
-        // 적 적중 시 오버드라이브 게이지 충전
-        private void HandleEnemyHitForOverDrive(IDamageable target, float damage) => _gaugeManager?.ChargeOverDriveOnHit();
+        // 적 적중 시 오버드라이브 게이지 충전 및 UI 이벤트 전달
+        private void HandleEnemyHitForOverDrive(IDamageable target, float damage)
+        {
+            _gaugeManager?.ChargeOverDriveOnHit();
+            HitEventManager.Instance?.NotifyDamageDealt(damage);
+        }
 
         // 콤보 공격 애니메이션
         private void HandleComboAttack(int comboStep) => _playerAnimatorController?.PlayAttack(comboStep, Movement.IsGrounded);
