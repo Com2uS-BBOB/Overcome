@@ -11,7 +11,7 @@ public class UI_Skill : MonoBehaviour
     [SerializeField] private Image _blockSkillImage;
     private int _lastDisplayTime;
     private bool _processCoolDown;
-    
+
     // Test Code
     [Header("Test Settings")]
     [SerializeField] private float _coolDownDuration = 5f;
@@ -33,17 +33,17 @@ public class UI_Skill : MonoBehaviour
     public void SetCoolDown()
     {
         if (!_canUse) return;
-        
+
         _elapsedTime = 0f;
         _processCoolDown = true;
-        
+
         ShowCooldownUI();
     }
 
     private void Update()
     {
         if (!_processCoolDown) return;
-        
+
         // todo. Player 정보 기반 내용으로 수정
         _elapsedTime += Time.deltaTime;
         float progress = Mathf.Clamp01(_elapsedTime / _coolDownDuration);
@@ -58,7 +58,7 @@ public class UI_Skill : MonoBehaviour
     private void UpdateCoolDownUI(float progress)
     {
         _coolDownGauge.fillAmount = progress;
-        
+
         float remainTime = _coolDownDuration * (1f - progress);
         int displayTime = Mathf.CeilToInt(remainTime);
         if (displayTime != _lastDisplayTime)
