@@ -1,27 +1,30 @@
-using UnityEngine;
+using System.Collections.Generic;
 
-public class EliteAttackPattern : MonoBehaviour
+public class EliteAttackPattern : IEnemyAttackPattern
 {
-    private EEliteAttackPhase _phase;
+    private readonly StepAttackPatternRunner _runner;
 
-    private bool _isFinished;
+    public bool IsFinished => false;
 
-    public bool IsFinished => _isFinished;
-
-    public void Update()
+    public EliteAttackPattern(EnemyAttackPatternContext context, EliteAttackPatternConfig config)
     {
-        if (_isFinished) return;
-
-        switch (_phase)
+        // 기본 스텝
+        var steps = new List<IEnemyAttackStep>
         {
-            case EEliteAttackPhase.Rush:
-                break;
+            new OpeningRushStep(context, config.OpeningRushDistance, config.OpeningRushDuration)
+        };
 
-            case EEliteAttackPhase.Wait:
-                break;
+        // 항상 돌아가는 스텝
+        var always = new List<IEnemyAttackAlwaysStep>
+        {
 
-            case EEliteAttackPhase.Rip:
-                break;
-        }
+        };
+
+        _runner = new StepAttackPatternRunner(steps, always);
     }
+
+    public void Start() => _runner.Start();
+    public void Update() => _runner.Update();
+    public void Stop() => _runner.Stop();
+    public void OnAnimEvent(EAttackAnimEvent animEvent) => _runner.OnAnimEvent(animEvent);
 }
