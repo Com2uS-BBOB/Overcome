@@ -974,7 +974,7 @@ MonoBehaviour:
   _crescent: {fileID: 1089555354}
   _dashAttack: {fileID: 1089555355}
   _gaugeManager: {fileID: 1089555356}
-  _playerAnimatorController: {fileID: 0}
+  _playerAnimatorController: {fileID: 1089555357}
 --- !u!114 &1089555349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1273,7 +1273,7 @@ PrefabInstance:
     - target: {fileID: 855324125511743067, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: 2e60b91038cc54bca9e5c4d3d6133664, type: 2}
+      objectReference: {fileID: 9100000, guid: 96c196d5f6d184ed59afa7b92617e3d2, type: 2}
     - target: {fileID: 855324125511743067, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_ApplyRootMotion
       value: 0
@@ -1317,6 +1317,42 @@ PrefabInstance:
     - target: {fileID: 1782168504486438905, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 35.636185
+      objectReference: {fileID: 0}
+    - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 1.9704885
+      objectReference: {fileID: 0}
+    - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 97.77869
+      objectReference: {fileID: 0}
+    - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 2.5636005
+      objectReference: {fileID: 0}
+    - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 35.602703
+      objectReference: {fileID: 0}
+    - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -96.321846
+      objectReference: {fileID: 0}
+    - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -59.215134
+      objectReference: {fileID: 0}
+    - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -101.38903
+      objectReference: {fileID: 0}
+    - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -36.36892
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
