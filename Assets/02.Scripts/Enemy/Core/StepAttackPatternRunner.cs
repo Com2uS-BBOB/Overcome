@@ -31,7 +31,7 @@ public class StepAttackPatternRunner : IEnemyAttackPattern
             _always[i].StartAlways();
         }
 
-        // 시작 시점에 “유지형” 스텝이 필요하면 해당 스텝 내부에서 TryStart() 때 생성/Enter하도록 구성
+        // 시작 시점에 항상 실행되는 스텝이 필요하면 해당 스텝 내부에서 TryStart() 때 생성/Enter하도록 구성
     }
 
     public void Update()
@@ -39,7 +39,10 @@ public class StepAttackPatternRunner : IEnemyAttackPattern
         // 항상 실행되는 스텝들
         for (int i = 0; i < _always.Count; i++)
         {
-            _always[i].TickAlways();
+            if (_always[i].ShouldTickWhile(_current))
+            {
+                _always[i].TickAlways();
+            }
         }
 
         // 현재 실행 중인 스텝

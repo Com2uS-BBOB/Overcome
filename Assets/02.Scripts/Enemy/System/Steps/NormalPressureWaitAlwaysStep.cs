@@ -5,6 +5,7 @@ public class NormalPressureWaitAlwaysStep : IEnemyAttackAlwaysStep
     private readonly AttackWaitActionConfig _config;
 
     private AttackWaitAction _pressure;
+    private bool _wasPaused;
 
     public NormalPressureWaitAlwaysStep(EnemyAttackPatternContext context, AttackWaitActionConfig config)
     {
@@ -25,6 +26,7 @@ public class NormalPressureWaitAlwaysStep : IEnemyAttackAlwaysStep
             _config
         );
         _pressure.Enter();
+        _wasPaused = false;
     }
 
     public void TickAlways()
@@ -37,5 +39,31 @@ public class NormalPressureWaitAlwaysStep : IEnemyAttackAlwaysStep
     {
         _pressure?.Exit();
         _pressure = null;
+    }
+
+    public bool ShouldTickWhile(IEnemyAttackStep currentStep)
+    {
+        bool shouldPause = (currentStep is OpeningRushStep) || (currentStep is NormalBiteStep);
+        
+        // 상태가 바뀌면 Exit/Enter 처리
+        if (shouldPause && !_wasPaused)
+        {
+            // 일시정지 시 Exit하여 NavMeshAgent 제어 해제
+            _pressure?.Exit();
+            _wasPaused = true;
+            return false;
+        }
+        else if (!shouldPause && _wasPaused)
+        {
+            // 다시 Enter
+            if (_pressure != null && _context.Player != null)
+            {
+                _pressure.Enter();
+            }
+            _wasPaused = false;
+            return true;
+        }
+        
+        return !shouldPause;
     }
 }
