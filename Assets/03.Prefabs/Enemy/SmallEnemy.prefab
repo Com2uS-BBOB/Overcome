@@ -71,7 +71,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: b40f8057638f17848ae52c10544f286c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -128,7 +128,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ffd06218cde93514eb138adf337ffbd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SmallEnemy
-  EnemyStatData: {fileID: 11400000, guid: 18794bed0c3dcb24eba55ab29c144215, type: 2}
   _spawnHeight: 2
 --- !u!114 &-2663029545220124248
 MonoBehaviour:
@@ -139,13 +138,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 1045832139059423618}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2168a6bf35c73774e980742615f6e366, type: 3}
+  m_Script: {fileID: 11500000, guid: 56f7fe0cecdb42045bc6dd703591ef41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
-  _detectRange: 6
-  _outRange: 12
-  _stopDistance: 0.1
-  _attackRange: 3
+  _detectRange: 10
+  _outRange: 18
+  _returnStopDistance: 0.3
+  _attackRange: 10
+  _openingRushDistance: 10
+  _openingRushDuration: 0.54
+  _pressureSpeedMultiplier: 0.15
 --- !u!54 &-3666630144614001360
 Rigidbody:
   m_ObjectHideFlags: 0
