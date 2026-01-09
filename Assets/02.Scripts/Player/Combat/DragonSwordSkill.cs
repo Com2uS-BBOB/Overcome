@@ -13,11 +13,12 @@ namespace _02.Scripts.Player.Combat
     public class DragonSwordSkill : MonoBehaviour, ISkill
     {
         private const string CooldownKey = "Attack";
-        private const int MaxCombo = 2;
+        private const int MaxCombo = 3;
 
         [Header("Duration Settings")]
         [SerializeField] private float _attack1Duration = 0.8f;
         [SerializeField] private float _attack2Duration = 0.9f;
+        [SerializeField] private float _attack3Duration = 1.0f;
 
         [Header("Combo Settings")]
         [SerializeField] private float _comboWindowStart = 0.3f;   // 콤보 윈도우 시작 (1타 중)
@@ -63,7 +64,13 @@ namespace _02.Scripts.Player.Combat
         public bool CanComboGrace => _inComboGrace && _comboStep < MaxCombo;
 
         private float AttackDamage => _stats != null ? _stats.AttackDamage : 10f;
-        private float GetAttackDuration(int step) => step == 1 ? _attack1Duration : _attack2Duration;
+        private float GetAttackDuration(int step) => step switch
+        {
+            1 => _attack1Duration,
+            2 => _attack2Duration,
+            3 => _attack3Duration,
+            _ => _attack1Duration
+        };
 
         public event Action OnSkillUsed;
         public event Action OnAttackStarted;

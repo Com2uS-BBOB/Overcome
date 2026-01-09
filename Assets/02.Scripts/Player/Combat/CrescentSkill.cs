@@ -15,6 +15,7 @@ namespace _02.Scripts.Player.Combat
 
         [Header("Duration Settings")]
         [SerializeField] private float _skillDuration = 0.6f;
+        [SerializeField] private float _comboWindow = 0.8f;  // 콤보 입력 허용 시간
 
         [Header("References")]
         [SerializeField] private CrescentProjectile _projectilePrefab;
@@ -30,6 +31,11 @@ namespace _02.Scripts.Player.Combat
         private bool _isUsing;
         private Coroutine _skillCoroutine;
 
+        // 콤보 시스템
+        private int _comboStep;
+        private float _comboTimer;
+        private const int MaxCombo = 2;
+
         // ISkill
         public string SkillName => "크레센트";
         public float Cooldown => 0f;
@@ -43,9 +49,14 @@ namespace _02.Scripts.Player.Combat
         private float Speed => _stats != null ? _stats.CrescentSpeed : 20f;
         private float Range => _stats != null ? _stats.CrescentRange : 30f;
 
+        // 콤보 프로퍼티
+        public int ComboStep => _comboStep;
+        public bool CanCombo => _comboStep > 0 && _comboStep < MaxCombo && _comboTimer > 0f;
+
         public event Action OnSkillUsed;
         public event Action OnCrescentEnded;
         public event Action<IDamageable, float> OnEnemyHit;
+        public event Action<int> OnComboAttack;  // comboStep 전달
 
         private void Awake()
         {
@@ -65,12 +76,50 @@ namespace _02.Scripts.Player.Combat
             _gaugeManager = gaugeManager;
         }
 
-        public void Use() => Fire();
-
-        // 카메라 방향으로 프로젝타일 발사
-        public void Fire()
+        private void Update()
         {
-            if (!CanUse || _projectilePool == null) return;
+            // 콤보 타이머 감소
+            if (_comboTimer > 0f)
+            {
+                _comboTimer -= Time.deltaTime;
+                if (_comboTimer <= 0f)
+                    ResetCombo();
+            }
+        }
+
+        /// <summary>
+        /// 크레센트 공격 (콤보 시스템)
+        /// </summary>
+        public void Attack()
+        {
+            // 콤보 연속 입력
+            if (CanCombo && _gaugeManager.CanUseCrescent)
+            {
+                _comboStep++;
+                _comboTimer = _comboWindow;
+                FireProjectile();
+                OnComboAttack?.Invoke(_comboStep);
+                return;
+            }
+
+            // 첫 공격
+            if (CanUse)
+            {
+                _comboStep = 1;
+                _comboTimer = _comboWindow;
+                FireProjectile();
+                OnComboAttack?.Invoke(_comboStep);
+            }
+        }
+
+        public void Use() => Attack();
+
+        /// <summary>
+        /// 프로젝타일 발사 (내부용)
+        /// </summary>
+        private void FireProjectile()
+        {
+            if (_projectilePool == null) return;
 
             // 오버드라이브 중이 아닐 때만 게이지 소모
             if (!IsOverDriveActive)
@@ -88,6 +137,15 @@ namespace _02.Scripts.Player.Combat
             _skillCoroutine = StartCoroutine(SkillDurationCoroutine());
 
             OnSkillUsed?.Invoke();
+        }
+
+        /// <summary>
+        /// 콤보 리셋
+        /// </summary>
+        public void ResetCombo()
+        {
+            _comboStep = 0;
+            _comboTimer = 0f;
         }
 
         private IEnumerator SkillDurationCoroutine()
