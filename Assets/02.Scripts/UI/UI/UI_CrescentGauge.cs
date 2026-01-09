@@ -1,14 +1,15 @@
+using _02.Scripts.Player.Gauge;
 using UnityEngine;
-using UnityEngine.UI;
-using DG.Tweening;
 
 public class UI_CrescentGauge : MonoBehaviour
 {
     [SerializeField] private Gauge _gauge;
-
+    [SerializeField] private GaugeManager _gaugeManager;
+    
     private void Awake()
     {
-        _gauge.Init();
+        _gauge.Init(1f);
+        _gaugeManager.OnCrescentGaugeChanged += SetGauge;
     }
 
     private void OnDestroy()
@@ -16,15 +17,9 @@ public class UI_CrescentGauge : MonoBehaviour
         _gauge.Clear();        
     }
     
-    public void SetGauge(float value)
+    private void SetGauge(float value, float max)
     {
-        _gauge.SetValue(value);
+        float nextValue = value / max;
+        _gauge.SetValue(nextValue);
     }
-    
-    #region Test Code
-    public void IncreaseGauge(float value)
-    {
-        
-    }
-    #endregion
 }

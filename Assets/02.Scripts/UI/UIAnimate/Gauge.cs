@@ -17,9 +17,10 @@ public class Gauge
     public float Value => _remainValue;
     private Tweener _tweener;
 
-    public void Init()
+    public void Init(float initialValue = 0f)
     {
-        _remainValue = 0;
+        _remainValue = initialValue;
+        _fillImage.fillAmount = initialValue;
         _tweener = _fillImage
                    .DOFillAmount(_remainValue, _duration)
                    .SetEase(_ease)

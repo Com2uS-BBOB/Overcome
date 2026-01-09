@@ -61,7 +61,9 @@ public class AnimatedNumber
         _text.text = string.Format(_format, _currentValue);
     }
     
-    public void Deactive()
+    public void ActivateTextUI() => _text.gameObject.SetActive(true);
+    
+    public void DeactivateTextUI()
     {
         if (_tweener.IsPlaying())
         {
