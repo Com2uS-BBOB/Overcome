@@ -20,25 +20,25 @@ public class EnemyState : MonoBehaviour
 
     private bool _didOpeningRush;
     private RushAction _openingRushAction;
-    private AttackWaitAction _pressureWaitAction;
 
     [Header("Trace 관련 옵션")]
     [SerializeField] private float _detectRange = 10f;
+    [SerializeField] private float _standOffDistance = 8.5f;  // 비압박자 유지 거리(attackRange보다 크게)
+    [SerializeField] private float _standOffRepathInterval = 0.4f;  // 목적지 자주 바뀜 방지
+
+    private float _standOffRepathTimer;
+    private bool _pressureReserved;
 
     [Header("Return 관련 옵션")]
     [SerializeField] private float _outRange = 18f;
     [SerializeField] private float _returnStopDistance = 0.3f;
 
     [Header("Attack 관련 옵션")]
-    [SerializeField] private float _attackRange = 10f;
+    [SerializeField] private float _attackRange = 5f;
 
     [Header("오프닝 돌진 옵션")]
     [SerializeField] private float _openingRushDistance = 10f;
     [SerializeField] private float _openingRushDuration = 0.54f;
-
-    [Header("압박 Wait 옵션")]
-    [SerializeField] private float _pressureSpeedMultiplier = 0.15f;
-    private float _pressureWaitTime = 999f; // 사실상 무한대기
 
     private void Awake()
     {
@@ -81,9 +81,7 @@ public class EnemyState : MonoBehaviour
     {
         _player = player;
         _attack?.Initialize(player);
-
         _attackDirector = player.GetComponent<EnemyAttackDirector>();
-        _slotCoordinator = player.GetComponent<EnemySlotCoordinator>();
     }
 
     #region State Updates
@@ -109,6 +107,7 @@ public class EnemyState : MonoBehaviour
 
         if (IsPlayerOutOfRange() && _canReturn)
         {
+            _attack.Stop();
             CleanupEngagement();
             ChangeState(EEnemyState.Return);
             return;
@@ -120,20 +119,82 @@ public class EnemyState : MonoBehaviour
             return; // Rush 하는 동안은 Wait/Bite 판단하지 않음
         }
 
-        // Rush 이후엔 항상 슬롯 압박 Wait 유지
-        StartOrUpdatePressureWait();
-
-        if (IsPlayerInAttackRange() && _canAttack)
+        if (_canAttack && IsPlayerInAttackRange())
         {
-            bool granted = (_attackDirector == null) || _attackDirector.TryReserve(transform);
-            if (granted)
+            if (_pressureReserved)
             {
-                int slotIndex = _pressureWaitAction != null ? _pressureWaitAction.SlotIndex : -1;
-                _attack.SetCurrentSlotIndex(slotIndex);
-                ChangeState(EEnemyState.Attack);
-                return;
+                _attackDirector?.ReleasePressure(transform);
+                _pressureReserved = false;
+            }
+
+            ChangeState(EEnemyState.Attack);
+            return;
+        }
+
+        // 플레이어 가까이 갈 압박자 여부 결정
+        bool isPressurer = (_attackDirector == null) || _attackDirector.TryReservePressure(transform);
+        _pressureReserved = isPressurer && (_attackDirector != null);
+
+        _movement.SetRotationToLookAt(_player);
+
+        if (isPressurer)
+        {
+            // 압박자는 플레이어 쪽으로 접근
+            _movement.MoveTo(_player.position);
+        }
+        else
+        {
+            // 비압박자는 떨어져서 이동
+            _standOffRepathTimer -= Time.deltaTime;
+
+            if (_standOffRepathTimer <= 0f)
+            {
+                _standOffRepathTimer = _standOffRepathInterval;
+
+                Vector3 toEnemy = (transform.position - _player.position);
+                toEnemy.y = 0f;
+
+                Vector3 direction = toEnemy.sqrMagnitude > 0.01f ? toEnemy.normalized : Vector3.forward;
+                Vector3 desired = _player.position + direction * _standOffDistance;
+
+                // NavMesh 위로 보정
+                if (NavMesh.SamplePosition(desired, out var hit, 1.5f, NavMesh.AllAreas))
+                {
+                    desired = hit.position;
+
+                }
+                _movement.MoveTo(desired);
             }
         }
+    }
+
+    private void UpdateAttack()
+    {
+        if (_player == null)
+        {
+            _attack.Stop();
+            CleanupEngagement();
+            ChangeState(EEnemyState.Idle);
+            return;
+        }
+
+        if (IsPlayerOutOfRange() && _canReturn)
+        {
+            _attack.Stop();
+            CleanupEngagement();
+            ChangeState(EEnemyState.Return);
+            return;
+        }
+
+        // AttackRange 밖이면 추적으로 복귀
+        if (!IsPlayerInAttackRange())
+        {
+            _attack.Stop();
+            ChangeState(EEnemyState.Trace);
+            return;
+        }
+
+        _attack.UpdateAttack();
     }
 
     private void StartOrUpdateOpeningRush()
@@ -164,26 +225,6 @@ public class EnemyState : MonoBehaviour
         }
     }
 
-    private void StartOrUpdatePressureWait()
-    {
-        if (_pressureWaitAction == null)
-        {
-            _pressureWaitAction = new AttackWaitAction(
-                transform,
-                _player,
-                _movement,
-                _slotCoordinator,
-                _agent,
-                _pressureWaitTime, _pressureWaitTime,
-                _pressureSpeedMultiplier,
-                releaseSlotOnExit: false // Bite 하러 잠깐 빠져도 슬롯 유지
-            );
-            _pressureWaitAction.Enter();
-        }
-
-        _pressureWaitAction.Update();
-    }
-
     private void UpdateReturn()
     {
         Vector3 returnPosition = _enemy.GetSpawnBasePosition();
@@ -197,39 +238,6 @@ public class EnemyState : MonoBehaviour
         }
     }
 
-    private void UpdateAttack()
-    {
-        int slot = _pressureWaitAction != null ? _pressureWaitAction.SlotIndex : -1;
-
-        if (_player == null)
-        {
-            _attack.Stop();
-            _attackDirector?.Release(transform);
-            CleanupEngagement();
-            ChangeState(EEnemyState.Idle);
-            return;
-        }
-
-        _attack.UpdateAttack();
-
-        // Bite가 끝났으면 공격권 반납하고 다시 Trace(Wait 유지)로 복귀
-        if (_attack.IsAttackFinished)
-        {
-            _attack.Stop();
-            _attackDirector?.Release(transform);
-            ChangeState(EEnemyState.Trace);
-            return;
-        }
-
-        if (IsPlayerOutOfRange() && _canReturn)
-        {
-            _attack.Stop();
-            _attackDirector?.Release(transform);
-            CleanupEngagement();
-            ChangeState(EEnemyState.Return);
-        }
-    }
-
     #endregion
 
     #region Cleanup
@@ -239,16 +247,13 @@ public class EnemyState : MonoBehaviour
         // Rush 정리
         _openingRushAction?.Exit();
         _openingRushAction = null;
-
-        // 슬롯 점유 해제
-        if (_pressureWaitAction != null)
-        {
-            _pressureWaitAction.ReleaseSlotNow();
-            _pressureWaitAction.Exit();
-            _pressureWaitAction = null;
-        }
-
         _didOpeningRush = false;
+
+        if (_pressureReserved)
+        {
+            _attackDirector?.ReleasePressure(transform);
+            _pressureReserved = false;
+        }
     }
 
     #endregion

@@ -12,16 +12,27 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly Animator _animator;
     private readonly NavMeshAgent _agent;
     private readonly EnemySlotCoordinator _slotCoordinator;
+    private readonly EnemyAttackDirector _attackDirector;
+
+    private AttackWaitAction _pressure;
+    private BiteAction _bite;
+
+    private bool _reserved;
+    private float _nextBiteTime;
+
+    // 압박 유지 관련
+    private readonly float _pressureWaitTime = 999f;
+    private readonly float _pressureSpeed = 0.15f;
+
+    // Bite 관련
+    private readonly float _biteCooldownMin = 3f;
+    private readonly float _biteCooldownMax = 5f;
+    private readonly float _biteTouchDelay = 0.2f;
 
     private IEnemyAction _currentAction;
-    private bool _isFinished;
 
-    public bool IsFinished => _isFinished;
+    public bool IsFinished => false;
 
-    // 수치 데이터
-    private readonly float _minWait = 1f;
-    private readonly float _maxWait = 3f;
-    private readonly float _windupSpeed = 0.15f;
     private readonly int _slotIndex;
 
     public NormalAttackPattern(
@@ -30,10 +41,9 @@ public class NormalAttackPattern : IEnemyAttackPattern
         float damage,
         EnemyMovement movement,
         EnemyKnockbackHitbox knockbackHitbox,
-        EnemyAttack attack,
         Animator animator,
         EnemySlotCoordinator slotCoordinator,
-        int slotIndex
+        EnemyAttackDirector attackDirector
     )
     {
         _player = player;
@@ -44,85 +54,103 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _animator = animator;
         _agent = enemy.GetComponent<NavMeshAgent>();
         _slotCoordinator = slotCoordinator;
-        _slotIndex = slotIndex;
+        _attackDirector = attackDirector;
     }
 
     public void Start()
     {
-        _isFinished = false;
+        _reserved = false;
+        _nextBiteTime = Time.time + Random.Range(_biteCooldownMin, _biteCooldownMax);
 
-        _currentAction = new AttackWaitAction(
+        // 압박 액션 생성 (슬롯 점유 포함)
+        _pressure = new AttackWaitAction(
             _enemy,
             _player,
             _movement,
             _slotCoordinator,
             _agent,
-            _minWait,
-            _maxWait,
-            _windupSpeed,
-            fixedSlotIndex: _slotIndex,
-            releaseSlotOnExit: false
+            _pressureWaitTime, _pressureWaitTime,
+            _pressureSpeed,
+            releaseSlotOnExit: true,  // 패턴이 Stop될 때만 Exit 호출되고 슬롯 해제
+            fixedSlotIndex: -1
         );
-
-        _currentAction.Enter();
+        _pressure.Enter();
     }
 
     public void Update()
     {
-        if (_isFinished) return;
+        if (_player == null) return;
 
-        _currentAction?.Update();
-
-        if (_currentAction != null && _currentAction.IsFinished)
+        // 1) Bite 진행 중이면 Bite만 처리 (압박은 잠시 정지)
+        if (_bite != null)
         {
-            _currentAction.Exit();
+            _bite.Update();
 
-            if (_currentAction is AttackWaitAction)
+            if (_bite.IsFinished)
             {
-                _currentAction = new BiteAction(
-                    _enemy,
-                    _player,
-                    _knockbackHitbox,
-                    _animator,
-                    _enemy.GetComponent<NavMeshAgent>(),
-                    _damage
-                    );
-                _currentAction.Enter();
-                return;
-            }
+                _bite.Exit();
+                _bite = null;
 
-            if (_currentAction is BiteAction)
-            {
-                _currentAction.Exit();
-                _isFinished = true;
+                if (_reserved)
+                {
+                    _attackDirector?.Release(_enemy);
+                    _reserved = false;
+                }
+
+                _nextBiteTime = Time.time + Random.Range(_biteCooldownMin, _biteCooldownMax);
             }
+            return;
         }
+
+        // 2) Bite 중이 아니면 압박은 항상 유지
+        _pressure?.Update();
+
+        // 3) Bite 시도 (공격권 필요)
+        if (Time.time < _nextBiteTime) return;
+
+        bool granted = (_attackDirector == null) || _attackDirector.TryReserve(_enemy);
+        if (!granted)
+        {
+            _nextBiteTime = Time.time + _biteTouchDelay; // 너무 자주 두드리지 않게 살짝 딜레이
+            return;
+        }
+
+        _reserved = (_attackDirector != null);
+
+        _bite = new BiteAction(
+            _enemy,
+            _player,
+            _knockbackHitbox,
+            _animator,
+            _agent,
+            _damage
+        );
+        _bite.Enter();
     }
 
     public void Stop()
     {
-        _currentAction?.Exit();
-        _currentAction = null;
-        _isFinished = true;
+        // Bite 정리
+        if (_bite != null)
+        {
+            _bite.Exit();
+            _bite = null;
+        }
+
+        // 공격권 반납 (Attack 상태에서 빠질 때)
+        if (_reserved)
+        {
+            _attackDirector?.Release(_enemy);
+            _reserved = false;
+        }
+
+        // 압박 정리 + 슬롯 해제
+        _pressure?.Exit();
+        _pressure = null;
     }
 
-    public void ForwardBiteStart()
-    {
-        (_currentAction as BiteAction)?.OnAnimStart();
-    }
-
-    public void ForwardBiteHitStart()
-    {
-        (_currentAction as BiteAction)?.OnHitStart();
-    }
-
-    public void ForwardBiteHitEnd()
-    {
-        (_currentAction as BiteAction)?.OnHitEnd();
-    }
-
-    public void ForwardBiteEnd()
-    {
-        (_currentAction as BiteAction)?.OnAnimEnd();
-    }
+    public void ForwardBiteStart() => _bite?.OnAnimStart();
+    public void ForwardBiteHitStart() => _bite?.OnHitStart();
+    public void ForwardBiteHitEnd() => _bite?.OnHitEnd();
+    public void ForwardBiteEnd() => _bite?.OnAnimEnd();
 }

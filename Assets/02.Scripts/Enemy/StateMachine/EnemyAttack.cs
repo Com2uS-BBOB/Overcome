@@ -9,15 +9,11 @@ public class EnemyAttack : MonoBehaviour
     private EnemyKnockbackHitbox _knockbackHitbox;
     private Animator _animator;
     private EnemySlotCoordinator _slotCoordinator;
+    private EnemyAttackDirector _attackDirector;
 
     private bool _hasRushedOnce;
-
     public bool HasRushedOnce => _hasRushedOnce;
     public void MarkRushed() => _hasRushedOnce = true;
-
-    private int _currentSlotIndex = -1;
-    public void SetCurrentSlotIndex(int slotIndex) => _currentSlotIndex = slotIndex;
-
 
     private IEnemyAttackPattern _currentPattern;
 
@@ -33,7 +29,10 @@ public class EnemyAttack : MonoBehaviour
     {
         _player = player;
         _damage = _enemy.EnemyStatData.Damage;
+
+        // ✅ “공격에 필요한” player 컴포넌트는 공격쪽에서 관리
         _slotCoordinator = player.GetComponent<EnemySlotCoordinator>();
+        _attackDirector = player.GetComponent<EnemyAttackDirector>();
     }
 
     public void StartAttack()
@@ -66,49 +65,24 @@ public class EnemyAttack : MonoBehaviour
                     _damage,
                     _movement,
                     _knockbackHitbox,
-                    this,
                     _animator,
                     _slotCoordinator,
-                    _currentSlotIndex
+                    _attackDirector
                 );
                 break;
+
+                // TODO: Elite, Small 확장
         }
     }
 
-    public bool IsAttackFinished => _currentPattern == null || _currentPattern.IsFinished;
-
-    public void RestartAttackIfNeeded()
-    {
-        if (_currentPattern == null || _currentPattern.IsFinished)
-        {
-            SelectPattern();
-            _currentPattern?.Start();
-        }
-    }
+    // 애니메이션 이벤트 포워딩
+    public void OnBiteStart() => (_currentPattern as NormalAttackPattern)?.ForwardBiteStart();
+    public void OnBiteHitStart() => (_currentPattern as NormalAttackPattern)?.ForwardBiteHitStart();
+    public void OnBiteHitEnd() => (_currentPattern as NormalAttackPattern)?.ForwardBiteHitEnd();
+    public void OnBiteEnd() => (_currentPattern as NormalAttackPattern)?.ForwardBiteEnd();
 
     public void ResetRush()
     {
         _hasRushedOnce = false;
-    }
-
-    // 이벤트 호출용 메서드
-    public void OnBiteStart()
-    {
-        (_currentPattern as NormalAttackPattern)?.ForwardBiteStart();
-    }
-
-    public void OnBiteHitStart()
-    {
-        (_currentPattern as NormalAttackPattern)?.ForwardBiteHitStart();
-    }
-
-    public void OnBiteHitEnd()
-    {
-        (_currentPattern as NormalAttackPattern)?.ForwardBiteHitEnd();
-    }
-
-    public void OnBiteEnd()
-    {
-        (_currentPattern as NormalAttackPattern)?.ForwardBiteEnd();
     }
 }

@@ -32,6 +32,10 @@ public class AttackWaitAction : IEnemyAction
     private float _feintDistance = 0.8f;
     private float _navSampleRadius = 1.5f;
 
+    private float _shuffleModeValue = 0.40f;
+    private float _feintModeValue = 0.70f;
+    private float _repositionModeValue = 0.85f;
+
     public bool IsFinished => _isFinished;
     public int SlotIndex => _mySlotIndex;
 
@@ -100,7 +104,7 @@ public class AttackWaitAction : IEnemyAction
         float flat = Vector3.Distance(new Vector3(_enemy.position.x, 0, _enemy.position.z),new Vector3(destination.x, 0, destination.z));
         
         // 슬롯 근처 또는 모드 목적지 근처면 대기 타이머 진행
-        bool arrived = flat <= 0.25f || (!_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.2f));
+        bool arrived = flat <= 0.2f || (!_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.1f));
 
         if (!arrived)
         {
@@ -125,9 +129,9 @@ public class AttackWaitAction : IEnemyAction
 
         // Hold 빈도는 가중치로 조절 가능
         float r = Random.value;
-        if (r < 0.40f) _probeMode = EEnemyProbeMode.Shuffle;
-        else if (r < 0.70f) _probeMode = EEnemyProbeMode.Feint;
-        else if (r < 0.85f) _probeMode = EEnemyProbeMode.Reposition;
+        if (r < _shuffleModeValue) _probeMode = EEnemyProbeMode.Shuffle;
+        else if (r < _feintModeValue) _probeMode = EEnemyProbeMode.Feint;
+        else if (r < _repositionModeValue) _probeMode = EEnemyProbeMode.Reposition;
         else _probeMode = EEnemyProbeMode.Hold;
     }
 
