@@ -172,12 +172,21 @@ namespace _02.Scripts.Player.Core
         {
             if (_crescent == null) return;
 
-            // 첫 크레센트 또는 콤보
-            if (_crescent.CanUse || _crescent.CanCombo)
+            // Case 1: 첫 공격
+            if (_crescent.CanUse)
             {
-                if (!StateMachine.IsCurrentState<CrescentState>())
-                    StateMachine.ChangeState<CrescentState>();
-
+                StateMachine.ChangeState<CrescentState>();
+                _crescent.Attack();
+            }
+            // Case 2: 콤보 큐잉 (1타 진행 중)
+            else if (_crescent.CanQueueCombo)
+            {
+                _crescent.Attack();
+            }
+            // Case 3: 콤보 유예 (1타 끝난 직후)
+            else if (_crescent.CanComboGrace)
+            {
+                StateMachine.ChangeState<CrescentState>();
                 _crescent.Attack();
             }
         }
