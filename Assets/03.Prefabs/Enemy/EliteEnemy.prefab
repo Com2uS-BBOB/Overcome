@@ -133,7 +133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af64928a9b3983046829150a2e252ebb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BigEnemy
-  EnemyStatData: {fileID: 11400000, guid: 79485fb519b6c35428186994de8564d5, type: 2}
   _spawnHeight: 2
 --- !u!114 &7941721044486324764
 MonoBehaviour:
@@ -148,9 +147,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
   _detectRange: 10
+  _standOffDistance: 8.5
+  _standOffRepathInterval: 0.4
   _outRange: 18
   _returnStopDistance: 0.3
   _attackRange: 10
+  _openingRushDistance: 10
+  _openingRushDuration: 0.54
 --- !u!114 &-6883950643001174605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +166,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ae850c4419471e489ee7014c8f704ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  _enemyStatData: {fileID: 0}
   _rotationMode: 0
   _speedLerpSpeed: 6
 --- !u!114 &-6303558022810326248
@@ -178,7 +180,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af8d5fbc2139f540ba0ccefb6ec8b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
-  _slotCoordinator: {fileID: 0}
 --- !u!54 &5666727357644055194
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -214,7 +215,7 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 258497289072480065}
   m_Enabled: 1
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1923039037
   m_Radius: 0.5000001
   m_Speed: 2
   m_Acceleration: 8
