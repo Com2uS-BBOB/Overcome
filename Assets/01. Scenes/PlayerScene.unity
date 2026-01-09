@@ -277,8 +277,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 18113530}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.31622785, y: 0.000000028272979, z: -0.000000009424329, w: 0.9486833}
-  m_LocalPosition: {x: 0, y: 3.4, z: 1.8478701}
+  m_LocalRotation: {x: 0.1784248, y: -0.000000021466738, z: 0.0000000038926613, w: 0.98395354}
+  m_LocalPosition: {x: 0, y: 3.4, z: -0.15212989}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -618,8 +618,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937650197}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3162278, y: 0.00000002827297, z: -0.0000000094243235, w: 0.9486834}
-  m_LocalPosition: {x: 0, y: 3.4, z: 1.8478701}
+  m_LocalRotation: {x: 0.17842479, y: -0.000000021466734, z: 0.00000000389266, w: 0.9839536}
+  m_LocalPosition: {x: 0, y: 3.4, z: -0.15212989}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -674,7 +674,7 @@ MonoBehaviour:
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
   OrbitStyle: 0
-  Radius: 2
+  Radius: 4
   Orbits:
     Top:
       Radius: 5
@@ -988,9 +988,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Movement.PlayerMovement
   _rotationSpeed: 10
-  _gravity: -10
+  _gravity: -25
   _groundedGravity: -5
-  _groundCheckDistance: 0.3
+  _groundCheckDistance: 1
   _groundCheckRadius: 0.2
   _groundLayer:
     serializedVersion: 2
@@ -1553,7 +1553,7 @@ Transform:
   m_GameObject: {fileID: 1587291321}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1, z: 0}
+  m_LocalPosition: {x: 0, y: -1.11, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
