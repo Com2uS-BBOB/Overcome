@@ -12,6 +12,8 @@ using System.Text;
 /// - SmallProps (User Layer 20): 작은 소품 - 컬링 거리 50m
 /// - MediumProps (User Layer 21): 중간 오브젝트 - 컬링 거리 100m  
 /// - Buildings (User Layer 22): 건물/도로/지형 - 컬링 없음 (항상 표시)
+/// 
+/// 우선순위: SmallProps > MediumProps > Buildings (구체적인 것 먼저 매칭)
 /// </summary>
 public class PrefabLayerAssigner : EditorWindow
 {
@@ -21,28 +23,66 @@ public class PrefabLayerAssigner : EditorWindow
     private const string BuildingsLayer = "Buildings";       // User Layer 22
     
     // ===== SmallProps 분류 키워드 (컬링 거리 50m) =====
+    // 가장 먼저 매칭됨 - 작은 장식 요소들
     private static readonly string[] SmallPropsKeywords = new string[]
     {
-        "Detail Small", "Grass", "Plants", "Props", "Signs",
-        "Decals", "Trash", "Posters", "Graffiti", "FX",
-        "Particle", "Debris", "Litter"
+        "Deco",           // 장식 요소 (추가됨)
+        "Detail Small", 
+        "Grass", 
+        "Plants", 
+        "Props", 
+        "Signs",
+        "Trash", 
+        "Posters", 
+        "Graffiti", 
+        "FX",
+        "Particle", 
+        "Debris", 
+        "Litter"
     };
     
     // ===== MediumProps 분류 키워드 (컬링 거리 100m) =====
+    // 두 번째로 매칭됨 - 중간 크기 오브젝트
     private static readonly string[] MediumPropsKeywords = new string[]
     {
-        "Detail Big", "Trees", "Vehicles", "Cars", "Chars",
-        "Characters", "Lights", "Street Lights", "Furniture",
-        "Bench", "Lamp"
+        "Decals",         // 데칼 (추가됨)
+        "Fenced",         // 펜스가 있는 오브젝트 (추가됨)
+        "Detail Big", 
+        "Trees", 
+        "Vehicles", 
+        "Cars", 
+        "Chars",
+        "Characters", 
+        "Lights", 
+        "Street Lights", 
+        "Furniture",
+        "Bench", 
+        "Lamp"
     };
     
     // ===== Buildings 분류 키워드 (컬링 없음) =====
+    // 마지막으로 매칭됨 - 큰 구조물
     private static readonly string[] BuildingsKeywords = new string[]
     {
-        "Building", "Street", "Road", "Platform", "Terrain",
-        "Ground", "Wall", "Floor", "Base", "Block", "City",
-        "Elevation", "Window", "Door", "Gate", "Arc",
-        "Corner", "Cornice", "Column"
+        "Building", 
+        "Street", 
+        "Road", 
+        "Platform", 
+        "Terrain",
+        "Ground", 
+        "Wall", 
+        "Floor", 
+        "Base", 
+        "Block", 
+        "City",
+        "Elevation", 
+        "Window", 
+        "Door", 
+        "Gate", 
+        "Arc",
+        "Corner", 
+        "Cornice", 
+        "Column"
     };
     
     private Vector2 _scrollPosition;
@@ -64,9 +104,10 @@ public class PrefabLayerAssigner : EditorWindow
         EditorGUILayout.LabelField("프리팹 레이어 자동 할당 도구", EditorStyles.boldLabel);
         EditorGUILayout.HelpBox(
             "폴더 경로를 기반으로 프리팹의 레이어를 자동 할당합니다.\n\n" +
-            "• SmallProps (Layer 20): 풀, 식물, 소품, 간판 등 → 컬링 50m\n" +
-            "• MediumProps (Layer 21): 나무, 차량, 가로등 등 → 컬링 100m\n" +
-            "• Buildings (Layer 22): 건물, 도로, 지형 등 → 컬링 없음",
+            "• SmallProps (Layer 20): Deco, 풀, 식물, 소품 등 → 컬링 50m\n" +
+            "• MediumProps (Layer 21): Decals, Fenced, 나무, 차량 등 → 컬링 100m\n" +
+            "• Buildings (Layer 22): 건물, 도로, 지형 등 → 컬링 없음\n\n" +
+            "우선순위: SmallProps > MediumProps > Buildings",
             MessageType.Info);
         
         EditorGUILayout.Space(10);
@@ -253,25 +294,32 @@ public class PrefabLayerAssigner : EditorWindow
         return results;
     }
 
+    /// <summary>
+    /// 경로를 기반으로 적절한 레이어를 결정합니다.
+    /// 우선순위: SmallProps > MediumProps > Buildings > Default
+    /// (구체적인 키워드가 먼저 매칭되도록 순서 변경)
+    /// </summary>
     private string DetermineLayer(string path)
     {
-        // 우선순위: Buildings > MediumProps > SmallProps > Default
-        foreach (var keyword in BuildingsKeywords)
+        // 1. SmallProps 키워드 확인 (가장 구체적 - Deco 등)
+        foreach (var keyword in SmallPropsKeywords)
         {
             if (path.IndexOf(keyword, System.StringComparison.OrdinalIgnoreCase) >= 0)
-                return BuildingsLayer;
+                return SmallPropsLayer;
         }
         
+        // 2. MediumProps 키워드 확인 (Decals, Fenced 등)
         foreach (var keyword in MediumPropsKeywords)
         {
             if (path.IndexOf(keyword, System.StringComparison.OrdinalIgnoreCase) >= 0)
                 return MediumPropsLayer;
         }
         
-        foreach (var keyword in SmallPropsKeywords)
+        // 3. Buildings 키워드 확인 (가장 일반적)
+        foreach (var keyword in BuildingsKeywords)
         {
             if (path.IndexOf(keyword, System.StringComparison.OrdinalIgnoreCase) >= 0)
-                return SmallPropsLayer;
+                return BuildingsLayer;
         }
         
         return "Default";
