@@ -9,6 +9,8 @@ namespace _02.Scripts.Player.StateMachine.States
 
         public override void Enter()
         {
+            Movement.RotateToCamera();
+
             if (Controller.DashAttack != null && Controller.DashAttack.CanUse)
             {
                 Controller.DashAttack.OnDashEnded += OnDashEnded;

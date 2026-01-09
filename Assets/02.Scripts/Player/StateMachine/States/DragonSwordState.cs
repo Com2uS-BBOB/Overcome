@@ -9,14 +9,11 @@ namespace _02.Scripts.Player.StateMachine.States
 
         public override void Enter()
         {
-            if (Combat != null && Combat.CanAttack)
+            Movement.RotateToCamera();
+
+            if (Combat != null)
             {
                 Combat.OnAttackEnded += OnAttackEnded;
-                Combat.Attack();
-            }
-            else
-            {
-                ReturnToPreviousState();
             }
         }
 
