@@ -1,0 +1,174 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class UI_Minimap : MonoBehaviour
+{
+    [Space(10)]
+    [Header("UI References")]
+    [SerializeField] private RectTransform _playerIcon;
+    [SerializeField] private GameObject _enemyIconFolder;
+    [SerializeField] private RectTransform _minimapRect;
+
+    [Header("Extra References")]
+    [SerializeField] private Transform _player;
+    [SerializeField] private GameObject _enemyIconPrefab;
+    private Vector3 _playerPosition;
+    
+    [Space(10)]
+    [Header("Minimap Settings")]
+    [SerializeField] private float _presentArea = 30f;
+    [SerializeField] private float _updateInterval = 0.05f;
+
+    [Space(10)]
+    [Header("Pool")]
+    [SerializeField] private int _initialPoolSize = 10;
+
+    [Space(10)]
+    [Header("Visual")]
+    [SerializeField] private Color _inRangeColor = Color.red;
+    [SerializeField] private Color _outOfRangeColor = new Color(1f, 0.5f, 0f);
+
+    private readonly Dictionary<Transform, EnemyIcon> _enemyIcons = new Dictionary<Transform, EnemyIcon>();
+    private readonly List<Transform> _enemiesToRemove = new List<Transform>();
+    private readonly Stack<EnemyIcon> _iconPool = new Stack<EnemyIcon>();
+    private float _lastUpdateTime;
+    private float _minimapRadius;
+    private float _scale;
+
+    private void Start()
+    {
+        if (_player == null)
+        {
+            _player = GameObject.FindGameObjectWithTag("Player").transform;
+            if (_player == null)
+            {
+                enabled = false;
+                return;
+            }
+        }
+        
+        _minimapRadius = Mathf.Min(_minimapRect.rect.width, _minimapRect.rect.height) / 2f;
+        _presentArea = _minimapRadius / 3.0f;
+        _scale = _minimapRadius / _presentArea;
+
+        InitializePool();
+        TestRegisterAllEnemies();
+    }
+
+    private void LateUpdate()
+    {
+        if (Time.time - _lastUpdateTime < _updateInterval) return;
+
+        UpdateMinimap();
+        _lastUpdateTime = Time.time;
+    }
+    
+    #region Pool
+    private void InitializePool()
+    {
+        for (var i = 0; i < _initialPoolSize; i++)
+        {
+            EnemyIcon icon = CreateIcon();
+            icon.gameObject.SetActive(false);
+            _iconPool.Push(icon);
+        }
+    }
+
+    private EnemyIcon CreateIcon()
+    {
+        GameObject iconObj = Instantiate(_enemyIconPrefab, _enemyIconFolder.transform);
+        EnemyIcon icon = iconObj.GetComponent<EnemyIcon>();
+        icon.Initialize(_inRangeColor, _outOfRangeColor, _minimapRadius);
+        return icon;
+    }
+
+    private EnemyIcon GetIcon()
+    {
+        if (_iconPool.Count > 0)
+        {
+            EnemyIcon icon = _iconPool.Pop();
+            icon.gameObject.SetActive(true);
+            return icon;
+        }
+
+        return CreateIcon();
+    }
+
+    private void ReleaseIcon(EnemyIcon icon)
+    {
+        icon.gameObject.SetActive(false);
+        _iconPool.Push(icon);
+    }
+    #endregion
+    
+    public void RegisterEnemy(Transform enemy)
+    {
+        if (_enemyIcons.ContainsKey(enemy)) return;
+
+        EnemyIcon icon = GetIcon();
+        _enemyIcons[enemy] = icon;
+    }
+
+    public void UnregisterEnemy(Transform enemy)
+    {
+        if (!_enemyIcons.TryGetValue(enemy, out EnemyIcon icon)) return;
+
+        ReleaseIcon(icon);
+        _enemyIcons.Remove(enemy);
+    }
+
+    private void UpdateMinimap()
+    {
+        _playerPosition = _player.position;
+
+        UpdatePlayerIcon();
+        UpdateEnemyIcons();
+        RemoveDestroyedEnemies();
+    }
+
+    private void UpdatePlayerIcon()
+    {
+        _playerIcon.localRotation = Quaternion.Euler(0, 0, -_player.eulerAngles.y);
+    }
+
+    private void UpdateEnemyIcons()
+    {
+        foreach ((Transform enemy, EnemyIcon icon) in _enemyIcons)
+        {
+            if (enemy == null)
+            {
+                _enemiesToRemove.Add(enemy);
+                continue;
+            }
+
+            Vector3 relativePos = enemy.position - _playerPosition;
+            Vector2 mapPosition = new Vector2(relativePos.x, relativePos.z) * _scale;
+
+            icon.UpdatePosition(mapPosition);
+        }
+    }
+
+    private void RemoveDestroyedEnemies()
+    {
+        foreach (Transform enemy in _enemiesToRemove)
+        {
+            UnregisterEnemy(enemy);
+        }
+
+        _enemiesToRemove.Clear();
+    }
+    
+    #region Test Code
+
+    private void TestRegisterAllEnemies()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (GameObject enemy in enemies)
+        {
+            RegisterEnemy(enemy.transform);
+        }
+    }
+
+    #endregion
+}
