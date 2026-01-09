@@ -4,41 +4,27 @@ using DG.Tweening;
 
 public class UI_CrescentGauge : MonoBehaviour
 {
-    [SerializeField] private Image _gaugeFillImage;
+    [SerializeField] private Gauge _gauge;
 
-    [Header("Test Code")]
-    [SerializeField] private float _remainValue;
-
-    [Header("Animation")]
-    [SerializeField] private float _duration = 1f;
-    [SerializeField] private Ease _ease = Ease.Linear;
-    private Tweener _tweener;
-    
     private void Awake()
     {
-        _tweener = _gaugeFillImage
-                   .DOFillAmount(_remainValue, _duration)
-                   .SetEase(_ease)
-                   .SetAutoKill(false);
+        _gauge.Init();
     }
 
     private void OnDestroy()
     {
-        _tweener?.Kill();
-    }
-
-    public void SetGaugeValue(float value)
-    {
-        if (_gaugeFillImage == null) return;
-        if (Mathf.Approximately(_gaugeFillImage.fillAmount, value)) return;
-        _remainValue = Mathf.Clamp01(value);
-        UpdateGaugeUI();
+        _gauge.Clear();        
     }
     
-    private void UpdateGaugeUI()
+    public void SetGauge(float value)
     {
-        _tweener.ChangeStartValue(_gaugeFillImage.fillAmount);
-        _tweener.ChangeEndValue(_remainValue);
-        _tweener.Restart();
+        _gauge.SetValue(value);
     }
+    
+    #region Test Code
+    public void IncreaseGauge(float value)
+    {
+        
+    }
+    #endregion
 }

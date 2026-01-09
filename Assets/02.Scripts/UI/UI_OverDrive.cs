@@ -1,34 +1,41 @@
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class UI_OverDrive : MonoBehaviour
 {
     [Header("UI References")]
-    [SerializeField] private Image _gaugeFillImage;
     [SerializeField] private Image _gaugeEffectImage;
-    [SerializeField] private Image _gaugeOutlineImage;
     [SerializeField] private Image _overDriveIcon;
-    [SerializeField] private TextMeshProUGUI _gaugePercentText;
-    
-    [Space(10)]
-    [Header("Test Settings")]
-    [SerializeField] private float _chargingAmount;
-    
+
+    [Header("Components")]
+    [SerializeField] private Gauge _gauge;
+    [SerializeField] private AnimatedNumber _percentText;
+
+    private void Awake()
+    {
+        _gauge.Init();
+        _percentText.Init();
+        ResetGauge();
+    }
+
     private void Start()
     {
         ShowChargingPercent();
     }
 
-    public void ImproveGauge()
+    private void OnDestroy()
     {
-        // todo. Player 정보 기반 내용으로 수정
-        float fillAmount = _gaugeFillImage.fillAmount;
-        if (fillAmount >= 1.0f) return;
-        fillAmount = Mathf.Clamp01(fillAmount + _chargingAmount);
-        _gaugePercentText.text = $"{(fillAmount * 100):F0}%";
-        _gaugeFillImage.fillAmount = fillAmount;
-        if (fillAmount >= 1.0f)
+        _gauge.Clear();
+        _percentText.Clear();
+    }
+
+    public void SetGauge(float value)
+    {
+        float gaugeValue = Mathf.Clamp01(value);
+        _gauge.SetValue(gaugeValue);
+        _percentText.SetValue(gaugeValue * 100f);
+
+        if (gaugeValue >= 1.0f)
         {
             ShowOverDrive();
         }
@@ -36,6 +43,8 @@ public class UI_OverDrive : MonoBehaviour
 
     public void ResetGauge()
     {
+        _gauge.SetValue(0f, immediate: true);
+        _percentText.SetValue(0f, immediate: true);
         ShowChargingPercent();
     }
 
@@ -43,19 +52,20 @@ public class UI_OverDrive : MonoBehaviour
     {
         _gaugeEffectImage.gameObject.SetActive(false);
         _overDriveIcon.gameObject.SetActive(false);
-        
-        _gaugePercentText.gameObject.SetActive(true);
-        _gaugePercentText.text = "0%";
-        
-        _gaugeFillImage.gameObject.SetActive(true);
-        _gaugeFillImage.fillAmount = 0.0f;
     }
 
     private void ShowOverDrive()
     {
         _gaugeEffectImage.gameObject.SetActive(true);
         _overDriveIcon.gameObject.SetActive(true);
-        _gaugePercentText.gameObject.SetActive(false);
-        _gaugeFillImage.gameObject.SetActive(false);
+        _percentText.Deactive();
     }
+    
+    #region Test Code
+    public void IncreaseGauge(float value)
+    {
+        float gaugeValue = Mathf.Clamp01(_gauge.Value + value);
+        SetGauge(gaugeValue);
+    }
+    #endregion
 }
