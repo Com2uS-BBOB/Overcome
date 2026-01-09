@@ -85,6 +85,8 @@ public class EnemyAttack : MonoBehaviour
 
                 var normalConfig = new NormalAttackPatternConfig(
                     pressureWaitConfig: waitConfig,
+                    openingRushDistance: 10f,
+                    openingRushDuration: 0.4f,
                     biteCooldownMin: 3f,
                     biteCooldownMax: 5f,
                     biteTouchDelay: 0.2f
