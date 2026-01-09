@@ -178,6 +178,7 @@ public class EnemyState : MonoBehaviour
             return;
         }
 
+        // OutOfRange 체크를 최우선으로 (공격 중이어도 즉시 중단하고 Return)
         if (IsPlayerOutOfRange() && _canReturn)
         {
             _attack.Stop();
@@ -190,6 +191,7 @@ public class EnemyState : MonoBehaviour
         if (!IsPlayerInAttackRange())
         {
             _attack.Stop();
+            // Trace로 돌아갈 때도 OpeningRush 상태 유지를 위해 CleanupEngagement 호출하지 않음
             ChangeState(EEnemyState.Trace);
             return;
         }
@@ -271,6 +273,8 @@ public class EnemyState : MonoBehaviour
 
     private void EnterState(EEnemyState state)
     {
+        Debug.Log($"[{gameObject.name}] 상태 진입: {state}");
+        
         switch (state)
         {
             case EEnemyState.Idle:

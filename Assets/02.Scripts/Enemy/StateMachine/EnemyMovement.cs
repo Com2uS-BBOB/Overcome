@@ -62,7 +62,13 @@ public class EnemyMovement : MonoBehaviour
 
     public bool IsArrived(float stopDistance)
     {
-        if (!_agent.enabled || !_agent.hasPath) return true;
+        if (!_agent.enabled) return false;
+        
+        // 경로 계산 중이면 아직 도착하지 않음
+        if (_agent.pathPending) return false;
+        
+        // 경로가 없으면 도착하지 않음 (경로를 찾을 수 없거나 아직 설정 안됨)
+        if (!_agent.hasPath) return false;
 
         return _agent.remainingDistance <= stopDistance;
     }
