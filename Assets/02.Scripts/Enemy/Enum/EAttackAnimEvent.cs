@@ -3,5 +3,10 @@ public enum EAttackAnimEvent
     BiteStart,
     BiteHitStart,
     BiteHitEnd,
-    BiteEnd
+    BiteEnd,
+
+    RipStart,
+    RipHitStart,
+    RipHitEnd,
+    RipEnd
 }
