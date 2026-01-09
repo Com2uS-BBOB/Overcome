@@ -1,3 +1,4 @@
+using NUnit.Framework.Internal;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -93,11 +94,13 @@ public class AttackWaitAction : IEnemyAction
         }
 
         Vector3 destination = GetModeDestination();
-
         _agent.SetDestination(destination);
 
+        // slotPosition과의 평면 거리 확인
+        float flat = Vector3.Distance(new Vector3(_enemy.position.x, 0, _enemy.position.z),new Vector3(destination.x, 0, destination.z));
+        
         // 슬롯 근처 또는 모드 목적지 근처면 대기 타이머 진행
-        bool arrived = !_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance + 0.05f;
+        bool arrived = flat <= 0.25f || (!_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.2f));
 
         if (!arrived)
         {
