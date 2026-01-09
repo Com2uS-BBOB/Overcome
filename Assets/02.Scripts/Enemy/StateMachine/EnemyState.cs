@@ -77,11 +77,12 @@ public class EnemyState : MonoBehaviour
         }
     }
 
-    public void Initialize(Transform player)
+    public void Initialize(EnemyCombatContext context)
     {
-        _player = player;
-        _attack?.Initialize(player);
-        _attackDirector = player.GetComponent<EnemyAttackDirector>();
+        _player = context.Player;
+        _attackDirector = context.AttackDirector;
+
+        _attack?.Initialize(context);
     }
 
     #region State Updates
@@ -273,8 +274,6 @@ public class EnemyState : MonoBehaviour
 
     private void EnterState(EEnemyState state)
     {
-        Debug.Log($"[{gameObject.name}] 상태 진입: {state}");
-        
         switch (state)
         {
             case EEnemyState.Idle:

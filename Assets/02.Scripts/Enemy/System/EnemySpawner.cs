@@ -19,8 +19,15 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float _randomDegree = 6f;
     [SerializeField] private float _randomRadius = 0.2f;
 
+    private EnemyCombatContext _enemyCombatContext;
+
     private void Start()
     {
+        var director = _player.GetComponent<EnemyAttackDirector>();
+        var slots = _player.GetComponent<EnemySlotCoordinator>();
+
+        _enemyCombatContext = new EnemyCombatContext(_player, director, slots);
+
         SpawnInitialEnemies();
     }
 
@@ -87,7 +94,7 @@ public class EnemySpawner : MonoBehaviour
         enemy.OnDespawn += HandleEnemyDespawn;
 
         EnemyState logic = enemy.GetComponent<EnemyState>();
-        logic.Initialize(_player);
+        logic.Initialize(_enemyCombatContext);
     }
 
     private Vector3 GetSpawnHeight(EEnemyType type)

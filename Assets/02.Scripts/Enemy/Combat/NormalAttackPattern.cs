@@ -149,6 +149,32 @@ public class NormalAttackPattern : IEnemyAttackPattern
         _pressure = null;
     }
 
+    // 애니메이션 이벤트 포워딩
+    public void OnAnimEvent(EAttackAnimEvent animEvent)
+    {
+        // BiteAction이 없으면 이벤트 무시
+        if (_bite == null) return;
+
+        switch (animEvent)
+        {
+            case EAttackAnimEvent.BiteStart:
+                _bite.OnAnimStart();
+                break;
+
+            case EAttackAnimEvent.BiteHitStart:
+                _bite.OnHitStart();
+                break;
+
+            case EAttackAnimEvent.BiteHitEnd:
+                _bite.OnHitEnd();
+                break;
+
+            case EAttackAnimEvent.BiteEnd:
+                _bite.OnAnimEnd();
+                break;
+        }
+    }
+
     public void ForwardBiteStart() => _bite?.OnAnimStart();
     public void ForwardBiteHitStart() => _bite?.OnHitStart();
     public void ForwardBiteHitEnd() => _bite?.OnHitEnd();

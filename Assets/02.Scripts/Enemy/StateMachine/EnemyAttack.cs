@@ -25,13 +25,13 @@ public class EnemyAttack : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
-    public void Initialize(Transform player)
+    public void Initialize(EnemyCombatContext context)
     {
-        _player = player;
+        _player = context.Player;
         _damage = _enemy.EnemyStatData.Damage;
 
-        _slotCoordinator = player.GetComponent<EnemySlotCoordinator>();
-        _attackDirector = player.GetComponent<EnemyAttackDirector>();
+        _slotCoordinator = context.SlotCoordinator;
+        _attackDirector = context.AttackDirector;
     }
 
     public void StartAttack()
@@ -75,10 +75,10 @@ public class EnemyAttack : MonoBehaviour
     }
 
     // 애니메이션 이벤트 포워딩
-    public void OnBiteStart() => (_currentPattern as NormalAttackPattern)?.ForwardBiteStart();
-    public void OnBiteHitStart() => (_currentPattern as NormalAttackPattern)?.ForwardBiteHitStart();
-    public void OnBiteHitEnd() => (_currentPattern as NormalAttackPattern)?.ForwardBiteHitEnd();
-    public void OnBiteEnd() => (_currentPattern as NormalAttackPattern)?.ForwardBiteEnd();
+    public void OnBiteStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteStart);
+    public void OnBiteHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteHitStart);
+    public void OnBiteHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteHitEnd);
+    public void OnBiteEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteEnd);
 
     public void ResetRush()
     {

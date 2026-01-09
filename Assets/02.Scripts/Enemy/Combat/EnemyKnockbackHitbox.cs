@@ -44,7 +44,9 @@ public class EnemyKnockbackHitbox : HitboxBase
     protected override void OnHitSuccess(Collider other, IDamageable damageable)
     {
         // TODO: 히트 이펙트, 사운드, 경직 등
+#if UNITY_EDITOR
         Debug.Log($"피격: {other.name}");
+#endif
 
         if (!_useKnockback) return;
 

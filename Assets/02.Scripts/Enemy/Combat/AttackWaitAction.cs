@@ -31,9 +31,15 @@ public class AttackWaitAction : IEnemyAction
     private float _feintDistance = 0.8f;
     private float _navSampleRadius = 1.5f;
 
+    private float _arrivedThreshold = 0.2f;
+    private float _minStoppingDistance = 0.1f;
+
     private float _shuffleModeValue = 0.40f;
     private float _feintModeValue = 0.70f;
     private float _repositionModeValue = 0.85f;
+
+    private float _magnitudeThreshold = 0.01f;
+    private float _randomValue = 0.5f;
 
     public bool IsFinished => _isFinished;
     public int SlotIndex => _mySlotIndex;
@@ -103,7 +109,7 @@ public class AttackWaitAction : IEnemyAction
         float flat = Vector3.Distance(new Vector3(_enemy.position.x, 0, _enemy.position.z),new Vector3(destination.x, 0, destination.z));
         
         // 슬롯 근처 또는 모드 목적지 근처면 대기 타이머 진행
-        bool arrived = flat <= 0.2f || (!_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, 0.1f));
+        bool arrived = flat <= _arrivedThreshold || (!_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, _minStoppingDistance));
 
         if (!arrived)
         {
@@ -152,9 +158,9 @@ public class AttackWaitAction : IEnemyAction
                     // 플레이어 중심 원호 이동
                     Vector3 toEnemy = (_enemy.position - _player.position);
                     toEnemy.y = 0f;
-                    if (toEnemy.sqrMagnitude < 0.01f) return slotPosition;
+                    if (toEnemy.sqrMagnitude < _magnitudeThreshold) return slotPosition;
 
-                    float sign = Random.value < 0.5f ? -1f : 1f;
+                    float sign = Random.value < _randomValue ? -1f : 1f;
                     Quaternion rot = Quaternion.Euler(0f, sign * _shuffleAngle, 0f);
                     Vector3 shuffledDir = rot * toEnemy.normalized;
 
@@ -173,10 +179,10 @@ public class AttackWaitAction : IEnemyAction
                     // 플레이어 방향으로 살짝 전진 혹은 후퇴
                     Vector3 direction = (_player.position - _enemy.position);
                     direction.y = 0f;
-                    if (direction.sqrMagnitude < 0.01f) return slotPosition;
+                    if (direction.sqrMagnitude < _magnitudeThreshold) return slotPosition;
                     direction.Normalize();
 
-                    float sign = Random.value < 0.5f ? 1f : -1f;
+                    float sign = Random.value < _randomValue ? 1f : -1f;
                     Vector3 raw = _enemy.position + direction * (_feintDistance * sign);
 
                     if (NavMesh.SamplePosition(raw, out var hit, _navSampleRadius, NavMesh.AllAreas))
