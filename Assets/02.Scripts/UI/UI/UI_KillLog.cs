@@ -15,13 +15,16 @@ public class UI_KillLog : MonoBehaviour
     private readonly Queue<KillLogItem> _itemPool = new Queue<KillLogItem>();
     private readonly List<KillLogItem> _activeItems = new List<KillLogItem>();
     
-    // TestCode
     [SerializeField] private Sprite[] _skillIcon;
     [SerializeField] private Sprite[] _enemyIcon;
 
-    private void Start()
+    private void Awake()
     {
         InitializePool();
+    }
+    
+    private void Start()
+    {
         if (KillLogSystem.Instance != null)
         {
             KillLogSystem.Instance.OnKillLogged += OnKillLogged;
@@ -30,30 +33,12 @@ public class UI_KillLog : MonoBehaviour
 
     private void OnDestroy()
     {
-        
         if (KillLogSystem.Instance != null)
         {
             KillLogSystem.Instance.OnKillLogged -= OnKillLogged;
         }
     }
-
-    private void InitializePool()
-    {
-        for (int i = 0; i < _initialPoolSize; i++)
-        {
-            CreateNewItem();
-        }
-    }
-
-    private KillLogItem CreateNewItem()
-    {
-        KillLogItem item = Instantiate(_killLogItemPrefab, _killLogContainer);
-        item.gameObject.SetActive(false);
-        item.OnExpired += ReturnToPool;
-        _itemPool.Enqueue(item);
-        return item;
-    }
-
+    
     private void OnKillLogged(KillLogConfig config)
     {
         if (_activeItems.Count >= _maxActiveItems)
@@ -72,6 +57,24 @@ public class UI_KillLog : MonoBehaviour
         item.transform.SetAsFirstSibling();
     }
 
+    #region Pool
+    private void InitializePool()
+    {
+        for (int i = 0; i < _initialPoolSize; i++)
+        {
+            CreateNewItem();
+        }
+    }
+    
+    private KillLogItem CreateNewItem()
+    {
+        KillLogItem item = Instantiate(_killLogItemPrefab, _killLogContainer);
+        item.gameObject.SetActive(false);
+        item.OnExpired += ReturnToPool;
+        _itemPool.Enqueue(item);
+        return item;
+    }
+    
     private KillLogItem GetItemFromPool()
     {
         if (_itemPool.Count == 0)
@@ -92,4 +95,5 @@ public class UI_KillLog : MonoBehaviour
         item.gameObject.SetActive(false);
         _itemPool.Enqueue(item);
     }
+    #endregion
 }

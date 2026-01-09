@@ -21,6 +21,7 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     protected override void Init()
     {
         _highScore = _testHighScore;
+        // todo. Enemy Die Event에 Increase Score 함수 바인딩
     }
     
     private void IncreaseScore(int score)

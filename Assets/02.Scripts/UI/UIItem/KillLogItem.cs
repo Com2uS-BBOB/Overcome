@@ -53,19 +53,13 @@ public class KillLogItem : MonoBehaviour
     {
         yield return new WaitForSeconds(_lifetime - _fadeOutDuration);
 
-        float elapsed = 0f;
-        while (elapsed < _fadeOutDuration)
+        Sequence fadeOutSequence = DOTween.Sequence();
+        fadeOutSequence.Append(_canvasGroup.DOFade(0f, _fadeOutDuration));
+        fadeOutSequence.Join(transform.DOScaleY(0f, _fadeOutDuration));
+        fadeOutSequence.OnComplete(() =>
         {
-            elapsed += Time.deltaTime;
-            _canvasGroup.alpha = Mathf.Lerp(1f, 0f, elapsed / _fadeOutDuration);
-            transform.localScale = Vector3.Lerp(Vector3.one, new Vector3(1f, 0f, 1f), elapsed / _fadeOutDuration);
-            yield return null;
-        }
-
-        _canvasGroup.alpha = 0f;
-        transform.localScale = Vector3.one;
-        OnExpired?.Invoke(this);
-        gameObject.SetActive(false);
+            OnExpired?.Invoke(this);
+        });
     }
 
     private void OnDisable()

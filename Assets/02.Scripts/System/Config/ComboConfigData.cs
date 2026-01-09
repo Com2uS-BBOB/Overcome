@@ -65,19 +65,16 @@ public class ComboConfig
 
     public VertexGradient GetComboVertexGradient()
     {
-        if (ComboColorMode == ColorMode.Solid)
-        {
-            return new VertexGradient(ComboColor);
-        }
-        return ComboGradient;
+        return GetVertexGradient(ComboColorMode, ComboColor, ComboGradient);
     }
 
     public VertexGradient GetGradeVertexGradient()
     {
-        if (GradeColorMode == ColorMode.Solid)
-        {
-            return new VertexGradient(GradeColor);
-        }
-        return GradeGradient;
+        return GetVertexGradient(GradeColorMode, GradeColor, GradeGradient);
+    }
+
+    private VertexGradient GetVertexGradient(ColorMode mode, Color solidColor, VertexGradient gradient)
+    {
+        return mode == ColorMode.Solid ? new VertexGradient(solidColor) : gradient;
     }
 }

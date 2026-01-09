@@ -7,7 +7,7 @@ public class KillLogSystem : SingletonBehaviour<KillLogSystem>
     protected override bool DontDestroy => false;
 
     public event Action<KillLogConfig> OnKillLogged;
-    private Dictionary<EEnemyType, int> _killLogs;
+    private Dictionary<EEnemyType, int> _killLogs = new Dictionary<EEnemyType, int>();
     
     public void LogKill()
     {
