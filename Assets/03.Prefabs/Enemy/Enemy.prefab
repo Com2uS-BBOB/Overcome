@@ -204,9 +204,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
   _detectRange: 10
-  _outRange: 18
+  _standOffDistance: 8.5
+  _standOffRepathInterval: 0.25
+  _outRange: 20
   _returnStopDistance: 0.3
-  _attackRange: 10
+  _attackRange: 5
+  _openingRushDistance: 10
+  _openingRushDuration: 0.54
 --- !u!95 &3365919557704155484
 Animator:
   serializedVersion: 7

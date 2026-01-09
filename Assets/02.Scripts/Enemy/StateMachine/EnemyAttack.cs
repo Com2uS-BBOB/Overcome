@@ -30,7 +30,6 @@ public class EnemyAttack : MonoBehaviour
         _player = player;
         _damage = _enemy.EnemyStatData.Damage;
 
-        // ✅ “공격에 필요한” player 컴포넌트는 공격쪽에서 관리
         _slotCoordinator = player.GetComponent<EnemySlotCoordinator>();
         _attackDirector = player.GetComponent<EnemyAttackDirector>();
     }
