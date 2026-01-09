@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyAttack : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class EnemyAttack : MonoBehaviour
     private Animator _animator;
     private EnemySlotCoordinator _slotCoordinator;
     private EnemyAttackDirector _attackDirector;
+    private NavMeshAgent _agent;
 
     private bool _hasRushedOnce;
     public bool HasRushedOnce => _hasRushedOnce;
@@ -23,6 +25,7 @@ public class EnemyAttack : MonoBehaviour
         _movement = GetComponent<EnemyMovement>();
         _knockbackHitbox = GetComponentInChildren<EnemyKnockbackHitbox>();
         _animator = GetComponent<Animator>();
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     public void Initialize(EnemyCombatContext context)
@@ -55,19 +58,39 @@ public class EnemyAttack : MonoBehaviour
 
     private void SelectPattern()
     {
+        var patternContext = new EnemyAttackPatternContext(
+            _player,
+            transform,
+            _damage,
+            _movement,
+            _knockbackHitbox,
+            _animator,
+            _agent,
+            _slotCoordinator,
+            _attackDirector
+        );
+
         switch (_enemy.EnemyStatData.EnemyType)
         {
             case EEnemyType.Normal:
-                _currentPattern = new NormalAttackPattern(
-                    _player,
-                    transform,
-                    _damage,
-                    _movement,
-                    _knockbackHitbox,
-                    _animator,
-                    _slotCoordinator,
-                    _attackDirector
+                var waitConfig = new AttackWaitActionConfig(
+                    minWait: 999f,
+                    maxWait: 999f,
+                    waitSpeedMultiplier: 0.15f,
+                    releaseSlotOnExit: true,
+                    fixedSlotIndex: -1,
+                    arrivedThreshold: 0.2f,
+                    minStoppingDistance: 0.1f
                 );
+
+                var normalConfig = new NormalAttackPatternConfig(
+                    pressureWaitConfig: waitConfig,
+                    biteCooldownMin: 3f,
+                    biteCooldownMax: 5f,
+                    biteTouchDelay: 0.2f
+                );
+
+                _currentPattern = new NormalAttackPattern(patternContext, normalConfig);
                 break;
 
                 // TODO: Elite, Small 확장

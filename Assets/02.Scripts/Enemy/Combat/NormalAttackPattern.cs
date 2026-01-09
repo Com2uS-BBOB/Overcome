@@ -1,28 +1,16 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 public class NormalAttackPattern : IEnemyAttackPattern
 {
     // 공용 컨텍스트
-    private readonly Transform _player;
-    private readonly Transform _enemy;
-    private readonly float _damage;
-    private readonly EnemyMovement _movement;
-    private readonly EnemyKnockbackHitbox _knockbackHitbox;
-    private readonly Animator _animator;
-    private readonly NavMeshAgent _agent;
-    private readonly EnemySlotCoordinator _slotCoordinator;
-    private readonly EnemyAttackDirector _attackDirector;
+    private readonly EnemyAttackPatternContext _attackContext;
+    private readonly NormalAttackPatternConfig _attackConfig;
 
     private AttackWaitAction _pressure;
     private BiteAction _bite;
 
     private bool _reserved;
     private float _nextBiteTime;
-
-    // 압박 유지 관련
-    private readonly float _pressureWaitTime = 999f;
-    private readonly float _pressureSpeed = 0.15f;
 
     // Bite 관련
     private readonly float _biteCooldownMin = 3f;
@@ -36,25 +24,12 @@ public class NormalAttackPattern : IEnemyAttackPattern
     private readonly int _slotIndex;
 
     public NormalAttackPattern(
-        Transform player,
-        Transform enemy,
-        float damage,
-        EnemyMovement movement,
-        EnemyKnockbackHitbox knockbackHitbox,
-        Animator animator,
-        EnemySlotCoordinator slotCoordinator,
-        EnemyAttackDirector attackDirector
+        EnemyAttackPatternContext context,
+        NormalAttackPatternConfig config
     )
     {
-        _player = player;
-        _enemy = enemy;
-        _damage = damage;
-        _movement = movement;
-        _knockbackHitbox = knockbackHitbox;
-        _animator = animator;
-        _agent = enemy.GetComponent<NavMeshAgent>();
-        _slotCoordinator = slotCoordinator;
-        _attackDirector = attackDirector;
+        _attackContext = context;
+        _attackConfig = config;
     }
 
     public void Start()
@@ -64,22 +39,19 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
         // 압박 액션 생성 (슬롯 점유 포함)
         _pressure = new AttackWaitAction(
-            _enemy,
-            _player,
-            _movement,
-            _slotCoordinator,
-            _agent,
-            _pressureWaitTime, _pressureWaitTime,
-            _pressureSpeed,
-            releaseSlotOnExit: true,  // 패턴이 Stop될 때만 Exit 호출되고 슬롯 해제
-            fixedSlotIndex: -1
+            _attackContext.Enemy,
+            _attackContext.Player,
+            _attackContext.Movement,
+            _attackContext.SlotCoordinator,
+            _attackContext.Agent,
+            _attackConfig.PressureWaitConfig
         );
         _pressure.Enter();
     }
 
     public void Update()
     {
-        if (_player == null) return;
+        if (_attackContext.Player == null) return;
 
         // 1) Bite 진행 중이면 Bite만 처리 (압박은 잠시 정지)
         if (_bite != null)
@@ -93,7 +65,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
                 if (_reserved)
                 {
-                    _attackDirector?.Release(_enemy);
+                    _attackContext.AttackDirector?.Release(_attackContext.Enemy);
                     _reserved = false;
                 }
 
@@ -108,22 +80,22 @@ public class NormalAttackPattern : IEnemyAttackPattern
         // 3) Bite 시도 (공격권 필요)
         if (Time.time < _nextBiteTime) return;
 
-        bool granted = (_attackDirector == null) || _attackDirector.TryReserve(_enemy);
+        bool granted = (_attackContext.AttackDirector == null) || _attackContext.AttackDirector.TryReserve(_attackContext.Enemy);
         if (!granted)
         {
             _nextBiteTime = Time.time + _biteTouchDelay; // 너무 자주 두드리지 않게 살짝 딜레이
             return;
         }
 
-        _reserved = (_attackDirector != null);
+        _reserved = (_attackContext.AttackDirector != null);
 
         _bite = new BiteAction(
-            _enemy,
-            _player,
-            _knockbackHitbox,
-            _animator,
-            _agent,
-            _damage
+            _attackContext.Enemy,
+            _attackContext.Player,
+            _attackContext.KnockbackHitbox,
+            _attackContext.Animator,
+            _attackContext.Agent,
+            _attackContext.Damage
         );
         _bite.Enter();
     }
@@ -140,7 +112,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         // 공격권 반납 (Attack 상태에서 빠질 때)
         if (_reserved)
         {
-            _attackDirector?.Release(_enemy);
+            _attackContext.AttackDirector?.Release(_attackContext.Enemy);
             _reserved = false;
         }
 
