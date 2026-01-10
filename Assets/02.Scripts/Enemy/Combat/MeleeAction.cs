@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BiteAction : IEnemyAction
+public class MeleeAction : IEnemyAction
 {
     private readonly Transform _enemy;
     private readonly Transform _player;
@@ -14,7 +14,7 @@ public class BiteAction : IEnemyAction
 
     public bool IsFinished => _isFinished;
 
-    public BiteAction(
+    public MeleeAction(
         Transform enemy,
         Transform player,
         EnemyKnockbackHitbox hitbox,
@@ -61,7 +61,7 @@ public class BiteAction : IEnemyAction
         }
     }
 
-    // Animation Events
+    // 애니메이션 이벤트
     public void OnAnimStart() { }
     
     public void OnHitStart()

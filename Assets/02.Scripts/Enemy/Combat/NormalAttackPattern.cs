@@ -13,7 +13,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         var steps = new List<IEnemyAttackStep>
         {
             new OpeningRushStep(context, config.OpeningRushDistance, config.OpeningRushDuration),
-            new NormalBiteStep(context, config),
+            new MeleeStep(context, config.MeleeCooldownMin, config.MeleeCooldownMax, config.MeleeAttackDelay),
         };
 
         // 항상 돌아가는 스텝

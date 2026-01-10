@@ -27,6 +27,9 @@ public class HowlAction : IEnemyAction
         _agent.ResetPath();
 
         // _animator.SetTrigger("Howl");
+#if UNITY_EDITOR
+        Debug.Log("포효 시작");
+#endif
     }
 
     public void Update()
