@@ -1,28 +1,21 @@
 using UnityEngine;
 
-public struct NormalAttackPatternConfig
+public struct SmallAttackPatternConfig
 {
     public AttackWaitActionConfig PressureWaitConfig;
-
-    public float OpeningRushDistance;
-    public float OpeningRushDuration;
 
     public float MeleeCooldownMin;
     public float MeleeCooldownMax;
     public float MeleeAttackDelay;
 
-    public NormalAttackPatternConfig(
+    public SmallAttackPatternConfig(
         AttackWaitActionConfig pressureWaitConfig,
-        float openingRushDistance = 10f,
-        float openingRushDuration = 0.4f,
         float meleeCooldownMin = 3f,
         float meleeCooldownMax = 5f,
         float meleeAttackDelay = 0.2f
     )
     {
         PressureWaitConfig = pressureWaitConfig;
-        OpeningRushDistance = openingRushDistance;
-        OpeningRushDuration = openingRushDuration;
         MeleeCooldownMin = meleeCooldownMin;
         MeleeCooldownMax = meleeCooldownMax;
         MeleeAttackDelay = meleeAttackDelay;
