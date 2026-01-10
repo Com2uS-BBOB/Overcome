@@ -12,7 +12,8 @@ public class EliteAttackPattern : IEnemyAttackPattern
         var steps = new List<IEnemyAttackStep>
         {
             new OpeningRushStep(context, config.OpeningRushDistance, config.OpeningRushDuration),
-            new EliteRipStep(context, config)
+            new EliteRipStep(context, config),
+            new HowlingStep(context, config.RipRange, config.HowlDuration)
         };
 
         // 항상 돌아가는 스텝

@@ -625,7 +625,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
   m_SerializedVersion: 0
   m_AgentTypeID: -1923039037
-  m_CollectObjects: 0
+  m_CollectObjects: 2
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}
   m_LayerMask:
@@ -1245,6 +1245,10 @@ PrefabInstance:
       propertyPath: _enemyPool
       value: 
       objectReference: {fileID: 642449878}
+    - target: {fileID: 7750734187541774591, guid: e598a457e994e31418203720141d3c67, type: 3}
+      propertyPath: _aroundCount
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
