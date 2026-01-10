@@ -209,8 +209,6 @@ MonoBehaviour:
   _outRange: 18
   _returnStopDistance: 0.3
   _attackRange: 5
-  _openingRushDistance: 10
-  _openingRushDuration: 0.54
 --- !u!95 &3365919557704155484
 Animator:
   serializedVersion: 7
@@ -249,7 +247,7 @@ NavMeshAgent:
   m_AngularSpeed: 120
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
+  m_AutoBraking: 0
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 1

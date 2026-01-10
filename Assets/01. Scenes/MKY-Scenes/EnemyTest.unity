@@ -401,7 +401,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySlotCoordinator
   _player: {fileID: 547553586}
   _radius: 3.2
-  _slotCount: 6
+  _slotCount: 10
 --- !u!1 &577460609
 GameObject:
   m_ObjectHideFlags: 0
@@ -556,6 +556,7 @@ GameObject:
   - component: {fileID: 677510115}
   - component: {fileID: 677510116}
   - component: {fileID: 677510117}
+  - component: {fileID: 677510118}
   m_Layer: 0
   m_Name: NavMesh Surface
   m_TagString: Untagged
@@ -642,6 +643,38 @@ MonoBehaviour:
   m_VoxelSize: 0.33333334
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 55c571a23d0b808428ce12244eca42ac, type: 2}
+  m_BuildHeightMesh: 0
+--- !u!114 &677510118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 677510114}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.AI.Navigation::Unity.AI.Navigation.NavMeshSurface
+  m_SerializedVersion: 0
+  m_AgentTypeID: 1479372276
+  m_CollectObjects: 2
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.33333334
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: f263d5db33c75084baa5fa418485a0ee, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &759827956
 GameObject:
@@ -1247,7 +1280,7 @@ PrefabInstance:
       objectReference: {fileID: 642449878}
     - target: {fileID: 7750734187541774591, guid: e598a457e994e31418203720141d3c67, type: 3}
       propertyPath: _aroundCount
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
