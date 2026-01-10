@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class NormalAttackPattern : IEnemyAttackPattern
 {
@@ -19,7 +19,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         // 항상 돌아가는 스텝
         var always = new List<IEnemyAttackAlwaysStep>
         {
-            new NormalPressureWaitAlwaysStep(context, config.PressureWaitConfig),
+            new PressureWaitAlwaysStep(context, config.PressureWaitConfig),
         };
 
         _runner = new StepAttackPatternRunner(steps, always);

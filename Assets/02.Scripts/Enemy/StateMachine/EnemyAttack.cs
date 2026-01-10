@@ -73,7 +73,7 @@ public class EnemyAttack : MonoBehaviour
         switch (_enemy.EnemyStatData.EnemyType)
         {
             case EEnemyType.Normal:
-                var waitConfig = new AttackWaitActionConfig(
+                var normalWaitConfig = new AttackWaitActionConfig(
                     minWait: 999f,
                     maxWait: 999f,
                     waitSpeedMultiplier: 0.15f,
@@ -84,15 +84,36 @@ public class EnemyAttack : MonoBehaviour
                 );
 
                 var normalConfig = new NormalAttackPatternConfig(
-                    pressureWaitConfig: waitConfig,
+                    pressureWaitConfig: normalWaitConfig,
                     openingRushDistance: 10f,
                     openingRushDuration: 0.4f,
-                    biteCooldownMin: 3f,
-                    biteCooldownMax: 5f,
-                    biteTouchDelay: 0.2f
+                    meleeCooldownMin: 3f,
+                    meleeCooldownMax: 5f,
+                    meleeAttackDelay: 0.2f
                 );
 
                 _currentPattern = new NormalAttackPattern(patternContext, normalConfig);
+                break;
+
+            case EEnemyType.Small:
+                var smallWaitConfig = new AttackWaitActionConfig(
+                    minWait: 999f,
+                    maxWait: 999f,
+                    waitSpeedMultiplier: 0.15f,
+                    releaseSlotOnExit: true,
+                    fixedSlotIndex: -1,
+                    arrivedThreshold: 0.2f,
+                    minStoppingDistance: 0.1f
+                );
+
+                var smallConfig = new SmallAttackPatternConfig(
+                    pressureWaitConfig: smallWaitConfig,
+                    meleeCooldownMin: 3f,
+                    meleeCooldownMax: 5f,
+                    meleeAttackDelay: 0.2f
+                );
+
+                _currentPattern = new SmallAttackPattern(patternContext, smallConfig);
                 break;
 
             case EEnemyType.Elite:
@@ -108,15 +129,14 @@ public class EnemyAttack : MonoBehaviour
 
                 _currentPattern = new EliteAttackPattern(patternContext, eliteCongig);
                 break;
-                // TODO: Small 확장
         }
     }
 
     // 애니메이션 이벤트 포워딩
-    public void OnBiteStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteStart);
-    public void OnBiteHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteHitStart);
-    public void OnBiteHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteHitEnd);
-    public void OnBiteEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteEnd);
+    public void OnMeleeStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeStart);
+    public void OnMeleeHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitStart);
+    public void OnMeleeHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitEnd);
+    public void OnMeleeEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeEnd);
 
     public void ResetRush()
     {

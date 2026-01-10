@@ -1,5 +1,5 @@
 
-public class NormalPressureWaitAlwaysStep : IEnemyAttackAlwaysStep
+public class PressureWaitAlwaysStep : IEnemyAttackAlwaysStep
 {
     private readonly EnemyAttackPatternContext _context;
     private readonly AttackWaitActionConfig _config;
@@ -7,7 +7,7 @@ public class NormalPressureWaitAlwaysStep : IEnemyAttackAlwaysStep
     private AttackWaitAction _pressure;
     private bool _wasPaused;
 
-    public NormalPressureWaitAlwaysStep(EnemyAttackPatternContext context, AttackWaitActionConfig config)
+    public PressureWaitAlwaysStep(EnemyAttackPatternContext context, AttackWaitActionConfig config)
     {
         _context = context;
         _config = config;
@@ -43,7 +43,7 @@ public class NormalPressureWaitAlwaysStep : IEnemyAttackAlwaysStep
 
     public bool ShouldTickWhile(IEnemyAttackStep currentStep)
     {
-        bool shouldPause = (currentStep is OpeningRushStep) || (currentStep is NormalBiteStep);
+        bool shouldPause = (currentStep is OpeningRushStep) || (currentStep is MeleeStep);
         
         // 상태가 바뀌면 Exit/Enter 처리
         if (shouldPause && !_wasPaused)
