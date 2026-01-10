@@ -51,6 +51,9 @@ public class EliteRipAction : IEnemyAction
         _movement.SetSpeedMultiplier(_ratio);
 
         // _animator.SetBool("IsRipping", true); 혹은 트리거
+#if UNITY_EDITOR
+        Debug.Log("난도질 공격 시도");
+#endif
     }
 
     public void Update()

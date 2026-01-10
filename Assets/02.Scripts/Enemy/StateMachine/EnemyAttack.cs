@@ -95,7 +95,20 @@ public class EnemyAttack : MonoBehaviour
                 _currentPattern = new NormalAttackPattern(patternContext, normalConfig);
                 break;
 
-                // TODO: Elite, Small 확장
+            case EEnemyType.Elite:
+                var eliteCongig = new EliteAttackPatternConfig(
+                    openingRushDistance: 20f,
+                    openingRushDuration: 0.2f,
+                    ripRange: 5f,
+                    ripMoveSpeed: 2f,
+                    ripDamagePerHit: 2f,
+                    ripTouchDelay: 0.25f,
+                    howlDuration: 2.8f
+                );
+
+                _currentPattern = new EliteAttackPattern(patternContext, eliteCongig);
+                break;
+                // TODO: Small 확장
         }
     }
 
