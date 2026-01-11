@@ -2,6 +2,6 @@ public enum EEnemyType
 {
     Normal,
     Small,
-    SmallGround,
+    FloatSmall,
     Elite
 }

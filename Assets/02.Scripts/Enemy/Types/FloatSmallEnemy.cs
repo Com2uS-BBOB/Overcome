@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class SmallGroundEnemy : EnemyBase
+public class FloatSmallEnemy : EnemyBase
 {
     public override bool CanMove => false;
     public override bool CanAttack => false;
