@@ -7,6 +7,7 @@ public class MeleeStep : IEnemyAttackStep
     private readonly float _cooldownMin;
     private readonly float _cooldownMax;
     private readonly float _attackDelay;
+    private readonly float _knockbackDistance;
     private readonly EnemyAttack _attack;
 
     private MeleeAction _melee;
@@ -16,12 +17,13 @@ public class MeleeStep : IEnemyAttackStep
 
     public bool IsFinished => _melee == null; // 공격 끝나면 null로 만들고 finished 처리
 
-    public MeleeStep(EnemyAttackPatternContext context, float cooldownMin, float cooldownMax, float attackDelay)
+    public MeleeStep(EnemyAttackPatternContext context, float cooldownMin, float cooldownMax, float attackDelay, float knockbackDistance)
     {
         _context = context;
         _cooldownMin = cooldownMin;
         _cooldownMax = cooldownMax;
         _attackDelay = attackDelay;
+        _knockbackDistance = knockbackDistance;
 
         _attack = _context.Enemy.GetComponent<EnemyAttack>();
     }
@@ -55,7 +57,8 @@ public class MeleeStep : IEnemyAttackStep
             _context.KnockbackHitbox,
             _context.Animator,
             _context.Agent,
-            _context.Damage
+            _context.Damage,
+            _knockbackDistance
         );
         _melee.Enter();
         return true;

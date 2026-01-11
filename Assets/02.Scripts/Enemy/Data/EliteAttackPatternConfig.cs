@@ -12,6 +12,8 @@ public struct EliteAttackPatternConfig
 
     public float HowlDuration;
 
+    public float RipKnockbackDistance;
+
     public EliteAttackPatternConfig(
         float openingRushDistance = 20f,
         float openingRushDuration = 1.4f,
@@ -19,7 +21,8 @@ public struct EliteAttackPatternConfig
         float ripMoveSpeed = 2f,
         float ripDamagePerHit = 2f,
         float ripTouchDelay = 0.25f,
-        float howlDuration = 3.2f
+        float howlDuration = 3.2f,
+        float ripKnockbackDistance = 1f
     )
     {
         OpeningRushDistance = openingRushDistance;
@@ -29,5 +32,6 @@ public struct EliteAttackPatternConfig
         RipDamagePerHit = ripDamagePerHit;
         RipTouchDelay = ripTouchDelay;
         HowlDuration = howlDuration;
+        RipKnockbackDistance = ripKnockbackDistance;
     }
 }

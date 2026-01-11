@@ -12,6 +12,7 @@ public class EliteRipAction : IEnemyAction
 
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;
+    private readonly float _ripKnockbackDistance;
 
     private float _ratio;
     private bool _finished;
@@ -26,7 +27,8 @@ public class EliteRipAction : IEnemyAction
         NavMeshAgent agent,
         Animator animator,
         float damagePerHit,
-        float ripMoveSpeed
+        float ripMoveSpeed,
+        float ripKnockbackDistance
     )
     {
         _enemy = enemy;
@@ -37,6 +39,7 @@ public class EliteRipAction : IEnemyAction
         _animator = animator;
         _damagePerHit = damagePerHit;
         _ripMoveSpeed = ripMoveSpeed;
+        _ripKnockbackDistance = ripKnockbackDistance;
     }
 
     public void Enter()
@@ -82,7 +85,7 @@ public class EliteRipAction : IEnemyAction
 
     public void OnHitStart()
     {
-        _hitbox?.Enable(_damagePerHit);
+        _hitbox?.Enable(_damagePerHit, _ripKnockbackDistance);
     }
 
     public void OnHitEnd()

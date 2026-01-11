@@ -14,6 +14,8 @@ public struct NormalAttackPatternConfig
 
     public float HowlDuration;
 
+    public float KnockbackDistance;
+
     public NormalAttackPatternConfig(
         AttackWaitActionConfig pressureWaitConfig,
         float openingRushDistance = 10f,
@@ -22,7 +24,8 @@ public struct NormalAttackPatternConfig
         float meleeCooldownMax = 5f,
         float meleeAttackDelay = 0.2f,
         float meleeAttackRange = 5f,
-        float howlDuration = 3f
+        float howlDuration = 3f,
+        float knockbackDistance = 2f
     )
     {
         PressureWaitConfig = pressureWaitConfig;
@@ -33,5 +36,6 @@ public struct NormalAttackPatternConfig
         MeleeAttackDelay = meleeAttackDelay;
         MeleeAttackRange = meleeAttackRange;
         HowlDuration = howlDuration;
+        KnockbackDistance = knockbackDistance;
     }
 }

@@ -49,7 +49,8 @@ public class EliteRipStep : IEnemyAttackStep
             _context.Agent,
             _context.Animator,
             _config.RipDamagePerHit,
-            _config.RipMoveSpeed
+            _config.RipMoveSpeed,
+            _config.RipKnockbackDistance
         );
         _rip.Enter();
         return true;

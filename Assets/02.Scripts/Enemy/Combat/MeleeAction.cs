@@ -8,6 +8,7 @@ public class MeleeAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly Animator _animator;
     private readonly NavMeshAgent _agent;
+    private readonly float _knockbackDistance;
 
     private readonly float _damage;
     private bool _isFinished;
@@ -20,7 +21,8 @@ public class MeleeAction : IEnemyAction
         EnemyKnockbackHitbox hitbox,
         Animator animator,
         NavMeshAgent agent,
-        float damage
+        float damage,
+        float knockbackDistance
     )
     {
         _enemy = enemy;
@@ -29,6 +31,7 @@ public class MeleeAction : IEnemyAction
         _animator = animator;
         _agent = agent;
         _damage = damage;
+        _knockbackDistance = knockbackDistance;
     }
 
     public void Enter()
@@ -68,7 +71,7 @@ public class MeleeAction : IEnemyAction
     {
         if (_hitbox != null)
         {
-            _hitbox.Enable(_damage);
+            _hitbox.Enable(_damage, _knockbackDistance);
         }
     }
     

@@ -122,7 +122,7 @@ public class EnemyAttack : MonoBehaviour
                 break;
 
             case EEnemyType.Elite:
-                var eliteCongig = new EliteAttackPatternConfig(
+                var eliteConfig = new EliteAttackPatternConfig(
                     openingRushDistance: 20f,
                     openingRushDuration: 0.2f,
                     ripRange: 5f,
@@ -132,7 +132,7 @@ public class EnemyAttack : MonoBehaviour
                     howlDuration: 2.8f
                 );
 
-                _currentPattern = new EliteAttackPattern(patternContext, eliteCongig);
+                _currentPattern = new EliteAttackPattern(patternContext, eliteConfig);
                 break;
         }
     }

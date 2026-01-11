@@ -17,7 +17,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
 
             new RecoveryStep(context),
 
-            new MeleeStep(context, config.MeleeCooldownMin, config.MeleeCooldownMax, config.MeleeAttackDelay),
+            new MeleeStep(context, config.MeleeCooldownMin, config.MeleeCooldownMax, config.MeleeAttackDelay, config.KnockbackDistance),
 
             new RecoveryStep(context)
         };

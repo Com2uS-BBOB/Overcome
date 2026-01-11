@@ -12,7 +12,7 @@ public class SmallAttackPattern : IEnemyAttackPattern
         // 기본 스텝
         var steps = new List<IEnemyAttackStep>
         {
-            new MeleeStep(context, config.MeleeCooldownMin, config.MeleeCooldownMax, config.MeleeAttackDelay),
+            new MeleeStep(context, config.MeleeCooldownMin, config.MeleeCooldownMax, config.MeleeAttackDelay, config.KnockbackDistance),
         };
 
         // 항상 돌아가는 스텝
