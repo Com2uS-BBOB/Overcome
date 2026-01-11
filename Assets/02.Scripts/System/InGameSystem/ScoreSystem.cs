@@ -35,7 +35,12 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     
     private void IncreaseScore(EnemyKilledEvent killedEvent)
     {
-        _currentScore += killedEvent.Score;
+        IncreaseScore(killedEvent.Score);
+    }
+
+    public void IncreaseScore(int score)
+    {
+        _currentScore += score;
         UpdateHighScore();
         OnScoreChanged?.Invoke(_currentScore, _highScore);
     }
