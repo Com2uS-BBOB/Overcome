@@ -1,21 +1,30 @@
-using System.Collections;
+using _02.Scripts.Player.Common;
 using TMPro;
 using UnityEngine;
 
 public class UI_Timer : MonoBehaviour
 {
+    [Header("UI References")]
     [SerializeField] private TextMeshProUGUI _playTimeText;
-    [SerializeField] private TextMeshProUGUI _changedValueText;
     [SerializeField] private TextMeshProUGUI _remainTimeText;
+    [SerializeField] private RectTransform _changedValueStartPosition;
+    [SerializeField] private TimeChangeItem _timeChangeItemPrefab;
+    
+    [Header("Change Value Settings")]
+    [SerializeField] private float _horizontalOffsetRange = 30f;
+    [SerializeField] private float _changeValueDuration = 1f;
+    
+    [Header("Pool Settings")]
+    [SerializeField] private int _poolInitialSize = 20;
 
     private TimeSystem _timeSystem;
-    private Coroutine _changeValueCoroutine;
-    [SerializeField] private float _changeValueDuration;
+    private ObjectPool<TimeChangeItem> _timeChangeItemPool;
+
     private void Start()
     {
         _timeSystem = TimeSystem.Instance;
         _timeSystem.OnRemainTimeDelta += UpdateChangeValueUI;
-        ResetChangeValue();
+        _timeChangeItemPool = new ObjectPool<TimeChangeItem>(_timeChangeItemPrefab, _changedValueStartPosition, _poolInitialSize);
     }
 
     private void Update()
@@ -26,7 +35,8 @@ public class UI_Timer : MonoBehaviour
     
     private void OnDestroy()
     {
-       _timeSystem.OnRemainTimeDelta -= UpdateChangeValueUI;
+        _timeSystem.OnRemainTimeDelta -= UpdateChangeValueUI;
+        _timeChangeItemPool.Clear();
     }
 
     private void UpdateRemainTimeUI()
@@ -41,41 +51,18 @@ public class UI_Timer : MonoBehaviour
 
     private void UpdateChangeValueUI(float value)
     {
-        if (_changeValueCoroutine != null)
-        {
-            StopCoroutine(_changeValueCoroutine);
-            _changeValueCoroutine = null;
-        }
-        _changeValueCoroutine = StartCoroutine(ChangeValueCoroutine(value));
+        if (Mathf.Approximately(value, 0f)) return;
+
+        SpawnTimeChangeItem(value);
     }
 
-    private void SetChangeValue(float value)
+    private void SpawnTimeChangeItem(float value)
     {
-        if (value > 0)
-        {
-            _changedValueText.text = $"+{value:F1}s";
-            _changedValueText.color = Color.lawnGreen;
-        }
-        else if (value < 0)
-        {
-            _changedValueText.text = $"{value:F1}s";
-            _changedValueText.color = Color.red;
-        }
-        else
-        {
-            ResetChangeValue();
-        }
-    }
+        TimeChangeItem item = _timeChangeItemPool.Get();
 
-    private void ResetChangeValue()
-    {
-        _changedValueText.text = "";
-    }
+        float randomOffsetX = Random.Range(-_horizontalOffsetRange, _horizontalOffsetRange);
+        Vector2 anchoredPosition = new Vector2(randomOffsetX, 0f);
 
-    private IEnumerator ChangeValueCoroutine(float value)
-    {
-        SetChangeValue(value);
-        yield return new WaitForSeconds(_changeValueDuration);
-        ResetChangeValue();
+        item.Init(value, _changeValueDuration, anchoredPosition, _timeChangeItemPool.Return);
     }
 }
