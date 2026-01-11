@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2718460419425412521}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -60,10 +60,17 @@ MonoBehaviour:
   _enemyPools:
   - Type: 0
     Prefab: {fileID: 1986956077294670782, guid: 050f78e19c0ebca408b83d8cc2a4e3ff, type: 3}
+    StatData: {fileID: 11400000, guid: e04ebbf4bcfd10b41bb31d5b1f9a5db5, type: 2}
     InitialSize: 30
   - Type: 1
     Prefab: {fileID: 9243648425913167, guid: 61220eac648dc9941890e02bee2c2a62, type: 3}
+    StatData: {fileID: 11400000, guid: 18794bed0c3dcb24eba55ab29c144215, type: 2}
     InitialSize: 30
   - Type: 2
+    Prefab: {fileID: 628111756843832478, guid: f06dd9cea3c135646a655046402b1a31, type: 3}
+    StatData: {fileID: 11400000, guid: cda2aa15c4fba59418b21c16a70123fb, type: 2}
+    InitialSize: 30
+  - Type: 3
     Prefab: {fileID: 211374651718498087, guid: 3042ca450be3bf34b8edd90813d08da5, type: 3}
+    StatData: {fileID: 11400000, guid: 79485fb519b6c35428186994de8564d5, type: 2}
     InitialSize: 10
