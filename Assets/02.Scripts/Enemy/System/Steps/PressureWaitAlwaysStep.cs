@@ -43,8 +43,8 @@ public class PressureWaitAlwaysStep : IEnemyAttackAlwaysStep
 
     public bool ShouldTickWhile(IEnemyAttackStep currentStep)
     {
-        bool shouldPause = (currentStep is OpeningRushStep) || (currentStep is MeleeStep);
-        
+        bool shouldPause = (currentStep is HowlingStep) || (currentStep is OpeningRushStep) || (currentStep is MeleeStep);
+
         // 상태가 바뀌면 Exit/Enter 처리
         if (shouldPause && !_wasPaused)
         {

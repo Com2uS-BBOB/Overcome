@@ -8,6 +8,8 @@ public class StepAttackPatternRunner : IEnemyAttackPattern
 
     private IEnemyAttackStep _current;
 
+    private bool _stepFinishedThisFrame;
+
     public bool IsFinished => false;
 
     public StepAttackPatternRunner(IEnumerable<IEnemyAttackStep> steps, IEnumerable<IEnemyAttackAlwaysStep> alwaysSteps)
@@ -25,6 +27,7 @@ public class StepAttackPatternRunner : IEnemyAttackPattern
     public void Start()
     {
         _current = null;
+        _stepFinishedThisFrame = false;
 
         for (int i = 0; i < _always.Count; i++)
         {
@@ -36,6 +39,8 @@ public class StepAttackPatternRunner : IEnemyAttackPattern
 
     public void Update()
     {
+        _stepFinishedThisFrame = false;
+
         // 항상 실행되는 스텝들
         for (int i = 0; i < _always.Count; i++)
         {
@@ -54,9 +59,13 @@ public class StepAttackPatternRunner : IEnemyAttackPattern
             {
                 _current.Stop();
                 _current = null;
+                _stepFinishedThisFrame = true;
             }
             return;
         }
+
+        // 방금 step이 끝난 프레임이면, 다음 step 시작은 다음 프레임으로 넘김
+        if (_stepFinishedThisFrame) return;
 
         // 실행 중 스텝이 없으면 우선순위대로 시작 시도
         for (int i = 0; i < _steps.Count; i++)
@@ -67,7 +76,6 @@ public class StepAttackPatternRunner : IEnemyAttackPattern
                 break;
             }
         }
-        // 아무도 시작 못했으면 다음 프레임까지 대기
     }
 
     public void Stop()
