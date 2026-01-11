@@ -62,6 +62,8 @@ public class OpeningRushStep : IEnemyAttackStep
             _rush = null;
 
             _attack.MarkRushed();
+            _attack.MarkNeedRecoveryAfterRush();
+
             _finished = true;
         }
     }

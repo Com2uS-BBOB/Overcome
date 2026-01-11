@@ -17,6 +17,11 @@ public class EnemyAttack : MonoBehaviour
     public bool HasRushedOnce => _hasRushedOnce;
     public void MarkRushed() => _hasRushedOnce = true;
 
+    private bool _needRecoveryAfterRush;
+    private bool _needRecoveryAfterMelee;
+    public bool NeedRecoveryAfterRush => _needRecoveryAfterRush;
+    public bool NeedRecoveryAfterMelee => _needRecoveryAfterMelee;
+
     private IEnemyAttackPattern _currentPattern;
 
     private void Awake()
@@ -138,6 +143,13 @@ public class EnemyAttack : MonoBehaviour
     public void OnMeleeHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitEnd);
     public void OnMeleeEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeEnd);
 
+    // 후딜 관련
+    public void MarkNeedRecoveryAfterRush() => _needRecoveryAfterRush = true;
+    public void ConsumeRecoveryAfterRush() => _needRecoveryAfterRush = false;
+    public void MarkNeedRecoveryAfterMelee() => _needRecoveryAfterMelee = true;
+    public void ConsumeRecoveryAfterMelee() => _needRecoveryAfterMelee = false;
+
+    // 리셋 관련
     public void ResetRush()
     {
         _hasRushedOnce = false;

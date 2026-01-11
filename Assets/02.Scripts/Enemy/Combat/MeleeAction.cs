@@ -47,7 +47,7 @@ public class MeleeAction : IEnemyAction
 
         _animator.SetTrigger("AttackTest");
 #if UNITY_EDITOR
-        Debug.Log("깨물기 공격 시도");
+        Debug.Log("근접 공격 시도");
 #endif
     }
 

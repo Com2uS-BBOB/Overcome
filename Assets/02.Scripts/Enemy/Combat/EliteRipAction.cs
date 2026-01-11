@@ -61,7 +61,7 @@ public class EliteRipAction : IEnemyAction
         if (_finished) return;
         if (_player == null) return;
 
-        // 립 중 전진
+        // 난도질 중 전진
         _movement.SetRotationToLookAt(_player);
         _movement.MoveTo(_player.position);
     }

@@ -7,6 +7,7 @@ public class MeleeStep : IEnemyAttackStep
     private readonly float _cooldownMin;
     private readonly float _cooldownMax;
     private readonly float _attackDelay;
+    private readonly EnemyAttack _attack;
 
     private MeleeAction _melee;
 
@@ -21,6 +22,8 @@ public class MeleeStep : IEnemyAttackStep
         _cooldownMin = cooldownMin;
         _cooldownMax = cooldownMax;
         _attackDelay = attackDelay;
+
+        _attack = _context.Enemy.GetComponent<EnemyAttack>();
     }
 
     public bool TryStart()
@@ -92,6 +95,8 @@ public class MeleeStep : IEnemyAttackStep
             _context.AttackDirector?.Release(_context.Enemy);
             _reserved = false;
         }
+
+        _attack.MarkNeedRecoveryAfterMelee();
     }
 
     public void OnAnimEvent(EAttackAnimEvent animEvent)

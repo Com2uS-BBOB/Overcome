@@ -27,12 +27,6 @@ public class EliteRipStep : IEnemyAttackStep
     {
         if (_context.Player == null) return false;
 
-        // 난도질 거리 안이면 시도(Attack 상태 자체가 attackRange 안이라도, 5m 같은 별도 조건이 있어서 추가 체크)
-        if (Vector3.Distance(_context.Enemy.position, _context.Player.position) > _config.RipRange)
-        {
-            return false;
-        }
-
         // 공격권 실패 시 너무 자주 시도하지 않도록 설정
         if (Time.time < _retryTime) return false;
 
@@ -133,6 +127,8 @@ public class EliteRipStep : IEnemyAttackStep
         _howl = null;
 
         ReleaseAttack();
+
+        _attack.MarkNeedRecoveryAfterMelee();
         _finished = true;
     }
 

@@ -14,7 +14,12 @@ public class NormalAttackPattern : IEnemyAttackPattern
         {
             new HowlingStep(context, config.MeleeAttackRange, config.HowlDuration),
             new OpeningRushStep(context, config.OpeningRushDistance, config.OpeningRushDuration),
+
+            new RecoveryStep(context),
+
             new MeleeStep(context, config.MeleeCooldownMin, config.MeleeCooldownMax, config.MeleeAttackDelay),
+
+            new RecoveryStep(context)
         };
 
         // 항상 돌아가는 스텝
