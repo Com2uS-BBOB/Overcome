@@ -19,22 +19,21 @@ public class HowlingStep : IEnemyAttackStep
 
     public HowlingStep(
         EnemyAttackPatternContext context,
-        float duration,
         float triggerRange,
-        float howlDuration = 1.0f
+        float duration
     )
     {
         _context = context;
-        _duration = duration;
 
         _triggerRange = triggerRange;
-        _howlDuration = howlDuration;
+        _howlDuration = duration;
 
         _attack = _context.Enemy.GetComponent<EnemyAttack>();
     }
 
     public bool TryStart()
     {
+        if (_howl != null) return false;
         if (_context.Player == null) return false;
         if (Time.time < _nextAllowedTime) return false;
 

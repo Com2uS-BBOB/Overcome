@@ -22,7 +22,7 @@ public struct NormalAttackPatternConfig
         float meleeCooldownMax = 5f,
         float meleeAttackDelay = 0.2f,
         float meleeAttackRange = 5f,
-        float howlDuration = 2.4f
+        float howlDuration = 3f
     )
     {
         PressureWaitConfig = pressureWaitConfig;
