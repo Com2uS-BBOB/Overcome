@@ -14,8 +14,8 @@ public struct EliteAttackPatternConfig
 
     public EliteAttackPatternConfig(
         float openingRushDistance = 20f,
-        float openingRushDuration = 0.2f,
-        float ripRange = 5f,
+        float openingRushDuration = 1.4f,
+        float ripRange = 8f,
         float ripMoveSpeed = 2f,
         float ripDamagePerHit = 2f,
         float ripTouchDelay = 0.25f,

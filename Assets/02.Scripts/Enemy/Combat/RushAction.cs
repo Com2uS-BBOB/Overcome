@@ -10,17 +10,20 @@ public class RushAction : IEnemyAction
     private readonly NavMeshAgent _agent;
 
     private readonly float _rushDistance;
-    private readonly float _maxDuration;
+    private readonly float _maxDuration;  // 속도 계산용
     private readonly float _damage;
 
-    private float _timer;
     private bool _isFinished;
 
     private Vector3 _rushDirection;  // Enter 순간에 고정되는 방향
-    private Vector3 _startPosition;
     private float _speed;            // distance / duration
 
+    // 실제 이동거리 누적
+    private float _traveled;
+    private Vector3 _lastPosition;
+
     private float _sqrMagnitudeThreshold = 0.01f;
+
     private bool _savedAgentUpdatePosition;
     private bool _savedAgentUpdateRotation;
 
@@ -50,52 +53,62 @@ public class RushAction : IEnemyAction
     public void Enter()
     {
         _isFinished = false;
-        _timer = 0f;
 
-        _startPosition = _enemy.position;
-
-        Vector3 snapPlayerPosition = _player.position;
-        Vector3 direction = (snapPlayerPosition - _enemy.position);
+        Vector3 snapPlayerPosition = _player != null ? _player.position : (_enemy.position + _enemy.forward);
+        Vector3 direction = snapPlayerPosition - _enemy.position;
         direction.y = 0f;
 
-        if (direction.sqrMagnitude < _sqrMagnitudeThreshold)
+        if (direction.sqrMagnitude < _sqrMagnitudeThreshold || _rushDistance <= _sqrMagnitudeThreshold)
         {
             _isFinished = true;
             return;
         }
 
         _rushDirection = direction.normalized;
-        _speed = _rushDistance / Mathf.Max(0.01f, _maxDuration);
+        _speed = _rushDistance / _maxDuration;
+
+        _traveled = 0f;
 
         _agent.ResetPath();
         _agent.isStopped = true;
 
         _savedAgentUpdatePosition = _agent.updatePosition;
         _savedAgentUpdateRotation = _agent.updateRotation;
+
         _agent.updatePosition = false;
         _agent.updateRotation = false;
 
-        // 방향 고정(시작 순간만)
+        // 시작한 순간 방향 고정
         _enemy.rotation = Quaternion.LookRotation(_rushDirection);
+
+        _lastPosition = _enemy.position;
 
         _hitbox?.Enable(_damage);
 
+#if UNITY_EDITOR
         Debug.Log("돌진 공격 시도");
+#endif
     }
 
     public void Update()
     {
         if (_isFinished) return;
 
-        _timer += Time.deltaTime;
-
         Vector3 step = _rushDirection * (_speed * Time.deltaTime);
         _agent.Move(step);
 
-        // 진행 거리로 종료 판단 (remainingDistance 같은 경로 기반 값 쓰지 않음)
-        float traveled = Vector3.Distance(new Vector3(_startPosition.x, 0, _startPosition.z), new Vector3(_enemy.position.x, 0, _enemy.position.z));
+        _enemy.position = _agent.nextPosition;
 
-        if (_timer >= _maxDuration || traveled >= _rushDistance)
+        // 실제 이동 거리 누적(평면 기준)
+        Vector3 now = _enemy.position;
+        Vector3 a = new Vector3(_lastPosition.x, 0, _lastPosition.z);
+        Vector3 b = new Vector3(now.x, 0, now.z);
+
+        _traveled += Vector3.Distance(a, b);
+        _lastPosition = now;
+
+        // 거리 기반으로 종료
+        if (_traveled >= _rushDistance)
         {
             _isFinished = true;
         }
@@ -111,12 +124,11 @@ public class RushAction : IEnemyAction
         // agent 원상복구
         _agent.updatePosition = _savedAgentUpdatePosition;
         _agent.updateRotation = _savedAgentUpdateRotation;
+
         _agent.isStopped = false;
 
-        // Transform과 agent 위치 싱크
+        // Transform과 agent 위치 싱크 확정 및 이전 경로 제거
         _agent.Warp(_enemy.position);
-        
-        // 이전 경로 정리 - Rush 전 경로가 남아있으면 문제 발생
         _agent.ResetPath();
 
         _movement.ResetSpeedMultiplier();
