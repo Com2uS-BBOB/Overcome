@@ -12,6 +12,7 @@ public class NormalAttackPattern : IEnemyAttackPattern
         // 기본 스텝
         var steps = new List<IEnemyAttackStep>
         {
+            new HowlingStep(context, config.MeleeAttackRange, config.HowlDuration),
             new OpeningRushStep(context, config.OpeningRushDistance, config.OpeningRushDuration),
             new MeleeStep(context, config.MeleeCooldownMin, config.MeleeCooldownMax, config.MeleeAttackDelay),
         };
