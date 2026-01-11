@@ -22,6 +22,10 @@ public class RushAction : IEnemyAction
     private float _traveled;
     private Vector3 _lastPosition;
 
+    // 비상 탈출용 타임아웃
+    private float _timeout;
+    private float _timer;
+
     private float _sqrMagnitudeThreshold = 0.01f;
 
     private bool _savedAgentUpdatePosition;
@@ -54,6 +58,9 @@ public class RushAction : IEnemyAction
     {
         _isFinished = false;
 
+        _traveled = 0f;
+        _traveled = 0f;
+
         Vector3 snapPlayerPosition = _player != null ? _player.position : (_enemy.position + _enemy.forward);
         Vector3 direction = snapPlayerPosition - _enemy.position;
         direction.y = 0f;
@@ -67,7 +74,8 @@ public class RushAction : IEnemyAction
         _rushDirection = direction.normalized;
         _speed = _rushDistance / _maxDuration;
 
-        _traveled = 0f;
+        // 비상 탈출용 타임아웃 계산
+        _timeout = _rushDistance / Mathf.Max(_sqrMagnitudeThreshold, _speed);
 
         _agent.ResetPath();
         _agent.isStopped = true;
@@ -86,7 +94,7 @@ public class RushAction : IEnemyAction
         _hitbox?.Enable(_damage);
 
 #if UNITY_EDITOR
-        Debug.Log("돌진 공격 시도");
+        Debug.Log("돌진 시작");
 #endif
     }
 
@@ -110,6 +118,19 @@ public class RushAction : IEnemyAction
         // 거리 기반으로 종료
         if (_traveled >= _rushDistance)
         {
+#if UNITY_EDITOR
+            Debug.Log($"돌진 종료: 거리 달성");
+#endif
+            _isFinished = true;
+            return;
+        }
+
+        // 타임아웃 기반으로 종료
+        if (_timer >= _timeout)
+        {
+#if UNITY_EDITOR
+            Debug.Log($"돌진 종료: 타임아웃");
+#endif
             _isFinished = true;
         }
     }
