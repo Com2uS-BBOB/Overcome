@@ -1,18 +1,13 @@
-using UnityEngine;
 using System.Collections;
+using UnityEngine;
 
 public class FloatSmallEnemySpawner : MonoBehaviour
 {
-    [Header("플레이어")]
-    [SerializeField] private Transform _player;
-
     [Header("풀링")]
     [SerializeField] private EnemyPool _enemyPool;
 
     [Header("스폰 설정")]
     [SerializeField] private float _respawnDelay = 3f;
-
-    private EnemyCombatContext _enemyCombatContext;
 
     private void Start()
     {
@@ -51,8 +46,6 @@ public class FloatSmallEnemySpawner : MonoBehaviour
 
         // todo. EnemyBase 활성화 시점으로 위치 이동 예정
         EnemyEventController.Enemy.RaiseSpawned(new EnemySpawnedEvent(enemy));
-        EnemyState logic = enemy.GetComponent<EnemyState>();
-        logic.Initialize(_enemyCombatContext);
     }
 
     private Vector3 GetSpawnHeight(EEnemyType type)
@@ -69,7 +62,7 @@ public class FloatSmallEnemySpawner : MonoBehaviour
     private IEnumerator RespawnEnemy_Coroutine(EnemyBase enemy)
     {
         Vector3 respawnPosition = enemy.GetSpawnBasePosition();
-        EEnemyType type = EEnemyType.FloatSmall;
+        EEnemyType type = enemy.EnemyType;
 
         yield return new WaitForSeconds(_respawnDelay);
 
