@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviour, IEnemyRespawnRequester
 {
     [Header("플레이어")]
     [SerializeField] private Transform _player;
@@ -36,7 +36,6 @@ public class EnemySpawner : MonoBehaviour
         enemy.OnDespawn -= HandleEnemyDespawn;
 
         _enemyPool.Despawn(enemy.EnemyType, enemy);
-        RequestRespawn(enemy);
     }
 
     private void SpawnInitialEnemies()
@@ -88,6 +87,7 @@ public class EnemySpawner : MonoBehaviour
             Quaternion.identity
         );
 
+        enemy.SetRespawnRequester(this);
         enemy.SetSpawner(this);
         enemy.SetSpawnBasePosition(basePosition);  // 리스폰용 (높이 재설정 제외)
 
