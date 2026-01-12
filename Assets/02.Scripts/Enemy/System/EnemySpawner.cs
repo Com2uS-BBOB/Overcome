@@ -93,6 +93,8 @@ public class EnemySpawner : MonoBehaviour
 
         enemy.OnDespawn += HandleEnemyDespawn;
 
+        // todo. EnemyBase 활성화 시점으로 위치 이동 예정
+        EnemyEventController.Enemy.RaiseSpawned(new EnemySpawnedEvent(enemy));
         EnemyState logic = enemy.GetComponent<EnemyState>();
         logic.Initialize(_enemyCombatContext);
     }

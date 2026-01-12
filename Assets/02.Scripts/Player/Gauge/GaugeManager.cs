@@ -33,6 +33,7 @@ namespace _02.Scripts.Player.Gauge
         // Events
         public event Action<float, float> OnCrescentGaugeChanged;
         public event Action<float, float> OnOverDriveGaugeChanged;
+        
         public event Action OnOverDriveActivated;
         public event Action OnOverDriveDeactivated;
         public event Action<float> OnOverDriveDurationTick;
@@ -42,7 +43,7 @@ namespace _02.Scripts.Player.Gauge
             _crescentGauge = new GaugeData(_settings.CrescentMaxGauge);
             _overDriveGauge = new GaugeData(_settings.OverDriveMaxGauge);
             _crescentGauge.Fill();
-            _overDriveGauge.Fill();
+            // _overDriveGauge.Fill();
         }
 
         private void Update()

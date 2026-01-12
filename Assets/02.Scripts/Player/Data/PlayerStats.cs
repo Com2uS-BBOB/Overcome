@@ -41,10 +41,13 @@ namespace _02.Scripts.Player.Data
         {
             if (IsDead) return;
 
-            CurrentHp = Mathf.Max(0, CurrentHp - damage);
-            OnHpChanged?.Invoke(CurrentHp, MaxHp);
+            // todo. Damage 처리 방식 수정 필요
+            TimeSystem.Instance.SubtractTimeLimit(damage);
+            
+            // CurrentHp = Mathf.Max(0, CurrentHp - damage);
+            // OnHpChanged?.Invoke(CurrentHp, MaxHp);
 
-            if (CurrentHp <= 0) OnDeath?.Invoke();
+            // if (CurrentHp <= 0) OnDeath?.Invoke();
         }
 
         public void Heal(float amount)

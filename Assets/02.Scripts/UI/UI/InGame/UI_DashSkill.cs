@@ -1,9 +1,12 @@
+using _02.Scripts.Player.Combat;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class UI_Skill : MonoBehaviour
+public class UI_DashSkill : MonoBehaviour
 {
+    [SerializeField] private DashAttackSkill _dashSkill;
+    
     [Header("UI References")]
     [SerializeField] private Image _coolDownGauge;
     [SerializeField] private TextMeshProUGUI _coolDownCountText;
@@ -11,42 +14,30 @@ public class UI_Skill : MonoBehaviour
     [SerializeField] private Image _blockSkillImage;
     private int _lastDisplayTime;
     private bool _processCoolDown;
-    
-    // Test Code
-    [Header("Test Settings")]
-    [SerializeField] private float _coolDownDuration = 5f;
-    [SerializeField] private bool _canUse = true;
+
     private float _elapsedTime = 0f;
 
     private void Start()
     {
-        _blockSkillImage.gameObject.SetActive(!_canUse);
+        _dashSkill.OnDashEnded += SetCoolDown;
+        _blockSkillImage.gameObject.SetActive(!_dashSkill.CanUse);
         HideCooldownUI();
-    }
-
-    public void SetSkillAvailability(bool canUse)
-    {
-        _canUse = canUse;
-        _blockSkillImage.gameObject.SetActive(!canUse);
     }
 
     public void SetCoolDown()
     {
-        if (!_canUse) return;
-        
         _elapsedTime = 0f;
         _processCoolDown = true;
-        
+
         ShowCooldownUI();
     }
 
     private void Update()
     {
         if (!_processCoolDown) return;
-        
-        // todo. Player 정보 기반 내용으로 수정
+
         _elapsedTime += Time.deltaTime;
-        float progress = Mathf.Clamp01(_elapsedTime / _coolDownDuration);
+        float progress = Mathf.Clamp01(_elapsedTime / _dashSkill.Cooldown);
         UpdateCoolDownUI(progress);
 
         if (progress >= 1f)
@@ -58,8 +49,8 @@ public class UI_Skill : MonoBehaviour
     private void UpdateCoolDownUI(float progress)
     {
         _coolDownGauge.fillAmount = progress;
-        
-        float remainTime = _coolDownDuration * (1f - progress);
+
+        float remainTime = _dashSkill.Cooldown * (1f - progress);
         int displayTime = Mathf.CeilToInt(remainTime);
         if (displayTime != _lastDisplayTime)
         {

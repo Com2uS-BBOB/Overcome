@@ -51,7 +51,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         _currentHealth = EnemyStatData.MaxHealth;
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
-        EnemyEventController.Enemy.RaiseSpawned(new EnemySpawnedEvent(this));
     }
 
     public void SetPool(EnemyPool pool)
