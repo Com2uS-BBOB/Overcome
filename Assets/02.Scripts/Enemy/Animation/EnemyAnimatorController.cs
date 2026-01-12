@@ -14,7 +14,7 @@ public class EnemyAnimatorController : MonoBehaviour
     [Header("Death Mode")]
     [SerializeField] private EEnemyDeathMode _deathMode = EEnemyDeathMode.Single;
 
-    [Tooltip("공중 적 Death 관련 트리거")]
+    [Header("공중 적 Death 관련 트리거")]
     [SerializeField] private string _fallingTriggerName = "Falling";
     [SerializeField] private string _onGroundTriggerName = "OnGround";
 
