@@ -1,26 +1,28 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BiteAction : IEnemyAction
+public class MeleeAction : IEnemyAction
 {
     private readonly Transform _enemy;
     private readonly Transform _player;
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly Animator _animator;
     private readonly NavMeshAgent _agent;
+    private readonly float _knockbackDistance;
 
     private readonly float _damage;
     private bool _isFinished;
 
     public bool IsFinished => _isFinished;
 
-    public BiteAction(
+    public MeleeAction(
         Transform enemy,
         Transform player,
         EnemyKnockbackHitbox hitbox,
         Animator animator,
         NavMeshAgent agent,
-        float damage
+        float damage,
+        float knockbackDistance
     )
     {
         _enemy = enemy;
@@ -29,6 +31,7 @@ public class BiteAction : IEnemyAction
         _animator = animator;
         _agent = agent;
         _damage = damage;
+        _knockbackDistance = knockbackDistance;
     }
 
     public void Enter()
@@ -47,7 +50,7 @@ public class BiteAction : IEnemyAction
 
         _animator.SetTrigger("AttackTest");
 #if UNITY_EDITOR
-        Debug.Log("깨물기 공격 시도");
+        Debug.Log("근접 공격 시도");
 #endif
     }
 
@@ -61,14 +64,14 @@ public class BiteAction : IEnemyAction
         }
     }
 
-    // Animation Events
+    // 애니메이션 이벤트
     public void OnAnimStart() { }
     
     public void OnHitStart()
     {
         if (_hitbox != null)
         {
-            _hitbox.Enable(_damage);
+            _hitbox.Enable(_damage, _knockbackDistance);
         }
     }
     

@@ -17,6 +17,11 @@ public class EnemyAttack : MonoBehaviour
     public bool HasRushedOnce => _hasRushedOnce;
     public void MarkRushed() => _hasRushedOnce = true;
 
+    private bool _needRecoveryAfterRush;
+    private bool _needRecoveryAfterMelee;
+    public bool NeedRecoveryAfterRush => _needRecoveryAfterRush;
+    public bool NeedRecoveryAfterMelee => _needRecoveryAfterMelee;
+
     private IEnemyAttackPattern _currentPattern;
 
     private void Awake()
@@ -73,7 +78,7 @@ public class EnemyAttack : MonoBehaviour
         switch (_enemy.EnemyStatData.EnemyType)
         {
             case EEnemyType.Normal:
-                var waitConfig = new AttackWaitActionConfig(
+                var normalWaitConfig = new AttackWaitActionConfig(
                     minWait: 999f,
                     maxWait: 999f,
                     waitSpeedMultiplier: 0.15f,
@@ -84,25 +89,67 @@ public class EnemyAttack : MonoBehaviour
                 );
 
                 var normalConfig = new NormalAttackPatternConfig(
-                    pressureWaitConfig: waitConfig,
-                    biteCooldownMin: 3f,
-                    biteCooldownMax: 5f,
-                    biteTouchDelay: 0.2f
+                    pressureWaitConfig: normalWaitConfig,
+                    openingRushDistance: 10f,
+                    openingRushDuration: 0.4f,
+                    meleeCooldownMin: 3f,
+                    meleeCooldownMax: 5f,
+                    meleeAttackDelay: 0.2f
                 );
 
                 _currentPattern = new NormalAttackPattern(patternContext, normalConfig);
                 break;
 
-                // TODO: Elite, Small 확장
+            case EEnemyType.Small:
+                var smallWaitConfig = new AttackWaitActionConfig(
+                    minWait: 999f,
+                    maxWait: 999f,
+                    waitSpeedMultiplier: 0.15f,
+                    releaseSlotOnExit: true,
+                    fixedSlotIndex: -1,
+                    arrivedThreshold: 0.2f,
+                    minStoppingDistance: 0.1f
+                );
+
+                var smallConfig = new SmallAttackPatternConfig(
+                    pressureWaitConfig: smallWaitConfig,
+                    meleeCooldownMin: 3f,
+                    meleeCooldownMax: 5f,
+                    meleeAttackDelay: 0.2f
+                );
+
+                _currentPattern = new SmallAttackPattern(patternContext, smallConfig);
+                break;
+
+            case EEnemyType.Elite:
+                var eliteConfig = new EliteAttackPatternConfig(
+                    openingRushDistance: 20f,
+                    openingRushDuration: 0.2f,
+                    ripRange: 5f,
+                    ripMoveSpeed: 2f,
+                    ripDamagePerHit: 2f,
+                    ripTouchDelay: 0.25f,
+                    howlDuration: 2.8f
+                );
+
+                _currentPattern = new EliteAttackPattern(patternContext, eliteConfig);
+                break;
         }
     }
 
     // 애니메이션 이벤트 포워딩
-    public void OnBiteStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteStart);
-    public void OnBiteHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteHitStart);
-    public void OnBiteHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteHitEnd);
-    public void OnBiteEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.BiteEnd);
+    public void OnMeleeStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeStart);
+    public void OnMeleeHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitStart);
+    public void OnMeleeHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitEnd);
+    public void OnMeleeEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeEnd);
 
+    // 후딜 관련
+    public void MarkNeedRecoveryAfterRush() => _needRecoveryAfterRush = true;
+    public void ConsumeRecoveryAfterRush() => _needRecoveryAfterRush = false;
+    public void MarkNeedRecoveryAfterMelee() => _needRecoveryAfterMelee = true;
+    public void ConsumeRecoveryAfterMelee() => _needRecoveryAfterMelee = false;
+
+    // 리셋 관련
     public void ResetRush()
     {
         _hasRushedOnce = false;

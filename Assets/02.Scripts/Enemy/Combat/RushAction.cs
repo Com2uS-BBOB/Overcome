@@ -10,17 +10,26 @@ public class RushAction : IEnemyAction
     private readonly NavMeshAgent _agent;
 
     private readonly float _rushDistance;
-    private readonly float _maxDuration;
+    private readonly float _maxDuration;  // 속도 계산용
     private readonly float _damage;
 
-    private float _timer;
     private bool _isFinished;
-    private Vector3 _rushTarget;
-    private float _originalSpeed;
+
+    private Vector3 _rushDirection;  // Enter 순간에 고정되는 방향
+    private float _speed;            // distance / duration
+
+    // 실제 이동거리 누적
+    private float _traveled;
+    private Vector3 _lastPosition;
+
+    // 비상 탈출용 타임아웃
+    private float _timeout;
+    private float _timer;
 
     private float _sqrMagnitudeThreshold = 0.01f;
-    private float _arrived = 0.1f;
-    private float _sampleRadius = 3f;
+
+    private bool _savedAgentUpdatePosition;
+    private bool _savedAgentUpdateRotation;
 
     public bool IsFinished => _isFinished;
 
@@ -48,48 +57,45 @@ public class RushAction : IEnemyAction
     public void Enter()
     {
         _isFinished = false;
-        _timer = 0f;
 
-        Vector3 direction = (_player.position - _enemy.position);
+        _traveled = 0f;
+        _traveled = 0f;
+
+        Vector3 snapPlayerPosition = _player != null ? _player.position : (_enemy.position + _enemy.forward);
+        Vector3 direction = snapPlayerPosition - _enemy.position;
         direction.y = 0f;
 
-        if (direction.sqrMagnitude < _sqrMagnitudeThreshold)
+        if (direction.sqrMagnitude < _sqrMagnitudeThreshold || _rushDistance <= _sqrMagnitudeThreshold)
         {
             _isFinished = true;
             return;
         }
 
-        direction.Normalize();
+        _rushDirection = direction.normalized;
+        _speed = _rushDistance / _maxDuration;
 
-        _rushTarget = _enemy.position + direction * _rushDistance;
+        // 비상 탈출용 타임아웃 계산
+        _timeout = _rushDistance / Mathf.Max(_sqrMagnitudeThreshold, _speed);
 
-        // NavMesh 보정
-        if (NavMesh.SamplePosition(_rushTarget, out var hit, _sampleRadius, NavMesh.AllAreas))
-        {
-            _rushTarget = hit.position;
-        }
-        else
-        {
-            Debug.LogWarning("돌진 목표 지점을 NavMesh에서 찾지 못했습니다.");
-        }
+        _agent.ResetPath();
+        _agent.isStopped = true;
 
-        _originalSpeed = _agent.speed;
-        float rushSpeed = _rushDistance / _maxDuration;
-        _movement.SetSpeedMultiplier(rushSpeed / _originalSpeed);
+        _savedAgentUpdatePosition = _agent.updatePosition;
+        _savedAgentUpdateRotation = _agent.updateRotation;
 
-        _movement.MoveTo(_rushTarget);
-        _movement.SetRotationToMoveDirection();
-        
-        if (_hitbox != null)
-        {
-            _hitbox.Enable(_damage);
-        }
-        else
-        {
-            Debug.LogWarning("EnemyKnockbackHitbox가 없습니다.");
-        }
+        _agent.updatePosition = false;
+        _agent.updateRotation = false;
 
-        Debug.Log("돌진 공격 시도");
+        // 시작한 순간 방향 고정
+        _enemy.rotation = Quaternion.LookRotation(_rushDirection);
+
+        _lastPosition = _enemy.position;
+
+        _hitbox?.Enable(_damage);
+
+#if UNITY_EDITOR
+        Debug.Log("돌진 시작");
+#endif
     }
 
     public void Update()
@@ -98,22 +104,55 @@ public class RushAction : IEnemyAction
 
         _timer += Time.deltaTime;
 
-        if (_agent.pathPending || _agent.isPathStale) return;
+        Vector3 step = _rushDirection * (_speed * Time.deltaTime);
+        _agent.Move(step);
 
-        if (_timer >= _maxDuration || (!_agent.pathPending && _agent.remainingDistance <= _arrived))
+        _enemy.position = _agent.nextPosition;
+
+        // 실제 이동 거리 누적(평면 기준)
+        Vector3 now = _enemy.position;
+        Vector3 a = new Vector3(_lastPosition.x, 0, _lastPosition.z);
+        Vector3 b = new Vector3(now.x, 0, now.z);
+
+        _traveled += Vector3.Distance(a, b);
+        _lastPosition = now;
+
+        // 거리 기반으로 종료
+        if (_traveled >= _rushDistance)
         {
+#if UNITY_EDITOR
+            Debug.Log($"돌진 종료: 거리 달성");
+#endif
+            _isFinished = true;
+            return;
+        }
+
+        // 타임아웃 기반으로 종료
+        if (_timer >= _timeout)
+        {
+#if UNITY_EDITOR
+            Debug.Log($"돌진 종료: 타임아웃");
+#endif
             _isFinished = true;
         }
     }
 
     public void Exit()
     {
-        _movement.Stop();
-        
         if (_hitbox != null)
         {
             _hitbox.Disable();
         }
+
+        // agent 원상복구
+        _agent.updatePosition = _savedAgentUpdatePosition;
+        _agent.updateRotation = _savedAgentUpdateRotation;
+
+        _agent.isStopped = false;
+
+        // Transform과 agent 위치 싱크 확정 및 이전 경로 제거
+        _agent.Warp(_enemy.position);
+        _agent.ResetPath();
 
         _movement.ResetSpeedMultiplier();
     }

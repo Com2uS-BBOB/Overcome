@@ -9,7 +9,8 @@ public class EnemyKnockbackHitbox : HitboxBase
     [Header("넉백 옵션")]
     [SerializeField] private bool _useKnockback = true;
     [SerializeField] private float _knockbackDuration = 0.2f;
-    [SerializeField] private float _totalDistance = 2f;
+    [SerializeField] private float _defaultKnockbackDistance = 2f;  // 기본값
+    private float _currentKnockbackDistance;
 
     private Coroutine _knockbackRoutine;
 
@@ -17,11 +18,19 @@ public class EnemyKnockbackHitbox : HitboxBase
     {
         base.Awake();
         DisableHitDetection();
+        _currentKnockbackDistance = _defaultKnockbackDistance;
     }
 
-    // 공격 패턴에서 호출
+    // 기본
     public void Enable(float damage)
     {
+        Enable(damage, _defaultKnockbackDistance);
+    }
+
+    // 공격별 넉백 지정
+    public void Enable(float damage, float knockbackDistance)
+    {
+        _currentKnockbackDistance = Mathf.Max(0f, knockbackDistance);
         EnableHitDetection(damage);
     }
 
@@ -70,9 +79,9 @@ public class EnemyKnockbackHitbox : HitboxBase
         float elapsed = 0f;
         float movedDistance = 0f;
 
-        while (elapsed < _knockbackDuration && movedDistance < _totalDistance)
+        while (elapsed < _knockbackDuration && movedDistance < _currentKnockbackDistance)
         {
-            float step = (_totalDistance / _knockbackDuration) * Time.deltaTime;
+            float step = (_currentKnockbackDistance / _knockbackDuration) * Time.deltaTime;
             Vector3 move = direction * step;
 
             Vector3 before = controller.transform.position;
