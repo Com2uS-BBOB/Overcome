@@ -14,7 +14,7 @@ public class RushAction : IEnemyAction
 
     private bool _isFinished;
 
-    private float _targetDistance;   // 이번 돌진에서 목표 거리
+    private float _targetDistance;
     private Vector3 _rushDirection;  // Enter 순간에 고정되는 방향
     private float _speed;            // distance / duration
 
@@ -39,7 +39,6 @@ public class RushAction : IEnemyAction
     private float _castRadiusPadding = 0.08f;
     private float _playerHitRadius = 0.3f;
 
-    private CharacterController _playerController;
     private int _playerLayerMask;
 
     public bool IsFinished => _isFinished;
@@ -72,11 +71,6 @@ public class RushAction : IEnemyAction
         _timer = 0f;
         _lastPosition = _enemy.position;
 
-        if (_player != null)
-        {
-            _playerController = _player.GetComponent<CharacterController>();
-        }
-
         Vector3 snapPlayerPosition = _player != null ? _player.position : (_enemy.position + _enemy.forward);
         Vector3 delta = snapPlayerPosition - _enemy.position;
         delta.y = 0f;
@@ -99,7 +93,7 @@ public class RushAction : IEnemyAction
         }
 
         // 목표 거리가 너무 짧으면 종료
-        if (_targetDistance <= 0.01f)
+        if (_targetDistance <= _sqrMagnitudeThreshold)
         {
             _isFinished = true;
             return;
@@ -151,11 +145,7 @@ public class RushAction : IEnemyAction
         {
             if (TryGetPlayerHit(stepDistance, out RaycastHit hit))
             {
-                if (!hit.collider.CompareTag("Player"))
-                {
-                    // 플레이어가 아니면 무시
-                }
-                else
+                if (hit.collider.CompareTag("Player"))
                 {
                     if (_stopShortOnPlayerHit)
                     {
