@@ -10,6 +10,9 @@ namespace _02.Scripts.Player.Animation
     public class PlayerAnimatorController : MonoBehaviour
     {
         [SerializeField] private Animator _animator;
+        [SerializeField] private RootMotionProxy _rootMotionProxy;
+
+        public event Action<Vector3> OnRootMotionUpdate;
 
         // Animator 파라미터 해시 - Locomotion
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
@@ -30,7 +33,20 @@ namespace _02.Scripts.Player.Animation
         {
             _stateMachine = stateMachine;
             _stateMachine.OnStateChanged += HandleStateChanged;
+
+            if (_rootMotionProxy != null)
+                _rootMotionProxy.OnRootMotionUpdate += HandleRootMotionUpdate;
         }
+
+        #region Root Motion
+
+        public void EnableRootMotion() => _rootMotionProxy?.EnableRootMotion();
+        public void DisableRootMotion() => _rootMotionProxy?.DisableRootMotion();
+
+        private void HandleRootMotionUpdate(Vector3 deltaPosition)
+            => OnRootMotionUpdate?.Invoke(deltaPosition);
+
+        #endregion
 
 
         #region Locomotion
@@ -118,6 +134,9 @@ namespace _02.Scripts.Player.Animation
         {
             if (_stateMachine != null)
                 _stateMachine.OnStateChanged -= HandleStateChanged;
+
+            if (_rootMotionProxy != null)
+                _rootMotionProxy.OnRootMotionUpdate -= HandleRootMotionUpdate;
         }
     }
 }

@@ -94,6 +94,10 @@ namespace _02.Scripts.Player.Core
             // 콤보 애니메이션 연결
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnComboAttack += HandleComboAttack;
             if (_crescent != null) _crescent.OnComboAttack += HandleCrescentCombo;
+
+            // Root Motion 이벤트 연결
+            if (_playerAnimatorController != null)
+                _playerAnimatorController.OnRootMotionUpdate += HandleRootMotion;
         }
 
         private void OnDisable()
@@ -110,6 +114,10 @@ namespace _02.Scripts.Player.Core
             // 콤보 애니메이션 연결 해제
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnComboAttack -= HandleComboAttack;
             if (_crescent != null) _crescent.OnComboAttack -= HandleCrescentCombo;
+
+            // Root Motion 이벤트 연결 해제
+            if (_playerAnimatorController != null)
+                _playerAnimatorController.OnRootMotionUpdate -= HandleRootMotion;
         }
 
         private void Update()
@@ -206,5 +214,16 @@ namespace _02.Scripts.Player.Core
 
         // 크레센트 콤보 공격 애니메이션
         private void HandleCrescentCombo(int comboStep) => _playerAnimatorController?.PlayCrescent(comboStep, Movement.IsGrounded);
+
+        // Root Motion 처리 - 플레이어 forward 방향으로 변환
+        private void HandleRootMotion(Vector3 deltaPosition)
+        {
+            float distance = deltaPosition.magnitude;
+            if (distance > 0.001f)
+            {
+                Vector3 movement = transform.forward * distance;
+                CharacterController.Move(movement);
+            }
+        }
     }
 }
