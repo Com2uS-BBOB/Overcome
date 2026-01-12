@@ -2,84 +2,36 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 
-public class UI_TimeResult : MonoBehaviour, ISequentialUI
+public class UI_TimeResult : MonoBehaviour
 {
-    [SerializeField] private AnimatedNumber _timeNumber;
-    [SerializeField] private CanvasGroup _canvasGroup;
-
-    [Header("Animation")]
-    [SerializeField] private float _showDuration = 0.3f;
-    [SerializeField] private Ease _showEase = Ease.OutBack;
-
-    public event Action OnShowComplete;
-
+    [SerializeField] private ProgressiveScrambleText _timeText;
     private float _targetTime;
-    private bool _isSubscribed;
 
     private void Awake()
     {
-        _timeNumber.Init();
+        _timeText.Init(this);
     }
 
-    private void OnDestroy()
+    private void OnEnable()
     {
-        UnsubscribeEvent();
-        _timeNumber.Clear();
+        Show();
     }
-
+    
+    private void OnDisable()
+    {
+        _timeText.Stop();
+    }
+ 
     public void Show()
     {
         _targetTime = TimeSystem.Instance.PlayTime;
         gameObject.SetActive(true);
-        SubscribeEvent();
-
-        if (_canvasGroup != null)
-        {
-            _canvasGroup.alpha = 0;
-            _canvasGroup.DOFade(1f, _showDuration);
-        }
-
-        transform.localScale = Vector3.zero;
-        transform
-            .DOScale(1f, _showDuration)
-            .SetEase(_showEase)
-            .OnComplete(() =>
-            {
-                _timeNumber.SetValue(_targetTime);
-            });
-    }
-
-    private void SubscribeEvent()
-    {
-        if (!_isSubscribed)
-        {
-            _timeNumber.OnCompleteChanging += HandleNumberComplete;
-            _isSubscribed = true;
-        }
-    }
-
-    private void UnsubscribeEvent()
-    {
-        if (_isSubscribed)
-        {
-            _timeNumber.OnCompleteChanging -= HandleNumberComplete;
-            _isSubscribed = false;
-        }
-    }
-
-    private void HandleNumberComplete()
-    {
-        OnShowComplete?.Invoke();
+        _timeText.PlayTime(_targetTime);
     }
 
     public void Hide()
     {
-        UnsubscribeEvent();
+        _timeText.Stop();
         gameObject.SetActive(false);
-    }
-
-    public void SetTime(float time)
-    {
-        _targetTime = time;
     }
 }

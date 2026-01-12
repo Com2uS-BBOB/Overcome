@@ -1,0 +1,159 @@
+using System;
+using System.Collections;
+using System.Text;
+using TMPro;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+[Serializable]
+public class ProgressiveScrambleText
+{
+    [Header("UI References")]
+    [SerializeField] private TMP_Text _text;
+
+    [Header("Settings")]
+    [SerializeField] private float _charDuration = 0.15f;
+    [SerializeField] private int _scrambleIterations = 5;
+    [SerializeField] private string _scrambleChars = "0123456789";
+
+    [Header("Format")]
+    [SerializeField] private string _numberFormat = "N0";
+    [SerializeField] private string _timeFormat = "00";
+    [SerializeField] private char _timeSeparator = ':';
+    [Tooltip("Characters that should not be scrambled (e.g., '.:')")]
+    [SerializeField] private string _skipChars = ".:";
+
+    public event Action OnComplete;
+
+    private Coroutine _currentCoroutine;
+    private MonoBehaviour _coroutineRunner;
+    private readonly StringBuilder _sb = new StringBuilder(32);
+
+    public void Init(MonoBehaviour runner)
+    {
+        _coroutineRunner = runner;
+    }
+
+    public void Play(int targetValue)
+    {
+        PlayInternal(targetValue.ToString(_numberFormat));
+    }
+
+    public void Play(float targetValue)
+    {
+        PlayInternal(targetValue.ToString(_numberFormat));
+    }
+
+    public void Play(string targetValue)
+    {
+        PlayInternal(targetValue);
+    }
+
+    public void PlayTime(float totalSeconds)
+    {
+        int minutes = Mathf.FloorToInt(totalSeconds / 60f);
+        int seconds = Mathf.FloorToInt(totalSeconds % 60f);
+
+        _sb.Clear();
+        _sb.Append(minutes.ToString(_timeFormat));
+        _sb.Append(_timeSeparator);
+        _sb.Append(seconds.ToString(_timeFormat));
+
+        PlayInternal(_sb.ToString());
+    }
+
+    public void PlayRaw(string targetValue)
+    {
+        PlayInternal(targetValue);
+    }
+
+    private void PlayInternal(string targetValue)
+    {
+        if (_coroutineRunner == null)
+        {
+            Debug.LogError("[ProgressiveScrambleText] CoroutineRunner is not set. Call Init() first.");
+            return;
+        }
+
+        Stop();
+        _currentCoroutine = _coroutineRunner.StartCoroutine(ProgressiveScrambleCoroutine(targetValue));
+    }
+
+    public void Stop()
+    {
+        if (_currentCoroutine != null && _coroutineRunner != null)
+        {
+            _coroutineRunner.StopCoroutine(_currentCoroutine);
+            _currentCoroutine = null;
+        }
+    }
+
+    public void SetTextImmediate(int value)
+    {
+        _text.text = value.ToString(_numberFormat);
+    }
+
+    public void SetTextImmediate(float value)
+    {
+        _text.text = value.ToString(_numberFormat);
+    }
+
+    public void SetTextImmediate(string value)
+    {
+        _text.text = value;
+    }
+
+    public void SetTimeImmediate(float totalSeconds)
+    {
+        int minutes = Mathf.FloorToInt(totalSeconds / 60f);
+        int seconds = Mathf.FloorToInt(totalSeconds % 60f);
+
+        _sb.Clear();
+        _sb.Append(minutes.ToString(_timeFormat));
+        _sb.Append(_timeSeparator);
+        _sb.Append(seconds.ToString(_timeFormat));
+
+        _text.text = _sb.ToString();
+    }
+
+    public void Clear()
+    {
+        _text.text = string.Empty;
+    }
+
+    public void SetActive(bool active)
+    {
+        _text.gameObject.SetActive(active);
+    }
+
+    private IEnumerator ProgressiveScrambleCoroutine(string target)
+    {
+        _sb.Clear();
+        var waitTime = new WaitForSeconds(_charDuration / _scrambleIterations);
+
+        for (int i = 0; i < target.Length; i++)
+        {
+            char targetChar = target[i];
+
+            if (_skipChars.IndexOf(targetChar) >= 0)
+            {
+                _sb.Append(targetChar);
+                _text.text = _sb.ToString();
+                continue;
+            }
+
+            for (int j = 0; j < _scrambleIterations; j++)
+            {
+                char randomChar = _scrambleChars[Random.Range(0, _scrambleChars.Length)];
+                _text.text = _sb.ToString() + randomChar;
+                yield return waitTime;
+            }
+
+            _sb.Append(targetChar);
+            _text.text = _sb.ToString();
+        }
+
+        _currentCoroutine = null;
+        OnComplete?.Invoke();
+    }
+}

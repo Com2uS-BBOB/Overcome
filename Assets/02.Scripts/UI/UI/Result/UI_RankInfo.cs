@@ -1,16 +1,15 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 
-public class UI_RankInfo : MonoBehaviour, ISequentialUI
+public class UI_RankInfo : MonoBehaviour
 {
-
     public event Action OnShowComplete;
     public void Show()
     {
-        throw new NotImplementedException();
+        RankConfig config = ScoreSystem.Instance.GetRanking();
+        Debug.Log(config.Grade);
+        Debug.Log(config.RequiredScore);
+        Debug.Log(config.RewardStars);
     }
     public void Hide()
     {

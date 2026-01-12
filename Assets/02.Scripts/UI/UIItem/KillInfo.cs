@@ -4,6 +4,9 @@ using DG.Tweening;
 
 public class KillInfo : MonoBehaviour
 {
+    private static readonly string[] EnemyTypeNames = 
+        { "Normal", "Small", "Elite", "FloatSmall" };
+
     [Serializable]
     public struct KillInfoData
     {
@@ -12,60 +15,38 @@ public class KillInfo : MonoBehaviour
     }
 
     [SerializeField] private KillInfoData _killInfo;
-    [SerializeField] private AnimatedNumber _number;
-    [SerializeField] private CanvasGroup _canvasGroup;
-
-    [Header("Animation")]
-    [SerializeField] private float _showDuration = 0.25f;
-    [SerializeField] private Ease _showEase = Ease.OutBack;
-
-    public event Action OnShowComplete;
-
+    [SerializeField] private ProgressiveScrambleText _enemyType;
+    [SerializeField] private ProgressiveScrambleText _killCountText;
+    
     private void Awake()
     {
-        _number.Init();
-        _number.OnCompleteChanging += OnNumberCompleted;
+        _enemyType.Init(this);
+        _killCountText.Init(this);
     }
 
-    private void OnDestroy()
+    private void OnEnable()
     {
-        _number.OnCompleteChanging -= OnNumberCompleted;
-        _number.Clear();
+        Show();
+    }
+    
+    private void OnDisable()
+    {
+        _enemyType.Stop();
+        _killCountText.Stop();
     }
 
-    public void Show()
+    private void Show()
     {
         _killInfo.KillCount = KillLogSystem.Instance.GetKillCount(_killInfo.Type);
         gameObject.SetActive(true);
-
-        transform.localScale = Vector3.zero;
-        if (_canvasGroup != null)
-        {
-            _canvasGroup.alpha = 0;
-            _canvasGroup.DOFade(1f, _showDuration);
-        }
-
-        transform
-            .DOScale(1f, _showDuration)
-            .SetEase(_showEase)
-            .OnComplete(() =>
-            {
-                _number.SetValue(_killInfo.KillCount);
-            });
+        _enemyType.Play(EnemyTypeNames[(int)_killInfo.Type]);
+        _killCountText.Play(_killInfo.KillCount);
     }
 
-    public void HideResult()
+    public void Hide()
     {
-        _number.DeactivateTextUI();
-    }
-    
-    public void HideUI()
-    {
+        _killCountText.Stop();
+        _enemyType.Stop();
         gameObject.SetActive(false);
-    }
-
-    private void OnNumberCompleted()
-    {
-        OnShowComplete?.Invoke();
     }
 }

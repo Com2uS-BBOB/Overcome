@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ScoreSystem : SingletonBehaviour<ScoreSystem>
 {
+    [SerializeField] private RankingData _rankingData;
     protected override bool DontDestroy => false;
     
     private int _currentScore;
@@ -14,6 +15,7 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     
     // Test Code
     [SerializeField] private int _testHighScore;
+    [SerializeField] private int _rankingTestScore;
 
     public int CurrentScore => _currentScore;
     public int HighScore => _highScore;
@@ -65,5 +67,12 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
             BreakHighScore?.Invoke();
         }
         _highScore = _currentScore;
+    }
+    
+    public RankConfig GetRanking()
+    {
+        // todo. TestCode 삭제 필요
+        return _rankingData.GetRank(_rankingTestScore);
+        // return _rankingData.GetRank(_currentScore);
     }
 }
