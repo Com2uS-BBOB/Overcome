@@ -122,6 +122,7 @@ public class EnemyAttack : MonoBehaviour
                 break;
 
             case EEnemyType.Elite:
+            case EEnemyType.FloatSmall:  // 임시로 FloatSmall도 Elite 패턴 사용
                 var eliteConfig = new EliteAttackPatternConfig(
                     openingRushDistance: 20f,
                     openingRushDuration: 0.2f,

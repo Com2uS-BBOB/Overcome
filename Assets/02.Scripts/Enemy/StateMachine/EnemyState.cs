@@ -22,6 +22,7 @@ public class EnemyState : MonoBehaviour
     [SerializeField] private float _detectRange = 10f;
     [SerializeField] private float _standOffDistance = 8.5f;  // 비압박자 유지 거리(attackRange보다 크게)
     [SerializeField] private float _standOffRepathInterval = 0.4f;  // 목적지 자주 바뀜 방지
+    private float _maxSamplePositionDistance = 1.5f;
 
     private float _standOffRepathTimer;
     private bool _pressureReserved;
@@ -31,7 +32,7 @@ public class EnemyState : MonoBehaviour
     [SerializeField] private float _returnStopDistance = 0.3f;
 
     [Header("Attack 관련 옵션")]
-    [SerializeField] private float _attackRange = 5f;
+    [SerializeField] private float _attackRange = 10f;
 
     private void Awake()
     {
@@ -145,7 +146,7 @@ public class EnemyState : MonoBehaviour
                 Vector3 desired = _player.position + direction * _standOffDistance;
 
                 // NavMesh 위로 보정
-                if (NavMesh.SamplePosition(desired, out var hit, 1.5f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(desired, out var hit, _maxSamplePositionDistance, NavMesh.AllAreas))
                 {
                     desired = hit.position;
 
@@ -257,6 +258,7 @@ public class EnemyState : MonoBehaviour
                 break;
 
             case EEnemyState.Attack:
+                _attack.Stop();
                 break;
         }
     }
