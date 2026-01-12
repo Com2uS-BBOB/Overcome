@@ -3,16 +3,13 @@ using UnityEngine;
 public class HowlingStep : IEnemyAttackStep
 {
     private readonly EnemyAttackPatternContext _context;
-    private readonly float _duration;
-
+    private readonly float _howlDuration;
     private readonly EnemyAttack _attack;
     private HowlAction _howl;
 
     private bool _finished;
 
-    // “언제 포효할지” 조건용(원하면 config로 빼도 됨)
     private readonly float _triggerRange;
-    private readonly float _howlDuration;
     private float _nextAllowedTime;
 
     public bool IsFinished => _finished;
@@ -43,7 +40,7 @@ public class HowlingStep : IEnemyAttackStep
 
         _finished = false;
 
-        _howl = new HowlAction(_context.Animator, _context.Agent, _duration);
+        _howl = new HowlAction(_context.Animator, _context.Agent, _howlDuration);
         _howl.Enter();
 
         return true;
