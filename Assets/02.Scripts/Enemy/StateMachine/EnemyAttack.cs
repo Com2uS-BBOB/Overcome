@@ -90,7 +90,6 @@ public class EnemyAttack : MonoBehaviour
 
                 var normalConfig = new NormalAttackPatternConfig(
                     pressureWaitConfig: normalWaitConfig,
-                    openingRushDistance: 10f,
                     openingRushDuration: 0.4f,
                     meleeCooldownMin: 3f,
                     meleeCooldownMax: 5f,
@@ -123,7 +122,6 @@ public class EnemyAttack : MonoBehaviour
 
             case EEnemyType.Elite:
                 var eliteConfig = new EliteAttackPatternConfig(
-                    openingRushDistance: 20f,
                     openingRushDuration: 0.2f,
                     ripRange: 5f,
                     ripMoveSpeed: 2f,

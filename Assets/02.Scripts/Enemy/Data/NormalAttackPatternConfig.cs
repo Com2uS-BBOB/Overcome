@@ -4,7 +4,6 @@ public struct NormalAttackPatternConfig
 {
     public AttackWaitActionConfig PressureWaitConfig;
 
-    public float OpeningRushDistance;
     public float OpeningRushDuration;
 
     public float MeleeCooldownMin;
@@ -18,7 +17,6 @@ public struct NormalAttackPatternConfig
 
     public NormalAttackPatternConfig(
         AttackWaitActionConfig pressureWaitConfig,
-        float openingRushDistance = 10f,
         float openingRushDuration = 2f,
         float meleeCooldownMin = 3f,
         float meleeCooldownMax = 5f,
@@ -29,7 +27,6 @@ public struct NormalAttackPatternConfig
     )
     {
         PressureWaitConfig = pressureWaitConfig;
-        OpeningRushDistance = openingRushDistance;
         OpeningRushDuration = openingRushDuration;
         MeleeCooldownMin = meleeCooldownMin;
         MeleeCooldownMax = meleeCooldownMax;

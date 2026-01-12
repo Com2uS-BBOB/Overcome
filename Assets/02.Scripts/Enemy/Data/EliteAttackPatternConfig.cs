@@ -2,7 +2,6 @@ using UnityEngine;
 
 public struct EliteAttackPatternConfig
 {
-    public float OpeningRushDistance;
     public float OpeningRushDuration;
 
     public float RipRange;
@@ -15,7 +14,6 @@ public struct EliteAttackPatternConfig
     public float RipKnockbackDistance;
 
     public EliteAttackPatternConfig(
-        float openingRushDistance = 20f,
         float openingRushDuration = 3.2f,
         float ripRange = 10f,
         float ripMoveSpeed = 2f,
@@ -25,7 +23,6 @@ public struct EliteAttackPatternConfig
         float ripKnockbackDistance = 1f
     )
     {
-        OpeningRushDistance = openingRushDistance;
         OpeningRushDuration = openingRushDuration;
         RipRange = ripRange;
         RipMoveSpeed = ripMoveSpeed;

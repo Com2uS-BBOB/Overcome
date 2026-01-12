@@ -9,12 +9,12 @@ public class RushAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
 
-    private readonly float _rushDistance;
     private readonly float _maxDuration;  // 속도 계산용
     private readonly float _damage;
 
     private bool _isFinished;
 
+    private float _targetDistance;   // 이번 돌진에서 목표 거리
     private Vector3 _rushDirection;  // Enter 순간에 고정되는 방향
     private float _speed;            // distance / duration
 
@@ -25,15 +25,17 @@ public class RushAction : IEnemyAction
     // 비상 탈출용 타임아웃
     private float _timeout;
     private float _timer;
+    private float _timeoutRatio = 1.4f;
 
     private float _sqrMagnitudeThreshold = 0.01f;
 
     private bool _savedAgentUpdatePosition;
     private bool _savedAgentUpdateRotation;
 
-    private bool _stopOnPlayerHit = true;
-    private bool _stopShortOnPlayerHit = false;
-    private float _stopOffset = 0.35f;
+    private bool _stopOnPlayerHit = true;        // 플레이어 충돌 시 즉시 정지
+    private bool _stopShortOnPlayerHit = false;  // 충돌 지점보다 살짝 앞에서 정지
+    private float _stopOffset = 0.5f;            // 앞에서 정지 시 플레이어와의 거리
+
     private float _castRadiusPadding = 0.08f;
     private float _playerHitRadius = 0.3f;
 
@@ -48,7 +50,6 @@ public class RushAction : IEnemyAction
         EnemyMovement movement,
         EnemyKnockbackHitbox hitbox,
         NavMeshAgent agent,
-        float rushDistance,
         float maxDuration,
         float damage
     )
@@ -58,7 +59,6 @@ public class RushAction : IEnemyAction
         _movement = movement;
         _hitbox = hitbox;
         _agent = agent;
-        _rushDistance = rushDistance;
         _maxDuration = maxDuration;
         _damage = damage;
         _playerLayerMask = ~0;
@@ -78,20 +78,37 @@ public class RushAction : IEnemyAction
         }
 
         Vector3 snapPlayerPosition = _player != null ? _player.position : (_enemy.position + _enemy.forward);
-        Vector3 direction = snapPlayerPosition - _enemy.position;
-        direction.y = 0f;
+        Vector3 delta = snapPlayerPosition - _enemy.position;
+        delta.y = 0f;
 
-        if (direction.sqrMagnitude < _sqrMagnitudeThreshold || _rushDistance <= _sqrMagnitudeThreshold)
+        if (delta.sqrMagnitude < _sqrMagnitudeThreshold)
         {
             _isFinished = true;
             return;
         }
 
-        _rushDirection = direction.normalized;
-        _speed = _rushDistance / _maxDuration;
+        float planarDistanceToPlayer = delta.magnitude;
+        _rushDirection = delta / planarDistanceToPlayer;
+
+        // 여기서 이번 러시 목표거리 결정
+        _targetDistance = planarDistanceToPlayer;
+
+        if (_stopShortOnPlayerHit)
+        {
+            _targetDistance = Mathf.Max(0f, _targetDistance - _stopOffset);
+        }
+
+        // 목표 거리가 너무 짧으면 종료
+        if (_targetDistance <= 0.01f)
+        {
+            _isFinished = true;
+            return;
+        }
+
+        _speed = _targetDistance / _maxDuration;
 
         // 비상 탈출용 타임아웃 계산
-        _timeout = _rushDistance / Mathf.Max(_sqrMagnitudeThreshold, _speed);
+        _timeout = _maxDuration * _timeoutRatio;
 
         _agent.ResetPath();
         _agent.isStopped = true;
@@ -121,35 +138,48 @@ public class RushAction : IEnemyAction
         float stepDistance = _speed * Time.deltaTime;
         if (stepDistance <= 0f) return;
 
+        float remaining = _targetDistance - _traveled;
+        if (remaining <= 0f)
+        {
+            _isFinished = true;
+            return;
+        }
+        stepDistance = Mathf.Min(stepDistance, remaining);
+
         // 이번 프레임 이동 경로에 플레이어가 있는지 먼저 검사
         if (_player != null && (_stopOnPlayerHit || _stopShortOnPlayerHit))
         {
             if (TryGetPlayerHit(stepDistance, out RaycastHit hit))
             {
                 if (!hit.collider.CompareTag("Player"))
-
-                if (_stopShortOnPlayerHit)
                 {
-                    float moveDistance = Mathf.Max(0f, hit.distance - _stopOffset);
-                    if (moveDistance > 0f)
+                    // 플레이어가 아니면 무시
+                }
+                else
+                {
+                    if (_stopShortOnPlayerHit)
                     {
-                        MoveBy(moveDistance);
+                        float moveDistance = Mathf.Max(0f, hit.distance - _stopOffset);
+                        moveDistance = Mathf.Min(moveDistance, remaining);
+
+                        if (moveDistance > 0f)
+                            MoveBy(moveDistance);
+
+#if UNITY_EDITOR
+                        Debug.Log("돌진 종료: 플레이어 앞에서 정지");
+#endif
+                        _isFinished = true;
+                        return;
                     }
 
+                    if (_stopOnPlayerHit)
+                    {
 #if UNITY_EDITOR
-                    Debug.Log($"돌진 종료: 플레이어 앞에서 정지");
+                        Debug.Log("돌진 종료: 플레이어 충돌로 정지");
 #endif
-                    _isFinished = true;
-                    return;
-                }
-
-                if (_stopOnPlayerHit)
-                {
-#if UNITY_EDITOR
-                    Debug.Log("돌진 종료: 플레이어 충돌로 정지");
-#endif
-                    _isFinished = true;
-                    return;
+                        _isFinished = true;
+                        return;
+                    }
                 }
             }
         }
@@ -158,7 +188,7 @@ public class RushAction : IEnemyAction
         MoveBy(stepDistance);
 
         // 거리 기반 종료
-        if (_traveled >= _rushDistance)
+        if (_traveled >= _targetDistance - _sqrMagnitudeThreshold)
         {
 #if UNITY_EDITOR
             Debug.Log("돌진 종료: 거리 달성");

@@ -13,7 +13,7 @@ public class EliteAttackPattern : IEnemyAttackPattern
         var steps = new List<IEnemyAttackStep>
         {
             new HowlingStep(context, config.RipRange, config.HowlDuration),
-            new OpeningRushStep(context, config.OpeningRushDistance, config.OpeningRushDuration),
+            new OpeningRushStep(context, config.OpeningRushDuration),
 
             new RecoveryStep(context),
 
