@@ -20,7 +20,7 @@ public class RankingData : ScriptableObject
                 return config;
             }
         }
-        return _configs[0];
+        return _configs[^1];
     }
     
     private void OnValidate()
