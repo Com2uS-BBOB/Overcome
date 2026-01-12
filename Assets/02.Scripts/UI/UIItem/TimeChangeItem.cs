@@ -5,7 +5,6 @@ using UnityEngine;
 
 [RequireComponent(typeof(RectTransform))]
 [RequireComponent(typeof(CanvasGroup))]
-[RequireComponent(typeof(RectTransform))]
 public class TimeChangeItem : MonoBehaviour
 {
     [SerializeField] private float _moveDistance = 50f;

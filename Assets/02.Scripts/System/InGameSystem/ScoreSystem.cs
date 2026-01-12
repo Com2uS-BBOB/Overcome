@@ -27,6 +27,17 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     {
         EnemyEventController.Enemy.OnKilled += IncreaseScore;
     }
+    
+    private void Start()
+    {
+        TimeSystem.Instance.OnClearGame += IncreaseScore;
+    }
+
+    private void OnDestroy()
+    {
+        if (TimeSystem.Instance == null) return;
+        TimeSystem.Instance.OnClearGame -= IncreaseScore;
+    }
 
     private void OnDisable()
     {

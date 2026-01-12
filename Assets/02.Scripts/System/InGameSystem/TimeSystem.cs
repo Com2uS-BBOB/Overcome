@@ -25,6 +25,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     // Event
     public event Action<float> OnRemainTimeDelta; // 변화량 기반(부호 명시 필요)
     public event Action OnGameOver;
+    public event Action<int> OnClearGame;
 
     protected override void Init()
     {
@@ -56,8 +57,8 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     private void Update()
     {
         UpdateTimers();
-        CheckGameOver();
         CheckGameClear();
+        CheckGameOver();
     }
 
     private void UpdateTimers()
@@ -74,23 +75,16 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         if (_remainTime > 0f) return;
 
         _isGameOver = true;
-        // todo. Test Code 제거 필요
-        _uiSequencer.gameObject.SetActive(true);
         OnGameOver?.Invoke();
     }
 
     private void CheckGameClear()
     {
         if (_isGameOver) return;
-        if (_remainTime > 0f) return;
         if (_playTime < _difficultyConfig.MaxPlayTime) return;
         
         _isGameOver = true;
-        ScoreSystem.Instance.IncreaseScore(_difficultyConfig.ClearBonus);
-        
-        // todo. Test Code 제거 필요
-        _uiSequencer.gameObject.SetActive(true);
-        
+        OnClearGame?.Invoke(_difficultyConfig.ClearBonus);
         OnGameOver?.Invoke();
     }
     

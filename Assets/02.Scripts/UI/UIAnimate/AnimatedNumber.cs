@@ -16,7 +16,7 @@ public class AnimatedNumber
     [SerializeField] private float _duration = 0.5f;
     [SerializeField] private Ease _ease = Ease.OutQuad;
 
-    public event Action OnCompleteChanging;
+    public Action OnCompleteChanging;
     private float _currentValue;
     private Tweener _tweener;
 
