@@ -96,8 +96,11 @@ namespace _02.Scripts.Player.Combat
         /// </summary>
         public void Attack()
         {
+            // 게이지 검증 (오버드라이브 시에는 무시)
+            bool hasGauge = IsOverDriveActive || _gaugeManager.CanUseCrescent;
+
             // Case 1: 콤보 큐잉 (1타 진행 중 입력) → 즉시 스킵
-            if (CanQueueCombo && _gaugeManager.CanUseCrescent)
+            if (CanQueueCombo && hasGauge)
             {
                 _comboQueued = true;
                 _skipToNextCombo = true;
@@ -105,7 +108,7 @@ namespace _02.Scripts.Player.Combat
             }
 
             // Case 2: 콤보 유예 (1타 끝난 직후 입력)
-            if (CanComboGrace && _gaugeManager.CanUseCrescent)
+            if (CanComboGrace && hasGauge)
             {
                 StopGraceTimer();
                 ExecuteNextCombo();

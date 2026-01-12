@@ -35,6 +35,7 @@ namespace _02.Scripts.Player.Core
         public CharacterController CharacterController { get; private set; }
         public PlayerStats Stats { get; private set; }
         public PlayerStateMachine StateMachine { get; private set; }
+        public CancelManager CancelManager { get; private set; }
         public PlayerAnimatorController PlayerAnimatorController => _playerAnimatorController;
 
         private void Awake()
@@ -72,6 +73,9 @@ namespace _02.Scripts.Player.Core
             StateMachine.RegisterState(new DragonSwordState(this, StateMachine));
             StateMachine.RegisterState(new DashAttackState(this, StateMachine));
             StateMachine.RegisterState(new CrescentState(this, StateMachine));
+
+            // CancelManager 초기화
+            CancelManager = new CancelManager(StateMachine);
 
             // PlayerAnimator 초기화 (State 변경 구독)
             _playerAnimatorController?.Initialize(StateMachine);
@@ -147,15 +151,21 @@ namespace _02.Scripts.Player.Core
 
         private void HandleDashAttack()
         {
-            if (_dashAttack != null && _dashAttack.CanUse && !StateMachine.IsCurrentState<DashAttackState>())
+            if (_dashAttack == null || !_dashAttack.CanUse) return;
+
+            // CancelManager로 캔슬 가능 여부 확인
+            if (CancelManager.CanCancelTo<DashAttackState>())
+            {
                 StateMachine.ChangeState<DashAttackState>();
+            }
         }
 
         private void HandleAttack()
         {
             if (_dragonSwordSkill == null) return;
-            if (_dashAttack != null && _dashAttack.IsDashing) return;
-            if (StateMachine.IsCurrentState<DashAttackState>()) return;
+
+            // DashAttack 중에는 공격 불가
+            if (!CancelManager.CanCancelTo<DragonSwordState>()) return;
 
             // Case 1: 첫 공격
             if (_dragonSwordSkill.CanAttack)
@@ -179,6 +189,9 @@ namespace _02.Scripts.Player.Core
         private void HandleCrescent()
         {
             if (_crescent == null) return;
+
+            // 캔슬 불가 상태면 무시
+            if (!CancelManager.CanCancelTo<CrescentState>()) return;
 
             // Case 1: 첫 공격
             if (_crescent.CanUse)
@@ -215,14 +228,14 @@ namespace _02.Scripts.Player.Core
         // 크레센트 콤보 공격 애니메이션
         private void HandleCrescentCombo(int comboStep) => _playerAnimatorController?.PlayCrescent(comboStep, Movement.IsGrounded);
 
-        // Root Motion 처리 - 플레이어 forward 방향으로 변환
-        private void HandleRootMotion(Vector3 deltaPosition)
+        // Root Motion 처리 - 로컬 좌표를 플레이어 기준 월드 좌표로 변환
+        private void HandleRootMotion(Vector3 localDelta)
         {
-            float distance = deltaPosition.magnitude;
-            if (distance > 0.001f)
+            if (localDelta.sqrMagnitude > 0.000001f)
             {
-                Vector3 movement = transform.forward * distance;
-                CharacterController.Move(movement);
+                // 로컬 방향을 플레이어 기준 월드 좌표로 변환
+                Vector3 worldMovement = transform.TransformDirection(localDelta);
+                CharacterController.Move(worldMovement);
             }
         }
     }

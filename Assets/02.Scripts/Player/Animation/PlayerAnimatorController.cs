@@ -96,6 +96,8 @@ namespace _02.Scripts.Player.Animation
         public void PlayAttack(int comboStep, bool isGrounded)
         {
             Debug.Log($"[Anim] PlayAttack called - comboStep: {comboStep}, isGrounded: {isGrounded}");
+            // 공격 시작 시점에 IsGrounded 즉시 동기화
+            _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.SetInteger(AttackComboCountHash, comboStep);
             _animator.SetTrigger(AttackHash);
         }
@@ -113,6 +115,8 @@ namespace _02.Scripts.Player.Animation
         /// </summary>
         public void PlayCrescent(int comboStep, bool isGrounded)
         {
+            // 공격 시작 시점에 IsGrounded 즉시 동기화
+            _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.SetInteger(CrescentComboCountHash, comboStep);
             _animator.SetTrigger(CrescentHash);
         }
