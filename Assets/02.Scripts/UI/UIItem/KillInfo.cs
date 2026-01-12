@@ -24,10 +24,12 @@ public class KillInfo : MonoBehaviour
     private void Awake()
     {
         _number.Init();
+        _number.OnCompleteChanging += OnNumberCompleted;
     }
 
     private void OnDestroy()
     {
+        _number.OnCompleteChanging -= OnNumberCompleted;
         _number.Clear();
     }
 
@@ -48,7 +50,6 @@ public class KillInfo : MonoBehaviour
             .SetEase(_showEase)
             .OnComplete(() =>
             {
-                _number.OnCompleteChanging += OnShowComplete;
                 _number.SetValue(_killInfo.KillCount);
             });
     }
@@ -61,5 +62,10 @@ public class KillInfo : MonoBehaviour
     public void HideUI()
     {
         gameObject.SetActive(false);
+    }
+
+    private void OnNumberCompleted()
+    {
+        OnShowComplete?.Invoke();
     }
 }

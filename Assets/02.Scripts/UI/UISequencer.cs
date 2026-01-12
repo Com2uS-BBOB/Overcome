@@ -15,6 +15,8 @@ public class UISequencer : MonoBehaviour
         public bool waitForEvent = false;
     }
 
+    [SerializeField] private GameObject[] _defaultGameObjects;
+    
     [SerializeField] private List<SequenceItem> _items;
     [SerializeField] private float _defaultAnimationDuration = 0.3f;
     [SerializeField] private Ease _defaultEase = Ease.OutBack;
@@ -23,13 +25,26 @@ public class UISequencer : MonoBehaviour
 
     private int _currentIndex;
 
-    private void OnEnable()
+    private void Start()
     {
-        Play();
+        TimeSystem.Instance.OnGameOver += Play;
+    }
+
+    private void OnDestroy()
+    {
+        if (TimeSystem.Instance != null)
+        {
+            TimeSystem.Instance.OnGameOver -= Play;
+        }
     }
     
     public void Play()
     {
+        foreach (GameObject defaultObject in _defaultGameObjects)
+        {
+            defaultObject.SetActive(true);
+        }
+        
         foreach (var item in _items)
         {
             item.target.SetActive(false);

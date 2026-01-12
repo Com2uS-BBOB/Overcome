@@ -730,7 +730,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayTimeSystem
   _uiSequencer: {fileID: 1300668384}
   _difficultyConfigData: {fileID: 11400000, guid: bae2da0e7a83ffc47b7e18b34867a97f, type: 2}
-  _currentDifficulty: 2
+  _currentDifficulty: 0
+--- !u!1 &174181920 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1091328049032755812, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+  m_PrefabInstance: {fileID: 1300668382}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &210166122
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1928,6 +1933,11 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &420867088 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 772447260026782033, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+  m_PrefabInstance: {fileID: 1300668382}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &428017012
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2061,6 +2071,11 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2153975541765808748, guid: 5fa8ae4931df17e40ab87f3ad8f6c757, type: 3}
   m_PrefabInstance: {fileID: 428017012}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &432139792 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6074645322617408231, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+  m_PrefabInstance: {fileID: 1300668382}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &472306177
 GameObject:
@@ -5033,6 +5048,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -170
       objectReference: {fileID: 0}
+    - target: {fileID: 772447260026782033, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1091328049032755812, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1093462737007712570, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
       propertyPath: _number._format
       value: '{0:0}'
@@ -5074,6 +5097,26 @@ PrefabInstance:
       value: ResultUI
       objectReference: {fileID: 0}
     - target: {fileID: 5233810339995701348, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+      propertyPath: _defaultGameObjects.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+      propertyPath: '_defaultGameObjects.Array.data[0]'
+      value: 
+      objectReference: {fileID: 174181920}
+    - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+      propertyPath: '_defaultGameObjects.Array.data[1]'
+      value: 
+      objectReference: {fileID: 420867088}
+    - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
+      propertyPath: '_defaultGameObjects.Array.data[2]'
+      value: 
+      objectReference: {fileID: 432139792}
+    - target: {fileID: 6074645322617408231, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
