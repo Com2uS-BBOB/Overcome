@@ -9,9 +9,21 @@ public class UI_KillResult : MonoBehaviour
     [SerializeField] private Transform _killInfosParent;
     private readonly List<KillInfo> _killInfos = new List<KillInfo>();
 
+    public event Action OnComplete;
+
+    private int _completedCount;
+
     private void Awake()
     {
         InitKillInfos();
+    }
+
+    private void OnDestroy()
+    {
+        foreach (KillInfo killInfo in _killInfos)
+        {
+            killInfo.OnComplete -= HandleKillInfoComplete;
+        }
     }
 
     private void OnEnable()
@@ -26,7 +38,7 @@ public class UI_KillResult : MonoBehaviour
             killInfo.Hide();
         }
     }
-    
+
     private void InitKillInfos()
     {
         _killInfos.Clear();
@@ -36,12 +48,23 @@ public class UI_KillResult : MonoBehaviour
             if (killInfo != null)
             {
                 _killInfos.Add(killInfo);
+                killInfo.OnComplete += HandleKillInfoComplete;
             }
+        }
+    }
+
+    private void HandleKillInfoComplete()
+    {
+        _completedCount++;
+        if (_completedCount >= _killInfos.Count)
+        {
+            OnComplete?.Invoke();
         }
     }
 
     public void Show()
     {
+        _completedCount = 0;
         foreach (KillInfo killInfo in _killInfos)
         {
             killInfo.gameObject.SetActive(true);
@@ -55,5 +78,13 @@ public class UI_KillResult : MonoBehaviour
             killInfo.Hide();
         }
         gameObject.SetActive(false);
+    }
+
+    public void Complete()
+    {
+        foreach (KillInfo killInfo in _killInfos)
+        {
+            killInfo.Complete();
+        }
     }
 }

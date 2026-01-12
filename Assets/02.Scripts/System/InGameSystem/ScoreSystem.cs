@@ -71,8 +71,6 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     
     public RankConfig GetRanking()
     {
-        // todo. TestCode 삭제 필요
-        return _rankingData.GetRank(_rankingTestScore);
-        // return _rankingData.GetRank(_currentScore);
+        return _rankingData.GetRank(_currentScore);
     }
 }

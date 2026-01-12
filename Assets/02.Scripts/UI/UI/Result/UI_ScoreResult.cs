@@ -7,9 +7,17 @@ public class UI_ScoreResult : MonoBehaviour
     [SerializeField] private ProgressiveScrambleText _scoreText;
     private int _targetScore;
 
+    public event Action OnComplete;
+
     private void Awake()
     {
         _scoreText.Init(this);
+        _scoreText.OnComplete += HandleComplete;
+    }
+
+    private void OnDestroy()
+    {
+        _scoreText.OnComplete -= HandleComplete;
     }
 
     private void OnDisable()
@@ -20,6 +28,11 @@ public class UI_ScoreResult : MonoBehaviour
     private void OnEnable()
     {
         Show();
+    }
+
+    private void HandleComplete()
+    {
+        OnComplete?.Invoke();
     }
 
     public void Show()
@@ -33,5 +46,12 @@ public class UI_ScoreResult : MonoBehaviour
     {
         _scoreText.Stop();
         gameObject.SetActive(false);
+    }
+
+    public void Complete()
+    {
+        _scoreText.Stop();
+        _scoreText.SetTextImmediate(_targetScore);
+        OnComplete?.Invoke();
     }
 }

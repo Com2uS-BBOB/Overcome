@@ -4,7 +4,7 @@ using DG.Tweening;
 
 public class KillInfo : MonoBehaviour
 {
-    private static readonly string[] EnemyTypeNames = 
+    private static readonly string[] EnemyTypeNames =
         { "Normal", "Small", "Elite", "FloatSmall" };
 
     [Serializable]
@@ -17,26 +17,61 @@ public class KillInfo : MonoBehaviour
     [SerializeField] private KillInfoData _killInfo;
     [SerializeField] private ProgressiveScrambleText _enemyType;
     [SerializeField] private ProgressiveScrambleText _killCountText;
-    
+
+    public event Action OnComplete;
+
+    private bool _enemyTypeComplete;
+    private bool _killCountComplete;
+
     private void Awake()
     {
         _enemyType.Init(this);
         _killCountText.Init(this);
+        _enemyType.OnComplete += HandleEnemyTypeComplete;
+        _killCountText.OnComplete += HandleKillCountComplete;
+    }
+
+    private void OnDestroy()
+    {
+        _enemyType.OnComplete -= HandleEnemyTypeComplete;
+        _killCountText.OnComplete -= HandleKillCountComplete;
     }
 
     private void OnEnable()
     {
         Show();
     }
-    
+
     private void OnDisable()
     {
         _enemyType.Stop();
         _killCountText.Stop();
     }
 
+    private void HandleEnemyTypeComplete()
+    {
+        _enemyTypeComplete = true;
+        CheckAllComplete();
+    }
+
+    private void HandleKillCountComplete()
+    {
+        _killCountComplete = true;
+        CheckAllComplete();
+    }
+
+    private void CheckAllComplete()
+    {
+        if (_enemyTypeComplete && _killCountComplete)
+        {
+            OnComplete?.Invoke();
+        }
+    }
+
     private void Show()
     {
+        _enemyTypeComplete = false;
+        _killCountComplete = false;
         _killInfo.KillCount = KillLogSystem.Instance.GetKillCount(_killInfo.Type);
         gameObject.SetActive(true);
         _enemyType.Play(EnemyTypeNames[(int)_killInfo.Type]);
@@ -48,5 +83,20 @@ public class KillInfo : MonoBehaviour
         _killCountText.Stop();
         _enemyType.Stop();
         gameObject.SetActive(false);
+    }
+
+    public void Complete()
+    {
+        _enemyType.Stop();
+        _killCountText.Stop();
+        _enemyType.SetTextImmediate(EnemyTypeNames[(int)_killInfo.Type]);
+        _killCountText.SetTextImmediate(_killInfo.KillCount);
+
+        if (!_enemyTypeComplete || !_killCountComplete)
+        {
+            _enemyTypeComplete = true;
+            _killCountComplete = true;
+            OnComplete?.Invoke();
+        }
     }
 }
