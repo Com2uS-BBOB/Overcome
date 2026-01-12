@@ -15,6 +15,7 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private float _speedLerpSpeed = 6f;
 
     private NavMeshAgent _agent;
+    private EnemyAnimatorController _anim;
 
     private float _currentSpeedMultiplier = 1f;
     private float _targetSpeedMultiplier = 1f;
@@ -25,6 +26,7 @@ public class EnemyMovement : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _enemy = GetComponent<EnemyBase>();
+        _anim = GetComponent<EnemyAnimatorController>();
 
         _agent.updateRotation = false;
         _agent.updateUpAxis = false;
@@ -40,6 +42,7 @@ public class EnemyMovement : MonoBehaviour
     {
         UpdateSpeed();
         UpdateRotation();
+        _anim?.SetMove(IsMoving);
     }
 
     #region Movement

@@ -8,6 +8,7 @@ public class RushAction : IEnemyAction
     private readonly EnemyMovement _movement;
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
+    private readonly EnemyAnimatorController _anim;
 
     private readonly float _maxDuration;  // 속도 계산용
     private readonly float _damage;
@@ -49,6 +50,7 @@ public class RushAction : IEnemyAction
         EnemyMovement movement,
         EnemyKnockbackHitbox hitbox,
         NavMeshAgent agent,
+        EnemyAnimatorController anim,
         float maxDuration,
         float damage
     )
@@ -58,6 +60,7 @@ public class RushAction : IEnemyAction
         _movement = movement;
         _hitbox = hitbox;
         _agent = agent;
+        _anim = anim;
         _maxDuration = maxDuration;
         _damage = damage;
         _playerLayerMask = ~0;
@@ -118,6 +121,7 @@ public class RushAction : IEnemyAction
 
         _hitbox?.Enable(_damage);
 
+        _anim.TryPlayRush();
 #if UNITY_EDITOR
         Debug.Log("돌진 시작");
 #endif

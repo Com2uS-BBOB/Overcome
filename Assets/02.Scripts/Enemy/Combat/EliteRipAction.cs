@@ -8,7 +8,7 @@ public class EliteRipAction : IEnemyAction
     private readonly EnemyMovement _movement;
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
-    private readonly Animator _animator;
+    private readonly EnemyAnimatorController _anim;
 
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;
@@ -25,7 +25,7 @@ public class EliteRipAction : IEnemyAction
         EnemyMovement movement,
         EnemyKnockbackHitbox hitbox,
         NavMeshAgent agent,
-        Animator animator,
+        EnemyAnimatorController anim,
         float damagePerHit,
         float ripMoveSpeed,
         float ripKnockbackDistance
@@ -36,7 +36,7 @@ public class EliteRipAction : IEnemyAction
         _movement = movement;
         _hitbox = hitbox;
         _agent = agent;
-        _animator = animator;
+        _anim = anim;
         _damagePerHit = damagePerHit;
         _ripMoveSpeed = ripMoveSpeed;
         _ripKnockbackDistance = ripKnockbackDistance;
@@ -53,7 +53,7 @@ public class EliteRipAction : IEnemyAction
         _ratio = _ripMoveSpeed / _agent.speed;
         _movement.SetSpeedMultiplier(_ratio);
 
-        // _animator.SetBool("IsRipping", true); 혹은 트리거
+        _anim.TryPlayAttack();
 #if UNITY_EDITOR
         Debug.Log("난도질 공격 시도");
 #endif

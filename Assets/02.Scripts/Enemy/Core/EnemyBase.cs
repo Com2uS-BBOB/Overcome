@@ -8,6 +8,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public EnemyStatData EnemyStatData { get; private set; }
 
+    private EnemyAnimatorController _anim;
+
     protected float _currentHealth;
 
     [Header("스폰 높이")]
@@ -34,16 +36,26 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public event Action OnDeath;
     public event Action<EnemyBase> OnDespawn;
 
+    protected virtual void Awake()
+    {
+        _anim = GetComponent<EnemyAnimatorController>();
+    }
+
     public void Initialize(EnemyStatData statData)
     {
         if (statData == null)
         {
+#if UNITY_EDITOR
             Debug.LogError($"[EnemyBase] Initialize: statData가 null입니다! EnemyType: {EnemyType}");
+#endif
             return;
         }
 
         EnemyStatData = statData;
         _currentHealth = EnemyStatData.MaxHealth;
+
+        if (_anim == null) _anim = GetComponent<EnemyAnimatorController>();
+        _anim?.ConfigureDeathMode(statData.EnemyDeathMode);
     }
 
     protected virtual void OnEnable()
@@ -52,6 +64,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         _currentHealth = EnemyStatData.MaxHealth;
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
+
+        _anim?.ReviveReset();
     }
 
     public void SetPool(EnemyPool pool)
@@ -100,6 +114,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         EnemyEventController.Enemy.RaiseHit(new EnemyHitEvent(this, damage));
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
 
+        _anim?.PlayHit();
+
         if (_currentHealth <= 0)
         {
             Die();
@@ -108,10 +124,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
+#if UNITY_EDITOR
         Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");
+#endif
 
         EnemyEventController.Enemy.RaiseKilled(new EnemyKilledEvent(this));
         OnDeath?.Invoke();
         OnDespawn?.Invoke(this);
+
+        _anim?.PlayDeath();
     }
 }

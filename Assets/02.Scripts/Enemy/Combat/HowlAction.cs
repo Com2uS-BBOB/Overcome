@@ -3,7 +3,7 @@ using UnityEngine.AI;
 
 public class HowlAction : IEnemyAction
 {
-    private readonly Animator _animator;
+    private readonly EnemyAnimatorController _anim;
     private readonly NavMeshAgent _agent;
     private readonly float _duration;
 
@@ -12,9 +12,9 @@ public class HowlAction : IEnemyAction
 
     public bool IsFinished => _finished;
 
-    public HowlAction(Animator animator, NavMeshAgent agent, float duration)
+    public HowlAction(EnemyAnimatorController anim, NavMeshAgent agent, float duration)
     {
-        _animator = animator;
+        _anim = anim;
         _agent = agent;
         _duration = duration;
     }
@@ -26,7 +26,7 @@ public class HowlAction : IEnemyAction
         _agent.isStopped = true;
         _agent.ResetPath();
 
-        // _animator.SetTrigger("Howl");
+        _anim.TryPlayHowl();
 #if UNITY_EDITOR
         Debug.Log("포효 시작");
 #endif

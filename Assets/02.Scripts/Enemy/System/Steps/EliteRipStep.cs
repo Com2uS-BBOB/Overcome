@@ -47,7 +47,7 @@ public class EliteRipStep : IEnemyAttackStep
             _context.Movement,
             _context.KnockbackHitbox,
             _context.Agent,
-            _context.Animator,
+            _context.Anim,
             _config.RipDamagePerHit,
             _config.RipMoveSpeed,
             _config.RipKnockbackDistance
@@ -77,7 +77,7 @@ public class EliteRipStep : IEnemyAttackStep
             ReleaseAttack();
 
             // Howl 시작
-            _howl = new HowlAction(_context.Animator, _context.Agent, _config.HowlDuration);
+            _howl = new HowlAction(_context.Anim, _context.Agent, _config.HowlDuration);
             _howl.Enter();
 
             return;

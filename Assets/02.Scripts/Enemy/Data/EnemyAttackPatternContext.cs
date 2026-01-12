@@ -8,7 +8,7 @@ public sealed class EnemyAttackPatternContext
 
     public EnemyMovement Movement { get; }
     public EnemyKnockbackHitbox KnockbackHitbox { get; }
-    public Animator Animator { get; }
+    public EnemyAnimatorController Anim { get; }
     public NavMeshAgent Agent { get; }
 
     public EnemySlotCoordinator SlotCoordinator { get; }
@@ -22,7 +22,7 @@ public sealed class EnemyAttackPatternContext
         float damage,
         EnemyMovement movement,
         EnemyKnockbackHitbox knockbackHitbox,
-        Animator animator,
+        EnemyAnimatorController anim,
         NavMeshAgent agent,
         EnemySlotCoordinator slotCoordinator,
         EnemyAttackDirector attackDirector
@@ -33,7 +33,7 @@ public sealed class EnemyAttackPatternContext
         Damage = damage;
         Movement = movement;
         KnockbackHitbox = knockbackHitbox;
-        Animator = animator;
+        Anim = anim;
         Agent = agent;
         SlotCoordinator = slotCoordinator;
         AttackDirector = attackDirector;

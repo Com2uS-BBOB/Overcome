@@ -6,7 +6,7 @@ public class MeleeAction : IEnemyAction
     private readonly Transform _enemy;
     private readonly Transform _player;
     private readonly EnemyKnockbackHitbox _hitbox;
-    private readonly Animator _animator;
+    private readonly EnemyAnimatorController _anim;
     private readonly NavMeshAgent _agent;
     private readonly float _knockbackDistance;
 
@@ -19,7 +19,7 @@ public class MeleeAction : IEnemyAction
         Transform enemy,
         Transform player,
         EnemyKnockbackHitbox hitbox,
-        Animator animator,
+        EnemyAnimatorController anim,
         NavMeshAgent agent,
         float damage,
         float knockbackDistance
@@ -28,7 +28,7 @@ public class MeleeAction : IEnemyAction
         _enemy = enemy;
         _player = player;
         _hitbox = hitbox;
-        _animator = animator;
+        _anim = anim;
         _agent = agent;
         _damage = damage;
         _knockbackDistance = knockbackDistance;
@@ -48,7 +48,7 @@ public class MeleeAction : IEnemyAction
             _enemy.rotation = Quaternion.LookRotation(direction);
         }
 
-        _animator.SetTrigger("AttackTest");
+        _anim.TryPlayAttack();
 #if UNITY_EDITOR
         Debug.Log("근접 공격 시도");
 #endif
