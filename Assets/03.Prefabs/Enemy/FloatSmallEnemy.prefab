@@ -206,6 +206,7 @@ GameObject:
   - component: {fileID: -2663029545220124248}
   - component: {fileID: -3666630144614001360}
   - component: {fileID: 2238311807889374755}
+  - component: {fileID: 6308656708991563312}
   m_Layer: 0
   m_Name: FloatSmallEnemy
   m_TagString: Untagged
@@ -389,6 +390,28 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6308656708991563312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1045832139059423618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d758c1499e841594f824f24d5474dddb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlyingEnemyDeathFall
+  _enemy: {fileID: 628111756843832478}
+  _anim: {fileID: 0}
+  _rayOriginUp: 0.2
+  _groundCheckDistance: 0.8
+  _selfColliders: []
+  _initialFallSpeed: 0
+  _gravity: 2
+  _maxFallSpeed: 5
+  _groundSnapOffset: 0.01
+  _callOnGroundOnce: 1
 --- !u!1 &1072199189979285922
 GameObject:
   m_ObjectHideFlags: 0
