@@ -4,16 +4,17 @@ using UnityEngine;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Interfaces;
 using _02.Scripts.Player.Data;
+using _02.Scripts.Player.Movement;
 
 namespace _02.Scripts.Player.Combat
 {
-    // 용검 (기본 공격) 스킬 - 2타 콤보
+    // 용검 (기본 공격) 스킬 - 지상 3타, 공중 2타 콤보
     // 콤보 윈도우 + 콤보 유예 시스템
-    // 콤보 윈도우 1타 (0.3 ~ 0.9(즉발)+0.1(유예)) + 2타(0.9초)
     public class DragonSwordSkill : MonoBehaviour, ISkill
     {
         private const string CooldownKey = "Attack";
-        private const int MaxCombo = 3;
+        private const int GroundMaxCombo = 3;
+        private const int AirMaxCombo = 2;
 
         [Header("Duration Settings")]
         [SerializeField] private float _attack1Duration = 0.8f;
@@ -32,7 +33,11 @@ namespace _02.Scripts.Player.Combat
         [SerializeField] private MeleeHitbox _hitbox;
 
         private PlayerStats _stats;
+        private PlayerMovement _movement;
         private CooldownManager _cooldownManager;
+
+        // 지상/공중에 따른 최대 콤보
+        private int MaxCombo => _movement != null && _movement.IsGrounded ? GroundMaxCombo : AirMaxCombo;
 
         // 상태
         private bool _isAttacking;
@@ -84,7 +89,11 @@ namespace _02.Scripts.Player.Combat
             _cooldownManager = new CooldownManager();
         }
 
-        public void Initialize(PlayerStats stats) => _stats = stats;
+        public void Initialize(PlayerStats stats, PlayerMovement movement)
+        {
+            _stats = stats;
+            _movement = movement;
+        }
 
         private void OnEnable() { if (_hitbox != null) _hitbox.OnHit += HandleHit; }
         private void OnDisable() { if (_hitbox != null) _hitbox.OnHit -= HandleHit; }

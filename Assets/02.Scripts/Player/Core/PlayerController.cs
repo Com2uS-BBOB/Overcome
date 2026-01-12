@@ -50,7 +50,7 @@ namespace _02.Scripts.Player.Core
             if (_gaugeManager == null) _gaugeManager = GetComponent<GaugeManager>();
 
             Movement.Initialize(Stats);
-            _dragonSwordSkill?.Initialize(Stats);
+            _dragonSwordSkill?.Initialize(Stats, Movement);
             _crescent?.Initialize(Stats, _gaugeManager);
             _dashAttack?.Initialize(Stats);
 
