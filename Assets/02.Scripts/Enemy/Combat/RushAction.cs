@@ -102,6 +102,8 @@ public class RushAction : IEnemyAction
     {
         if (_isFinished) return;
 
+        _timer += Time.deltaTime;
+
         Vector3 step = _rushDirection * (_speed * Time.deltaTime);
         _agent.Move(step);
 

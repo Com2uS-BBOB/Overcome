@@ -27,11 +27,20 @@ public class RecoveryStep : IEnemyAttackStep
         if (_attack == null) return false;
 
         // 후딜이 필요하지 않으면 시작할 필요 없음
-        if (!_attack.NeedRecoveryAfterRush) return false;
-        if (!_attack.NeedRecoveryAfterMelee) return false;
+        if (!_attack.NeedRecoveryAfterRush && !_attack.NeedRecoveryAfterMelee)
+        {
+            return false;
+        }
 
         // 일회성 처리
-        _attack.ConsumeRecoveryAfterRush();
+        if (_attack.NeedRecoveryAfterRush)
+        {
+            _attack.ConsumeRecoveryAfterRush();
+        }
+        if (_attack.NeedRecoveryAfterMelee)
+        {
+            _attack.ConsumeRecoveryAfterMelee();
+        }
 
         _running = true;
         _time = 0f;
