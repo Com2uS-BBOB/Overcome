@@ -25,6 +25,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private Vector3 _spawnBasePosition;  // 최초 스폰 위치 저장용 (리스폰 때 사용)
 
+    private bool _despawnRequested;
+
     public float CurrentHp => _currentHealth;
     public float MaxHp => EnemyStatData.MaxHealth;
     public bool IsDead => _currentHealth <= 0;
@@ -61,6 +63,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     protected virtual void OnEnable()
     {
         if (EnemyStatData == null) return;
+
+        _despawnRequested = false;
 
         _currentHealth = EnemyStatData.MaxHealth;
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
@@ -124,14 +128,30 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
+        if (_despawnRequested) return;
+        _despawnRequested = true;
+
 #if UNITY_EDITOR
         Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");
 #endif
 
         EnemyEventController.Enemy.RaiseKilled(new EnemyKilledEvent(this));
         OnDeath?.Invoke();
-        OnDespawn?.Invoke(this);
 
         _anim?.PlayDeath();
+    }
+
+    // 애니 이벤트에서 호출 (Death / OnGround 클립 끝에 넣기)
+    public void AnimEvent_Despawn()
+    {
+        DoDespawn();
+    }
+
+    private void DoDespawn()
+    {
+        if (!_despawnRequested) return; // 혹시 모를 중복 방지
+        _despawnRequested = false;
+
+        OnDespawn?.Invoke(this);
     }
 }
