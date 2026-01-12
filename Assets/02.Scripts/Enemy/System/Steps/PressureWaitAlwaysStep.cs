@@ -48,7 +48,8 @@ public class PressureWaitAlwaysStep : IEnemyAttackAlwaysStep
             (currentStep is HowlingStep) || 
             (currentStep is OpeningRushStep) ||
             (currentStep is RecoveryStep) || 
-            (currentStep is MeleeStep);
+            (currentStep is MeleeStep) ||
+            (currentStep is EliteRipStep);
 
         // 상태가 바뀌면 Exit/Enter 처리
         if (shouldPause && !_wasPaused)

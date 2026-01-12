@@ -7,7 +7,7 @@ public struct EliteAttackPatternConfig
 
     public float RipRange;
     public float RipMoveSpeed;
-    public float RipDamagePerHit;       // -2s 느낌이면 데미지 환산
+    public float RipDamagePerHit;
     public float RipTouchDelay;         // 공격권 실패 시 딜레이
 
     public float HowlDuration;
