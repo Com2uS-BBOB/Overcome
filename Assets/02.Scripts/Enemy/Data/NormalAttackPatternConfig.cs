@@ -17,7 +17,7 @@ public struct NormalAttackPatternConfig
 
     public NormalAttackPatternConfig(
         AttackWaitActionConfig pressureWaitConfig,
-        float openingRushDuration = 2f,
+        float openingRushDuration = 0.3f,
         float meleeCooldownMin = 3f,
         float meleeCooldownMax = 5f,
         float meleeAttackDelay = 0.2f,
