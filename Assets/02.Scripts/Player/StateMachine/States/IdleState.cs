@@ -7,6 +7,11 @@ namespace _02.Scripts.Player.StateMachine.States
         public IdleState(PlayerController controller, PlayerStateMachine stateMachine)
             : base(controller, stateMachine) { }
 
+        public override void Enter()
+        {
+            Controller.PlayerAnimatorController?.SetMoving(false);
+        }
+
         public override void Update()
         {
             if (HasMoveInput()) StateMachine.ChangeState<MoveState>();

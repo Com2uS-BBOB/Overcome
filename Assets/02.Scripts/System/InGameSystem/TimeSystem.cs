@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class TimeSystem : SingletonBehaviour<TimeSystem>
 {
+    [Header("Test Code")]
+    [SerializeField] private UISequencer _uiSequencer;
+    
     protected override bool DontDestroy => false;
 
     [Header("난이도 설정")]
@@ -22,10 +25,21 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     // Event
     public event Action<float> OnRemainTimeDelta; // 변화량 기반(부호 명시 필요)
     public event Action OnGameOver;
+    public event Action<int> OnClearGame;
 
     protected override void Init()
     {
         SetInfoByDifficulty();
+    }
+    
+    private void OnEnable()
+    {
+        EnemyEventController.Enemy.OnKilled += KillEnemy;
+    }
+
+    private void OnDisable()
+    {
+        EnemyEventController.Enemy.OnKilled -= KillEnemy;
     }
     
     private void SetInfoByDifficulty()
@@ -43,6 +57,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     private void Update()
     {
         UpdateTimers();
+        CheckGameClear();
         CheckGameOver();
     }
 
@@ -63,6 +78,21 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         OnGameOver?.Invoke();
     }
 
+    private void CheckGameClear()
+    {
+        if (_isGameOver) return;
+        if (_playTime < _difficultyConfig.MaxPlayTime) return;
+        
+        _isGameOver = true;
+        OnClearGame?.Invoke(_difficultyConfig.ClearBonus);
+        OnGameOver?.Invoke();
+    }
+    
+    private void KillEnemy(EnemyKilledEvent killedEvent)
+    {
+        AddTimeLimit(killedEvent.Playtime);
+    }
+    
     public void AddTimeLimit(float additionalTime)
     {
         if (!_difficultyConfig.HasTimeLimit) return;

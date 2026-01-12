@@ -44,9 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a996ca09b9930c949b25178ed32c92da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
+  _player: {fileID: 0}
   _enemyPool: {fileID: 0}
   _aroundCount: 20
   _spawnRadius: 10
   _respawnDelay: 3
+  _randomSpawnRate: 0.5
   _randomDegree: 6
   _randomRadius: 0.2

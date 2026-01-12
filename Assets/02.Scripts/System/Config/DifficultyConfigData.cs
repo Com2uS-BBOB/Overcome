@@ -37,4 +37,5 @@ public class DifficultyConfig
     
     [Header("점수 관련")]
     public float ScoreMultiplier;
+    public int ClearBonus;
 }
