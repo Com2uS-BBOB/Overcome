@@ -4,7 +4,6 @@ using UnityEngine.AI;
 public class OpeningRushStep : IEnemyAttackStep
 {
     private readonly EnemyAttackPatternContext _context;
-    private readonly float _rushDistance;
     private readonly float _rushDuration;
 
     private readonly EnemyAttack _attack; // HasRushedOnce / MarkRushed 사용
@@ -14,10 +13,9 @@ public class OpeningRushStep : IEnemyAttackStep
 
     public bool IsFinished => _finished;
 
-    public OpeningRushStep(EnemyAttackPatternContext context, float rushDistance, float rushDuration)
+    public OpeningRushStep(EnemyAttackPatternContext context, float rushDuration)
     {
         _context = context;
-        _rushDistance = rushDistance;
         _rushDuration = rushDuration;
 
         _attack = _context.Enemy.GetComponent<EnemyAttack>();
@@ -38,7 +36,6 @@ public class OpeningRushStep : IEnemyAttackStep
             _context.Movement,
             _context.KnockbackHitbox,
             _context.Agent,
-            _rushDistance,
             _rushDuration,
             _context.Damage
         );
