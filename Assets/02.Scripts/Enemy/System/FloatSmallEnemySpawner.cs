@@ -1,26 +1,16 @@
 using System.Collections;
 using UnityEngine;
 
-public class FloatSmallEnemySpawner : MonoBehaviour, IEnemyRespawnRequester
+public class FloatSmallEnemySpawner : MonoBehaviour
 {
-    [Header("플레이어")]
-    [SerializeField] private Transform _player;
-
     [Header("풀링")]
     [SerializeField] private EnemyPool _enemyPool;
 
     [Header("스폰 설정")]
     [SerializeField] private float _respawnDelay = 3f;
 
-    private EnemyCombatContext _enemyCombatContext;
-
     private void Start()
     {
-        var director = _player.GetComponent<EnemyAttackDirector>();
-        var slots = _player.GetComponent<EnemySlotCoordinator>();
-
-        _enemyCombatContext = new EnemyCombatContext(_player, director, slots);
-
         SpawnInitialEnemies();
     }
 
@@ -29,6 +19,7 @@ public class FloatSmallEnemySpawner : MonoBehaviour, IEnemyRespawnRequester
         enemy.OnDespawn -= HandleEnemyDespawn;
 
         _enemyPool.Despawn(enemy.EnemyType, enemy);
+        RequestRespawn(enemy);
     }
 
     private void SpawnInitialEnemies()
@@ -48,7 +39,6 @@ public class FloatSmallEnemySpawner : MonoBehaviour, IEnemyRespawnRequester
             Quaternion.identity
         );
 
-        enemy.SetRespawnRequester(this);
         enemy.SetFloatSmallEnemySpawner(this);
         enemy.SetSpawnBasePosition(basePosition);  // 리스폰용 (높이 재설정 제외)
 
@@ -56,8 +46,6 @@ public class FloatSmallEnemySpawner : MonoBehaviour, IEnemyRespawnRequester
 
         // todo. EnemyBase 활성화 시점으로 위치 이동 예정
         EnemyEventController.Enemy.RaiseSpawned(new EnemySpawnedEvent(enemy));
-        EnemyState logic = enemy.GetComponent<EnemyState>();
-        logic.Initialize(_enemyCombatContext);
     }
 
     private Vector3 GetSpawnHeight(EEnemyType type)

@@ -8,8 +8,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public EnemyStatData EnemyStatData { get; private set; }
 
-    private IEnemyRespawnRequester _respawnRequester;
-
     protected float _currentHealth;
 
     [Header("스폰 높이")]
@@ -76,11 +74,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _floatSpawner = floatSpawner;
     }
 
-    public void SetRespawnRequester(IEnemyRespawnRequester requester)
-    {
-        _respawnRequester = requester;
-    }
-
     // 최초 스폰 위치 저장 (리스폰용)
     public void SetSpawnBasePosition(Vector3 basePosition)
     {
@@ -115,12 +108,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
-        Debug.Log($"적이 죽었습니다.");
+        Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");
 
         EnemyEventController.Enemy.RaiseKilled(new EnemyKilledEvent(this));
         OnDeath?.Invoke();
-
-        _respawnRequester?.RequestRespawn(this);
         OnDespawn?.Invoke(this);
     }
 }
