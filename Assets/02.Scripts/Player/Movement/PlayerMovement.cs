@@ -30,6 +30,8 @@ namespace _02.Scripts.Player.Movement
         private Vector3 _horizontalMove;    // 수평 이동
         private bool _isGrounded;
         private float _coyoteTimer;
+        private int _jumpCount;             // 현재 점프 횟수
+        private const int MaxJumpCount = 2; // 최대 점프 횟수 (2단 점프)
 
         private float MoveSpeed => _stats != null ? _stats.MoveSpeed : 8f;
         private float JumpForce => _stats != null ? _stats.JumpForce : 10f;
@@ -129,13 +131,37 @@ namespace _02.Scripts.Player.Movement
             return new Vector2(localDir.x, localDir.z);
         }
 
+        /// <summary>
+        /// 점프 시도. 1단/2단 점프 가능 여부에 따라 결과 반환
+        /// </summary>
+        /// <returns>0: 점프 불가, 1: 1단 점프, 2: 2단 점프</returns>
+        public int TryJump()
+        {
+            // 1단 점프: 지면에 있을 때
+            if (IsGrounded)
+            {
+                _isGrounded = false;
+                _coyoteTimer = 0f;
+                _jumpCount = 1;
+                _velocity.y = JumpForce;
+                return 1;
+            }
+
+            // 2단 점프: 공중에서 1회만 가능
+            if (_jumpCount < MaxJumpCount)
+            {
+                _jumpCount = MaxJumpCount;
+                _velocity.y = JumpForce;
+                return 2;
+            }
+
+            return 0;
+        }
+
+        [Obsolete("Use TryJump() instead")]
         public void Jump()
         {
-            if (!IsGrounded) return;
-
-            _isGrounded = false;   // 점프 시 즉시 공중 상태로 전환
-            _coyoteTimer = 0f;     // 코요테 타임 리셋
-            _velocity.y = JumpForce;
+            TryJump();
         }
 
         private void CheckGround()
@@ -169,6 +195,7 @@ namespace _02.Scripts.Player.Movement
             {
                 _isGrounded = true;
                 _coyoteTimer = _coyoteTime;
+                _jumpCount = 0;  // 착지 시 점프 횟수 리셋
             }
             else
             {

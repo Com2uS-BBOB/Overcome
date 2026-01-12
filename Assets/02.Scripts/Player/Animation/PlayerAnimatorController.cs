@@ -5,32 +5,26 @@ using _02.Scripts.Player.StateMachine.States;
 
 namespace _02.Scripts.Player.Animation
 {
-    // 플레이어 애니메이션 관리 (3-Layer 시스템)
-    // Layer 0: Locomotion (이동, 점프)
-    // Layer 1: UpperCombat (공중 상체 공격)
-    // Layer 2: Combat (지상 전신 공격)
+    // 플레이어 애니메이션 관리 (1-Layer Sub-State Machine 구조)
+    // Base Layer: Locomotion, Jump, GroundCombat, AirCombat
     public class PlayerAnimatorController : MonoBehaviour
     {
         [SerializeField] private Animator _animator;
 
-        // Layer 인덱스
-        private const int UpperCombatLayerIndex = 1;
-        private const int CombatLayerIndex = 2;
-
         // Animator 파라미터 해시 - Locomotion
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
+        private static readonly int DoubleJumpHash = Animator.StringToHash("DoubleJump");
         private static readonly int IsGroundedHash = Animator.StringToHash("IsGrounded");
 
         // Animator 파라미터 해시 - Combat
         private static readonly int AttackHash = Animator.StringToHash("Attack");
-        private static readonly int ComboCountHash = Animator.StringToHash("ComboCount");
+        private static readonly int AttackComboCountHash = Animator.StringToHash("AttackComboCount");
         private static readonly int DashAttackHash = Animator.StringToHash("DashAttack");
         private static readonly int CrescentHash = Animator.StringToHash("Crescent");
+        private static readonly int CrescentComboCountHash = Animator.StringToHash("CrescentComboCount");
 
         private PlayerStateMachine _stateMachine;
-        private float _upperCombatLayerWeight;
-        private float _combatLayerWeight;
 
         public void Initialize(PlayerStateMachine stateMachine)
         {
@@ -38,18 +32,6 @@ namespace _02.Scripts.Player.Animation
             _stateMachine.OnStateChanged += HandleStateChanged;
         }
 
-        private void Update()
-        {
-            // UpperCombat Layer Weight 부드럽게 전환
-            float currentUpper = _animator.GetLayerWeight(UpperCombatLayerIndex);
-            float newUpper = Mathf.Lerp(currentUpper, _upperCombatLayerWeight, 10f * Time.deltaTime);
-            _animator.SetLayerWeight(UpperCombatLayerIndex, newUpper);
-
-            // Combat Layer Weight 부드럽게 전환
-            float currentCombat = _animator.GetLayerWeight(CombatLayerIndex);
-            float newCombat = Mathf.Lerp(currentCombat, _combatLayerWeight, 10f * Time.deltaTime);
-            _animator.SetLayerWeight(CombatLayerIndex, newCombat);
-        }
 
         #region Locomotion
 
@@ -59,9 +41,14 @@ namespace _02.Scripts.Player.Animation
         public void SetMoving(bool isMoving) => _animator.SetBool(IsMovingHash, isMoving);
 
         /// <summary>
-        /// 점프 애니메이션 트리거
+        /// 1단 점프 애니메이션 트리거
         /// </summary>
         public void PlayJump() => _animator.SetTrigger(JumpHash);
+
+        /// <summary>
+        /// 2단 점프 애니메이션 트리거
+        /// </summary>
+        public void PlayDoubleJump() => _animator.SetTrigger(DoubleJumpHash);
 
         /// <summary>
         /// 지면 상태 동기화
@@ -88,65 +75,41 @@ namespace _02.Scripts.Player.Animation
         }
 
         /// <summary>
-        /// 용검 공격 (지상: 전신, 공중: 상체만)
+        /// 용검 공격
         /// </summary>
         public void PlayAttack(int comboStep, bool isGrounded)
         {
-            _animator.SetInteger(ComboCountHash, comboStep);
+            Debug.Log($"[Anim] PlayAttack called - comboStep: {comboStep}, isGrounded: {isGrounded}");
+            _animator.SetInteger(AttackComboCountHash, comboStep);
             _animator.SetTrigger(AttackHash);
-
-            if (isGrounded)
-            {
-                _combatLayerWeight = 1f;
-                _upperCombatLayerWeight = 0f;
-            }
-            else
-            {
-                _upperCombatLayerWeight = 1f;
-                _combatLayerWeight = 0f;
-            }
         }
 
         /// <summary>
-        /// 질풍참 (항상 전신)
+        /// 질풍참
         /// </summary>
         public void PlayDashAttack()
         {
             _animator.SetTrigger(DashAttackHash);
-            _combatLayerWeight = 1f;
-            _upperCombatLayerWeight = 0f;
         }
 
         /// <summary>
-        /// 크레센트 (지상: 전신, 공중: 상체만)
+        /// 크레센트
         /// </summary>
-        public void PlayCrescent(bool isGrounded)
+        public void PlayCrescent(int comboStep, bool isGrounded)
         {
+            _animator.SetInteger(CrescentComboCountHash, comboStep);
             _animator.SetTrigger(CrescentHash);
-
-            if (isGrounded)
-            {
-                _combatLayerWeight = 1f;
-                _upperCombatLayerWeight = 0f;
-            }
-            else
-            {
-                _upperCombatLayerWeight = 1f;
-                _combatLayerWeight = 0f;
-            }
         }
 
         /// <summary>
-        /// 모든 전투 레이어 비활성화 및 파라미터 리셋
+        /// 파라미터 리셋
         /// </summary>
         public void EndCombat()
         {
-            _combatLayerWeight = 0f;
-            _upperCombatLayerWeight = 0f;
-
-            // Trigger 및 ComboCount 리셋
             _animator.ResetTrigger(AttackHash);
-            _animator.SetInteger(ComboCountHash, 0);
+            _animator.ResetTrigger(CrescentHash);
+            _animator.SetInteger(AttackComboCountHash, 0);
+            _animator.SetInteger(CrescentComboCountHash, 0);
         }
 
         #endregion

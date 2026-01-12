@@ -50,7 +50,7 @@ namespace _02.Scripts.Player.Core
             if (_gaugeManager == null) _gaugeManager = GetComponent<GaugeManager>();
 
             Movement.Initialize(Stats);
-            _dragonSwordSkill?.Initialize(Stats);
+            _dragonSwordSkill?.Initialize(Stats, Movement);
             _crescent?.Initialize(Stats, _gaugeManager);
             _dashAttack?.Initialize(Stats);
 
@@ -93,6 +93,7 @@ namespace _02.Scripts.Player.Core
 
             // 콤보 애니메이션 연결
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnComboAttack += HandleComboAttack;
+            if (_crescent != null) _crescent.OnComboAttack += HandleCrescentCombo;
         }
 
         private void OnDisable()
@@ -108,6 +109,7 @@ namespace _02.Scripts.Player.Core
 
             // 콤보 애니메이션 연결 해제
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnComboAttack -= HandleComboAttack;
+            if (_crescent != null) _crescent.OnComboAttack -= HandleCrescentCombo;
         }
 
         private void Update()
@@ -122,10 +124,16 @@ namespace _02.Scripts.Player.Core
 
         private void HandleJump()
         {
-            if (Movement.IsGrounded)
+            int jumpResult = Movement.TryJump();
+
+            switch (jumpResult)
             {
-                Movement.Jump();
-                _playerAnimatorController?.PlayJump();
+                case 1: // 1단 점프
+                    _playerAnimatorController?.PlayJump();
+                    break;
+                case 2: // 2단 점프
+                    _playerAnimatorController?.PlayDoubleJump();
+                    break;
             }
         }
 
@@ -162,11 +170,24 @@ namespace _02.Scripts.Player.Core
 
         private void HandleCrescent()
         {
-            if (_crescent != null && _crescent.CanUse && !StateMachine.IsCurrentState<CrescentState>())
+            if (_crescent == null) return;
+
+            // Case 1: 첫 공격
+            if (_crescent.CanUse)
             {
                 StateMachine.ChangeState<CrescentState>();
-                _crescent.Use();
-                _playerAnimatorController?.PlayCrescent(Movement.IsGrounded);
+                _crescent.Attack();
+            }
+            // Case 2: 콤보 큐잉 (1타 진행 중)
+            else if (_crescent.CanQueueCombo)
+            {
+                _crescent.Attack();
+            }
+            // Case 3: 콤보 유예 (1타 끝난 직후)
+            else if (_crescent.CanComboGrace)
+            {
+                StateMachine.ChangeState<CrescentState>();
+                _crescent.Attack();
             }
         }
 
@@ -180,7 +201,10 @@ namespace _02.Scripts.Player.Core
             HitEventManager.Instance?.NotifyDamageDealt(damage);
         }
 
-        // 콤보 공격 애니메이션
+        // 용검 콤보 공격 애니메이션
         private void HandleComboAttack(int comboStep) => _playerAnimatorController?.PlayAttack(comboStep, Movement.IsGrounded);
+
+        // 크레센트 콤보 공격 애니메이션
+        private void HandleCrescentCombo(int comboStep) => _playerAnimatorController?.PlayCrescent(comboStep, Movement.IsGrounded);
     }
 }
