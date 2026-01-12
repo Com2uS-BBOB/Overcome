@@ -1,18 +1,37 @@
 using System;
+using TMPro;
 using UnityEngine;
 
 public class UI_RankInfo : MonoBehaviour
 {
-    public event Action OnShowComplete;
+    [SerializeField] private TextMeshProUGUI _gradeText;
+    [SerializeField] private StarItem[] _starItems;
+
+    private void OnEnable()
+    {
+        Show();
+    }
+
+    private void OnDisable()
+    {
+        Reset();
+    }
+    
     public void Show()
     {
         RankConfig config = ScoreSystem.Instance.GetRanking();
-        Debug.Log(config.Grade);
-        Debug.Log(config.RequiredScore);
-        Debug.Log(config.RewardStars);
+        _gradeText.text = config.Grade;
+        for (var i = 0; i < config.RewardStars; ++i)
+        {
+            _starItems[i].ActiveStar();
+        }
     }
-    public void Hide()
+
+    private void Reset()
     {
-        throw new NotImplementedException();
+        foreach (StarItem item in _starItems)
+        {
+            item.DeactiveColor();
+        }
     }
 }

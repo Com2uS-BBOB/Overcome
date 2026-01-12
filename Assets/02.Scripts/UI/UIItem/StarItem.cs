@@ -1,16 +1,16 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class StarItem : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Image _starImage;
 
-    // Update is called once per frame
-    void Update()
+    public void ActiveStar()
     {
-        
+        _starImage.color = Color.yellowNice;
+    }
+    public void DeactiveColor()
+    {
+        _starImage.color = Color.white;
     }
 }
