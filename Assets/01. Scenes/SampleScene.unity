@@ -668,7 +668,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayTimeSystem
   _uiSequencer: {fileID: 1300668384}
   _difficultyConfigData: {fileID: 11400000, guid: bae2da0e7a83ffc47b7e18b34867a97f, type: 2}
-  _currentDifficulty: 2
+  _currentDifficulty: 1
 --- !u!1 &174181920 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1091328049032755812, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
@@ -3086,6 +3086,14 @@ PrefabInstance:
     m_TransformParent: {fileID: 1702472628}
     m_Modifications:
     - target: {fileID: 134178239795507229, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.09968787
+      objectReference: {fileID: 0}
+    - target: {fileID: 134178239795507229, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.02525205
+      objectReference: {fileID: 0}
+    - target: {fileID: 134178239795507229, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.42556697
       objectReference: {fileID: 0}
@@ -3663,7 +3671,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 998101982}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d0390bd8b8ffd640b34fe25065ff1df, type: 3}
   m_Name: 
@@ -4816,6 +4824,7 @@ GameObject:
   - component: {fileID: 1332302587}
   - component: {fileID: 1332302584}
   - component: {fileID: 1332302588}
+  - component: {fileID: 1332302598}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -5094,6 +5103,21 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1332302583}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1332302598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332302583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1977e63c4afd43649aa57fc56cb4eca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySlotCoordinator
+  _player: {fileID: 1332302586}
+  _radius: 3.2
+  _slotCount: 6
 --- !u!1 &1388329367
 GameObject:
   m_ObjectHideFlags: 0
@@ -7360,7 +7384,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.33333334
+  m_VoxelSize: 0.4
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: cb35d43ec69aa8345a100f6f07e293ed, type: 2}
   m_BuildHeightMesh: 0
@@ -7392,7 +7416,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.16666667
+  m_VoxelSize: 0.4
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 91168924ee892c44b9c74ef8097a3171, type: 2}
   m_BuildHeightMesh: 0
