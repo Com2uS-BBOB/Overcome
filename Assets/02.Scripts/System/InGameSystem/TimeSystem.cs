@@ -3,6 +3,9 @@ using UnityEngine;
 
 public class TimeSystem : SingletonBehaviour<TimeSystem>
 {
+    [Header("Test Code")]
+    [SerializeField] private UISequencer _uiSequencer;
+    
     protected override bool DontDestroy => false;
 
     [Header("난이도 설정")]
@@ -54,6 +57,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     {
         UpdateTimers();
         CheckGameOver();
+        CheckGameClear();
     }
 
     private void UpdateTimers()
@@ -70,9 +74,26 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         if (_remainTime > 0f) return;
 
         _isGameOver = true;
+        // todo. Test Code 제거 필요
+        _uiSequencer.gameObject.SetActive(true);
         OnGameOver?.Invoke();
     }
 
+    private void CheckGameClear()
+    {
+        if (_isGameOver) return;
+        if (_remainTime > 0f) return;
+        if (_playTime < _difficultyConfig.MaxPlayTime) return;
+        
+        _isGameOver = true;
+        ScoreSystem.Instance.IncreaseScore(_difficultyConfig.ClearBonus);
+        
+        // todo. Test Code 제거 필요
+        _uiSequencer.gameObject.SetActive(true);
+        
+        OnGameOver?.Invoke();
+    }
+    
     private void KillEnemy(EnemyKilledEvent killedEvent)
     {
         AddTimeLimit(killedEvent.Playtime);

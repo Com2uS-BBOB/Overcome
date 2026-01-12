@@ -10,12 +10,13 @@ public class AnimatedNumber
     [SerializeField] private TextMeshProUGUI _text;
 
     [Header("Format")]
-    [SerializeField] private string _format = "{0:F0}";
+    [SerializeField] private string _format = "{0:0}";
 
     [Header("Animation")]
     [SerializeField] private float _duration = 0.5f;
     [SerializeField] private Ease _ease = Ease.OutQuad;
 
+    public event Action OnCompleteChanging;
     private float _currentValue;
     private Tweener _tweener;
 
@@ -27,7 +28,8 @@ public class AnimatedNumber
                 UpdateText();
             }, 0f, _duration)
             .SetEase(_ease)
-            .SetAutoKill(false);
+            .SetAutoKill(false)
+            .OnComplete(() => { OnCompleteChanging?.Invoke(); });
     }
 
     public void Clear()
@@ -37,8 +39,11 @@ public class AnimatedNumber
 
     public void SetValue(float value, bool immediate = false)
     {
-        if (_text == null) return;
-        if (Mathf.Approximately(_currentValue, value)) return;
+        if (Mathf.Approximately(_currentValue, value))
+        {
+            OnCompleteChanging?.Invoke();
+            return;
+        }
 
         if (immediate)
         {
@@ -58,7 +63,8 @@ public class AnimatedNumber
 
     private void UpdateText()
     {
-        _text.text = string.Format(_format, _currentValue);
+        // todo. 시간 기반 Text 표시 기능 필요
+        _text.SetText(_format, _currentValue);
     }
     
     public void ActivateTextUI() => _text.gameObject.SetActive(true);
