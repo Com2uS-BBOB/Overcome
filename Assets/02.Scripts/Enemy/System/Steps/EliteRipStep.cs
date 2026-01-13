@@ -8,7 +8,6 @@ public class EliteRipStep : IEnemyAttackStep
     private readonly EnemyAttack _attack;
 
     private EliteRipAction _rip;
-    private HowlAction _howl;
 
     private bool _reserved;
     private float _retryTime;
@@ -66,37 +65,18 @@ public class EliteRipStep : IEnemyAttackStep
             return;
         }
 
-        // 난도질 도중 플레이어가 범위 밖으로 벗어나면 Howl 후 Rush 재진입
+        // 난도질 도중 플레이어가 범위 밖으로 벗어나면 즉시 종료
         if (_rip != null && Vector3.Distance(_context.Enemy.position, _context.Player.position) > _config.RipRange)
         {
-            // Rip 중단
             _rip.Exit();
             _rip = null;
 
-            // 공격권 반납(연출 중에는 공격자로 잡고 있을 필요 없음)
             ReleaseAttack();
-
-            // Howl 시작
-            _howl = new HowlAction(_context.Anim, _context.Agent, _config.HowlDuration);
-            _howl.Enter();
-
-            return;
-        }
-
-        // 포효 진행 중
-        if (_howl != null)
-        {
-            _howl.Update();
-            if (_howl.IsFinished)
-            {
-                _howl.Exit();
-                _howl = null;
-
-                // Rush를 다시 가능하게 만든다
-                _attack?.ResetRush();
-
-                FinishNow();
-            }
+            
+            // Rush 다시 가능
+            _attack?.ResetRush();
+            
+            FinishNow();
             return;
         }
 
@@ -123,9 +103,6 @@ public class EliteRipStep : IEnemyAttackStep
     {
         _rip?.Exit();
         _rip = null;
-
-        _howl?.Exit();
-        _howl = null;
 
         ReleaseAttack();
 
