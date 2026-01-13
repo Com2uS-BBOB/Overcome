@@ -15,9 +15,11 @@ public class EliteRipAction : IEnemyAction
     private readonly float _ripKnockbackDistance;
 
     private float _ratio;
-    private bool _finished;
+    private bool _isFinished;
 
-    public bool IsFinished => _finished;
+    private bool _cycleEnded;
+
+    public bool IsFinished => _isFinished;
 
     public EliteRipAction(
         Transform enemy,
@@ -44,7 +46,7 @@ public class EliteRipAction : IEnemyAction
 
     public void Enter()
     {
-        _finished = false;
+        _isFinished = false;
 
         // 난도질 중엔 계속 전진
         _agent.isStopped = false;
@@ -61,7 +63,7 @@ public class EliteRipAction : IEnemyAction
 
     public void Update()
     {
-        if (_finished) return;
+        if (_isFinished) return;
         if (_player == null) return;
 
         // 난도질 중 전진
@@ -71,19 +73,19 @@ public class EliteRipAction : IEnemyAction
 
     public void Exit()
     {
+        _isFinished = true;
+
         _anim.SetRip(false);
 
         _movement.Stop();
         _hitbox?.Disable();
         _movement.ResetSpeedMultiplier();
-
-        _finished = true;
     }
 
     // 애니메이션 이벤트
     public void OnAnimStart()
     {
-        // 난도질 시작 시 처리
+        _cycleEnded = false;
     }
 
     public void OnHitStart()
@@ -98,6 +100,7 @@ public class EliteRipAction : IEnemyAction
 
     public void OnAnimEnd()
     {
-        // 난도질 종료 시 처리
+        _hitbox?.Disable();
+        _cycleEnded = true;
     }
 }

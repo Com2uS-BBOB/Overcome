@@ -29,8 +29,8 @@ public class EliteRipStep : IEnemyAttackStep
         // 공격권 실패 시 너무 자주 시도하지 않도록 설정
         if (Time.time < _retryTime) return false;
 
-        float dist = Vector3.Distance(_context.Enemy.position, _context.Player.position);
-        if (dist > _config.RipRange)  // 범위 밖이면 Rip 시작 금지
+        float distance = Vector3.Distance(_context.Enemy.position, _context.Player.position);
+        if (distance > _config.RipRange)  // 범위 밖이면 Rip 시작 금지
         {
             _retryTime = Time.time + _config.RipTouchDelay; // 너무 자주 시도 방지
             return false;
@@ -68,27 +68,27 @@ public class EliteRipStep : IEnemyAttackStep
 
         if (_context.Player == null)
         {
-            FinishNow();
+            FinishAndCleanup();
             return;
         }
 
-        // 난도질 진행
-        if (_rip != null)
+        float distance = Vector3.Distance(_context.Enemy.position, _context.Player.position);
+        if (distance > _config.RipRange)
         {
-            _rip.Update();
-            if (_rip.IsFinished)
-            {
-                _rip.Exit();
-                _rip = null;
+            _rip?.Exit();
+            _rip = null;
 
-                ReleaseAttack();
-                FinishNow();
-            }
+            ReleaseAttack();
+
+            // Rush를 다시 가능하게
+            _attack?.ResetRush();
+
+            _finished = true;
+            return;
         }
-        else
-        {
-            FinishNow();
-        }
+
+        // 범위 안이면 Rip은 계속 유지
+        _rip?.Update();
     }
 
     public void Stop()
@@ -111,8 +111,11 @@ public class EliteRipStep : IEnemyAttackStep
         }
     }
 
-    private void FinishNow()
+    private void FinishAndCleanup()
     {
+        _rip?.Exit();
+        _rip = null;
+        ReleaseAttack();
         _finished = true;
     }
 

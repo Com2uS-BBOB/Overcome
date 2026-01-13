@@ -123,7 +123,7 @@ public class EnemyAttack : MonoBehaviour
             case EEnemyType.Elite:
                 var eliteConfig = new EliteAttackPatternConfig(
                     openingRushDuration: 0.5f,
-                    ripRange: 5f,
+                    ripRange: 10f,
                     ripMoveSpeed: 2f,
                     ripDamagePerHit: 2f,
                     ripTouchDelay: 0.25f,
