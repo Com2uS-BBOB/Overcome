@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using UnityEngine;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Interfaces;
@@ -8,22 +7,15 @@ using _02.Scripts.Player.Gauge;
 
 namespace _02.Scripts.Player.Combat
 {
-    // 크레센트 원거리 스킬 (게이지 기반) - 2타 콤보
-    // 콤보 윈도우 + 콤보 유예 시스템
-    public class CrescentSkill : MonoBehaviour, ISkill, IOverDriveAffected
+    /// <summary>
+    /// 크레센트 원거리 스킬 (게이지 기반)
+    /// 지상 콤보와 공중 콤보가 SkillDataSet으로 분리되어 관리됨
+    /// </summary>
+    public class CrescentSkill : BaseSkill, IOverDriveAffected
     {
         private const int PoolInitialSize = 5;
-        private const int MaxCombo = 2;
 
-        [Header("Duration Settings")]
-        [SerializeField] private float _skill1Duration = 0.6f;
-        [SerializeField] private float _skill2Duration = 0.7f;
-
-        [Header("Combo Settings")]
-        [SerializeField] private float _comboWindowStart = 0.25f;  // 콤보 윈도우 시작 시점
-        [SerializeField] private float _comboGraceTime = 0.1f;     // 스킬 종료 후 유예 시간
-
-        [Header("References")]
+        [Header("Projectile")]
         [SerializeField] private CrescentProjectile _projectilePrefab;
         [SerializeField] private Transform _firePoint;
         [SerializeField] private Transform _cameraTransform;
@@ -33,50 +25,37 @@ namespace _02.Scripts.Player.Combat
         private GaugeManager _gaugeManager;
         private ObjectPool<CrescentProjectile> _projectilePool;
 
-        // 상태
-        private bool _isUsing;
-        private int _comboStep;
-        private bool _comboQueued;
-        private bool _inComboWindow;
-        private bool _inComboGrace;
-        private bool _skipToNextCombo;
-        private float _skillElapsedTime;
-        private float _currentSkillDuration;
+        // === ISkill 구현 ===
+        public override string SkillName => "크레센트";
+        public override float Cooldown => 0f;
+        public override bool CanUse => !_isActive && !_inComboGrace &&
+                                       _gaugeManager != null && _gaugeManager.CanUseCrescent;
 
-        private Coroutine _skillCoroutine;
-        private Coroutine _comboGraceCoroutine;
-
-        // ISkill
-        public string SkillName => "크레센트";
-        public float Cooldown => 0f;
-        public bool CanUse => !_isUsing && !_inComboGrace && _gaugeManager != null && _gaugeManager.CanUseCrescent;
-        public bool IsUsing => _isUsing;
-        public int ComboStep => _comboStep;
-
-        // IOverDriveAffected
+        // === IOverDriveAffected 구현 ===
         public bool IsOverDriveActive { get; set; }
 
-        // 콤보 큐잉 가능: 스킬 사용 중 + 콤보 윈도우 내 + 아직 예약 안됨 + 마지막 콤보 아님
-        public bool CanQueueCombo => _isUsing && _inComboWindow && !_comboQueued && _comboStep < MaxCombo;
+        // === Properties ===
 
-        // 콤보 유예 가능: 유예 구간 내 + 다음 콤보 있음
-        public bool CanComboGrace => _inComboGrace && _comboStep < MaxCombo;
+        /// <summary>
+        /// 스킬 사용 중 여부 (State 체크용)
+        /// </summary>
+        public bool IsUsing => _isActive;
 
         private float Damage => _stats != null ? _stats.CrescentDamage : 15f;
         private float Speed => _stats != null ? _stats.CrescentSpeed : 20f;
         private float Range => _stats != null ? _stats.CrescentRange : 30f;
-        private float GetSkillDuration(int step) => step == 1 ? _skill1Duration : _skill2Duration;
 
-        public event Action OnSkillUsed;
+        // === Events ===
         public event Action OnCrescentEnded;
-        public event Action<IDamageable, float> OnEnemyHit;
-        public event Action<int> OnComboAttack;
+
+        // === Initialization ===
 
         private void Awake()
         {
             if (_projectilePrefab != null)
             {
-                _projectilePool = new ObjectPool<CrescentProjectile>(_projectilePrefab, _poolContainer, PoolInitialSize);
+                _projectilePool = new ObjectPool<CrescentProjectile>(
+                    _projectilePrefab, _poolContainer, PoolInitialSize);
             }
 
             if (_firePoint == null) _firePoint = transform;
@@ -89,103 +68,70 @@ namespace _02.Scripts.Player.Combat
             _gaugeManager = gaugeManager;
         }
 
-        public void Use() => Attack();
+        // === BaseSkill Override ===
+
+        protected override bool GetIsGrounded()
+        {
+            // 크레센트는 지상/공중 구분을 위해 별도 Movement 참조 필요
+            // 현재는 true 반환 (PlayerController에서 StartSkill 호출 시 isGrounded 전달)
+            return true;
+        }
+
+        protected override float GetDamage()
+        {
+            return Damage;
+        }
+
+        protected override void OnSkillStart()
+        {
+            FireProjectile();
+        }
+
+        // 크레센트는 히트박스 대신 프로젝타일 사용
+        protected override void EnableHitbox() { }
+        protected override void DisableHitbox() { }
+
+        // === Public API (호환성 유지) ===
 
         /// <summary>
-        /// 크레센트 공격 - 상황에 따라 첫 공격/콤보 큐잉/콤보 유예 처리
+        /// 첫 크레센트 공격 (콤보 1타)
         /// </summary>
         public void Attack()
         {
-            // Case 1: 콤보 큐잉 (1타 진행 중 입력) → 즉시 스킵
-            if (CanQueueCombo && _gaugeManager.CanUseCrescent)
+            StartSkill(GetIsGrounded());
+        }
+
+        /// <summary>
+        /// 콤보 큐잉 Override (게이지 체크 추가)
+        /// </summary>
+        public override void QueueCombo()
+        {
+            // 게이지 검증 (오버드라이브 시에는 무시)
+            bool hasGauge = IsOverDriveActive || _gaugeManager.CanUseCrescent;
+
+            if (_isActive && !_comboQueued && CanContinueCombo && hasGauge)
             {
                 _comboQueued = true;
-                _skipToNextCombo = true;
-                return;
+                // OnComboQueued 이벤트는 BaseSkill에서 호출됨
             }
+        }
 
-            // Case 2: 콤보 유예 (1타 끝난 직후 입력)
-            if (CanComboGrace && _gaugeManager.CanUseCrescent)
+        /// <summary>
+        /// 콤보 유예 중 다음 콤보 실행 Override (게이지 체크 추가)
+        /// </summary>
+        public override void ExecuteGraceCombo()
+        {
+            // 게이지 검증 (오버드라이브 시에는 무시)
+            bool hasGauge = IsOverDriveActive || _gaugeManager.CanUseCrescent;
+
+            if (CanComboGrace && hasGauge)
             {
                 StopGraceTimer();
                 ExecuteNextCombo();
-                return;
-            }
-
-            // Case 3: 첫 공격
-            if (CanUse)
-            {
-                StopAllTimers();
-                _comboStep = 1;
-                _skillCoroutine = StartCoroutine(SkillCoroutine());
             }
         }
 
-        private IEnumerator SkillCoroutine()
-        {
-            _isUsing = true;
-            _comboQueued = false;
-            _inComboWindow = false;
-            _inComboGrace = false;
-            _skipToNextCombo = false;
-
-            _currentSkillDuration = GetSkillDuration(_comboStep);
-            _skillElapsedTime = 0f;
-
-            // 게이지 소모 및 프로젝타일 발사
-            FireProjectile();
-
-            OnSkillUsed?.Invoke();
-            OnComboAttack?.Invoke(_comboStep);
-
-            // 매 프레임 경과 시간 추적 + 스킵 체크
-            while (_skillElapsedTime < _currentSkillDuration)
-            {
-                _skillElapsedTime += Time.deltaTime;
-
-                // 콤보 윈도우 시작
-                if (!_inComboWindow && _skillElapsedTime >= _comboWindowStart && _comboStep < MaxCombo)
-                {
-                    _inComboWindow = true;
-                }
-
-                // 스킵 체크: 콤보가 큐잉되고 스킵 플래그가 설정되면 즉시 종료
-                if (_skipToNextCombo && _comboQueued)
-                {
-                    break;
-                }
-
-                yield return null;
-            }
-
-            // 스킬 종료
-            _isUsing = false;
-            _inComboWindow = false;
-            _skipToNextCombo = false;
-
-            // 콤보 처리
-            if (_comboQueued && _comboStep < MaxCombo)
-            {
-                ExecuteNextCombo();
-            }
-            else if (_comboStep < MaxCombo)
-            {
-                StartGraceTimer();
-            }
-            else
-            {
-                // 마지막 콤보 완료
-                _comboStep = 0;
-                OnCrescentEnded?.Invoke();
-            }
-        }
-
-        private void ExecuteNextCombo()
-        {
-            _comboStep++;
-            _comboQueued = false;
-            _skillCoroutine = StartCoroutine(SkillCoroutine());
-        }
+        // === Private Methods ===
 
         private void FireProjectile()
         {
@@ -195,57 +141,11 @@ namespace _02.Scripts.Player.Combat
             if (!IsOverDriveActive)
                 _gaugeManager.ConsumeCrescent();
 
-            Vector3 direction = _cameraTransform.forward;
+            Vector3 direction = _cameraTransform != null ? _cameraTransform.forward : transform.forward;
             CrescentProjectile projectile = _projectilePool.Get();
             projectile.transform.position = _firePoint.position;
             projectile.Initialize(Damage, Speed, Range, direction, gameObject, ReturnProjectile);
             projectile.OnHit += HandleProjectileHit;
-        }
-
-        private void StartGraceTimer()
-        {
-            _inComboGrace = true;
-            _comboGraceCoroutine = StartCoroutine(GraceTimerCoroutine());
-        }
-
-        private IEnumerator GraceTimerCoroutine()
-        {
-            yield return new WaitForSeconds(_comboGraceTime);
-
-            // 유예 시간 종료
-            _inComboGrace = false;
-            _comboStep = 0;
-            OnCrescentEnded?.Invoke();
-        }
-
-        private void StopGraceTimer()
-        {
-            _inComboGrace = false;
-            if (_comboGraceCoroutine != null)
-            {
-                StopCoroutine(_comboGraceCoroutine);
-                _comboGraceCoroutine = null;
-            }
-        }
-
-        private void StopAllTimers()
-        {
-            StopGraceTimer();
-            if (_skillCoroutine != null)
-            {
-                StopCoroutine(_skillCoroutine);
-                _skillCoroutine = null;
-            }
-        }
-
-        public void ResetCombo()
-        {
-            StopAllTimers();
-            _comboStep = 0;
-            _isUsing = false;
-            _comboQueued = false;
-            _inComboWindow = false;
-            _inComboGrace = false;
         }
 
         private void ReturnProjectile(CrescentProjectile projectile)
@@ -254,8 +154,14 @@ namespace _02.Scripts.Player.Combat
             _projectilePool.Return(projectile);
         }
 
-        private void HandleProjectileHit(IDamageable target, float damage) => OnEnemyHit?.Invoke(target, damage);
+        private void HandleProjectileHit(IDamageable target, float damage)
+        {
+            InvokeEnemyHit(target, damage);
+        }
 
-        private void OnDestroy() => _projectilePool?.Clear();
+        private void OnDestroy()
+        {
+            _projectilePool?.Clear();
+        }
     }
 }

@@ -105,6 +105,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1782168504486438905}
   - component: {fileID: 855324125511743067}
+  - component: {fileID: 5375706219993101799}
+  - component: {fileID: 7188817808197553273}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -160,7 +162,7 @@ Animator:
   m_GameObject: {fileID: 188815996246225958}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 108a17e601cede644bd96be9856b1057, type: 3}
-  m_Controller: {fileID: 9100000, guid: 90f44bf03e1822d458c3397942a6663a, type: 2}
+  m_Controller: {fileID: 9100000, guid: 96c196d5f6d184ed59afa7b92617e3d2, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -172,6 +174,31 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5375706219993101799
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188815996246225958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf7a85acb678245c293c06479a233ca6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Animation.RootMotionProxy
+--- !u!114 &7188817808197553273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188815996246225958}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 988792906e92739449474a43267e2e84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUtils::Drakkar.Examples.AnimationEvents
+  Trail: {fileID: 671542251130911682}
 --- !u!1 &193792705243300365
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,7 +1172,7 @@ Transform:
   - {fileID: 2392235515311318195}
   - {fileID: 8641381018518137330}
   m_Father: {fileID: 134178239795507229}
-  m_LocalEulerAnglesHint: {x: 0.28031373, y: 15.552013, z: -96.82349}
+  m_LocalEulerAnglesHint: {x: 2.6595814, y: 36.084625, z: -96.29509}
 --- !u!1 &1239122815831409770
 GameObject:
   m_ObjectHideFlags: 0
@@ -4560,7 +4587,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5604617627446233844}
-  m_LocalEulerAnglesHint: {x: 15.478852, y: 1.6175973, z: 97.02212}
+  m_LocalEulerAnglesHint: {x: 36.12517, y: 1.9365771, z: 97.79337}
 --- !u!1 &5085777168472084427
 GameObject:
   m_ObjectHideFlags: 0
@@ -4985,8 +5012,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5388136421146779367}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.8134669, y: -0.33787784, z: 0.030558195, w: 0.47241536}
-  m_LocalPosition: {x: 0.09968787, y: 0.02525205, z: 0.42556694}
+  m_LocalRotation: {x: 0.40575892, y: -0.15696888, z: 0.033283595, w: 0.89978474}
+  m_LocalPosition: {x: 0.17588319, y: 0.08395478, z: 0.3047489}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -5003,12 +5030,12 @@ ParentConstraint:
   m_Enabled: 1
   serializedVersion: 2
   m_Weight: 1
-  m_TranslationAtRest: {x: 0.09968787, y: 0.02525205, z: 0.42556694}
-  m_RotationAtRest: {x: 52.11442, y: -153.96645, z: -121.98993}
+  m_TranslationAtRest: {x: 0.09968787, y: 0.02525205, z: 0.42556697}
+  m_RotationAtRest: {x: 52.11441, y: -153.96646, z: -121.99002}
   m_TranslationOffsets:
   - {x: 0, y: 0, z: 0}
   m_RotationOffsets:
-  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: -0.00014087251}
   m_AffectTranslationX: 1
   m_AffectTranslationY: 1
   m_AffectTranslationZ: 1
@@ -7986,7 +8013,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5604617627446233844}
-  m_LocalEulerAnglesHint: {x: -49.547264, y: 155.71288, z: -35.374943}
+  m_LocalEulerAnglesHint: {x: 35.79645, y: 173.85895, z: -144.19547}
 --- !u!1 &7951789251272466538
 GameObject:
   m_ObjectHideFlags: 0
@@ -9082,6 +9109,61 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5966773358350584582}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8997796752751754952
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1562091592838578447}
+  - component: {fileID: 671542251130911682}
+  m_Layer: 0
+  m_Name: SwordTrail
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1562091592838578447
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8997796752751754952}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.60666364, y: 0.36252165, z: 0.37750807, w: 0.59835184}
+  m_LocalPosition: {x: -0.000051299692, y: 0.00010516028, z: -0.000070410126}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3186643792995540806}
+  m_LocalEulerAnglesHint: {x: -88.611, y: -87.458, z: 150.568}
+--- !u!114 &671542251130911682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8997796752751754952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3351d65a5e49c64d9002bba88ce89a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUtils::Drakkar.GameUtils.DrakkarTrail
+  Length: 0.997803
+  Steps: 10
+  StepTime: 1
+  EndingSpeed: 8
+  Bounds: 2.5
+  Interpolation: 4
+  Edges: 0
+  Edge1: 0.5
+  Edge2: 0.666666
+  TrailMaterial: {fileID: 2100000, guid: 7ad44bde63dbe5a42acfa801d1aad726, type: 2}
+  Layer: 0
 --- !u!1 &9134933007767796435
 GameObject:
   m_ObjectHideFlags: 0
@@ -9198,7 +9280,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 4955980010281204764, guid: de532dcfb2a0f59478873884fc040305, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1562091592838578447}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de532dcfb2a0f59478873884fc040305, type: 3}
 --- !u!4 &3186643792995540806 stripped
