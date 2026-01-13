@@ -261,8 +261,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Movement.PlayerMovement
   _rotationSpeed: 10
-  _gravity: -30
-  _groundedGravity: -5
+  _gravity: -50
+  _groundedGravity: -15
   _groundCheckDistance: 0.3
   _groundCheckRadius: 0.2
   _groundLayer:
@@ -690,7 +690,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.33333334
+  m_VoxelSize: 0.26666668
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: f263d5db33c75084baa5fa418485a0ee, type: 2}
   m_BuildHeightMesh: 0
@@ -1168,7 +1168,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3925722291729619585, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7318016410296134547, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1294,7 +1294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5034534909042179694, guid: e598a457e994e31418203720141d3c67, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6688767809611053625, guid: e598a457e994e31418203720141d3c67, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1346,7 +1346,7 @@ PrefabInstance:
       objectReference: {fileID: 642449878}
     - target: {fileID: 7750734187541774591, guid: e598a457e994e31418203720141d3c67, type: 3}
       propertyPath: _aroundCount
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
