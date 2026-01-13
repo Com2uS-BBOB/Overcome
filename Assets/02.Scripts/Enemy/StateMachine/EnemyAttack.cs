@@ -136,11 +136,18 @@ public class EnemyAttack : MonoBehaviour
         }
     }
 
-    // 애니메이션 이벤트 포워딩
+    #region Animation Event Fowarding
+
     public void OnMeleeStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeStart);
     public void OnMeleeHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitStart);
     public void OnMeleeHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitEnd);
     public void OnMeleeEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeEnd);
+    public void OnRipStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipStart);
+    public void OnRipHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipHitStart);
+    public void OnRipHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipHitEnd);
+    public void OnRipEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipEnd);
+
+    #endregion
 
     // 후딜 관련
     public void MarkNeedRecoveryAfterRush() => _needRecoveryAfterRush = true;

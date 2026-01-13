@@ -53,7 +53,7 @@ public class EliteRipAction : IEnemyAction
         _ratio = _ripMoveSpeed / _agent.speed;
         _movement.SetSpeedMultiplier(_ratio);
 
-        _anim.TryPlayAttack();
+        _anim.SetRip(true);
 #if UNITY_EDITOR
         Debug.Log("난도질 공격 시도");
 #endif
@@ -71,10 +71,13 @@ public class EliteRipAction : IEnemyAction
 
     public void Exit()
     {
-        // _animator.SetBool("IsRipping", false); 혹은 트리거
+        _anim.SetRip(false);
+
         _movement.Stop();
         _hitbox?.Disable();
         _movement.ResetSpeedMultiplier();
+
+        _finished = true;
     }
 
     // 애니메이션 이벤트
@@ -95,6 +98,6 @@ public class EliteRipAction : IEnemyAction
 
     public void OnAnimEnd()
     {
-        _finished = true;
+        // 난도질 종료 시 처리
     }
 }

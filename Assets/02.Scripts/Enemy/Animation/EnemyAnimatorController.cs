@@ -11,13 +11,6 @@ public class EnemyAnimatorController : MonoBehaviour
     [SerializeField] private bool _supportsAttack = true;
     [SerializeField] private bool _supportsHit = true;
 
-    [Header("Death Mode")]
-    [SerializeField] private EEnemyDeathMode _deathMode = EEnemyDeathMode.Single;
-
-    [Header("공중 적 Death 관련 트리거")]
-    [SerializeField] private string _fallingTriggerName = "Falling";
-    [SerializeField] private string _onGroundTriggerName = "OnGround";
-
     [Header("트리거 난입 방지")]
     [SerializeField] private bool _exclusiveCombat = true;  // Combat(Howl/Rush/Attack) 시작 시 기존 Combat 트리거를 리셋하고 하나만 발동
     [SerializeField] private bool _useCombatLock = true;  // 락 중에는 다른 Combat 트리거를 막기 (Hit/Death는 제외)
@@ -30,6 +23,9 @@ public class EnemyAnimatorController : MonoBehaviour
     [Header("Hit / Death 속성")]
     [SerializeField] private bool _hitInterruptsCombat = true;  // Hit 우선 옵션
 
+    [Header("Death Mode")]
+    [SerializeField] private EEnemyDeathMode _deathMode = EEnemyDeathMode.Single;
+
     [Header("애니메이터 매개변수 명칭 (최대한 통일)")]
     [SerializeField] private string _moveBoolName = "Move";
     [SerializeField] private string _howlTriggerName = "Howl";
@@ -38,6 +34,13 @@ public class EnemyAnimatorController : MonoBehaviour
     [SerializeField] private string _hitTriggerName = "Hit";
     [SerializeField] private string _deathTriggerName = "Death";
 
+    [Header("엘리트 적 난도질 공격 매개변수 명칭")]
+    [SerializeField] private string _ripBoolName = "Rip";
+
+    [Header("공중 적 Death 관련 매개변수 명칭")]
+    [SerializeField] private string _fallingTriggerName = "Falling";
+    [SerializeField] private string _onGroundTriggerName = "OnGround";
+
     // ---- animator hashes ----
     private int _moveHash;
     private int _howlHash;
@@ -45,6 +48,8 @@ public class EnemyAnimatorController : MonoBehaviour
     private int _attackHash;
     private int _hitHash;
     private int _deathHash;
+
+    private int _ripHash;
 
     private int _fallingHash;
     private int _onGroundHash;
@@ -67,6 +72,8 @@ public class EnemyAnimatorController : MonoBehaviour
         _hitHash = Animator.StringToHash(_hitTriggerName);
         _deathHash = Animator.StringToHash(_deathTriggerName);
 
+        _ripHash = Animator.StringToHash(_ripBoolName);
+
         _fallingHash = Animator.StringToHash(_fallingTriggerName);
         _onGroundHash = Animator.StringToHash(_onGroundTriggerName);
     }
@@ -74,7 +81,9 @@ public class EnemyAnimatorController : MonoBehaviour
     private void Update()
     {
         if (_combatLockTimer > 0f)
+        {
             _combatLockTimer -= Time.deltaTime;
+        }
     }
 
     // 외부 호출용
@@ -96,6 +105,18 @@ public class EnemyAnimatorController : MonoBehaviour
     {
         if (_isDead || _animator == null) return;
         _animator.SetBool(_moveHash, isMoving);
+    }
+
+    public void SetRip(bool isRipping)
+    {
+        if (!_isDead || _animator == null) return;
+
+        if (isRipping && _exclusiveCombat)
+        {
+            ClearCombatTriggersOnly();
+        }
+
+        _animator.SetBool(_ripHash, isRipping);
     }
 
     public bool TryPlayHowl()
@@ -247,6 +268,9 @@ public class EnemyAnimatorController : MonoBehaviour
 
         // Move
         _animator.SetBool(_moveHash, false);
+
+        // Rip
+        _animator.SetBool(_ripHash, false);
 
         _currentCombat = EEnemyCombatAnim.None;
         _combatLockTimer = 0f;
