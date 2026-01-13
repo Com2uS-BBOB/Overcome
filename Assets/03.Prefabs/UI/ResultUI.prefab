@@ -2217,7 +2217,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8099351287030110473
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3224,8 +3224,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 7760961618830041038}
     m_Modifications:
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _startScale
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _impactScale
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _moveDuration
-      value: 0.3
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _emptyTransform
@@ -3233,6 +3241,14 @@ PrefabInstance:
       objectReference: {fileID: 9105408552156412881}
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _impactDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _minImpactScale
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _recoveryDurationRatio
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1674117810200261899, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
@@ -3349,9 +3365,29 @@ PrefabInstance:
     m_TransformParent: {fileID: 7760961618830041038}
     m_Modifications:
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _startScale
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _impactScale
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _moveDuration
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _emptyTransform
       value: 
       objectReference: {fileID: 5102908650313430841}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _minImpactScale
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _recoveryDurationRatio
+      value: 0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 1674117810200261899, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: m_Name
       value: FilledStar1
@@ -3475,7 +3511,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _startScale
-      value: 5
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _impactScale
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _bezierHeight
@@ -3483,7 +3523,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _moveDuration
-      value: 0.3
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _scaleDuration
@@ -3495,6 +3535,14 @@ PrefabInstance:
       objectReference: {fileID: 3865719604053324092}
     - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
       propertyPath: _impactDuration
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _minImpactScale
+      value: 0.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 38970834458937075, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: _recoveryDurationRatio
       value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 1674117810200261899, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
