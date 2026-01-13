@@ -15,8 +15,12 @@ namespace _02.Scripts.Player.Combat
         [Header("Settings")]
         [SerializeField] private float _dashDuration = 0.2f;
 
+        [Header("Damage")]
+        [SerializeField] private float _dashDamage = 15f;
+
         [Header("References")]
         [SerializeField] private Transform _cameraTransform;
+        [SerializeField] private MeleeHitbox _hitbox;
 
         private CharacterController _controller;
         private PlayerStats _stats;
@@ -37,6 +41,7 @@ namespace _02.Scripts.Player.Combat
         public event Action OnSkillUsed;
         public event Action OnDashStarted;
         public event Action OnDashEnded;
+        public event Action<IDamageable, float> OnEnemyHit;
 
         private void Awake()
         {
@@ -46,7 +51,22 @@ namespace _02.Scripts.Player.Combat
             if (_cameraTransform == null) _cameraTransform = Camera.main?.transform;
         }
 
+        private void OnEnable()
+        {
+            if (_hitbox != null) _hitbox.OnHit += HandleHit;
+        }
+
+        private void OnDisable()
+        {
+            if (_hitbox != null) _hitbox.OnHit -= HandleHit;
+        }
+
         public void Initialize(PlayerStats stats) => _stats = stats;
+
+        private void HandleHit(IDamageable target, float damage)
+        {
+            OnEnemyHit?.Invoke(target, damage);
+        }
 
         public void Use()
         {
@@ -61,6 +81,9 @@ namespace _02.Scripts.Player.Combat
             OnDashStarted?.Invoke();
             OnSkillUsed?.Invoke();
 
+            // 히트박스 활성화
+            _hitbox?.EnableHitDetection(_dashDamage);
+
             Vector3 dashDirection = _cameraTransform.forward;
             float dashSpeed = DashDistance / _dashDuration;
 
@@ -71,6 +94,9 @@ namespace _02.Scripts.Player.Combat
                 elapsed += Time.deltaTime;
                 yield return null;
             }
+
+            // 히트박스 비활성화
+            _hitbox?.DisableHitDetection();
 
             _isDashing = false;
             OnDashEnded?.Invoke();
