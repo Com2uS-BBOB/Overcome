@@ -14,6 +14,11 @@ namespace _02.Scripts.Player.StateMachine.States
         protected virtual float AirGravityScale => 0.3f;
         protected virtual float ComboLiftForce => 1.5f;
 
+        // 공격 중 자유 이동/회전 설정
+        protected virtual bool AllowMovementDuringAttack => true;   // 이동 허용
+        protected virtual bool AllowRotationDuringAttack => true;   // 카메라 추적 회전 허용
+        protected virtual float CombatMoveSpeedMultiplier => 0.3f;  // 이동 속도 30%
+
         protected CombatStateBase(PlayerController controller, PlayerStateMachine stateMachine)
             : base(controller, stateMachine) { }
 
@@ -32,6 +37,12 @@ namespace _02.Scripts.Player.StateMachine.States
 
         public override void Update()
         {
+            // 공격 중 자유 이동/회전 처리
+            if (IsSkillActive)
+            {
+                HandleCombatMovement();
+            }
+
             // 공격 종료 + 유예 아님 → 상태 탈출
             if (!IsSkillActive && !IsInComboGrace)
             {
@@ -44,6 +55,25 @@ namespace _02.Scripts.Player.StateMachine.States
             {
                 ResetCombo();
                 StateMachine.ChangeState<MoveState>();
+            }
+        }
+
+        /// <summary>
+        /// 공격 중 이동/회전 처리 (DMC/Bayonetta 스타일)
+        /// </summary>
+        protected virtual void HandleCombatMovement()
+        {
+            // 1. 카메라 방향으로 부드럽게 회전
+            if (AllowRotationDuringAttack)
+            {
+                Movement.SmoothRotateToCamera();
+            }
+
+            // 2. WASD 입력 시 위치만 이동 (회전 없이)
+            if (AllowMovementDuringAttack)
+            {
+                var moveInput = Controller.Input.MoveInput;
+                Movement.MoveWithoutRotation(moveInput, CombatMoveSpeedMultiplier);
             }
         }
 

@@ -83,6 +83,46 @@ namespace _02.Scripts.Player.Movement
                 transform.rotation = Quaternion.LookRotation(forward);
         }
 
+        /// <summary>
+        /// 카메라 방향으로 부드럽게 회전 (공격 중 지속 호출)
+        /// </summary>
+        public void SmoothRotateToCamera()
+        {
+            if (_cameraTransform == null) return;
+
+            Vector3 forward = _cameraTransform.forward;
+            forward.y = 0f;
+            forward.Normalize();
+
+            if (forward.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(forward);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRotation,
+                    _rotationSpeed * Time.deltaTime
+                );
+            }
+        }
+
+        /// <summary>
+        /// 회전 없이 위치만 이동 (공격 중 슬라이딩)
+        /// </summary>
+        /// <param name="input">이동 입력</param>
+        /// <param name="speedMultiplier">속도 배율 (기본 0.5 = 50%)</param>
+        public void MoveWithoutRotation(Vector2 input, float speedMultiplier = 0.5f)
+        {
+            if (input.sqrMagnitude < 0.01f)
+            {
+                _horizontalMove = Vector3.zero;
+                return;
+            }
+
+            Vector3 moveDirection = GetWorldMoveDirection(input);
+            _horizontalMove = moveDirection * MoveSpeed * speedMultiplier;
+            // 회전은 하지 않음
+        }
+
         // 카메라 기준 이동 (수평 이동 저장, ApplyMovement에서 적용)
         public void Move(Vector2 input)
         {

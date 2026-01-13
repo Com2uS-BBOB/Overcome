@@ -11,6 +11,10 @@ namespace _02.Scripts.Player.StateMachine.States
         protected override bool IsAirCombat => false;
         protected override bool UseRootMotion => false;  // 대시는 자체 이동 처리
 
+        // 대시 중 이동/회전 불가
+        protected override bool AllowMovementDuringAttack => false;
+        protected override bool AllowRotationDuringAttack => false;
+
         // DashAttack은 콤보 없음
         protected override bool IsSkillActive => Controller.DashAttack != null && Controller.DashAttack.IsDashing;
         protected override bool IsInComboGrace => false;

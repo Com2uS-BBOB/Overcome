@@ -396,6 +396,7 @@ namespace _02.Scripts.Player.Core
             {
                 // 로컬 방향을 플레이어 기준 월드 좌표로 변환
                 Vector3 worldMovement = transform.TransformDirection(localDelta);
+                worldMovement.y = 0;  // Y축 제거 (중력 시스템이 담당)
                 CharacterController.Move(worldMovement);
             }
         }
