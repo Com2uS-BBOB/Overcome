@@ -36,8 +36,11 @@ namespace _02.Scripts.Player.Combat
         private PlayerMovement _movement;
         private CooldownManager _cooldownManager;
 
-        // 지상/공중에 따른 최대 콤보
-        private int MaxCombo => _movement != null && _movement.IsGrounded ? GroundMaxCombo : AirMaxCombo;
+        // 콤보 시작 시점의 지상/공중 상태 (콤보 전체에 적용)
+        private bool _wasGroundedOnComboStart;
+
+        // 콤보 시작 시점 기준 최대 콤보 (실시간 IsGrounded가 아닌 콤보 시작 시점 기준)
+        private int MaxCombo => _wasGroundedOnComboStart ? GroundMaxCombo : AirMaxCombo;
 
         // 상태
         private bool _isAttacking;
@@ -127,6 +130,8 @@ namespace _02.Scripts.Player.Combat
             {
                 StopAllTimers();
                 _comboStep = 1;
+                // 콤보 시작 시점의 지상/공중 상태 기억 (콤보 전체에 적용)
+                _wasGroundedOnComboStart = _movement != null && _movement.IsGrounded;
                 _attackCoroutine = StartCoroutine(AttackCoroutine());
             }
         }
