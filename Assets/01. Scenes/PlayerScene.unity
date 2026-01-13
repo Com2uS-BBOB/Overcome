@@ -552,6 +552,66 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 188815996246225958, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
   m_PrefabInstance: {fileID: 1375713067}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &809161681 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3186643792995540806, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+  m_PrefabInstance: {fileID: 1375713067}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &815207201
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 815207202}
+  - component: {fileID: 815207203}
+  m_Layer: 0
+  m_Name: SwordTrail
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &815207202
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815207201}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 809161681}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &815207203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 815207201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3351d65a5e49c64d9002bba88ce89a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUtils::Drakkar.GameUtils.DrakkarTrail
+  Length: 1
+  Steps: 4
+  StepTime: 0
+  EndingSpeed: 4
+  Bounds: 1
+  Interpolation: 0
+  Edges: 0
+  Edge1: 0.5
+  Edge2: 0.666666
+  TrailMaterial: {fileID: 0}
+  Layer: 0
 --- !u!1 &878829023
 GameObject:
   m_ObjectHideFlags: 0
@@ -1094,8 +1154,8 @@ MonoBehaviour:
   _dashAttack: {fileID: 1089555355}
   _gaugeManager: {fileID: 1089555356}
   _playerAnimatorController: {fileID: 1089555357}
-  _combatStateHandler: {fileID: 0}
-  _inputBuffer: {fileID: 0}
+  _combatStateHandler: {fileID: 1089555358}
+  _inputBuffer: {fileID: 1089555359}
 --- !u!114 &1089555349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1111,7 +1171,7 @@ MonoBehaviour:
   _rotationSpeed: 10
   _gravity: -25
   _groundedGravity: -5
-  _groundCheckDistance: 3
+  _groundCheckDistance: 2.5
   _groundCheckRadius: 0.2
   _groundLayer:
     serializedVersion: 2
@@ -1168,10 +1228,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0b21b9940874d6986e9f80223aae4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
-  _attack1Duration: 1
-  _attack2Duration: 1
-  _attack3Duration: 2
-  _comboWindowStart: 0.5
+  _attack1Duration: 0.8
+  _attack2Duration: 0.7
+  _attack3Duration: 1.1
+  _comboWindowStart: 0.3
   _comboGraceTime: 0.1
   _hitboxStartTime: 0.15
   _hitboxDuration: 0.3
@@ -1554,7 +1614,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 3186643792995540806, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 815207202}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 188815996246225958, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       insertIndex: -1

@@ -62,6 +62,9 @@ namespace _02.Scripts.Player.Combat
         // 콤보 유예 가능: 유예 구간 내 + 다음 콤보 있음
         public bool CanComboGrace => _inComboGrace && _comboStep < MaxCombo;
 
+        // 콤보 유예 중 여부 (State 탈출 체크용)
+        public bool IsInComboGrace => _inComboGrace;
+
         private float Damage => _stats != null ? _stats.CrescentDamage : 15f;
         private float Speed => _stats != null ? _stats.CrescentSpeed : 20f;
         private float Range => _stats != null ? _stats.CrescentRange : 30f;

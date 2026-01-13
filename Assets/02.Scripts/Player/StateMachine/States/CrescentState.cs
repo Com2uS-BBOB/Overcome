@@ -2,52 +2,35 @@ using _02.Scripts.Player.Core;
 
 namespace _02.Scripts.Player.StateMachine.States
 {
-    public class CrescentState : PlayerStateBase
+    /// <summary>
+    /// 지상 크레센트 스킬 상태
+    /// </summary>
+    public class CrescentState : CombatStateBase
     {
+        protected override bool IsAirCombat => false;
+        protected override bool UseRootMotion => true;  // 지상: Root Motion ON
+
+        protected override bool IsSkillActive => Crescent.IsUsing;
+        protected override bool IsInComboGrace => Crescent.IsInComboGrace;
+        protected override void ResetCombo() => Crescent.ResetCombo();
+
         public CrescentState(PlayerController controller, PlayerStateMachine stateMachine)
             : base(controller, stateMachine) { }
 
         public override void Enter()
         {
-            // 전투 중 이동 애니메이션 비활성화
-            Controller.PlayerAnimatorController?.SetMoving(false);
-
-            Movement.RotateToCamera();
+            base.Enter();
 
             if (Crescent != null)
-            {
-                Crescent.OnCrescentEnded += OnCrescentEnded;
-            }
-        }
-
-        public override void Update()
-        {
-            // 콤보 유예 중 이동 입력 시 즉시 State 전환
-            if (!Crescent.IsUsing && HasMoveInput())
-            {
-                Crescent.ResetCombo();
-                StateMachine.ChangeState<MoveState>();
-            }
+                Crescent.OnCrescentEnded += OnSkillEnded;
         }
 
         public override void Exit()
         {
-            if (Crescent != null) Crescent.OnCrescentEnded -= OnCrescentEnded;
-        }
+            base.Exit();
 
-        private void OnCrescentEnded() => ReturnToPreviousState();
-
-        private void ReturnToPreviousState()
-        {
-            // 공중이면 Idle로 전환 (Animator가 IsGrounded=false로 Fall 처리)
-            if (!Movement.IsGrounded)
-            {
-                StateMachine.ChangeState<IdleState>();
-                return;
-            }
-
-            if (HasMoveInput()) StateMachine.ChangeState<MoveState>();
-            else StateMachine.ChangeState<IdleState>();
+            if (Crescent != null)
+                Crescent.OnCrescentEnded -= OnSkillEnded;
         }
     }
 }

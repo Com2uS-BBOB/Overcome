@@ -78,8 +78,8 @@ namespace _02.Scripts.Player.Animation
         private void HandleStateChanged(Type previousState, Type newState)
         {
             // DragonSwordState: 애니메이션은 OnComboAttack 이벤트에서 처리
-            // DashAttackState: 여기서 직접 처리
-            if (newState == typeof(DashAttackState))
+            // DashAttackState / AirDashAttackState: 여기서 직접 처리
+            if (newState == typeof(DashAttackState) || newState == typeof(AirDashAttackState))
             {
                 PlayDashAttack();
             }

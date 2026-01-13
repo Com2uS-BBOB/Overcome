@@ -3,20 +3,21 @@ using _02.Scripts.Player.Core;
 namespace _02.Scripts.Player.StateMachine.States
 {
     /// <summary>
-    /// 지상 질풍참 (대시 공격) 상태
+    /// 공중 질풍참 (대시 공격) 상태
     /// 콤보 없음, 캔슬 불가
     /// </summary>
-    public class DashAttackState : CombatStateBase
+    public class AirDashAttackState : CombatStateBase
     {
-        protected override bool IsAirCombat => false;
+        protected override bool IsAirCombat => true;
         protected override bool UseRootMotion => false;  // 대시는 자체 이동 처리
+        protected override float AirGravityScale => 0.1f;  // 대시 중 거의 부유
 
         // DashAttack은 콤보 없음
         protected override bool IsSkillActive => Controller.DashAttack != null && Controller.DashAttack.IsDashing;
         protected override bool IsInComboGrace => false;
         protected override void ResetCombo() { }
 
-        public DashAttackState(PlayerController controller, PlayerStateMachine stateMachine)
+        public AirDashAttackState(PlayerController controller, PlayerStateMachine stateMachine)
             : base(controller, stateMachine) { }
 
         public override void Enter()
@@ -37,7 +38,7 @@ namespace _02.Scripts.Player.StateMachine.States
         public override void Update()
         {
             // DashAttack은 캔슬 불가, 완료까지 대기
-            // base.Update() 호출 안 함 (콤보 유예 체크 불필요)
+            // 착지 체크도 안 함 (대시 완료 후 자연스럽게 복귀)
         }
 
         public override void Exit()

@@ -33,6 +33,9 @@ namespace _02.Scripts.Player.Movement
         private int _jumpCount;             // 현재 점프 횟수
         private const int MaxJumpCount = 2; // 최대 점프 횟수 (2단 점프)
 
+        // 중력 스케일 (공중 부유감 제어)
+        private float _gravityScale = 1f;
+
         private float MoveSpeed => _stats != null ? _stats.MoveSpeed : 8f;
         private float JumpForce => _stats != null ? _stats.JumpForce : 10f;
 
@@ -225,8 +228,30 @@ namespace _02.Scripts.Player.Movement
         private void ApplyGravity()
         {
             if (!_isGrounded)
-                _velocity.y += _gravity * Time.deltaTime;
+                _velocity.y += _gravity * _gravityScale * Time.deltaTime;
         }
+
+        #region Gravity Scale (공중 부유감)
+
+        /// <summary>
+        /// 중력 스케일 설정 (1.0 = 기본, 0.3 = 부유감)
+        /// </summary>
+        public void SetGravityScale(float scale) => _gravityScale = scale;
+
+        /// <summary>
+        /// 중력 스케일 기본값으로 리셋
+        /// </summary>
+        public void ResetGravityScale() => _gravityScale = 1f;
+
+        /// <summary>
+        /// 수직 속도 추가 (체공 연장용)
+        /// </summary>
+        public void AddVerticalVelocity(float amount)
+        {
+            _velocity.y = Mathf.Max(_velocity.y, 0f) + amount;
+        }
+
+        #endregion
 
         /// <summary>
         /// 수평 이동 + 수직 속도를 합쳐서 한번에 적용

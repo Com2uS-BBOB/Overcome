@@ -15,9 +15,17 @@ namespace _02.Scripts.Player.Combat
         // 액션 우선순위 정의 (높을수록 우선)
         private static readonly Dictionary<Type, int> ActionPriority = new()
         {
+            // 대시 공격 (최고 우선순위)
             { typeof(DashAttackState), 100 },
+            { typeof(AirDashAttackState), 100 },
+            // 전투 스킬
             { typeof(DragonSwordState), 50 },
+            { typeof(AirDragonSwordState), 50 },
             { typeof(CrescentState), 50 },
+            { typeof(AirCrescentState), 50 },
+            // 점프
+            { typeof(JumpState), 20 },
+            // 이동
             { typeof(MoveState), 10 },
             { typeof(IdleState), 0 }
         };
@@ -27,19 +35,35 @@ namespace _02.Scripts.Player.Combat
         {
             // Idle/Move에서는 모든 전투 상태로 전환 가능
             (typeof(IdleState), typeof(DragonSwordState)),
+            (typeof(IdleState), typeof(AirDragonSwordState)),
             (typeof(IdleState), typeof(CrescentState)),
+            (typeof(IdleState), typeof(AirCrescentState)),
             (typeof(IdleState), typeof(DashAttackState)),
+            (typeof(IdleState), typeof(AirDashAttackState)),
+            (typeof(IdleState), typeof(JumpState)),
+
             (typeof(MoveState), typeof(DragonSwordState)),
+            (typeof(MoveState), typeof(AirDragonSwordState)),
             (typeof(MoveState), typeof(CrescentState)),
+            (typeof(MoveState), typeof(AirCrescentState)),
             (typeof(MoveState), typeof(DashAttackState)),
+            (typeof(MoveState), typeof(AirDashAttackState)),
+            (typeof(MoveState), typeof(JumpState)),
+
+            // JumpState에서 공중 전투 상태로 전환 가능
+            (typeof(JumpState), typeof(AirDragonSwordState)),
+            (typeof(JumpState), typeof(AirCrescentState)),
+            (typeof(JumpState), typeof(AirDashAttackState)),
 
             // DashAttack은 다른 것으로 캔슬 불가 (완료까지 대기)
 
             // DragonSword 콤보 중에는 자기 자신으로만 전환 (콤보 연결)
             (typeof(DragonSwordState), typeof(DragonSwordState)),
+            (typeof(AirDragonSwordState), typeof(AirDragonSwordState)),
 
             // Crescent 콤보 중에는 자기 자신으로만 전환 (콤보 연결)
             (typeof(CrescentState), typeof(CrescentState)),
+            (typeof(AirCrescentState), typeof(AirCrescentState)),
         };
 
         // ActionType -> State Type 매핑

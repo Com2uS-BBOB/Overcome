@@ -76,9 +76,17 @@ namespace _02.Scripts.Player.Core
             StateMachine = new PlayerStateMachine();
             StateMachine.RegisterState(new IdleState(this, StateMachine));
             StateMachine.RegisterState(new MoveState(this, StateMachine));
+            StateMachine.RegisterState(new JumpState(this, StateMachine));
+
+            // 지상 전투 상태
             StateMachine.RegisterState(new DragonSwordState(this, StateMachine));
-            StateMachine.RegisterState(new DashAttackState(this, StateMachine));
             StateMachine.RegisterState(new CrescentState(this, StateMachine));
+            StateMachine.RegisterState(new DashAttackState(this, StateMachine));
+
+            // 공중 전투 상태
+            StateMachine.RegisterState(new AirDragonSwordState(this, StateMachine));
+            StateMachine.RegisterState(new AirCrescentState(this, StateMachine));
+            StateMachine.RegisterState(new AirDashAttackState(this, StateMachine));
 
             // CancelManager 초기화
             CancelManager = new CancelManager(StateMachine);
@@ -122,9 +130,14 @@ namespace _02.Scripts.Player.Core
         {
             if (_dragonSwordSkill == null) return;
 
+            bool isGrounded = Movement.IsGrounded;
+
             if (_dragonSwordSkill.CanAttack)
             {
-                StateMachine.ChangeState<DragonSwordState>();
+                if (isGrounded)
+                    StateMachine.ChangeState<DragonSwordState>();
+                else
+                    StateMachine.ChangeState<AirDragonSwordState>();
                 _dragonSwordSkill.Attack();
             }
             else if (_dragonSwordSkill.CanQueueCombo)
@@ -133,7 +146,10 @@ namespace _02.Scripts.Player.Core
             }
             else if (_dragonSwordSkill.CanComboGrace)
             {
-                StateMachine.ChangeState<DragonSwordState>();
+                if (isGrounded)
+                    StateMachine.ChangeState<DragonSwordState>();
+                else
+                    StateMachine.ChangeState<AirDragonSwordState>();
                 _dragonSwordSkill.Attack();
             }
         }
@@ -142,9 +158,14 @@ namespace _02.Scripts.Player.Core
         {
             if (_crescent == null) return;
 
+            bool isGrounded = Movement.IsGrounded;
+
             if (_crescent.CanUse)
             {
-                StateMachine.ChangeState<CrescentState>();
+                if (isGrounded)
+                    StateMachine.ChangeState<CrescentState>();
+                else
+                    StateMachine.ChangeState<AirCrescentState>();
                 _crescent.Attack();
             }
             else if (_crescent.CanQueueCombo)
@@ -153,7 +174,10 @@ namespace _02.Scripts.Player.Core
             }
             else if (_crescent.CanComboGrace)
             {
-                StateMachine.ChangeState<CrescentState>();
+                if (isGrounded)
+                    StateMachine.ChangeState<CrescentState>();
+                else
+                    StateMachine.ChangeState<AirCrescentState>();
                 _crescent.Attack();
             }
         }
@@ -161,7 +185,11 @@ namespace _02.Scripts.Player.Core
         private void ExecuteDashAttack()
         {
             if (_dashAttack == null || !_dashAttack.CanUse) return;
-            StateMachine.ChangeState<DashAttackState>();
+
+            if (Movement.IsGrounded)
+                StateMachine.ChangeState<DashAttackState>();
+            else
+                StateMachine.ChangeState<AirDashAttackState>();
         }
 
         private void ExecuteJump()
@@ -248,10 +276,18 @@ namespace _02.Scripts.Player.Core
         {
             if (_dashAttack == null || !_dashAttack.CanUse) return;
 
-            // CancelManager로 캔슬 가능 여부 확인
-            if (CancelManager.CanCancelTo<DashAttackState>())
+            bool isGrounded = Movement.IsGrounded;
+
+            // 지상/공중에 따른 캔슬 체크 및 State 전환
+            if (isGrounded)
             {
-                StateMachine.ChangeState<DashAttackState>();
+                if (CancelManager.CanCancelTo<DashAttackState>())
+                    StateMachine.ChangeState<DashAttackState>();
+            }
+            else
+            {
+                if (CancelManager.CanCancelTo<AirDashAttackState>())
+                    StateMachine.ChangeState<AirDashAttackState>();
             }
         }
 
@@ -259,24 +295,39 @@ namespace _02.Scripts.Player.Core
         {
             if (_dragonSwordSkill == null) return;
 
-            // DashAttack 중에는 공격 불가
-            if (!CancelManager.CanCancelTo<DragonSwordState>()) return;
+            bool isGrounded = Movement.IsGrounded;
+
+            // 지상/공중에 따른 캔슬 체크
+            if (isGrounded)
+            {
+                if (!CancelManager.CanCancelTo<DragonSwordState>()) return;
+            }
+            else
+            {
+                if (!CancelManager.CanCancelTo<AirDragonSwordState>()) return;
+            }
 
             // Case 1: 첫 공격
             if (_dragonSwordSkill.CanAttack)
             {
-                StateMachine.ChangeState<DragonSwordState>();
+                if (isGrounded)
+                    StateMachine.ChangeState<DragonSwordState>();
+                else
+                    StateMachine.ChangeState<AirDragonSwordState>();
                 _dragonSwordSkill.Attack();
             }
-            // Case 2: 콤보 큐잉 (1타 진행 중)
+            // Case 2: 콤보 큐잉 (공격 진행 중)
             else if (_dragonSwordSkill.CanQueueCombo)
             {
                 _dragonSwordSkill.Attack();
             }
-            // Case 3: 콤보 유예 (1타 끝난 직후)
+            // Case 3: 콤보 유예 (공격 끝난 직후)
             else if (_dragonSwordSkill.CanComboGrace)
             {
-                StateMachine.ChangeState<DragonSwordState>();
+                if (isGrounded)
+                    StateMachine.ChangeState<DragonSwordState>();
+                else
+                    StateMachine.ChangeState<AirDragonSwordState>();
                 _dragonSwordSkill.Attack();
             }
         }
@@ -285,24 +336,39 @@ namespace _02.Scripts.Player.Core
         {
             if (_crescent == null) return;
 
-            // 캔슬 불가 상태면 무시
-            if (!CancelManager.CanCancelTo<CrescentState>()) return;
+            bool isGrounded = Movement.IsGrounded;
+
+            // 지상/공중에 따른 캔슬 체크
+            if (isGrounded)
+            {
+                if (!CancelManager.CanCancelTo<CrescentState>()) return;
+            }
+            else
+            {
+                if (!CancelManager.CanCancelTo<AirCrescentState>()) return;
+            }
 
             // Case 1: 첫 공격
             if (_crescent.CanUse)
             {
-                StateMachine.ChangeState<CrescentState>();
+                if (isGrounded)
+                    StateMachine.ChangeState<CrescentState>();
+                else
+                    StateMachine.ChangeState<AirCrescentState>();
                 _crescent.Attack();
             }
-            // Case 2: 콤보 큐잉 (1타 진행 중)
+            // Case 2: 콤보 큐잉 (스킬 진행 중)
             else if (_crescent.CanQueueCombo)
             {
                 _crescent.Attack();
             }
-            // Case 3: 콤보 유예 (1타 끝난 직후)
+            // Case 3: 콤보 유예 (스킬 끝난 직후)
             else if (_crescent.CanComboGrace)
             {
-                StateMachine.ChangeState<CrescentState>();
+                if (isGrounded)
+                    StateMachine.ChangeState<CrescentState>();
+                else
+                    StateMachine.ChangeState<AirCrescentState>();
                 _crescent.Attack();
             }
         }
@@ -317,8 +383,8 @@ namespace _02.Scripts.Player.Core
             HitEventManager.Instance?.NotifyDamageDealt(damage);
         }
 
-        // 용검 콤보 공격 애니메이션
-        private void HandleComboAttack(int comboStep) => _playerAnimatorController?.PlayAttack(comboStep, Movement.IsGrounded);
+        // 용검 콤보 공격 애니메이션 (콤보 시작 시점의 IsGrounded 사용)
+        private void HandleComboAttack(int comboStep) => _playerAnimatorController?.PlayAttack(comboStep, _dragonSwordSkill.WasGroundedOnComboStart);
 
         // 크레센트 콤보 공격 애니메이션
         private void HandleCrescentCombo(int comboStep) => _playerAnimatorController?.PlayCrescent(comboStep, Movement.IsGrounded);

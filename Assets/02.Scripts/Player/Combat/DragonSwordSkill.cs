@@ -71,6 +71,12 @@ namespace _02.Scripts.Player.Combat
         // 콤보 유예 가능: 유예 구간 내 + 다음 콤보 있음
         public bool CanComboGrace => _inComboGrace && _comboStep < MaxCombo;
 
+        // 콤보 유예 중 여부 (State 탈출 체크용)
+        public bool IsInComboGrace => _inComboGrace;
+
+        // 콤보 시작 시점 지상 여부 (공중/지상 콤보 구분용)
+        public bool WasGroundedOnComboStart => _wasGroundedOnComboStart;
+
         private float AttackDamage => _stats != null ? _stats.AttackDamage : 10f;
         private float GetAttackDuration(int step) => step switch
         {
