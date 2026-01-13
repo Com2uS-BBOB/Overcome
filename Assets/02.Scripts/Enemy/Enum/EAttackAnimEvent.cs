@@ -1,7 +1,12 @@
 public enum EAttackAnimEvent
 {
-    BiteStart,
-    BiteHitStart,
-    BiteHitEnd,
-    BiteEnd
+    MeleeStart,
+    MeleeHitStart,
+    MeleeHitEnd,
+    MeleeEnd,
+
+    RipStart,
+    RipHitStart,
+    RipHitEnd,
+    RipEnd
 }

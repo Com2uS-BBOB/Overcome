@@ -4,20 +4,35 @@ public struct NormalAttackPatternConfig
 {
     public AttackWaitActionConfig PressureWaitConfig;
 
-    public float BiteCooldownMin;
-    public float BiteCooldownMax;
-    public float BiteTouchDelay;
+    public float OpeningRushDuration;
+
+    public float MeleeCooldownMin;
+    public float MeleeCooldownMax;
+    public float MeleeAttackDelay;
+    public float MeleeAttackRange;
+
+    public float HowlDuration;
+
+    public float KnockbackDistance;
 
     public NormalAttackPatternConfig(
         AttackWaitActionConfig pressureWaitConfig,
-        float biteCooldownMin = 3f,
-        float biteCooldownMax = 5f,
-        float biteTouchDelay = 0.2f
+        float openingRushDuration = 0.3f,
+        float meleeCooldownMin = 3f,
+        float meleeCooldownMax = 5f,
+        float meleeAttackDelay = 0.2f,
+        float meleeAttackRange = 5f,
+        float howlDuration = 3f,
+        float knockbackDistance = 2f
     )
     {
         PressureWaitConfig = pressureWaitConfig;
-        BiteCooldownMin = biteCooldownMin;
-        BiteCooldownMax = biteCooldownMax;
-        BiteTouchDelay = biteTouchDelay;
+        OpeningRushDuration = openingRushDuration;
+        MeleeCooldownMin = meleeCooldownMin;
+        MeleeCooldownMax = meleeCooldownMax;
+        MeleeAttackDelay = meleeAttackDelay;
+        MeleeAttackRange = meleeAttackRange;
+        HowlDuration = howlDuration;
+        KnockbackDistance = knockbackDistance;
     }
 }

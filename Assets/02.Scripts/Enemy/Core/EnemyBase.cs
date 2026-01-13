@@ -19,6 +19,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private EnemyPool _pool;
     private EnemySpawner _spawner;
+    private FloatSmallEnemySpawner _floatSpawner;
 
     private Vector3 _spawnBasePosition;  // 최초 스폰 위치 저장용 (리스폰 때 사용)
 
@@ -68,6 +69,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _spawner = spawner;
     }
 
+    public void SetFloatSmallEnemySpawner(FloatSmallEnemySpawner floatSpawner)
+    {
+        _floatSpawner = floatSpawner;
+    }
+
     // 최초 스폰 위치 저장 (리스폰용)
     public void SetSpawnBasePosition(Vector3 basePosition)
     {
@@ -102,7 +108,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
-        Debug.Log($"적이 죽었습니다.");
+        Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");
 
         EnemyEventController.Enemy.RaiseKilled(new EnemyKilledEvent(this));
         OnDeath?.Invoke();

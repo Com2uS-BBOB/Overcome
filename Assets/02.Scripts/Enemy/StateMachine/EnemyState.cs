@@ -18,13 +18,11 @@ public class EnemyState : MonoBehaviour
 
     private Transform _player;
 
-    private bool _didOpeningRush;
-    private RushAction _openingRushAction;
-
     [Header("Trace 관련 옵션")]
     [SerializeField] private float _detectRange = 10f;
     [SerializeField] private float _standOffDistance = 8.5f;  // 비압박자 유지 거리(attackRange보다 크게)
     [SerializeField] private float _standOffRepathInterval = 0.4f;  // 목적지 자주 바뀜 방지
+    private float _maxSamplePositionDistance = 1.5f;
 
     private float _standOffRepathTimer;
     private bool _pressureReserved;
@@ -34,11 +32,7 @@ public class EnemyState : MonoBehaviour
     [SerializeField] private float _returnStopDistance = 0.3f;
 
     [Header("Attack 관련 옵션")]
-    [SerializeField] private float _attackRange = 5f;
-
-    [Header("오프닝 돌진 옵션")]
-    [SerializeField] private float _openingRushDistance = 10f;
-    [SerializeField] private float _openingRushDuration = 0.54f;
+    [SerializeField] private float _attackRange = 10f;
 
     private void Awake()
     {
@@ -67,7 +61,6 @@ public class EnemyState : MonoBehaviour
                 break;
 
             case EEnemyState.Return:
-                _attack.ResetRush();
                 UpdateReturn();
                 break;
 
@@ -114,12 +107,6 @@ public class EnemyState : MonoBehaviour
             return;
         }
 
-        if (!_didOpeningRush)
-        {
-            StartOrUpdateOpeningRush();
-            return; // Rush 하는 동안은 Wait/Bite 판단하지 않음
-        }
-
         if (_canAttack && IsPlayerInAttackRange())
         {
             if (_pressureReserved)
@@ -159,7 +146,7 @@ public class EnemyState : MonoBehaviour
                 Vector3 desired = _player.position + direction * _standOffDistance;
 
                 // NavMesh 위로 보정
-                if (NavMesh.SamplePosition(desired, out var hit, 1.5f, NavMesh.AllAreas))
+                if (NavMesh.SamplePosition(desired, out var hit, _maxSamplePositionDistance, NavMesh.AllAreas))
                 {
                     desired = hit.position;
 
@@ -179,7 +166,7 @@ public class EnemyState : MonoBehaviour
             return;
         }
 
-        // OutOfRange 체크를 최우선으로 (공격 중이어도 즉시 중단하고 Return)
+        // Return 범위 밖이면 복귀
         if (IsPlayerOutOfRange() && _canReturn)
         {
             _attack.Stop();
@@ -188,44 +175,16 @@ public class EnemyState : MonoBehaviour
             return;
         }
 
-        // AttackRange 밖이면 추적으로 복귀
+        // AttackRange 밖이면 추적으로 복귀 + 돌진 공격 초기화
         if (!IsPlayerInAttackRange())
         {
             _attack.Stop();
-            // Trace로 돌아갈 때도 OpeningRush 상태 유지를 위해 CleanupEngagement 호출하지 않음
+            _attack.ResetRush();
             ChangeState(EEnemyState.Trace);
             return;
         }
 
         _attack.UpdateAttack();
-    }
-
-    private void StartOrUpdateOpeningRush()
-    {
-        if (_openingRushAction == null)
-        {
-            var hitbox = GetComponentInChildren<EnemyKnockbackHitbox>();
-            _openingRushAction = new RushAction(
-                transform,
-                _player,
-                _movement,
-                hitbox,
-                _agent,
-                _openingRushDistance,
-                _openingRushDuration,
-                _enemy.EnemyStatData.Damage
-            );
-            _openingRushAction.Enter();
-        }
-
-        _openingRushAction.Update();
-
-        if (_openingRushAction.IsFinished)
-        {
-            _openingRushAction.Exit();
-            _openingRushAction = null;
-            _didOpeningRush = true;
-        }
     }
 
     private void UpdateReturn()
@@ -247,11 +206,6 @@ public class EnemyState : MonoBehaviour
 
     private void CleanupEngagement()
     {
-        // Rush 정리
-        _openingRushAction?.Exit();
-        _openingRushAction = null;
-        _didOpeningRush = false;
-
         if (_pressureReserved)
         {
             _attackDirector?.ReleasePressure(transform);
@@ -304,6 +258,7 @@ public class EnemyState : MonoBehaviour
                 break;
 
             case EEnemyState.Attack:
+                _attack.Stop();
                 break;
         }
     }

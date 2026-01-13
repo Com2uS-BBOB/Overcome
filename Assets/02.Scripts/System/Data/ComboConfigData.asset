@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 0}
   m_Name: ComboConfigData
   m_EditorClassIdentifier: Assembly-CSharp::ComboConfigData
-  MaxCombo: 10
+  MaxCombo: 100
   ComboDuration: 2
   Configs:
   - MinCombo: 0
-    MaxComboInclusive: 3
+    MaxComboInclusive: 39
     ComboText: NICE
     DamageMultiplier: 1
     ComboColorMode: 0
@@ -33,8 +33,8 @@ MonoBehaviour:
       topRight: {r: 0, g: 0, b: 0, a: 0}
       bottomLeft: {r: 0, g: 0, b: 0, a: 0}
       bottomRight: {r: 0, g: 0, b: 0, a: 0}
-  - MinCombo: 4
-    MaxComboInclusive: 5
+  - MinCombo: 40
+    MaxComboInclusive: 59
     ComboText: GREAT
     DamageMultiplier: 1.2
     ComboColorMode: 0
@@ -51,8 +51,8 @@ MonoBehaviour:
       topRight: {r: 0, g: 0, b: 0, a: 0}
       bottomLeft: {r: 0, g: 0, b: 0, a: 0}
       bottomRight: {r: 0, g: 0, b: 0, a: 0}
-  - MinCombo: 6
-    MaxComboInclusive: 8
+  - MinCombo: 60
+    MaxComboInclusive: 89
     ComboText: EXCELLENT
     DamageMultiplier: 1.5
     ComboColorMode: 0
@@ -69,8 +69,8 @@ MonoBehaviour:
       topRight: {r: 0, g: 0, b: 0, a: 0}
       bottomLeft: {r: 0, g: 0, b: 0, a: 0}
       bottomRight: {r: 0, g: 0, b: 0, a: 0}
-  - MinCombo: 9
-    MaxComboInclusive: 10
+  - MinCombo: 90
+    MaxComboInclusive: 100
     ComboText: PERFECT
     DamageMultiplier: 2
     ComboColorMode: 1

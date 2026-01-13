@@ -77,6 +77,12 @@ public class AttackWaitAction : IEnemyAction
     {
         if (_mySlotIndex < 0) return;
 
+        // RushAction이 agent를 제어 중이면 AttackWaitAction은 대기
+        if (!_agent.updatePosition)
+        {
+            return;
+        }
+
         _modeTimer += Time.deltaTime;
         if (_modeTimer >= _modeDuration)
         {
@@ -181,6 +187,13 @@ public class AttackWaitAction : IEnemyAction
 
     public void Exit()
     {
+        // NavMeshAgent 경로 정리 - 이게 없으면 이전 목적지로 계속 가려고 함
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.ResetPath();
+            _agent.isStopped = true;
+        }
+
         if (_actionConfig.ReleaseSlotOnExit)
         {
             ReleaseSlotNow();
