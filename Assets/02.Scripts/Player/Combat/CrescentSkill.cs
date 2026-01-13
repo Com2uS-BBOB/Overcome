@@ -144,6 +144,8 @@ namespace _02.Scripts.Player.Combat
             Vector3 direction = _cameraTransform != null ? _cameraTransform.forward : transform.forward;
             CrescentProjectile projectile = _projectilePool.Get();
             projectile.transform.position = _firePoint.position;
+            direction.y = 0f;
+            direction.Normalize();
             projectile.Initialize(Damage, Speed, Range, direction, gameObject, ReturnProjectile);
             projectile.OnHit += HandleProjectileHit;
         }

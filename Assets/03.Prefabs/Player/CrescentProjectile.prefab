@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7459199068497174228}
   - component: {fileID: 3967521162764357988}
   - component: {fileID: 5555896469636686190}
+  - component: {fileID: 1591708929423635464}
   m_Layer: 0
   m_Name: CrescentProjectile
   m_TagString: Untagged
@@ -32,7 +33,8 @@ Transform:
   m_LocalPosition: {x: -8.91, y: 4.54, z: 3.6191}
   m_LocalScale: {x: 4, y: 1, z: 2}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 984646606890805797}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5964139819809708996
@@ -50,7 +52,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 321336950800397816}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -126,3 +128,86 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5dc660c91cd74255b20d71d36425c69, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.CrescentProjectile
+  _vfxController: {fileID: 1591708929423635464}
+--- !u!114 &1591708929423635464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 321336950800397816}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 534228b92da294bcf80e01a1d8f26af0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.ProjectileVFXController
+  _mainVFX: {fileID: 984646606890805796}
+  _trail: {fileID: 0}
+  _hitEffectPrefab: {fileID: 0}
+--- !u!1001 &5920010964913157101
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1246397121212182299}
+    m_Modifications:
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192011, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_Name
+      value: Slash Projectile VFX Fire 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+--- !u!198 &984646606890805796 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 6882116249847192009, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+  m_PrefabInstance: {fileID: 5920010964913157101}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &984646606890805797 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+  m_PrefabInstance: {fileID: 5920010964913157101}
+  m_PrefabAsset: {fileID: 0}

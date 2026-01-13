@@ -1,12 +1,16 @@
 using System;
 using UnityEngine;
 using _02.Scripts.Player.Common;
+using _02.Scripts.Player.Interfaces;
 
 namespace _02.Scripts.Player.Combat
 {
     // 검기
     public class CrescentProjectile : HitboxBase
     {
+        [Header("VFX")]
+        [SerializeField] private ProjectileVFXController _vfxController;
+
         private float _speed;
         private float _maxDistance;
         private Vector3 _startPosition;
@@ -27,6 +31,9 @@ namespace _02.Scripts.Player.Combat
 
             if (_direction != Vector3.zero)
                 transform.rotation = Quaternion.LookRotation(_direction);
+
+            // VFX 활성화
+            _vfxController?.OnFired();
         }
 
         private void Update()
@@ -47,10 +54,21 @@ namespace _02.Scripts.Player.Combat
         {
             DisableHitDetection();
 
+            // VFX 비활성화
+            _vfxController?.OnReturned();
+
             if (_returnToPool != null)
                 _returnToPool.Invoke(this);
             else
                 Destroy(gameObject);
+        }
+
+        /// <summary>
+        /// 히트 성공 시 Hit 이펙트 스폰
+        /// </summary>
+        protected override void OnHitSuccess(Collider other, IDamageable damageable)
+        {
+            _vfxController?.SpawnHitEffect(other.bounds.center);
         }
     }
 }
