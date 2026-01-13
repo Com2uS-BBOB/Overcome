@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ScoreSystem : SingletonBehaviour<ScoreSystem>
 {
-    [SerializeField] private RankingData _rankingData;
+    [SerializeField] private GradeData _gradeData;
     protected override bool DontDestroy => false;
     
     private int _currentScore;
@@ -73,15 +73,15 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
         _highScore = _currentScore;
     }
     
-    public RankConfig GetRanking()
+    public GradeConfig GetRanking()
     {
         if (_isTest)
         {
-            return _rankingData.GetRank(_testScore);
+            return _gradeData.GetGrade(_testScore);
         }
         else
         {
-            return _rankingData.GetRank(_currentScore);
+            return _gradeData.GetGrade(_currentScore);
         }
     }
 }

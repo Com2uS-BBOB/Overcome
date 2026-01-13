@@ -2,18 +2,18 @@ using System;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "RankingData", menuName = "Game/Rank Config")]
-public class RankingData : ScriptableObject
+public class GradeData : ScriptableObject
 {
-    [SerializeField] private RankConfig[] _configs;
-    public RankConfig GetRank(int currentScore)
+    [SerializeField] private GradeConfig[] _configs;
+    public GradeConfig GetGrade(int currentScore)
     {
-        if (_configs == null)
+        if (_configs == null || _configs.Length == 0)
         {
-            Debug.LogError("[RankingData] GetRank: _configs is null");
+            Debug.LogError("[RankingData] GetRank: _configs is null or empty.");
             return null;
         }
-        
-        foreach (RankConfig config in _configs)
+
+        foreach (GradeConfig config in _configs)
         {
             if (currentScore >= config.RequiredScore)
             {
@@ -31,7 +31,7 @@ public class RankingData : ScriptableObject
 }
 
 [Serializable]
-public class RankConfig
+public class GradeConfig
 {
     public string Grade;
     public int RequiredScore; 

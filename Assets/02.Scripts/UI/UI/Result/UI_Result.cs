@@ -1,13 +1,19 @@
-using System;
+using System.Linq;
 using UnityEngine;
 
 public class UI_Result : MonoBehaviour
 {
+    [SerializeField] private CanvasGroup _canvasGroup;
+    
+    [Header("UI References")]
     [SerializeField] private UI_TimeResult _timeResult;
     [SerializeField] private UI_ScoreResult _scoreResult;
     [SerializeField] private UI_KillResult _killResult;
     [SerializeField] private UI_RankInfo _rankInfo;
+    
 
+    private Transform[] _resultUiObjects;
+    
     private bool _timeComplete;
     private bool _scoreComplete;
     private bool _killComplete;
@@ -18,7 +24,19 @@ public class UI_Result : MonoBehaviour
         _timeResult.OnComplete += HandleTimeComplete;
         _scoreResult.OnComplete += HandleScoreComplete;
         _killResult.OnComplete += HandleKillComplete;
-        gameObject.SetActive(false);
+        _resultUiObjects = GetComponentsInChildren<Transform>(true)
+            .Where(t => t != transform)
+            .ToArray();
+        foreach (Transform child in _resultUiObjects)
+        {
+            child.gameObject.SetActive(false);
+        }
+        _canvasGroup.alpha = 0;
+    }
+
+    private void Start()
+    {
+        TimeSystem.Instance.OnGameOver += ShowResultUI;
     }
 
     private void OnDestroy()
@@ -27,10 +45,15 @@ public class UI_Result : MonoBehaviour
         _scoreResult.OnComplete -= HandleScoreComplete;
         _killResult.OnComplete -= HandleKillComplete;
     }
-
-    private void OnEnable()
+    
+    private void ShowResultUI()
     {
+        _canvasGroup.alpha = 1;
         ResetState();
+        foreach (Transform child in _resultUiObjects)
+        {
+            child.gameObject.SetActive(true);
+        }
     }
 
     private void ResetState()

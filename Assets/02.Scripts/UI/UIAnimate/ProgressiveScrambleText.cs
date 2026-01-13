@@ -27,7 +27,8 @@ public class ProgressiveScrambleText
 
     private Coroutine _currentCoroutine;
     private MonoBehaviour _coroutineRunner;
-    private readonly StringBuilder _sb = new StringBuilder(32);
+    private readonly StringBuilder _stringBuilder = new StringBuilder(32);
+    private readonly char[] _charBuffer = new char[8];
 
     public void Init(MonoBehaviour runner)
     {
@@ -54,12 +55,12 @@ public class ProgressiveScrambleText
         int minutes = Mathf.FloorToInt(totalSeconds / 60f);
         int seconds = Mathf.FloorToInt(totalSeconds % 60f);
 
-        _sb.Clear();
-        _sb.Append(minutes.ToString(_timeFormat));
-        _sb.Append(_timeSeparator);
-        _sb.Append(seconds.ToString(_timeFormat));
+        _stringBuilder.Clear();
+        _stringBuilder.Append(minutes.ToString(_timeFormat));
+        _stringBuilder.Append(_timeSeparator);
+        _stringBuilder.Append(seconds.ToString(_timeFormat));
 
-        PlayInternal(_sb.ToString());
+        PlayInternal(_stringBuilder.ToString());
     }
 
     public void PlayRaw(string targetValue)
@@ -108,12 +109,12 @@ public class ProgressiveScrambleText
         int minutes = Mathf.FloorToInt(totalSeconds / 60f);
         int seconds = Mathf.FloorToInt(totalSeconds % 60f);
 
-        _sb.Clear();
-        _sb.Append(minutes.ToString(_timeFormat));
-        _sb.Append(_timeSeparator);
-        _sb.Append(seconds.ToString(_timeFormat));
+        _stringBuilder.Clear();
+        _stringBuilder.Append(minutes.ToString(_timeFormat));
+        _stringBuilder.Append(_timeSeparator);
+        _stringBuilder.Append(seconds.ToString(_timeFormat));
 
-        _text.text = _sb.ToString();
+        _text.text = _stringBuilder.ToString();
     }
 
     public void Clear()
@@ -128,29 +129,31 @@ public class ProgressiveScrambleText
 
     private IEnumerator ProgressiveScrambleCoroutine(string target)
     {
-        _sb.Clear();
+        int length = target.Length;
+        int currentLength = 0;
         var waitTime = new WaitForSeconds(_charDuration / _scrambleIterations);
 
-        for (int i = 0; i < target.Length; i++)
+        for (int i = 0; i < length; i++)
         {
             char targetChar = target[i];
 
             if (_skipChars.IndexOf(targetChar) >= 0)
             {
-                _sb.Append(targetChar);
-                _text.text = _sb.ToString();
+                _charBuffer[currentLength++] = targetChar;
+                _text.SetCharArray(_charBuffer, 0, currentLength);
                 continue;
             }
 
             for (int j = 0; j < _scrambleIterations; j++)
             {
                 char randomChar = _scrambleChars[Random.Range(0, _scrambleChars.Length)];
-                _text.text = _sb.ToString() + randomChar;
+                _charBuffer[currentLength] = randomChar;
+                _text.SetCharArray(_charBuffer, 0, currentLength + 1);
                 yield return waitTime;
             }
 
-            _sb.Append(targetChar);
-            _text.text = _sb.ToString();
+            _charBuffer[currentLength++] = targetChar;
+            _text.SetCharArray(_charBuffer, 0, currentLength);
         }
 
         _currentCoroutine = null;

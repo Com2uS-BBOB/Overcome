@@ -32,7 +32,7 @@ public class UI_RankInfo : MonoBehaviour
 
     private void Show()
     {
-        RankConfig config = ScoreSystem.Instance.GetRanking();
+        GradeConfig config = ScoreSystem.Instance.GetRanking();
         PlayStampAnimation(config.Grade, config.RewardStars);
     }
 
