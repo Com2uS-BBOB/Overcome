@@ -3502,28 +3502,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0886e04d6e774644aa4ba7a87d8fef72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataManager
-  _playerData:
-    PlayerID: CJJ
-    Settings:
-      MasterVolume: 1
-      MusicVolume: 1
-      SfxVolume: 1
-    StageProgress:
-    - StageID: 0
-      IsCleared: 1
-      StarsEarned: 3
-      BestScore: 52000
-      PlayCount: 20
-    - StageID: 1
-      IsCleared: 1
-      StarsEarned: 2
-      BestScore: 38000
-      PlayCount: 0
-    - StageID: 0
-      IsCleared: 0
-      StarsEarned: 0
-      BestScore: 0
-      PlayCount: 0
+  _startPlayerID: Player_002
+  _saveData:
+    CurrentPlayerID: Player_002
+    Players:
+    - PlayerID: Player_001
+      Settings:
+        MasterVolume: 1
+        MusicVolume: 0.8
+        SfxVolume: 0.5
+      StageProgress:
+      - StageID: 1
+        IsCleared: 1
+        StarsEarned: 3
+        BestScore: 10000
+        PlayCount: 5
+      - StageID: 2
+        IsCleared: 1
+        StarsEarned: 2
+        BestScore: 8000
+        PlayCount: 3
+    - PlayerID: Player_002
+      Settings:
+        MasterVolume: 0.7
+        MusicVolume: 0.6
+        SfxVolume: 0.8
+      StageProgress:
+      - StageID: 1
+        IsCleared: 1
+        StarsEarned: 2
+        BestScore: 7500
+        PlayCount: 2
 --- !u!4 &2020635143
 Transform:
   m_ObjectHideFlags: 0
