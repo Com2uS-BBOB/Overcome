@@ -26,7 +26,13 @@ namespace _02.Scripts.Player.Core
         [Header("Animation")]
         [SerializeField] private PlayerAnimatorController _playerAnimatorController;
 
+        [Header("Combat System")]
+        [SerializeField] private CombatStateHandler _combatStateHandler;
+        [SerializeField] private InputBuffer _inputBuffer;
+
         public PlayerInputHandler Input { get; private set; }
+        public CombatStateHandler CombatStateHandler => _combatStateHandler;
+        public InputBuffer InputBuffer => _inputBuffer;
         public PlayerMovement Movement { get; private set; }
         public DragonSwordSkill DragonSwordSkill => _dragonSwordSkill;
         public CrescentSkill Crescent => _crescent;
@@ -77,10 +83,99 @@ namespace _02.Scripts.Player.Core
             // CancelManager 초기화
             CancelManager = new CancelManager(StateMachine);
 
+            // CombatStateHandler 연결 (있는 경우)
+            if (_combatStateHandler != null && _inputBuffer != null)
+            {
+                CancelManager.SetCombatHandler(_combatStateHandler, _inputBuffer);
+                CancelManager.OnActionExecute += HandleActionExecute;
+            }
+
             // PlayerAnimator 초기화 (State 변경 구독)
             _playerAnimatorController?.Initialize(StateMachine);
 
             StateMachine.Initialize<IdleState>();
+        }
+
+        /// <summary>
+        /// CancelManager에서 버퍼된 액션 실행 시 호출
+        /// </summary>
+        private void HandleActionExecute(ActionType action)
+        {
+            switch (action)
+            {
+                case ActionType.Attack:
+                    ExecuteAttack();
+                    break;
+                case ActionType.Skill:
+                    ExecuteCrescent();
+                    break;
+                case ActionType.DashAttack:
+                    ExecuteDashAttack();
+                    break;
+                case ActionType.Jump:
+                    ExecuteJump();
+                    break;
+            }
+        }
+
+        private void ExecuteAttack()
+        {
+            if (_dragonSwordSkill == null) return;
+
+            if (_dragonSwordSkill.CanAttack)
+            {
+                StateMachine.ChangeState<DragonSwordState>();
+                _dragonSwordSkill.Attack();
+            }
+            else if (_dragonSwordSkill.CanQueueCombo)
+            {
+                _dragonSwordSkill.Attack();
+            }
+            else if (_dragonSwordSkill.CanComboGrace)
+            {
+                StateMachine.ChangeState<DragonSwordState>();
+                _dragonSwordSkill.Attack();
+            }
+        }
+
+        private void ExecuteCrescent()
+        {
+            if (_crescent == null) return;
+
+            if (_crescent.CanUse)
+            {
+                StateMachine.ChangeState<CrescentState>();
+                _crescent.Attack();
+            }
+            else if (_crescent.CanQueueCombo)
+            {
+                _crescent.Attack();
+            }
+            else if (_crescent.CanComboGrace)
+            {
+                StateMachine.ChangeState<CrescentState>();
+                _crescent.Attack();
+            }
+        }
+
+        private void ExecuteDashAttack()
+        {
+            if (_dashAttack == null || !_dashAttack.CanUse) return;
+            StateMachine.ChangeState<DashAttackState>();
+        }
+
+        private void ExecuteJump()
+        {
+            int jumpResult = Movement.TryJump();
+            switch (jumpResult)
+            {
+                case 1:
+                    _playerAnimatorController?.PlayJump();
+                    break;
+                case 2:
+                    _playerAnimatorController?.PlayDoubleJump();
+                    break;
+            }
         }
 
         private void OnEnable()

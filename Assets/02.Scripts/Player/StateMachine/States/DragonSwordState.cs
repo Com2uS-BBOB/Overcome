@@ -37,6 +37,13 @@ namespace _02.Scripts.Player.StateMachine.States
                 _wasGroundedOnEnter = true;
                 Controller.PlayerAnimatorController?.EnableRootMotion();
             }
+
+            // 콤보 유예 중 이동 입력 시 즉시 State 전환
+            if (!Combat.IsAttacking && HasMoveInput())
+            {
+                Combat.ResetCombo();
+                StateMachine.ChangeState<MoveState>();
+            }
         }
 
         public override void Exit()

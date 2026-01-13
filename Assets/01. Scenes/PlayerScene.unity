@@ -970,6 +970,8 @@ GameObject:
   - component: {fileID: 1089555355}
   - component: {fileID: 1089555356}
   - component: {fileID: 1089555357}
+  - component: {fileID: 1089555359}
+  - component: {fileID: 1089555358}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1092,6 +1094,8 @@ MonoBehaviour:
   _dashAttack: {fileID: 1089555355}
   _gaugeManager: {fileID: 1089555356}
   _playerAnimatorController: {fileID: 1089555357}
+  _combatStateHandler: {fileID: 0}
+  _inputBuffer: {fileID: 0}
 --- !u!114 &1089555349
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1164,9 +1168,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0b21b9940874d6986e9f80223aae4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
-  _attack1Duration: 1.1
-  _attack2Duration: 1.2
-  _attack3Duration: 2.3
+  _attack1Duration: 1
+  _attack2Duration: 1
+  _attack3Duration: 2
   _comboWindowStart: 0.5
   _comboGraceTime: 0.1
   _hitboxStartTime: 0.15
@@ -1249,6 +1253,34 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Animation.PlayerAnimator
   _animator: {fileID: 2017195265}
   _rootMotionProxy: {fileID: 2017195266}
+--- !u!114 &1089555358
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089555343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b9541e3bf37b46e981abaa1d5ab8ac4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.CombatStateHandler
+  _animator: {fileID: 2017195265}
+  _inputBuffer: {fileID: 1089555359}
+  _attackDataList: []
+--- !u!114 &1089555359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089555343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c069f467a2a44e096131eb87ccddd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.InputBuffer
+  _bufferDuration: 0.15
 --- !u!1 &1291455054
 GameObject:
   m_ObjectHideFlags: 0

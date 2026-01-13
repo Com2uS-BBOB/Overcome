@@ -8,6 +8,7 @@ namespace _02.Scripts.Player.Combat
     /// <summary>
     /// 스킬/액션 캔슬 우선순위 중앙 관리
     /// 우선순위: DashAttack > DragonSword = Crescent > Move > Idle
+    /// CombatStateHandler와 InputBuffer를 통합하여 정밀한 캔슬 윈도우 관리
     /// </summary>
     public class CancelManager
     {
@@ -41,12 +42,133 @@ namespace _02.Scripts.Player.Combat
             (typeof(CrescentState), typeof(CrescentState)),
         };
 
+        // ActionType -> State Type 매핑
+        private static readonly Dictionary<ActionType, Type> ActionToStateMap = new()
+        {
+            { ActionType.Attack, typeof(DragonSwordState) },
+            { ActionType.Skill, typeof(CrescentState) },
+            { ActionType.DashAttack, typeof(DashAttackState) },
+            { ActionType.Move, typeof(MoveState) },
+        };
+
         private readonly PlayerStateMachine _stateMachine;
+        private CombatStateHandler _combatHandler;
+        private InputBuffer _inputBuffer;
+
+        // 액션 실행 콜백 (PlayerController에서 등록)
+        public event Action<ActionType> OnActionExecute;
 
         public CancelManager(PlayerStateMachine stateMachine)
         {
             _stateMachine = stateMachine;
         }
+
+        /// <summary>
+        /// CombatStateHandler 및 InputBuffer 연결
+        /// </summary>
+        public void SetCombatHandler(CombatStateHandler combatHandler, InputBuffer inputBuffer)
+        {
+            _combatHandler = combatHandler;
+            _inputBuffer = inputBuffer;
+
+            if (_combatHandler != null)
+            {
+                _combatHandler.OnCancelWindowEnter += HandleCancelWindowEnter;
+                _combatHandler.OnBufferedActionReady += HandleBufferedActionReady;
+            }
+        }
+
+        /// <summary>
+        /// 액션 실행 시도 (캔슬 윈도우 + 상태 우선순위 통합 체크)
+        /// </summary>
+        public bool TryExecuteAction(ActionType action)
+        {
+            // 1. 상태 기반 우선순위 체크
+            if (!CanExecuteByState(action))
+            {
+                // 캔슬 불가 → 버퍼에 저장
+                _inputBuffer?.Buffer(action);
+                return false;
+            }
+
+            // 2. 캔슬 윈도우 체크 (CombatStateHandler가 있는 경우)
+            if (_combatHandler != null && _combatHandler.CurrentAttack != null)
+            {
+                if (!_combatHandler.CanCancelInto(action))
+                {
+                    // 캔슬 윈도우 밖 → 버퍼에 저장
+                    _inputBuffer?.Buffer(action);
+                    return false;
+                }
+            }
+
+            // 3. 액션 실행
+            ExecuteAction(action);
+            return true;
+        }
+
+        /// <summary>
+        /// 액션 실행
+        /// </summary>
+        private void ExecuteAction(ActionType action)
+        {
+            OnActionExecute?.Invoke(action);
+        }
+
+        /// <summary>
+        /// 상태 기반으로 액션 실행 가능한지 확인
+        /// </summary>
+        private bool CanExecuteByState(ActionType action)
+        {
+            if (!ActionToStateMap.TryGetValue(action, out var targetState))
+                return true; // 매핑 없으면 항상 허용
+
+            var currentType = _stateMachine.CurrentState?.GetType();
+            if (currentType == null) return true;
+
+            // 같은 상태 → 규칙 확인
+            if (currentType == targetState)
+            {
+                return CancelRules.Contains((currentType, targetState));
+            }
+
+            // 우선순위 비교
+            int currentPriority = GetPriority(currentType);
+            int targetPriority = GetPriority(targetState);
+
+            if (targetPriority > currentPriority) return true;
+
+            return CancelRules.Contains((currentType, targetState));
+        }
+
+        /// <summary>
+        /// 캔슬 윈도우 진입 시 버퍼 소비
+        /// </summary>
+        private void HandleCancelWindowEnter()
+        {
+            if (_inputBuffer == null) return;
+
+            if (_inputBuffer.TryConsume(out var buffered))
+            {
+                if (CanExecuteByState(buffered.Action))
+                {
+                    ExecuteAction(buffered.Action);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 버퍼에서 액션이 준비됐을 때
+        /// </summary>
+        private void HandleBufferedActionReady(InputBuffer.BufferedInput buffered)
+        {
+            if (CanExecuteByState(buffered.Action))
+            {
+                ExecuteAction(buffered.Action);
+            }
+        }
+
+        #region Legacy API (하위 호환)
 
         /// <summary>
         /// 현재 상태에서 목표 상태로 캔슬 가능한지 확인
@@ -86,9 +208,20 @@ namespace _02.Scripts.Player.Combat
             return true;
         }
 
+        #endregion
+
         private int GetPriority(Type stateType)
         {
             return ActionPriority.TryGetValue(stateType, out int priority) ? priority : 0;
+        }
+
+        public void Cleanup()
+        {
+            if (_combatHandler != null)
+            {
+                _combatHandler.OnCancelWindowEnter -= HandleCancelWindowEnter;
+                _combatHandler.OnBufferedActionReady -= HandleBufferedActionReady;
+            }
         }
     }
 }

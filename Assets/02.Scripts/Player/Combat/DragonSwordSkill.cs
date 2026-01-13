@@ -253,6 +253,19 @@ namespace _02.Scripts.Player.Combat
             }
         }
 
+        /// <summary>
+        /// 콤보 리셋 (유예 타이머 정리)
+        /// </summary>
+        public void ResetCombo()
+        {
+            StopAllTimers();
+            _comboStep = 0;
+            _isAttacking = false;
+            _comboQueued = false;
+            _inComboWindow = false;
+            _inComboGrace = false;
+        }
+
         private void HandleHit(IDamageable target, float damage) => OnEnemyHit?.Invoke(target, damage);
     }
 }

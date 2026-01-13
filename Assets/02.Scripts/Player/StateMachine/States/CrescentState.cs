@@ -20,6 +20,16 @@ namespace _02.Scripts.Player.StateMachine.States
             }
         }
 
+        public override void Update()
+        {
+            // 콤보 유예 중 이동 입력 시 즉시 State 전환
+            if (!Crescent.IsUsing && HasMoveInput())
+            {
+                Crescent.ResetCombo();
+                StateMachine.ChangeState<MoveState>();
+            }
+        }
+
         public override void Exit()
         {
             if (Crescent != null) Crescent.OnCrescentEnded -= OnCrescentEnded;
