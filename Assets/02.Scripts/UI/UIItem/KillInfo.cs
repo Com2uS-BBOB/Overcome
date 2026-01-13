@@ -1,12 +1,17 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 
 public class KillInfo : MonoBehaviour
 {
-    private static readonly string[] EnemyTypeNames =
-        { "Normal", "Small", "Elite", "FloatSmall" };
-
+    private readonly Dictionary<EEnemyType, string> _enemyTypeNames = new Dictionary<EEnemyType, string>
+    {
+        { EEnemyType.Normal, "Normal" },
+        { EEnemyType.Small, "Small" },
+        { EEnemyType.Elite, "Elite" },
+        { EEnemyType.FloatSmall, "FloatSmall" }
+    };
     [Serializable]
     public struct KillInfoData
     {
@@ -74,7 +79,7 @@ public class KillInfo : MonoBehaviour
         _killCountComplete = false;
         _killInfo.KillCount = KillLogSystem.Instance.GetKillCount(_killInfo.Type);
         gameObject.SetActive(true);
-        _enemyType.Play(EnemyTypeNames[(int)_killInfo.Type]);
+        _enemyType.Play(_enemyTypeNames[_killInfo.Type]);
         _killCountText.Play(_killInfo.KillCount);
     }
 
@@ -89,7 +94,7 @@ public class KillInfo : MonoBehaviour
     {
         _enemyType.Stop();
         _killCountText.Stop();
-        _enemyType.SetTextImmediate(EnemyTypeNames[(int)_killInfo.Type]);
+        _enemyType.SetTextImmediate(_enemyTypeNames[_killInfo.Type]);
         _killCountText.SetTextImmediate(_killInfo.KillCount);
 
         if (!_enemyTypeComplete || !_killCountComplete)

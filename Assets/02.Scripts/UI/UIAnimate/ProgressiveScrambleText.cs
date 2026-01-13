@@ -28,7 +28,7 @@ public class ProgressiveScrambleText
     private Coroutine _currentCoroutine;
     private MonoBehaviour _coroutineRunner;
     private readonly StringBuilder _stringBuilder = new StringBuilder(32);
-    private readonly char[] _charBuffer = new char[8];
+    private char[] _charBuffer = new char[32];
 
     public void Init(MonoBehaviour runner)
     {
@@ -130,10 +130,15 @@ public class ProgressiveScrambleText
     private IEnumerator ProgressiveScrambleCoroutine(string target)
     {
         int length = target.Length;
-        int currentLength = 0;
+        if (_charBuffer.Length < length)
+        {
+            _charBuffer = new char[length];
+        }
+
+        var currentLength = 0;
         var waitTime = new WaitForSeconds(_charDuration / _scrambleIterations);
 
-        for (int i = 0; i < length; i++)
+        for (var i = 0; i < length; i++)
         {
             char targetChar = target[i];
 
@@ -144,7 +149,7 @@ public class ProgressiveScrambleText
                 continue;
             }
 
-            for (int j = 0; j < _scrambleIterations; j++)
+            for (var j = 0; j < _scrambleIterations; j++)
             {
                 char randomChar = _scrambleChars[Random.Range(0, _scrambleChars.Length)];
                 _charBuffer[currentLength] = randomChar;
