@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 using _02.Scripts.Player.Interfaces;
 
 public abstract class EnemyBase : MonoBehaviour, IDamageable
@@ -13,7 +14,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     protected float _currentHealth;
 
     [Header("스폰 높이")]
-    [SerializeField] private float _spawnHeight = 1f;  // 바닥과 적의 중심 높이 차이
+    [SerializeField] private float _spawnHeight = 0f;  // 바닥과 적의 중심 높이 차이
+
+    private float _hitStopTime = 0.16f;
+    private Coroutine _hitStopRoutine;
 
     public virtual bool CanMove => true;
     public virtual bool CanReturn => true;
@@ -22,6 +26,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     private EnemyPool _pool;
     private EnemySpawner _spawner;
     private FloatSmallEnemySpawner _floatSpawner;
+
+    private EnemyMovement _movement;
 
     private Vector3 _spawnBasePosition;  // 최초 스폰 위치 저장용 (리스폰 때 사용)
 
@@ -41,6 +47,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     protected virtual void Awake()
     {
         _anim = GetComponent<EnemyAnimatorController>();
+        _movement = GetComponent<EnemyMovement>();
     }
 
     public void Initialize(EnemyStatData statData)
@@ -70,6 +77,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
 
         _anim?.ReviveReset();
+        _movement?.LockMovement(false);
     }
 
     public void SetPool(EnemyPool pool)
@@ -118,6 +126,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         EnemyEventController.Enemy.RaiseHit(new EnemyHitEvent(this, damage));
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
 
+        StopOnHit(_hitStopTime);
         _anim?.PlayHit();
 
         if (_currentHealth <= 0)
@@ -130,6 +139,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (_despawnRequested) return;
         _despawnRequested = true;
+
+        _movement?.LockMovement(true);
 
 #if UNITY_EDITOR
         Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");
@@ -153,5 +164,26 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _despawnRequested = false;
 
         OnDespawn?.Invoke(this);
+    }
+
+    private void StopOnHit(float seconds)
+    {
+        if (_movement == null) return;
+
+        if (_hitStopRoutine != null)
+        {
+            StopCoroutine(_hitStopRoutine);
+        }
+        _hitStopRoutine = StartCoroutine(HitStop_Coroutine(seconds));
+    }
+
+    private IEnumerator HitStop_Coroutine(float seconds)
+    {
+        _movement.LockMovement(true);
+        yield return new WaitForSeconds(seconds);
+
+        // 죽었다면 풀면 안 됨
+        if (!IsDead)
+            _movement.LockMovement(false);
     }
 }
