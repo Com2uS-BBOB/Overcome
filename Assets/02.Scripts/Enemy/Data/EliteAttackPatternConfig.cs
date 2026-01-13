@@ -19,7 +19,7 @@ public struct EliteAttackPatternConfig
         float ripDamagePerHit = 2f,
         float ripTouchDelay = 0.25f,
         float ripKnockbackDistance = 1f,
-        float howlDuration = 3.2f
+        float howlDuration = 3.4f
     )
     {
         OpeningRushDuration = openingRushDuration;

@@ -128,7 +128,7 @@ public class EnemyAttack : MonoBehaviour
                     ripDamagePerHit: 2f,
                     ripTouchDelay: 0.25f,
                     ripKnockbackDistance: 1f,
-                    howlDuration: 3.2f
+                    howlDuration: 3.4f
                 );
 
                 _currentPattern = new EliteAttackPattern(patternContext, eliteConfig);

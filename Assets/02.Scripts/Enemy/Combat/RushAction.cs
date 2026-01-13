@@ -27,6 +27,8 @@ public class RushAction : IEnemyAction
     private float _timeout;
     private float _timer;
     private float _timeoutRatio = 1.4f;
+    private float _startTime = 0.2f;
+    private float _startTimer;
 
     private float _sqrMagnitudeThreshold = 0.01f;
 
@@ -131,6 +133,9 @@ public class RushAction : IEnemyAction
     {
         if (_isFinished) return;
 
+        _startTimer+= Time.deltaTime;
+
+        if (_startTimer < _startTime) return;
         _timer += Time.deltaTime;
 
         float stepDistance = _speed * Time.deltaTime;
