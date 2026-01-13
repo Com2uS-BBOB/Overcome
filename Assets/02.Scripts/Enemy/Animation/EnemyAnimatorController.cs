@@ -109,7 +109,7 @@ public class EnemyAnimatorController : MonoBehaviour
 
     public void SetRip(bool isRipping)
     {
-        if (!_isDead || _animator == null) return;
+        if (_isDead || _animator == null) return;
 
         if (isRipping && _exclusiveCombat)
         {
