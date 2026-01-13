@@ -145,6 +145,7 @@ GameObject:
   - component: {fileID: -445512948294510239}
   - component: {fileID: -2607970238799787965}
   - component: {fileID: -4471165230191658703}
+  - component: {fileID: 7588981516338341651}
   m_Layer: 0
   m_Name: SmallEnemy
   m_TagString: Untagged
@@ -316,8 +317,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1045832139059423618}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 7eed4b093d1fefa4da40fbc69a3e645c, type: 2}
+  m_Avatar: {fileID: 9000000, guid: b8ca025dacac1ff44935d1c468bf58a3, type: 3}
+  m_Controller: {fileID: 9100000, guid: 45f13ad2b6cb6404085ee9778ec2e6ad, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -377,6 +378,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3af8d5fbc2139f540ba0ccefb6ec8b40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyAttack
+--- !u!114 &7588981516338341651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1045832139059423618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d64291954d517054e952461442edf526, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimatorController
+  _animator: {fileID: 2238311807889374755}
+  _supportsHowl: 1
+  _supportsRush: 1
+  _supportsAttack: 1
+  _supportsHit: 1
+  _deathMode: 0
+  _fallingTriggerName: Falling
+  _onGroundTriggerName: OnGround
+  _exclusiveCombat: 1
+  _useCombatLock: 1
+  _blockAttackRushWhileHowling: 1
+  _howlLockSeconds: 0.6
+  _rushLockSeconds: 0.15
+  _attackLockSeconds: 0.15
+  _hitInterruptsCombat: 1
+  _moveBoolName: Move
+  _howlTriggerName: Howl
+  _rushTriggerName: Rush
+  _attackTriggerName: Attack
+  _hitTriggerName: Hit
+  _deathTriggerName: Death
 --- !u!1 &1252681512692205229
 GameObject:
   m_ObjectHideFlags: 0
