@@ -8,7 +8,7 @@ public class UI_PlayerInfo : MonoBehaviour
 
     private void Start()
     {
-        _playerNameText.SetText(DataManager.Instance.GetPlayerID());
-        _playerStarText.SetText(DataManager.Instance.GetPlayerStarCount().ToString());
+        _playerNameText.SetText(PlayerDataManager.Instance.GetPlayerID());
+        _playerStarText.SetText(PlayerDataManager.Instance.GetPlayerStarCount().ToString());
     }
 }
