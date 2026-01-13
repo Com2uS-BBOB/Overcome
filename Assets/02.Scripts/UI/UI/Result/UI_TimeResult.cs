@@ -2,84 +2,56 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 
-public class UI_TimeResult : MonoBehaviour, ISequentialUI
+public class UI_TimeResult : MonoBehaviour
 {
-    [SerializeField] private AnimatedNumber _timeNumber;
-    [SerializeField] private CanvasGroup _canvasGroup;
-
-    [Header("Animation")]
-    [SerializeField] private float _showDuration = 0.3f;
-    [SerializeField] private Ease _showEase = Ease.OutBack;
-
-    public event Action OnShowComplete;
-
+    [SerializeField] private ProgressiveScrambleText _timeText;
     private float _targetTime;
-    private bool _isSubscribed;
+
+    public event Action OnComplete;
 
     private void Awake()
     {
-        _timeNumber.Init();
+        _timeText.Init(this);
+        _timeText.OnComplete += HandleComplete;
     }
 
     private void OnDestroy()
     {
-        UnsubscribeEvent();
-        _timeNumber.Clear();
+        _timeText.OnComplete -= HandleComplete;
+    }
+
+    private void OnEnable()
+    {
+        Show();
+    }
+
+    private void OnDisable()
+    {
+        _timeText.Stop();
+    }
+
+    private void HandleComplete()
+    {
+        OnComplete?.Invoke();
     }
 
     public void Show()
     {
         _targetTime = TimeSystem.Instance.PlayTime;
         gameObject.SetActive(true);
-        SubscribeEvent();
-
-        if (_canvasGroup != null)
-        {
-            _canvasGroup.alpha = 0;
-            _canvasGroup.DOFade(1f, _showDuration);
-        }
-
-        transform.localScale = Vector3.zero;
-        transform
-            .DOScale(1f, _showDuration)
-            .SetEase(_showEase)
-            .OnComplete(() =>
-            {
-                _timeNumber.SetValue(_targetTime);
-            });
-    }
-
-    private void SubscribeEvent()
-    {
-        if (!_isSubscribed)
-        {
-            _timeNumber.OnCompleteChanging += HandleNumberComplete;
-            _isSubscribed = true;
-        }
-    }
-
-    private void UnsubscribeEvent()
-    {
-        if (_isSubscribed)
-        {
-            _timeNumber.OnCompleteChanging -= HandleNumberComplete;
-            _isSubscribed = false;
-        }
-    }
-
-    private void HandleNumberComplete()
-    {
-        OnShowComplete?.Invoke();
+        _timeText.PlayTime(_targetTime);
     }
 
     public void Hide()
     {
-        UnsubscribeEvent();
+        _timeText.Stop();
         gameObject.SetActive(false);
     }
 
-    public void SetTime(float time)
+    public void Complete()
     {
-        _targetTime = time;
+        _timeText.Stop();
+        _timeText.SetTimeImmediate(_targetTime);
+        OnComplete?.Invoke();
     }
 }

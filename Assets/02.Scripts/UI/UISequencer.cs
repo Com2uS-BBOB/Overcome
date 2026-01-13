@@ -37,6 +37,11 @@ public class UISequencer : MonoBehaviour
             TimeSystem.Instance.OnGameOver -= Play;
         }
     }
+
+    private void OnEnable()
+    {
+        Play();
+    }
     
     public void Play()
     {

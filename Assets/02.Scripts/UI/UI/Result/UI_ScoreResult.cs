@@ -2,81 +2,56 @@ using System;
 using UnityEngine;
 using DG.Tweening;
 
-public class UI_ScoreResult : MonoBehaviour, ISequentialUI
+public class UI_ScoreResult : MonoBehaviour
 {
-    [SerializeField] private AnimatedNumber _scoreNumber;
-    [SerializeField] private CanvasGroup _canvasGroup;
-
-    [Header("Animation")]
-    [SerializeField] private float _showDuration = 0.3f;
-    [SerializeField] private Ease _showEase = Ease.OutBack;
-
-
+    [SerializeField] private ProgressiveScrambleText _scoreText;
     private int _targetScore;
-    private bool _isSubscribed;
-    
-    public event Action OnShowComplete;
+
+    public event Action OnComplete;
 
     private void Awake()
     {
-        _scoreNumber.Init();
+        _scoreText.Init(this);
+        _scoreText.OnComplete += HandleComplete;
     }
 
     private void OnDestroy()
     {
-        UnsubscribeEvent();
-        _scoreNumber.Clear();
+        _scoreText.OnComplete -= HandleComplete;
+    }
+
+    private void OnDisable()
+    {
+        _scoreText.Stop();
+    }
+
+    private void OnEnable()
+    {
+        Show();
+    }
+
+    private void HandleComplete()
+    {
+        OnComplete?.Invoke();
     }
 
     public void Show()
     {
         _targetScore = ScoreSystem.Instance.CurrentScore;
         gameObject.SetActive(true);
-        SubscribeEvent();
-
-        // 페이드 + 스케일 애니메이션
-        if (_canvasGroup != null)
-        {
-            _canvasGroup.alpha = 0;
-            _canvasGroup.DOFade(1f, _showDuration);
-        }
-
-        transform.localScale = Vector3.zero;
-        transform
-            .DOScale(1f, _showDuration)
-            .SetEase(_showEase)
-            .OnComplete(() =>
-            {
-                _scoreNumber.SetValue(_targetScore);
-            });
-    }
-
-    private void SubscribeEvent()
-    {
-        if (!_isSubscribed)
-        {
-            _scoreNumber.OnCompleteChanging += HandleNumberComplete;
-            _isSubscribed = true;
-        }
-    }
-
-    private void UnsubscribeEvent()
-    {
-        if (_isSubscribed)
-        {
-            _scoreNumber.OnCompleteChanging -= HandleNumberComplete;
-            _isSubscribed = false;
-        }
-    }
-
-    private void HandleNumberComplete()
-    {
-        OnShowComplete?.Invoke();
+        _scoreText.Play(_targetScore);
     }
 
     public void Hide()
     {
-        UnsubscribeEvent();
+        _scoreText.Stop();
         gameObject.SetActive(false);
+    }
+
+    public void Complete()
+    {
+        _scoreText.Stop();
+        _scoreText.SetTextImmediate(_targetScore);
+        OnComplete?.Invoke();
     }
 }
