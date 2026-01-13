@@ -12,7 +12,6 @@ public class UI_RankInfo : MonoBehaviour
     [SerializeField] private float _stampDuration = 0.3f;
     [SerializeField] private float _punchScale = 0.15f;
     [SerializeField] private float _punchDuration = 0.2f;
-    [SerializeField] private Ease _punchEase = Ease.InQuad;
 
     [Header("Star Animation")]
     [SerializeField] private float _starDelay = 0.2f;
