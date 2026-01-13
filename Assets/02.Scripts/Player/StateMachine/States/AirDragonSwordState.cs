@@ -1,17 +1,16 @@
+using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Core;
 
 namespace _02.Scripts.Player.StateMachine.States
 {
     /// <summary>
     /// 공중 용검 공격 상태
+    /// SkillData에서 GravityScale, ComboLiftForce, MoveSpeedMultiplier 등을 동적으로 참조
     /// </summary>
     public class AirDragonSwordState : CombatStateBase
     {
         protected override bool IsAirCombat => true;
-        protected override bool UseRootMotion => false;  // 공중: Root Motion OFF
-        protected override float AirGravityScale => 0.8f;  // 부유감
-        protected override float ComboLiftForce => 0.1f;   // 콤보마다 위로
-        protected override float CombatMoveSpeedMultiplier => 0.3f;  // 공중 이동 속도 30%
+        protected override BaseSkill GetSkill() => Combat;
 
         protected override bool IsSkillActive => Combat.IsAttacking;
         protected override bool IsInComboGrace => Combat.IsInComboGrace;

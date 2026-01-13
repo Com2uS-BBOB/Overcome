@@ -1,14 +1,16 @@
+using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Core;
 
 namespace _02.Scripts.Player.StateMachine.States
 {
     /// <summary>
     /// 지상 크레센트 스킬 상태
+    /// SkillData에서 UseRootMotion, MoveSpeedMultiplier 등을 동적으로 참조
     /// </summary>
     public class CrescentState : CombatStateBase
     {
         protected override bool IsAirCombat => false;
-        protected override bool UseRootMotion => true;  // 지상: Root Motion ON
+        protected override BaseSkill GetSkill() => Crescent;
 
         protected override bool IsSkillActive => Crescent.IsUsing;
         protected override bool IsInComboGrace => Crescent.IsInComboGrace;

@@ -109,6 +109,9 @@ namespace _02.Scripts.Player.Core
         /// </summary>
         private void HandleActionExecute(ActionType action)
         {
+            // 다른 스킬에서 전환하는 경우 이전 스킬 정리
+            ResetPreviousSkillIfNeeded(action);
+
             switch (action)
             {
                 case ActionType.Attack:
@@ -126,12 +129,34 @@ namespace _02.Scripts.Player.Core
             }
         }
 
+        /// <summary>
+        /// 스킬 전환 시 이전 스킬 콤보 리셋
+        /// </summary>
+        private void ResetPreviousSkillIfNeeded(ActionType newAction)
+        {
+            var currentState = StateMachine.CurrentState;
+
+            // 크레센트 → 용검 전환
+            if (newAction == ActionType.Attack &&
+                (currentState is CrescentState || currentState is AirCrescentState))
+            {
+                _crescent?.ResetCombo();
+            }
+            // 용검 → 크레센트 전환
+            else if (newAction == ActionType.Skill &&
+                     (currentState is DragonSwordState || currentState is AirDragonSwordState))
+            {
+                _dragonSwordSkill?.ResetCombo();
+            }
+        }
+
         private void ExecuteAttack()
         {
             if (_dragonSwordSkill == null) return;
 
             bool isGrounded = Movement.IsGrounded;
 
+            // Case 1: 첫 공격
             if (_dragonSwordSkill.CanAttack)
             {
                 if (isGrounded)
@@ -139,18 +164,22 @@ namespace _02.Scripts.Player.Core
                 else
                     StateMachine.ChangeState<AirDragonSwordState>();
                 _dragonSwordSkill.Attack();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
             }
-            else if (_dragonSwordSkill.CanQueueCombo)
+            // Case 2: 공격 중 콤보 큐잉 (CombatStateHandler가 윈도우 체크 완료 후 호출됨)
+            else if (_dragonSwordSkill.IsAttacking && _dragonSwordSkill.CanContinueCombo)
             {
-                _dragonSwordSkill.Attack();
+                _dragonSwordSkill.QueueCombo();
             }
+            // Case 3: 콤보 유예
             else if (_dragonSwordSkill.CanComboGrace)
             {
                 if (isGrounded)
                     StateMachine.ChangeState<DragonSwordState>();
                 else
                     StateMachine.ChangeState<AirDragonSwordState>();
-                _dragonSwordSkill.Attack();
+                _dragonSwordSkill.ExecuteGraceCombo();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
             }
         }
 
@@ -160,6 +189,7 @@ namespace _02.Scripts.Player.Core
 
             bool isGrounded = Movement.IsGrounded;
 
+            // Case 1: 첫 스킬 사용
             if (_crescent.CanUse)
             {
                 if (isGrounded)
@@ -167,18 +197,22 @@ namespace _02.Scripts.Player.Core
                 else
                     StateMachine.ChangeState<AirCrescentState>();
                 _crescent.Attack();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
             }
-            else if (_crescent.CanQueueCombo)
+            // Case 2: 스킬 사용 중 콤보 큐잉 (CombatStateHandler가 윈도우 체크 완료 후 호출됨)
+            else if (_crescent.IsUsing && _crescent.CanContinueCombo)
             {
-                _crescent.Attack();
+                _crescent.QueueCombo();
             }
+            // Case 3: 콤보 유예
             else if (_crescent.CanComboGrace)
             {
                 if (isGrounded)
                     StateMachine.ChangeState<CrescentState>();
                 else
                     StateMachine.ChangeState<AirCrescentState>();
-                _crescent.Attack();
+                _crescent.ExecuteGraceCombo();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
             }
         }
 
@@ -310,26 +344,42 @@ namespace _02.Scripts.Player.Core
             // Case 1: 첫 공격
             if (_dragonSwordSkill.CanAttack)
             {
-                if (isGrounded)
-                    StateMachine.ChangeState<DragonSwordState>();
-                else
-                    StateMachine.ChangeState<AirDragonSwordState>();
-                _dragonSwordSkill.Attack();
+                StartNewDragonSwordCombo(isGrounded);
+                return;
             }
-            // Case 2: 콤보 큐잉 (공격 진행 중)
-            else if (_dragonSwordSkill.CanQueueCombo)
+
+            // Case 2: 콤보 큐잉 (CombatStateHandler가 윈도우 체크)
+            if (_combatStateHandler != null && _combatStateHandler.CanQueueCombo(ActionType.Attack))
             {
-                _dragonSwordSkill.Attack();
+                _dragonSwordSkill.QueueCombo();
+                return;
             }
+
             // Case 3: 콤보 유예 (공격 끝난 직후)
-            else if (_dragonSwordSkill.CanComboGrace)
+            if (_dragonSwordSkill.CanComboGrace)
             {
                 if (isGrounded)
                     StateMachine.ChangeState<DragonSwordState>();
                 else
                     StateMachine.ChangeState<AirDragonSwordState>();
-                _dragonSwordSkill.Attack();
+                _dragonSwordSkill.ExecuteGraceCombo();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
+                return;
             }
+
+            // Case 4: 캔슬 불가 → 입력 버퍼링
+            _combatStateHandler?.BufferIfNeeded(ActionType.Attack);
+        }
+
+        private void StartNewDragonSwordCombo(bool isGrounded)
+        {
+            if (isGrounded)
+                StateMachine.ChangeState<DragonSwordState>();
+            else
+                StateMachine.ChangeState<AirDragonSwordState>();
+
+            _dragonSwordSkill.Attack();
+            _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
         }
 
         private void HandleCrescent()
@@ -351,26 +401,42 @@ namespace _02.Scripts.Player.Core
             // Case 1: 첫 공격
             if (_crescent.CanUse)
             {
-                if (isGrounded)
-                    StateMachine.ChangeState<CrescentState>();
-                else
-                    StateMachine.ChangeState<AirCrescentState>();
-                _crescent.Attack();
+                StartNewCrescentCombo(isGrounded);
+                return;
             }
-            // Case 2: 콤보 큐잉 (스킬 진행 중)
-            else if (_crescent.CanQueueCombo)
+
+            // Case 2: 콤보 큐잉 (CombatStateHandler가 윈도우 체크)
+            if (_combatStateHandler != null && _combatStateHandler.CanQueueCombo(ActionType.Skill))
             {
-                _crescent.Attack();
+                _crescent.QueueCombo();
+                return;
             }
+
             // Case 3: 콤보 유예 (스킬 끝난 직후)
-            else if (_crescent.CanComboGrace)
+            if (_crescent.CanComboGrace)
             {
                 if (isGrounded)
                     StateMachine.ChangeState<CrescentState>();
                 else
                     StateMachine.ChangeState<AirCrescentState>();
-                _crescent.Attack();
+                _crescent.ExecuteGraceCombo();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
+                return;
             }
+
+            // Case 4: 캔슬 불가 → 입력 버퍼링
+            _combatStateHandler?.BufferIfNeeded(ActionType.Skill);
+        }
+
+        private void StartNewCrescentCombo(bool isGrounded)
+        {
+            if (isGrounded)
+                StateMachine.ChangeState<CrescentState>();
+            else
+                StateMachine.ChangeState<AirCrescentState>();
+
+            _crescent.Attack();
+            _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
         }
 
         // 오버드라이브 발동

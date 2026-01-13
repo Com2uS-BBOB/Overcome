@@ -1,3 +1,4 @@
+using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Core;
 
 namespace _02.Scripts.Player.StateMachine.States
@@ -5,11 +6,13 @@ namespace _02.Scripts.Player.StateMachine.States
     /// <summary>
     /// 지상 질풍참 (대시 공격) 상태
     /// 콤보 없음, 캔슬 불가
+    /// DashAttackSkill은 BaseSkill 미상속이므로 GetSkill() → null
     /// </summary>
     public class DashAttackState : CombatStateBase
     {
         protected override bool IsAirCombat => false;
-        protected override bool UseRootMotion => false;  // 대시는 자체 이동 처리
+        protected override BaseSkill GetSkill() => null;  // DashAttack은 BaseSkill 미상속
+        protected override bool UseRootMotion => false;   // 대시는 자체 이동 처리
 
         // 대시 중 이동/회전 불가
         protected override bool AllowMovementDuringAttack => false;

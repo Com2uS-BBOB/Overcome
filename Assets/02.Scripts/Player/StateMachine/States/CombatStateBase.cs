@@ -1,23 +1,36 @@
+using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Core;
+using _02.Scripts.Player.Data;
 
 namespace _02.Scripts.Player.StateMachine.States
 {
     /// <summary>
     /// 전투 상태 기반 클래스 (지상/공중 전투 공통 로직)
+    /// SkillData에서 물리 설정을 동적으로 참조
     /// </summary>
     public abstract class CombatStateBase : PlayerStateBase
     {
         protected abstract bool IsAirCombat { get; }
-        protected abstract bool UseRootMotion { get; }
 
-        // 공중 부유감 설정 (서브클래스에서 오버라이드 가능)
-        protected virtual float AirGravityScale => 0.3f;
-        protected virtual float ComboLiftForce => 1.5f;
+        /// <summary>
+        /// 현재 상태에서 사용하는 스킬 반환
+        /// </summary>
+        protected abstract BaseSkill GetSkill();
+
+        /// <summary>
+        /// 현재 스킬의 SkillData (콤보 시작 시점 기준)
+        /// </summary>
+        protected SkillData CurrentSkillData => GetSkill()?.CurrentSkillData;
+
+        // SkillData에서 동적으로 값 가져오기 (폴백 값 포함)
+        protected virtual bool UseRootMotion => CurrentSkillData?.UseRootMotion ?? !IsAirCombat;
+        protected virtual float AirGravityScale => CurrentSkillData?.GravityScale ?? 0.3f;
+        protected virtual float ComboLiftForce => CurrentSkillData?.ComboLiftForce ?? 1.5f;
+        protected virtual float CombatMoveSpeedMultiplier => CurrentSkillData?.MoveSpeedMultiplier ?? 0.2f;
 
         // 공격 중 자유 이동/회전 설정
         protected virtual bool AllowMovementDuringAttack => true;   // 이동 허용
         protected virtual bool AllowRotationDuringAttack => true;   // 카메라 추적 회전 허용
-        protected virtual float CombatMoveSpeedMultiplier => 0.3f;  // 이동 속도 30%
 
         protected CombatStateBase(PlayerController controller, PlayerStateMachine stateMachine)
             : base(controller, stateMachine) { }

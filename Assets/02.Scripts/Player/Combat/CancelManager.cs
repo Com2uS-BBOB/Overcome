@@ -64,6 +64,21 @@ namespace _02.Scripts.Player.Combat
             // Crescent 콤보 중에는 자기 자신으로만 전환 (콤보 연결)
             (typeof(CrescentState), typeof(CrescentState)),
             (typeof(AirCrescentState), typeof(AirCrescentState)),
+
+            // === 스킬 간 양방향 전환 규칙 (캔슬 윈도우 내에서만) ===
+            // 지상: DragonSword <-> Crescent
+            (typeof(DragonSwordState), typeof(CrescentState)),
+            (typeof(CrescentState), typeof(DragonSwordState)),
+
+            // 공중: AirDragonSword <-> AirCrescent
+            (typeof(AirDragonSwordState), typeof(AirCrescentState)),
+            (typeof(AirCrescentState), typeof(AirDragonSwordState)),
+
+            // DashAttack 후 다른 스킬로 전환
+            (typeof(DashAttackState), typeof(DragonSwordState)),
+            (typeof(DashAttackState), typeof(CrescentState)),
+            (typeof(AirDashAttackState), typeof(AirDragonSwordState)),
+            (typeof(AirDashAttackState), typeof(AirCrescentState)),
         };
 
         // ActionType -> State Type 매핑
