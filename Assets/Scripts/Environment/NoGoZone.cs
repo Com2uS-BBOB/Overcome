@@ -7,7 +7,10 @@ namespace NeonHighCity.Environment
     /// 플레이어가 갈 수 없는 구역을 시각적으로 표현한다.
     /// 
     /// [ExecuteAlways]: Edit 모드에서도 실행되어 실시간 미리보기 가능.
-    /// 사용 셰이더: Custom/NeonGridFlat (평면 전용)
+    /// 
+    /// 메시 타입:
+    /// - Cube: Holograms 에셋과 호환 (Fresnel 효과 작동)
+    /// - Quad: 평면 전용 셰이더용 (NeonGridFlat)
     /// </summary>
     [ExecuteAlways]
     [RequireComponent(typeof(BoxCollider))]
@@ -30,9 +33,30 @@ namespace NeonHighCity.Environment
             WallLeftRight
         }
         
+        /// <summary>
+        /// 그리드 메시 타입.
+        /// </summary>
+        public enum MeshType
+        {
+            [Tooltip("얇은 박스 (Holograms 에셋 호환, Fresnel 작동)")]
+            Cube,
+            
+            [Tooltip("단순 평면 (NeonGridFlat 셰이더용)")]
+            Quad
+        }
+        
         #endregion
 
         #region Inspector Fields
+        
+        [Header("Mesh Settings")]
+        [Tooltip("그리드 메시 타입\n" +
+                 "• Cube: Holograms 에셋 호환 (Fresnel 효과 O)\n" +
+                 "• Quad: 평면 전용 셰이더 (NeonGridFlat)")]
+        [SerializeField] private MeshType _meshType = MeshType.Cube;
+        
+        [Tooltip("Cube 메시의 두께 (얇을수록 벽처럼 보임)")]
+        [SerializeField] [Range(0.01f, 1f)] private float _cubeThickness = 0.1f;
         
         [Header("Grid Face")]
         [Tooltip("그리드가 표시될 면 방향\n" +
@@ -43,62 +67,60 @@ namespace NeonHighCity.Environment
         
         [Tooltip("그리드 위치 오프셋 (면의 법선 방향)\n" +
                  "양수: 바깥쪽, 음수: 안쪽")]
-        [SerializeField] private float _faceOffset = 0.01f;
+        [SerializeField] private float _faceOffset = 0f;
         
         [Header("Grid Material")]
-        [Tooltip("그리드 셰이더가 적용된 Material.\n" +
-                 "추천: Assets/Materials/M_NeonGridFlat.mat")]
+        [Tooltip("그리드 Material.\n" +
+                 "• Cube용: Assets/Holograms/Materials/Examples/Basic/Grid_Hologram_Empty.mat\n" +
+                 "• Quad용: Assets/Materials/M_NeonGridFlat.mat")]
         [SerializeField] private Material _gridMaterial;
         
-        [Header("Grid Appearance")]
-        [Tooltip("그리드 색상 (HDR 지원, 밝기 높이면 Bloom 효과)")]
+        [Header("Grid Appearance (Holograms 에셋)")]
+        [Tooltip("홀로그램 색상 (HDR 지원)")]
         [ColorUsage(true, true)]
-        [SerializeField] private Color _gridColor = new Color(0f, 2f, 2f, 1f);
+        [SerializeField] private Color _hologramColor = new Color(0f, 1f, 1f, 1f);
         
-        [Tooltip("그리드 선 밀도 (값이 클수록 촘촘함)")]
-        [SerializeField] [Range(1f, 50f)] private float _gridDensity = 10f;
+        [Tooltip("발광 강도 (에셋 기본값: 20)")]
+        [SerializeField] [Range(1f, 50f)] private float _emissionScale = 20f;
         
-        [Tooltip("그리드 선 두께 (값이 클수록 두꺼움)")]
-        [SerializeField] [Range(0.01f, 0.2f)] private float _lineThickness = 0.05f;
+        [Tooltip("그리드 밀도 (에셋 기본값: 250, 낮을수록 넓은 간격)")]
+        [SerializeField] [Range(50f, 500f)] private float _patternDensity = 250f;
         
-        [Tooltip("발광 강도 (높을수록 밝음)")]
-        [SerializeField] [Range(0.1f, 5f)] private float _intensity = 1f;
+        [Tooltip("Fresnel 강도 (가장자리 발광, 에셋 기본값: 1.5)")]
+        [SerializeField] [Range(0.5f, 5f)] private float _fresnelPower = 1.5f;
         
-        [Header("Animation")]
-        [Tooltip("X축 스크롤 속도 (0이면 정지)")]
-        [SerializeField] [Range(-10f, 10f)] private float _scrollSpeedX = 0f;
+        [Header("Animation (Holograms 에셋)")]
+        [Tooltip("패턴 스크롤 속도 A (세로 방향, 에셋 기본값: 10)")]
+        [SerializeField] [Range(0f, 30f)] private float _patternSpeedA = 10f;
         
-        [Tooltip("Y축 스크롤 속도 (0이면 정지)")]
-        [SerializeField] [Range(-10f, 10f)] private float _scrollSpeedY = 0.5f;
-        
-        [Header("Pulse Animation")]
-        [Tooltip("밝기 깜빡임(Pulse) 활성화")]
-        [SerializeField] private bool _enablePulse = false;
-        
-        [Tooltip("깜빡임 속도")]
-        [SerializeField] [Range(0.5f, 5f)] private float _pulseSpeed = 2f;
-        
-        [Tooltip("깜빡임 최소 강도 비율 (0~1)")]
-        [SerializeField] [Range(0f, 1f)] private float _pulseMinRatio = 0.3f;
+        [Tooltip("패턴 스크롤 속도 B (가로 방향, 에셋 기본값: 0)")]
+        [SerializeField] [Range(0f, 30f)] private float _patternSpeedB = 0f;
         
         #endregion
 
         #region Private Fields
         
         private BoxCollider _boxCollider;
-        private GameObject _gridQuad;
-        private MeshRenderer _quadRenderer;
+        private GameObject _gridMesh;
+        private MeshRenderer _meshRenderer;
         private Material _materialInstance;
         
-        private float _baseIntensity;
+        // 현재 생성된 메시 타입 추적 (변경 감지용)
+        private MeshType _currentMeshType;
         
-        // Shader Property IDs
+        // Shader Property IDs (Holograms 에셋)
+        private static readonly int HologramColorProperty = Shader.PropertyToID("_Hologram_Color");
+        private static readonly int EmissionScaleProperty = Shader.PropertyToID("_Emission_Scale");
+        private static readonly int PatternDensityProperty = Shader.PropertyToID("_Pattern_Density");
+        private static readonly int FresnelPowerProperty = Shader.PropertyToID("_Fresnel_Power");
+        private static readonly int PatternSpeedAProperty = Shader.PropertyToID("_Pattern_Speed_A");
+        private static readonly int PatternSpeedBProperty = Shader.PropertyToID("_Pattern_Speed_B");
+        
+        // Shader Property IDs (NeonGridFlat - Quad용)
         private static readonly int GridColorProperty = Shader.PropertyToID("_GridColor");
         private static readonly int GridDensityProperty = Shader.PropertyToID("_GridDensity");
         private static readonly int LineThicknessProperty = Shader.PropertyToID("_LineThickness");
         private static readonly int IntensityProperty = Shader.PropertyToID("_Intensity");
-        private static readonly int ScrollSpeedXProperty = Shader.PropertyToID("_ScrollSpeedX");
-        private static readonly int ScrollSpeedYProperty = Shader.PropertyToID("_ScrollSpeedY");
         
         #endregion
 
@@ -115,75 +137,75 @@ namespace NeonHighCity.Environment
                 return;
             }
             
-            CreateGridQuad();
+            CreateGridMesh();
             SetupMaterial();
             UpdateGridTransform();
             ApplyMaterialProperties();
-            
-            _baseIntensity = _intensity;
         }
         
         private void OnDisable()
         {
-            CleanupGridQuad();
-        }
-        
-        private void Update()
-        {
-            if (Application.isPlaying && _enablePulse && _materialInstance != null)
-            {
-                UpdatePulseAnimation();
-            }
+            CleanupGridMesh();
         }
         
         private void OnValidate()
         {
-            if (_gridQuad == null || _materialInstance == null)
+            // 메시 타입이 변경되면 재생성
+            if (_gridMesh != null && _currentMeshType != _meshType)
+            {
+                CleanupGridMesh();
+                CreateGridMesh();
+                SetupMaterial();
+            }
+            
+            if (_gridMesh == null || _materialInstance == null)
             {
                 return;
             }
             
             UpdateGridTransform();
             ApplyMaterialProperties();
-            _baseIntensity = _intensity;
         }
         
         #endregion
 
         #region Grid Setup
         
-        private void CreateGridQuad()
+        private void CreateGridMesh()
         {
-            if (_gridQuad != null) return;
+            if (_gridMesh != null) return;
             
-            _gridQuad = GameObject.CreatePrimitive(PrimitiveType.Quad);
-            _gridQuad.name = $"{gameObject.name}_GridVisual";
-            _gridQuad.transform.SetParent(transform);
+            // 선택된 메시 타입으로 생성
+            PrimitiveType primitiveType = _meshType == MeshType.Cube 
+                ? PrimitiveType.Cube 
+                : PrimitiveType.Quad;
             
-            // DontSave만 설정 (NotEditable 제거 - 편집 가능하게)
-            _gridQuad.hideFlags = HideFlags.DontSave;
+            _gridMesh = GameObject.CreatePrimitive(primitiveType);
+            _gridMesh.name = $"{gameObject.name}_GridVisual";
+            _gridMesh.transform.SetParent(transform);
             
-            // 명시적으로 활성화
-            _gridQuad.SetActive(true);
+            _gridMesh.hideFlags = HideFlags.DontSave;
+            _gridMesh.SetActive(true);
             
-            // Quad의 Collider 제거
-            Collider quadCollider = _gridQuad.GetComponent<Collider>();
-            if (quadCollider != null)
+            // 메시의 Collider 제거 (시각 전용)
+            Collider meshCollider = _gridMesh.GetComponent<Collider>();
+            if (meshCollider != null)
             {
                 if (Application.isPlaying)
                 {
-                    Destroy(quadCollider);
+                    Destroy(meshCollider);
                 }
                 else
                 {
-                    DestroyImmediate(quadCollider);
+                    DestroyImmediate(meshCollider);
                 }
             }
             
-            _quadRenderer = _gridQuad.GetComponent<MeshRenderer>();
+            _meshRenderer = _gridMesh.GetComponent<MeshRenderer>();
+            _currentMeshType = _meshType;
         }
         
-        private void CleanupGridQuad()
+        private void CleanupGridMesh()
         {
             if (_materialInstance != null)
             {
@@ -198,25 +220,25 @@ namespace NeonHighCity.Environment
                 _materialInstance = null;
             }
             
-            if (_gridQuad != null)
+            if (_gridMesh != null)
             {
                 if (Application.isPlaying)
                 {
-                    Destroy(_gridQuad);
+                    Destroy(_gridMesh);
                 }
                 else
                 {
-                    DestroyImmediate(_gridQuad);
+                    DestroyImmediate(_gridMesh);
                 }
-                _gridQuad = null;
+                _gridMesh = null;
             }
             
-            _quadRenderer = null;
+            _meshRenderer = null;
         }
         
         private void SetupMaterial()
         {
-            if (_quadRenderer == null) return;
+            if (_meshRenderer == null) return;
             
             if (_materialInstance != null)
             {
@@ -232,20 +254,15 @@ namespace NeonHighCity.Environment
             
             if (_gridMaterial == null)
             {
-                Shader gridShader = Shader.Find("Custom/NeonGridFlat");
-                
-                if (gridShader != null)
-                {
-                    _materialInstance = new Material(gridShader);
-                }
-                else
-                {
-                    Debug.LogWarning($"[NoGoZone] {gameObject.name}: Grid Material이 할당되지 않았습니다.\n" +
-                                     "추천 경로: Assets/Materials/M_NeonGridFlat.mat", this);
+                string recommendedPath = _meshType == MeshType.Cube
+                    ? "Assets/Holograms/Materials/Examples/Basic/Grid_Hologram_Empty.mat"
+                    : "Assets/Materials/M_NeonGridFlat.mat";
                     
-                    _materialInstance = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
-                    _materialInstance.color = _gridColor;
-                }
+                Debug.LogWarning($"[NoGoZone] {gameObject.name}: Grid Material이 할당되지 않았습니다.\n" +
+                                 $"추천 경로: {recommendedPath}", this);
+                
+                _materialInstance = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+                _materialInstance.color = _hologramColor;
             }
             else
             {
@@ -253,12 +270,15 @@ namespace NeonHighCity.Environment
             }
             
             _materialInstance.hideFlags = HideFlags.DontSave;
-            _quadRenderer.sharedMaterial = _materialInstance;
+            _meshRenderer.sharedMaterial = _materialInstance;
         }
         
+        /// <summary>
+        /// 선택된 GridFace와 MeshType에 따라 메시의 위치/회전/크기를 설정.
+        /// </summary>
         private void UpdateGridTransform()
         {
-            if (_gridQuad == null || _boxCollider == null) return;
+            if (_gridMesh == null || _boxCollider == null) return;
             
             Vector3 center = _boxCollider.center;
             Vector3 size = _boxCollider.size;
@@ -267,27 +287,43 @@ namespace NeonHighCity.Environment
             Quaternion rotation;
             Vector3 scale;
             
+            // Cube일 때 두께 적용, Quad일 때 두께 = 0 (1로 설정해도 평면이라 무의미)
+            float thickness = _meshType == MeshType.Cube ? _cubeThickness : 1f;
+            
             switch (_gridFace)
             {
                 case GridFace.Top:
+                    // 수평면: X × Z 크기, Y 방향 두께
                     float topY = center.y + (size.y / 2f) + _faceOffset;
                     position = new Vector3(center.x, topY, center.z);
-                    rotation = Quaternion.Euler(90f, 0f, 0f);
-                    scale = new Vector3(size.x, size.z, 1f);
+                    rotation = _meshType == MeshType.Quad 
+                        ? Quaternion.Euler(90f, 0f, 0f) 
+                        : Quaternion.identity;
+                    scale = _meshType == MeshType.Cube
+                        ? new Vector3(size.x, thickness, size.z)
+                        : new Vector3(size.x, size.z, 1f);
                     break;
                     
                 case GridFace.WallFrontBack:
+                    // Z방향 벽: X × Y 크기, Z 방향 두께
                     float frontZ = center.z + (size.z / 2f) + _faceOffset;
                     position = new Vector3(center.x, center.y, frontZ);
                     rotation = Quaternion.identity;
-                    scale = new Vector3(size.x, size.y, 1f);
+                    scale = _meshType == MeshType.Cube
+                        ? new Vector3(size.x, size.y, thickness)
+                        : new Vector3(size.x, size.y, 1f);
                     break;
                     
                 case GridFace.WallLeftRight:
+                    // X방향 벽: Z × Y 크기, X 방향 두께
                     float sideX = center.x + (size.x / 2f) + _faceOffset;
                     position = new Vector3(sideX, center.y, center.z);
-                    rotation = Quaternion.Euler(0f, 90f, 0f);
-                    scale = new Vector3(size.z, size.y, 1f);
+                    rotation = _meshType == MeshType.Quad 
+                        ? Quaternion.Euler(0f, 90f, 0f) 
+                        : Quaternion.identity;
+                    scale = _meshType == MeshType.Cube
+                        ? new Vector3(thickness, size.y, size.z)
+                        : new Vector3(size.z, size.y, 1f);
                     break;
                     
                 default:
@@ -297,64 +333,64 @@ namespace NeonHighCity.Environment
                     break;
             }
             
-            _gridQuad.transform.localPosition = position;
-            _gridQuad.transform.localRotation = rotation;
-            _gridQuad.transform.localScale = scale;
+            _gridMesh.transform.localPosition = position;
+            _gridMesh.transform.localRotation = rotation;
+            _gridMesh.transform.localScale = scale;
         }
         
+        /// <summary>
+        /// Material 속성을 Inspector 값으로 업데이트.
+        /// 메시 타입에 따라 다른 Property 사용.
+        /// </summary>
         private void ApplyMaterialProperties()
         {
             if (_materialInstance == null) return;
             
+            // Holograms 에셋 Property (Cube용)
+            if (_materialInstance.HasProperty(HologramColorProperty))
+            {
+                _materialInstance.SetColor(HologramColorProperty, _hologramColor);
+            }
+            
+            if (_materialInstance.HasProperty(EmissionScaleProperty))
+            {
+                _materialInstance.SetFloat(EmissionScaleProperty, _emissionScale);
+            }
+            
+            if (_materialInstance.HasProperty(PatternDensityProperty))
+            {
+                _materialInstance.SetFloat(PatternDensityProperty, _patternDensity);
+            }
+            
+            if (_materialInstance.HasProperty(FresnelPowerProperty))
+            {
+                _materialInstance.SetFloat(FresnelPowerProperty, _fresnelPower);
+            }
+            
+            if (_materialInstance.HasProperty(PatternSpeedAProperty))
+            {
+                _materialInstance.SetFloat(PatternSpeedAProperty, _patternSpeedA);
+            }
+            
+            if (_materialInstance.HasProperty(PatternSpeedBProperty))
+            {
+                _materialInstance.SetFloat(PatternSpeedBProperty, _patternSpeedB);
+            }
+            
+            // NeonGridFlat Property (Quad용)
             if (_materialInstance.HasProperty(GridColorProperty))
             {
-                _materialInstance.SetColor(GridColorProperty, _gridColor);
+                _materialInstance.SetColor(GridColorProperty, _hologramColor);
             }
             
             if (_materialInstance.HasProperty(GridDensityProperty))
             {
-                _materialInstance.SetFloat(GridDensityProperty, _gridDensity);
-            }
-            
-            if (_materialInstance.HasProperty(LineThicknessProperty))
-            {
-                _materialInstance.SetFloat(LineThicknessProperty, _lineThickness);
+                _materialInstance.SetFloat(GridDensityProperty, _patternDensity / 25f); // 스케일 조정
             }
             
             if (_materialInstance.HasProperty(IntensityProperty))
             {
-                _materialInstance.SetFloat(IntensityProperty, _intensity);
-            }
-            
-            if (_materialInstance.HasProperty(ScrollSpeedXProperty))
-            {
-                _materialInstance.SetFloat(ScrollSpeedXProperty, _scrollSpeedX);
-            }
-            
-            if (_materialInstance.HasProperty(ScrollSpeedYProperty))
-            {
-                _materialInstance.SetFloat(ScrollSpeedYProperty, _scrollSpeedY);
-            }
-            
-            if (_materialInstance.HasProperty("_BaseColor"))
-            {
-                _materialInstance.SetColor("_BaseColor", _gridColor);
-            }
-        }
-        
-        #endregion
-
-        #region Animation
-        
-        private void UpdatePulseAnimation()
-        {
-            float pulse = Mathf.Sin(Time.time * _pulseSpeed) * 0.5f + 0.5f;
-            float minIntensity = _baseIntensity * _pulseMinRatio;
-            float currentIntensity = Mathf.Lerp(minIntensity, _baseIntensity, pulse);
-            
-            if (_materialInstance.HasProperty(IntensityProperty))
-            {
-                _materialInstance.SetFloat(IntensityProperty, currentIntensity);
+                _materialInstance.SetFloat(IntensityProperty, _emissionScale / 20f); // 스케일 조정
             }
         }
         
@@ -362,36 +398,29 @@ namespace NeonHighCity.Environment
 
         #region Public API
         
-        public void SetGridColor(Color newColor)
+        public void SetHologramColor(Color newColor)
         {
-            _gridColor = newColor;
+            _hologramColor = newColor;
             ApplyMaterialProperties();
         }
         
         public void SetGridVisible(bool isVisible)
         {
-            if (_gridQuad != null)
+            if (_gridMesh != null)
             {
-                _gridQuad.SetActive(isVisible);
+                _gridMesh.SetActive(isVisible);
             }
         }
         
-        public void SetGridDensity(float density)
+        public void SetEmissionScale(float scale)
         {
-            _gridDensity = Mathf.Clamp(density, 1f, 50f);
+            _emissionScale = Mathf.Clamp(scale, 1f, 50f);
             ApplyMaterialProperties();
         }
         
-        public void SetIntensity(float intensity)
+        public void SetPatternDensity(float density)
         {
-            _intensity = Mathf.Clamp(intensity, 0.1f, 5f);
-            _baseIntensity = _intensity;
-            ApplyMaterialProperties();
-        }
-        
-        public void SetLineThickness(float thickness)
-        {
-            _lineThickness = Mathf.Clamp(thickness, 0.01f, 0.2f);
+            _patternDensity = Mathf.Clamp(density, 50f, 500f);
             ApplyMaterialProperties();
         }
         
@@ -399,6 +428,19 @@ namespace NeonHighCity.Environment
         {
             _gridFace = face;
             UpdateGridTransform();
+        }
+        
+        public void SetMeshType(MeshType meshType)
+        {
+            if (_meshType != meshType)
+            {
+                _meshType = meshType;
+                CleanupGridMesh();
+                CreateGridMesh();
+                SetupMaterial();
+                UpdateGridTransform();
+                ApplyMaterialProperties();
+            }
         }
         
         #endregion
@@ -410,30 +452,31 @@ namespace NeonHighCity.Environment
             BoxCollider col = GetComponent<BoxCollider>();
             if (col == null) return;
             
-            Gizmos.color = new Color(_gridColor.r, _gridColor.g, _gridColor.b, 0.2f);
+            Gizmos.color = new Color(_hologramColor.r, _hologramColor.g, _hologramColor.b, 0.2f);
             Gizmos.matrix = transform.localToWorldMatrix;
             Gizmos.DrawWireCube(col.center, col.size);
             
-            Gizmos.color = new Color(_gridColor.r, _gridColor.g, _gridColor.b, 0.5f);
+            Gizmos.color = new Color(_hologramColor.r, _hologramColor.g, _hologramColor.b, 0.5f);
             Vector3 center = col.center;
             Vector3 size = col.size;
             
             Vector3 faceCenter;
             Vector3 faceSize;
+            float thickness = _meshType == MeshType.Cube ? _cubeThickness : 0.01f;
             
             switch (_gridFace)
             {
                 case GridFace.Top:
                     faceCenter = center + Vector3.up * (size.y / 2f);
-                    faceSize = new Vector3(size.x, 0.01f, size.z);
+                    faceSize = new Vector3(size.x, thickness, size.z);
                     break;
                 case GridFace.WallFrontBack:
                     faceCenter = center + Vector3.forward * (size.z / 2f);
-                    faceSize = new Vector3(size.x, size.y, 0.01f);
+                    faceSize = new Vector3(size.x, size.y, thickness);
                     break;
                 case GridFace.WallLeftRight:
                     faceCenter = center + Vector3.right * (size.x / 2f);
-                    faceSize = new Vector3(0.01f, size.y, size.z);
+                    faceSize = new Vector3(thickness, size.y, size.z);
                     break;
                 default:
                     faceCenter = center;
