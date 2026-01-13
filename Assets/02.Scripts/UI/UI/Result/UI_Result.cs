@@ -18,6 +18,7 @@ public class UI_Result : MonoBehaviour
         _timeResult.OnComplete += HandleTimeComplete;
         _scoreResult.OnComplete += HandleScoreComplete;
         _killResult.OnComplete += HandleKillComplete;
+        gameObject.SetActive(false);
     }
 
     private void OnDestroy()

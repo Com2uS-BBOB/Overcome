@@ -1,4 +1,3 @@
-using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -14,8 +13,12 @@ public class UI_RankInfo : MonoBehaviour
     [SerializeField] private float _punchScale = 0.15f;
     [SerializeField] private float _punchDuration = 0.2f;
     [SerializeField] private Ease _punchEase = Ease.InQuad;
+
+    [Header("Star Animation")]
+    [SerializeField] private float _starDelay = 0.2f;
     
     private Sequence _stampSequence;
+    private Sequence _starSequence;
 
     private void OnEnable()
     {
@@ -24,20 +27,16 @@ public class UI_RankInfo : MonoBehaviour
 
     private void OnDisable()
     {
-        Reset();
+        ResetUI();
     }
 
-    public void Show()
+    private void Show()
     {
         RankConfig config = ScoreSystem.Instance.GetRanking();
-        PlayStampAnimation(config.Grade);
-        for (var i = 0; i < config.RewardStars; ++i)
-        {
-            _starItems[i].ActiveStar();
-        }
+        PlayStampAnimation(config.Grade, config.RewardStars);
     }
 
-    private void PlayStampAnimation(string grade)
+    private void PlayStampAnimation(string grade, int starCount)
     {
         _stampSequence?.Kill();
 
@@ -50,16 +49,32 @@ public class UI_RankInfo : MonoBehaviour
             .SetEase(Ease.InQuad));
         _stampSequence.Append(_gradeText.transform
             .DOPunchScale(Vector3.one * _punchScale, _punchDuration, 1, 0f));
+        _stampSequence.OnComplete(() => PlayStarAnimation(starCount));
     }
 
-    private void Reset()
+    private void PlayStarAnimation(int starCount)
+    {
+        _starSequence?.Kill();
+        _starSequence = DOTween.Sequence();
+
+        int activeStarCount = Mathf.Min(starCount, _starItems.Length); 
+        for (var i = 0; i < activeStarCount; i++)
+        {
+            int index = i;
+            _starSequence.AppendCallback(() => _starItems[index].ActiveStar());
+            _starSequence.AppendInterval(_starDelay);
+        }
+    }
+
+    private void ResetUI()
     {
         _stampSequence?.Kill();
+        _starSequence?.Kill();
         _gradeText.transform.localScale = Vector3.one;
 
         foreach (StarItem item in _starItems)
         {
-            item.DeactiveColor();
+            item.ResetStar();
         }
     }
 }

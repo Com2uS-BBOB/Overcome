@@ -13,16 +13,20 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     public event Action<int, int> OnScoreChanged;
     public event Action BreakHighScore;
     
-    // Test Code
+    [Header("Test Settings")]
+    [SerializeField] private bool _isTest = false;
     [SerializeField] private int _testHighScore;
-    [SerializeField] private int _rankingTestScore;
-
+    [SerializeField] private int _testScore;
+    
     public int CurrentScore => _currentScore;
     public int HighScore => _highScore;
     
     protected override void Init()
     {
-        _highScore = _testHighScore;
+        if (_isTest)
+        {
+            _highScore = _testHighScore;
+        }
     }
     
     private void OnEnable()
@@ -71,6 +75,13 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     
     public RankConfig GetRanking()
     {
-        return _rankingData.GetRank(_currentScore);
+        if (_isTest)
+        {
+            return _rankingData.GetRank(_testScore);
+        }
+        else
+        {
+            return _rankingData.GetRank(_currentScore);
+        }
     }
 }
