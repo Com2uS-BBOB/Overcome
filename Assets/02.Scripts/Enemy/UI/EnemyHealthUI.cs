@@ -18,7 +18,7 @@ public class EnemyHealthUI : MonoBehaviour
     [Header("펄스 옵션 (엘리트)")]
     [SerializeField] private bool _pulseOnlyElite = true;
     [SerializeField] private float _pulseSpeed = 6f;
-    [SerializeField] private float _pulseAmount = 0.25f; // 색 밝기 변화량
+    [SerializeField] private float _pulseAmount = 0.7f; // 색 밝기 변화량
 
     private float _pulseRangeScaling = 0.5f;
 
