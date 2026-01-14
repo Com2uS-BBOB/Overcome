@@ -40,8 +40,7 @@ namespace _02.Scripts.Player.Common
             if (_hitTargets.Contains(other)) return;
             if (ShouldIgnore(other)) return;
 
-            var damageable = other.GetComponent<IDamageable>()
-                          ?? other.GetComponentInParent<IDamageable>();
+            var damageable = other.GetComponent<IDamageable>();
 
             if (damageable != null)
             {
