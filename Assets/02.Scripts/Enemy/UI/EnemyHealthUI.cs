@@ -47,18 +47,48 @@ public class EnemyHealthUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_enemy != null)
-        {
-            _enemy.OnHpChanged += OnHealthChanged;
-        }
+        if (_enemy == null) return;
+
+        _enemy.OnHpChanged += OnHealthChanged;
+
+        if (_enemy.EnemyStatData == null) return;
+
+        ForceRefresh();
     }
 
     private void OnDisable()
     {
-        if (_enemy != null)
-        {
-            _enemy.OnHpChanged -= OnHealthChanged;
-        }
+        if (_enemy == null) return;
+
+        _enemy.OnHpChanged -= OnHealthChanged;
+
+        Cleanup_Coroutines();
+    }
+    private void ForceRefresh()
+    {
+        Cleanup_Coroutines();
+
+        if (_enemy.EnemyStatData == null) return;
+
+        float max = _enemy.MaxHp;
+        float current = _enemy.CurrentHp;
+
+        float ratio = max <= 0f ? 0f : current / max;
+
+        if (_healthFill != null) _healthFill.fillAmount = ratio;
+        if (_healthDelay != null) _healthDelay.fillAmount = ratio;
+
+        _isLowHp = false;
+        StopPulse();
+        UpdateBorderColor(ratio);
+    }
+
+    private void Cleanup_Coroutines()
+    {
+        if (_fillCoroutine != null) { StopCoroutine(_fillCoroutine); _fillCoroutine = null; }
+        if (_delayCoroutine != null) { StopCoroutine(_delayCoroutine); _delayCoroutine = null; }
+        if (_borderLerpCoroutine != null) { StopCoroutine(_borderLerpCoroutine); _borderLerpCoroutine = null; }
+        StopPulse(); // 내부에서 _borderPulseCoroutine 정리
     }
 
     private void OnHealthChanged(float currentHp, float maxHp)
