@@ -29,9 +29,9 @@ public class UI_Minimap : MonoBehaviour
     [SerializeField] private Color _inRangeColor = Color.red;
     [SerializeField] private Color _outOfRangeColor = new Color(1f, 0.5f, 0f);
 
-    private readonly Dictionary<Transform, EnemyIcon> _enemyIcons = new Dictionary<Transform, EnemyIcon>();
+    private readonly Dictionary<Transform, EnemyMinimapIcon> _enemyIcons = new Dictionary<Transform, EnemyMinimapIcon>();
     private readonly List<Transform> _enemiesToRemove = new List<Transform>();
-    private readonly Stack<EnemyIcon> _iconPool = new Stack<EnemyIcon>();
+    private readonly Stack<EnemyMinimapIcon> _iconPool = new Stack<EnemyMinimapIcon>();
     private float _lastUpdateTime;
     private float _minimapRadius;
     private float _scale;
@@ -80,36 +80,36 @@ public class UI_Minimap : MonoBehaviour
     {
         for (var i = 0; i < _initialPoolSize; i++)
         {
-            EnemyIcon icon = CreateIcon();
-            icon.gameObject.SetActive(false);
-            _iconPool.Push(icon);
+            EnemyMinimapIcon minimapIcon = CreateIcon();
+            minimapIcon.gameObject.SetActive(false);
+            _iconPool.Push(minimapIcon);
         }
     }
 
-    private EnemyIcon CreateIcon()
+    private EnemyMinimapIcon CreateIcon()
     {
         GameObject iconObj = Instantiate(_enemyIconPrefab, _enemyIconFolder.transform);
-        EnemyIcon icon = iconObj.GetComponent<EnemyIcon>();
-        icon.Initialize(_inRangeColor, _outOfRangeColor, _minimapRadius);
-        return icon;
+        EnemyMinimapIcon minimapIcon = iconObj.GetComponent<EnemyMinimapIcon>();
+        minimapIcon.Initialize(_inRangeColor, _outOfRangeColor, _minimapRadius);
+        return minimapIcon;
     }
 
-    private EnemyIcon GetIcon()
+    private EnemyMinimapIcon GetIcon()
     {
         if (_iconPool.Count > 0)
         {
-            EnemyIcon icon = _iconPool.Pop();
-            icon.gameObject.SetActive(true);
-            return icon;
+            EnemyMinimapIcon minimapIcon = _iconPool.Pop();
+            minimapIcon.gameObject.SetActive(true);
+            return minimapIcon;
         }
 
         return CreateIcon();
     }
 
-    private void ReleaseIcon(EnemyIcon icon)
+    private void ReleaseIcon(EnemyMinimapIcon minimapIcon)
     {
-        icon.gameObject.SetActive(false);
-        _iconPool.Push(icon);
+        minimapIcon.gameObject.SetActive(false);
+        _iconPool.Push(minimapIcon);
     }
     #endregion
     
@@ -118,8 +118,8 @@ public class UI_Minimap : MonoBehaviour
         Transform enemyTransform = enemy.Enemy.transform;
         if (_enemyIcons.ContainsKey(enemyTransform)) return;
 
-        EnemyIcon icon = GetIcon();
-        _enemyIcons[enemyTransform] = icon;
+        EnemyMinimapIcon minimapIcon = GetIcon();
+        _enemyIcons[enemyTransform] = minimapIcon;
     }
 
     private void UnregisterEnemy(EnemyKilledEvent enemy)
@@ -130,7 +130,7 @@ public class UI_Minimap : MonoBehaviour
 
     private void RemoveEnemy(Transform enemy)
     {
-        if (!_enemyIcons.TryGetValue(enemy, out EnemyIcon icon)) return;
+        if (!_enemyIcons.TryGetValue(enemy, out EnemyMinimapIcon icon)) return;
 
         ReleaseIcon(icon);
         _enemyIcons.Remove(enemy);
@@ -152,7 +152,7 @@ public class UI_Minimap : MonoBehaviour
 
     private void UpdateEnemyIcons()
     {
-        foreach ((Transform enemy, EnemyIcon icon) in _enemyIcons)
+        foreach ((Transform enemy, EnemyMinimapIcon icon) in _enemyIcons)
         {
             if (enemy == null)
             {

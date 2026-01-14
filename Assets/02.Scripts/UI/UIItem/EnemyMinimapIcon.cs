@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyIcon : MonoBehaviour
+public class EnemyMinimapIcon : MonoBehaviour
 {
     [Header("Icon Elements")]
     [SerializeField] private Image _normalIcon;

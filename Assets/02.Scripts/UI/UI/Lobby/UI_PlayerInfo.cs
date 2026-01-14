@@ -25,8 +25,9 @@ public class UI_PlayerInfo : MonoBehaviour
     
     private void UpdateStarInfoUI()
     {
-        int playerStarCount = PlayerDataManager.Instance.GetPlayerStarCount();
-        // todo. TotalStarCount 변경(Stage 개수 * 3개로 변경)
-        _playerStarText.text = $"{playerStarCount} / {_totalStarCount}";
+        StageManager stageManager = StageManager.Instance;
+        int playerStarCount = stageManager.GetPlayerStarCount();
+        int totalStarCount = stageManager.GetTotalStars();
+        _playerStarText.text = $"{playerStarCount} / {totalStarCount}";
     }
 }

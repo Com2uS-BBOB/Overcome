@@ -32,6 +32,11 @@ public class StageManager : SingletonBehaviour<StageManager>
     {
         return _gradeData?.GetGrade(stageId, score);
     }
+
+    public StageGradeConfig GetStageGradeConfig(string stageId)
+    {
+        return _gradeData?.GetStageGradeConfig(stageId);
+    }
     #endregion
 
     #region Stage Completion
@@ -98,10 +103,9 @@ public class StageManager : SingletonBehaviour<StageManager>
         return prevProgress != null && prevProgress.IsCleared;
     }
 
-    public int GetTotalStars()
-    {
-        return PlayerDataManager.Instance.GetPlayerStarCount();
-    }
+    public int GetPlayerStarCount() => PlayerDataManager.Instance.GetPlayerStarCount();
+
+    public int GetTotalStars() => StageCount * _gradeData.GetStageCount();
     #endregion
 
 #if UNITY_EDITOR

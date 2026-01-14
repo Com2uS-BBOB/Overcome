@@ -36,6 +36,10 @@ public class GradeData : ScriptableObject
         return stageConfig.Grades.Length > 0 ? stageConfig.Grades[^1] : null;
     }
 
+    public StageGradeConfig GetStageGradeConfig(string stageId) => Array.Find(_stageConfigs, config => config.StageId == stageId);
+    
+    public int GetStageCount() => _stageConfigs?.Length ?? 0;
+    
     private void OnValidate()
     {
         if (_stageConfigs == null) return;

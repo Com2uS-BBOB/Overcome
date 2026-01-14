@@ -11,5 +11,6 @@ public class UI_MainMission : MonoBehaviour
     {
         _lobbyCanvas.alpha = 0f;
         _stageSelectCanvas.DOFade(1f, _changeDuration);
+        _stageSelectCanvas.blocksRaycasts = true;
     }
 }
