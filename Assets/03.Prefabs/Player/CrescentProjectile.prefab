@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -8.91, y: 4.54, z: 3.6191}
-  m_LocalScale: {x: 4, y: 1, z: 2}
+  m_LocalScale: {x: 7, y: 1, z: 20}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 984646606890805797}
@@ -170,13 +170,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5308057303253745514}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.76}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.165, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1246397121212182299}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &3953740989969947066
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,11 +189,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3351d65a5e49c64d9002bba88ce89a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: GameUtils::Drakkar.GameUtils.DrakkarTrail
-  Length: 3
+  Length: 1
   Steps: 4
   StepTime: 1
   EndingSpeed: 4
-  Bounds: 5
+  Bounds: 0
   Interpolation: 0
   Edges: 0
   Edge1: 0.5
@@ -226,11 +226,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 6882116249847192008, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
       propertyPath: m_LocalScale.z
@@ -278,7 +278,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6882116249847192009, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
       propertyPath: InitialModule.startSize.scalar
-      value: 3
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6882116249847192009, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
       propertyPath: InitialModule.startColor.maxColor.b
@@ -296,6 +296,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Slash Projectile VFX Fire 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6882116249847192011, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6882116249880209706, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -303,6 +307,18 @@ PrefabInstance:
     - target: {fileID: 6882116250624017302, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116251151058299, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.b
+      value: 0.9811321
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116251151058299, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.g
+      value: 0.032395888
+      objectReference: {fileID: 0}
+    - target: {fileID: 6882116251151058299, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
+      propertyPath: InitialModule.startColor.maxColor.r
+      value: 0.52035296
       objectReference: {fileID: 0}
     - target: {fileID: 6882116251151058302, guid: 648d1b12120714af3aff586249dcd6da, type: 3}
       propertyPath: m_IsActive

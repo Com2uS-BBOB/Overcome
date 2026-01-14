@@ -13,7 +13,7 @@ namespace _02.Scripts.Player.Combat
     /// </summary>
     public class CrescentSkill : BaseSkill, IOverDriveAffected
     {
-        private const int PoolInitialSize = 5;
+        private const int PoolInitialSize = 10;
 
         [Header("Projectile")]
         [SerializeField] private CrescentProjectile _projectilePrefab;
