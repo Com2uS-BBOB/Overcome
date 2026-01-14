@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(Image))]
 [RequireComponent(typeof(RectTransform))]
-public class UI_RhombusButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler, ICanvasRaycastFilter
+public class RhombusButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerClickHandler, ICanvasRaycastFilter
 {
     private Image _image;
     private RectTransform _rectTransform;
