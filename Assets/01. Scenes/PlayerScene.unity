@@ -1238,7 +1238,7 @@ GameObject:
   - component: {fileID: 1089555357}
   - component: {fileID: 1089555359}
   - component: {fileID: 1089555358}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -1478,8 +1478,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcb8f97e7160941aea83e7d6c17c3bd4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.DashAttackSkill
-  _dashDuration: 0.2
-  _dashDamage: 15
+  _dashDuration: 0.3
+  _enemyLayerName: Enemy
+  _dashDamage: 20
   _cameraTransform: {fileID: 937650199}
   _hitbox: {fileID: 7904193}
 --- !u!114 &1089555356

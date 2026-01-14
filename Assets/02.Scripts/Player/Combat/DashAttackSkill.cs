@@ -14,6 +14,7 @@ namespace _02.Scripts.Player.Combat
 
         [Header("Settings")]
         [SerializeField] private float _dashDuration = 0.2f;
+        [SerializeField] private string _enemyLayerName = "Enemy";
 
         [Header("Damage")]
         [SerializeField] private float _dashDamage = 15f;
@@ -84,6 +85,14 @@ namespace _02.Scripts.Player.Combat
             // 히트박스 활성화
             _hitbox?.EnableHitDetection(_dashDamage);
 
+            // 적 레이어와 충돌 무시 (관통)
+            int playerLayer = gameObject.layer;
+            int enemyLayer = LayerMask.NameToLayer(_enemyLayerName);
+            bool layerCollisionEnabled = enemyLayer >= 0;
+
+            if (layerCollisionEnabled)
+                Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
+
             Vector3 dashDirection = _cameraTransform.forward;
             float dashSpeed = DashDistance / _dashDuration;
 
@@ -94,6 +103,10 @@ namespace _02.Scripts.Player.Combat
                 elapsed += Time.deltaTime;
                 yield return null;
             }
+
+            // 적 레이어 충돌 복원
+            if (layerCollisionEnabled)
+                Physics.IgnoreLayerCollision(playerLayer, enemyLayer, false);
 
             // 히트박스 비활성화
             _hitbox?.DisableHitDetection();
