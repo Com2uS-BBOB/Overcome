@@ -214,7 +214,6 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -460,7 +459,6 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -621,7 +619,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a648eb8ff5c56a47bfdb384375702f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreSystem
+  _gradeData: {fileID: 0}
+  _isTest: 0
   _testHighScore: 4000
+  _testScore: 0
 --- !u!1 &169186000
 GameObject:
   m_ObjectHideFlags: 0
@@ -666,7 +667,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48df590cf111e4443bd38d2c7771d27c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayTimeSystem
-  _uiSequencer: {fileID: 1300668384}
+  _uiSequencer: {fileID: 0}
   _difficultyConfigData: {fileID: 11400000, guid: bae2da0e7a83ffc47b7e18b34867a97f, type: 2}
   _currentDifficulty: 1
 --- !u!1 &174181920 stripped
@@ -1289,8 +1290,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1312,11 +1311,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &345094854
 MeshFilter:
@@ -1620,14 +1617,14 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 410087039}
   m_Enabled: 1
-  serializedVersion: 12
+  serializedVersion: 11
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 2
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
-  m_CookieSize2D: {x: 10, y: 10}
+  m_CookieSize: 10
   m_Shadows:
     m_Type: 2
     m_Resolution: -1
@@ -1704,23 +1701,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Version: 4
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
   m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
   m_LightCookieSize: {x: 1, y: 1}
   m_LightCookieOffset: {x: 0, y: 0}
   m_SoftShadowQuality: 1
-  m_RenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_ShadowRenderingLayersMask:
-    serializedVersion: 0
-    m_Bits: 1
-  m_Version: 4
-  m_LightLayerMask: 1
-  m_ShadowLayerMask: 1
-  m_RenderingLayers: 1
-  m_ShadowRenderingLayers: 1
 --- !u!1 &420867088 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 772447260026782033, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
@@ -1776,6 +1767,83 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ComboSystem
   _comboConfigData: {fileID: 11400000, guid: c4b6d92ee2ed3084eb1e52b894090fce, type: 2}
+--- !u!1 &479896561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 479896565}
+  - component: {fileID: 479896564}
+  - component: {fileID: 479896563}
+  - component: {fileID: 479896562}
+  m_Layer: 0
+  m_Name: TrailUpdater
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &479896562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 479896561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 628557688023fba4b8e58d004aaacf45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Drakkar::Drakkar.DrakkarUpdater
+  PreUpdateSlots: 100
+  NormalUpdateSlots: 1000
+  PostUpdateSlots: 100
+  PreLateUpdateSlots: 30
+  LateUpdateSlots: 400
+  PostLateUpdateSlots: 30
+  FixedUpdateSlots: 10
+--- !u!114 &479896563
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 479896561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0984cf082085f0e429bf56329c69c7ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Drakkar::Drakkar.DrakkarUpdaterPost
+--- !u!114 &479896564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 479896561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d088f73d4d2f7694493ea80d35f89b7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Drakkar::Drakkar.DrakkarUpdaterPre
+--- !u!4 &479896565
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 479896561}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.77135, y: 2.20739, z: 4.30085}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &504031205
 GameObject:
   m_ObjectHideFlags: 0
@@ -2509,7 +2577,6 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -2769,8 +2836,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2792,11 +2857,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &860766653
 MeshFilter:
@@ -2976,7 +3039,6 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -3227,6 +3289,22 @@ PrefabInstance:
     - target: {fileID: 134178239795507229, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.42556697
+      objectReference: {fileID: 0}
+    - target: {fileID: 134178239795507229, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.4724155
+      objectReference: {fileID: 0}
+    - target: {fileID: 134178239795507229, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.8134673
+      objectReference: {fileID: 0}
+    - target: {fileID: 134178239795507229, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.3378767
+      objectReference: {fileID: 0}
+    - target: {fileID: 134178239795507229, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.030557718
       objectReference: {fileID: 0}
     - target: {fileID: 188815996246225958, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_Name
@@ -3534,6 +3612,7 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
+  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -3541,7 +3620,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
-  m_Version: 2
 --- !u!81 &979317002
 AudioListener:
   m_ObjectHideFlags: 0
@@ -3976,7 +4054,6 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -4922,17 +4999,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 8099351287030110473, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
   m_PrefabInstance: {fileID: 1300668382}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1300668384 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
-  m_PrefabInstance: {fileID: 1300668382}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f4c1fcca8a2c114fa637da1c4786c71, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UISequencer
 --- !u!1 &1332302583
 GameObject:
   m_ObjectHideFlags: 0
@@ -4991,10 +5057,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0030aa212c73949b7a5d3eec10705853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.CrescentSkill
-  _skill1Duration: 1
-  _skill2Duration: 1
-  _comboWindowStart: 0.3
-  _comboGraceTime: 0.1
+  _skillDataSet: {fileID: 0}
   _projectilePrefab: {fileID: 5555896469636686190, guid: 90608efcaac7e4bf7bb4ffe905db7674, type: 3}
   _firePoint: {fileID: 357966760}
   _cameraTransform: {fileID: 979317004}
@@ -5044,6 +5107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Animation.PlayerAnimator
   _animator: {fileID: 965508635}
+  _rootMotionProxy: {fileID: 0}
 --- !u!114 &1332302589
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5069,13 +5133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0b21b9940874d6986e9f80223aae4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
-  _attack1Duration: 0.7
-  _attack2Duration: 0.7
-  _attack3Duration: 0.7
-  _comboWindowStart: 0.3
-  _comboGraceTime: 0.1
-  _hitboxStartTime: 0.15
-  _hitboxDuration: 0.3
+  _skillDataSet: {fileID: 0}
   _hitbox: {fileID: 1071607221}
 --- !u!114 &1332302591
 MonoBehaviour:
@@ -5094,6 +5152,8 @@ MonoBehaviour:
   _dashAttack: {fileID: 1332302587}
   _gaugeManager: {fileID: 1332302584}
   _playerAnimatorController: {fileID: 1332302588}
+  _combatStateHandler: {fileID: 0}
+  _inputBuffer: {fileID: 0}
 --- !u!114 &1332302592
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5197,8 +5257,6 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_ForceMeshLod: -1
-  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -5220,11 +5278,9 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!33 &1332302597
 MeshFilter:
@@ -5641,7 +5697,6 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -6058,7 +6113,6 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -6816,7 +6870,6 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
-  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -7492,3 +7545,4 @@ SceneRoots:
   - {fileID: 1770095869}
   - {fileID: 2110923805}
   - {fileID: 214337549}
+  - {fileID: 479896565}
