@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class EnemyAnimatorController : MonoBehaviour
 {
@@ -54,6 +55,10 @@ public class EnemyAnimatorController : MonoBehaviour
     private int _fallingHash;
     private int _onGroundHash;
 
+    // ---- reset lists ----
+    private readonly List<int> _resetTriggerHashes = new();
+    private readonly List<int> _resetBoolHashes = new();
+
     // ---- state ----
     private bool _isDead;
     private EEnemyCombatAnim _currentCombat = EEnemyCombatAnim.None;
@@ -76,6 +81,33 @@ public class EnemyAnimatorController : MonoBehaviour
 
         _fallingHash = Animator.StringToHash(_fallingTriggerName);
         _onGroundHash = Animator.StringToHash(_onGroundTriggerName);
+
+        BuildResetLists();
+    }
+
+    private void BuildResetLists()
+    {
+        _resetTriggerHashes.Clear();
+        _resetBoolHashes.Clear();
+
+        // Bools
+        _resetBoolHashes.Add(_moveHash);
+        _resetBoolHashes.Add(_ripHash);
+
+        // Combat Triggers
+        if (_supportsHowl) _resetTriggerHashes.Add(_howlHash);
+        if (_supportsRush) _resetTriggerHashes.Add(_rushHash);
+        if (_supportsAttack) _resetTriggerHashes.Add(_attackHash);
+
+        // Hit Trigger
+        if (_supportsHit) _resetTriggerHashes.Add(_hitHash);
+
+        // Death Trigger
+        _resetTriggerHashes.Add(_deathHash);
+
+        // Flying Death Triggers
+        _resetTriggerHashes.Add(_fallingHash);
+        _resetTriggerHashes.Add(_onGroundHash);
     }
 
     private void Update()
@@ -86,7 +118,7 @@ public class EnemyAnimatorController : MonoBehaviour
         }
     }
 
-    // 외부 호출용
+    // ---- 외부 호출용 ----
     // 스폰/리스폰/풀에서 꺼낼 때 호출 추천
 
     // Death Mode 설정
@@ -213,7 +245,8 @@ public class EnemyAnimatorController : MonoBehaviour
     }
 
 
-    // 내부 호출용
+    // ---- 내부 호출용 ----
+
     private bool CanEnterCombat(EEnemyCombatAnim next)
     {
         if (_isDead || _animator == null) return false;
@@ -253,24 +286,17 @@ public class EnemyAnimatorController : MonoBehaviour
     {
         if (_animator == null) return;
 
-        // Combat
-        if (_supportsHowl) _animator.ResetTrigger(_howlHash);
-        if (_supportsRush) _animator.ResetTrigger(_rushHash);
-        if (_supportsAttack) _animator.ResetTrigger(_attackHash);
+        // Triggers
+        for (int i = 0; i < _resetTriggerHashes.Count; i++)
+        {
+            _animator.ResetTrigger(_resetTriggerHashes[i]);
+        }
 
-        // Hit / Death
-        if (_supportsHit) _animator.ResetTrigger(_hitHash);
-        _animator.ResetTrigger(_deathHash);
-
-        // 공중 적 Death
-        _animator.ResetTrigger(_fallingHash);
-        _animator.ResetTrigger(_onGroundHash);
-
-        // Move
-        _animator.SetBool(_moveHash, false);
-
-        // Rip
-        _animator.SetBool(_ripHash, false);
+        // Bools
+        for (int i = 0; i < _resetBoolHashes.Count; i++)
+        {
+            _animator.SetBool(_resetBoolHashes[i], false);
+        }
 
         _currentCombat = EEnemyCombatAnim.None;
         _combatLockTimer = 0f;

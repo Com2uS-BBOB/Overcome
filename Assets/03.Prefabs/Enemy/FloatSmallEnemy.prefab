@@ -405,9 +405,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlyingEnemyDeathFall
   _enemy: {fileID: 628111756843832478}
   _anim: {fileID: 5567059196591585720}
+  _groundMask:
+    serializedVersion: 2
+    m_Bits: 64
   _rayOriginUp: 0.2
   _groundCheckDistance: 0.8
-  _selfColliders: []
   _initialFallSpeed: 0
   _gravity: 2
   _maxFallSpeed: 5
@@ -430,9 +432,6 @@ MonoBehaviour:
   _supportsRush: 1
   _supportsAttack: 1
   _supportsHit: 1
-  _deathMode: 0
-  _fallingTriggerName: Falling
-  _onGroundTriggerName: OnGround
   _exclusiveCombat: 1
   _useCombatLock: 1
   _blockAttackRushWhileHowling: 1
@@ -440,12 +439,16 @@ MonoBehaviour:
   _rushLockSeconds: 0.15
   _attackLockSeconds: 0.15
   _hitInterruptsCombat: 1
+  _deathMode: 0
   _moveBoolName: Move
   _howlTriggerName: Howl
   _rushTriggerName: Rush
   _attackTriggerName: Attack
   _hitTriggerName: Hit
   _deathTriggerName: Death
+  _ripBoolName: Rip
+  _fallingTriggerName: Falling
+  _onGroundTriggerName: OnGround
 --- !u!1 &1072199189979285922
 GameObject:
   m_ObjectHideFlags: 0
