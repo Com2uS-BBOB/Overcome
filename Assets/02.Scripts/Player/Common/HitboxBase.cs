@@ -9,7 +9,7 @@ namespace _02.Scripts.Player.Common
     [RequireComponent(typeof(Collider))]
     public abstract class HitboxBase : MonoBehaviour, IHitDetector
     {
-        protected HashSet<Collider> _hitTargets = new();
+        protected HashSet<IDamageable> _hitTargets = new();
         protected float _damage;
         protected bool _isActive;
 
@@ -37,18 +37,17 @@ namespace _02.Scripts.Player.Common
 
         protected virtual void ProcessHit(Collider other)
         {
-            if (_hitTargets.Contains(other)) return;
             if (ShouldIgnore(other)) return;
 
             var damageable = other.GetComponent<IDamageable>();
 
-            if (damageable != null)
-            {
-                _hitTargets.Add(other);
-                damageable.TakeDamage(_damage, GetOwner());
-                OnHit?.Invoke(damageable, _damage);
-                OnHitSuccess(other, damageable);
-            }
+            if (damageable == null) return;
+            if (_hitTargets.Contains(damageable)) return;  // IDamageable 기준 중복 체크
+
+            _hitTargets.Add(damageable);
+            damageable.TakeDamage(_damage, GetOwner());
+            OnHit?.Invoke(damageable, _damage);
+            OnHitSuccess(other, damageable);
         }
 
         // 무시 대상 체크
