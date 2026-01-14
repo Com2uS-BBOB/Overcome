@@ -33,6 +33,9 @@ namespace _02.Scripts.Player.Movement
         private int _jumpCount;             // 현재 점프 횟수
         private const int MaxJumpCount = 2; // 최대 점프 횟수 (2단 점프)
 
+        // 중력 스케일 (공중 부유감 제어)
+        private float _gravityScale = 1f;
+
         private float MoveSpeed => _stats != null ? _stats.MoveSpeed : 8f;
         private float JumpForce => _stats != null ? _stats.JumpForce : 10f;
 
@@ -78,6 +81,46 @@ namespace _02.Scripts.Player.Movement
 
             if (forward.sqrMagnitude > 0.01f)
                 transform.rotation = Quaternion.LookRotation(forward);
+        }
+
+        /// <summary>
+        /// 카메라 방향으로 부드럽게 회전 (공격 중 지속 호출)
+        /// </summary>
+        public void SmoothRotateToCamera()
+        {
+            if (_cameraTransform == null) return;
+
+            Vector3 forward = _cameraTransform.forward;
+            forward.y = 0f;
+            forward.Normalize();
+
+            if (forward.sqrMagnitude > 0.01f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(forward);
+                transform.rotation = Quaternion.Slerp(
+                    transform.rotation,
+                    targetRotation,
+                    _rotationSpeed * Time.deltaTime
+                );
+            }
+        }
+
+        /// <summary>
+        /// 회전 없이 위치만 이동 (공격 중 슬라이딩)
+        /// </summary>
+        /// <param name="input">이동 입력</param>
+        /// <param name="speedMultiplier">속도 배율 (기본 0.5 = 50%)</param>
+        public void MoveWithoutRotation(Vector2 input, float speedMultiplier = 0.5f)
+        {
+            if (input.sqrMagnitude < 0.01f)
+            {
+                _horizontalMove = Vector3.zero;
+                return;
+            }
+
+            Vector3 moveDirection = GetWorldMoveDirection(input);
+            _horizontalMove = moveDirection * MoveSpeed * speedMultiplier;
+            // 회전은 하지 않음
         }
 
         // 카메라 기준 이동 (수평 이동 저장, ApplyMovement에서 적용)
@@ -225,8 +268,30 @@ namespace _02.Scripts.Player.Movement
         private void ApplyGravity()
         {
             if (!_isGrounded)
-                _velocity.y += _gravity * Time.deltaTime;
+                _velocity.y += _gravity * _gravityScale * Time.deltaTime;
         }
+
+        #region Gravity Scale (공중 부유감)
+
+        /// <summary>
+        /// 중력 스케일 설정 (1.0 = 기본, 0.3 = 부유감)
+        /// </summary>
+        public void SetGravityScale(float scale) => _gravityScale = scale;
+
+        /// <summary>
+        /// 중력 스케일 기본값으로 리셋
+        /// </summary>
+        public void ResetGravityScale() => _gravityScale = 1f;
+
+        /// <summary>
+        /// 수직 속도 추가 (체공 연장용)
+        /// </summary>
+        public void AddVerticalVelocity(float amount)
+        {
+            _velocity.y = Mathf.Max(_velocity.y, 0f) + amount;
+        }
+
+        #endregion
 
         /// <summary>
         /// 수평 이동 + 수직 속도를 합쳐서 한번에 적용

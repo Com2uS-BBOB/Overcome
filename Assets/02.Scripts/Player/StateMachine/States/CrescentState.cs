@@ -1,33 +1,38 @@
+using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Core;
 
 namespace _02.Scripts.Player.StateMachine.States
 {
-    public class CrescentState : PlayerStateBase
+    /// <summary>
+    /// 지상 크레센트 스킬 상태
+    /// SkillData에서 UseRootMotion, MoveSpeedMultiplier 등을 동적으로 참조
+    /// </summary>
+    public class CrescentState : CombatStateBase
     {
+        protected override bool IsAirCombat => false;
+        protected override BaseSkill GetSkill() => Crescent;
+
+        protected override bool IsSkillActive => Crescent.IsUsing;
+        protected override bool IsInComboGrace => Crescent.IsInComboGrace;
+        protected override void ResetCombo() => Crescent.ResetCombo();
+
         public CrescentState(PlayerController controller, PlayerStateMachine stateMachine)
             : base(controller, stateMachine) { }
 
         public override void Enter()
         {
-            Movement.RotateToCamera();
+            base.Enter();
 
             if (Crescent != null)
-            {
-                Crescent.OnCrescentEnded += OnCrescentEnded;
-            }
+                Crescent.OnCrescentEnded += OnSkillEnded;
         }
 
         public override void Exit()
         {
-            if (Crescent != null) Crescent.OnCrescentEnded -= OnCrescentEnded;
-        }
+            base.Exit();
 
-        private void OnCrescentEnded() => ReturnToPreviousState();
-
-        private void ReturnToPreviousState()
-        {
-            if (HasMoveInput()) StateMachine.ChangeState<MoveState>();
-            else StateMachine.ChangeState<IdleState>();
+            if (Crescent != null)
+                Crescent.OnCrescentEnded -= OnSkillEnded;
         }
     }
 }
