@@ -4,8 +4,8 @@ using UnityEngine;
 public class StageProgress
 {
     public int StageID;
+    
     public bool IsCleared;
-
     public int StarsEarned;
 
     public int BestScore;

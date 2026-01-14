@@ -1,4 +1,5 @@
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
@@ -35,7 +36,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     private string GenerateTempPlayerID()
     {
-        return $"Player_{DateTime.Now:yyyyMMdd_HHmmss}";
+        return $"Player_{System.DateTime.Now:yyyyMMdd_HHmmss}";
     }
 
     private void OnApplicationQuit()
@@ -55,7 +56,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
     private void LoadData()
     {
         _saveData = JsonSaveService.Load<GameSaveData>(SaveKey);
-        _saveData.Players ??= Array.Empty<PlayerData>();
+        _saveData.Players ??= new List<PlayerData>();
 
         _currentPlayer = FindPlayer(_saveData.CurrentPlayerID);
     }
@@ -64,13 +65,10 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
     {
         if (_currentPlayer == null) return;
 
-        for (int i = 0; i < _saveData.Players.Length; i++)
+        int index = _saveData.Players.FindIndex(p => p.PlayerID == _currentPlayer.PlayerID);
+        if (index >= 0)
         {
-            if (_saveData.Players[i].PlayerID == _currentPlayer.PlayerID)
-            {
-                _saveData.Players[i] = _currentPlayer;
-                return;
-            }
+            _saveData.Players[index] = _currentPlayer;
         }
     }
 
@@ -78,7 +76,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     #region Player Management
 
-    public PlayerData[] GetAllPlayers() => _saveData.Players;
+    public List<PlayerData> GetAllPlayers() => _saveData.Players;
     public PlayerData GetCurrentPlayer() => _currentPlayer;
     public bool HasPlayer(string playerId) => FindPlayer(playerId) != null;
 
@@ -90,14 +88,10 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
         {
             PlayerID = playerId,
             Settings = new PlayerSettings(),
-            StageProgress = Array.Empty<StageProgress>()
+            StageProgress = new List<StageProgress>()
         };
 
-        var newArray = new PlayerData[_saveData.Players.Length + 1];
-        _saveData.Players.CopyTo(newArray, 0);
-        newArray[^1] = newPlayer;
-        _saveData.Players = newArray;
-
+        _saveData.Players.Add(newPlayer);
         return true;
     }
 
@@ -115,22 +109,14 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     public bool DeletePlayer(string playerId)
     {
-        int index = FindPlayerIndex(playerId);
+        int index = _saveData.Players.FindIndex(p => p.PlayerID == playerId);
         if (index < 0) return false;
 
-        var newArray = new PlayerData[_saveData.Players.Length - 1];
-        for (int i = 0, j = 0; i < _saveData.Players.Length; i++)
-        {
-            if (i != index)
-            {
-                newArray[j++] = _saveData.Players[i];
-            }
-        }
-        _saveData.Players = newArray;
+        _saveData.Players.RemoveAt(index);
 
         if (_currentPlayer?.PlayerID == playerId)
         {
-            _currentPlayer = _saveData.Players.Length > 0 ? _saveData.Players[0] : null;
+            _currentPlayer = _saveData.Players.Count > 0 ? _saveData.Players[0] : null;
             _saveData.CurrentPlayerID = _currentPlayer?.PlayerID;
         }
 
@@ -140,28 +126,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
     private PlayerData FindPlayer(string playerId)
     {
         if (string.IsNullOrEmpty(playerId) || _saveData.Players == null) return null;
-
-        foreach (PlayerData player in _saveData.Players)
-        {
-            if (player.PlayerID == playerId)
-            {
-                return player;
-            }
-        }
-
-        return null;
-    }
-
-    private int FindPlayerIndex(string playerId)
-    {
-        if (_saveData.Players == null) return -1;
-
-        for (int i = 0; i < _saveData.Players.Length; i++)
-        {
-            if (_saveData.Players[i].PlayerID == playerId) return i;
-        }
-
-        return -1;
+        return _saveData.Players.Find(p => p.PlayerID == playerId);
     }
 
     #endregion
@@ -184,67 +149,43 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     #endregion
 
-    #region Stage Data (TODO: StageManager로 이동 예정)
+    #region Stage Data
+
+    public List<StageProgress> GetAllStageProgress()
+    {
+        return _currentPlayer?.StageProgress ?? new List<StageProgress>();
+    }
 
     public StageProgress GetStageProgress(int stageId)
     {
-        if (_currentPlayer?.StageProgress == null)
-        {
-            return null;
-        }
-
-        foreach (StageProgress progress in _currentPlayer.StageProgress)
-        {
-            if (progress.StageID == stageId)
-            {
-                return progress;
-            }
-        }
-
-        return null;
+        return _currentPlayer?.StageProgress?.Find(p => p.StageID == stageId);
     }
 
-    public void UpdateStageProgress(int stageId, bool isCleared, int starsEarned, int score)
+    public void SaveStageProgress(StageProgress progress)
     {
-        if (_currentPlayer == null) return;
-
-        _currentPlayer.StageProgress ??= Array.Empty<StageProgress>();
-
-        foreach (StageProgress stageProgress in _currentPlayer.StageProgress)
+        if (_currentPlayer == null)
         {
-            if (stageProgress.StageID != stageId)
-            {
-                UpdateExistingProgress(stageProgress, isCleared, starsEarned, score);
-                return;
-            }
+            Debug.LogError("[PlayerDataManager] SaveStageProgress: _currentPlayer is null");
+            return;
         }
 
-        AddNewStageProgress(stageId, isCleared, starsEarned, score);
-    }
+        _currentPlayer.StageProgress ??= new List<StageProgress>();
 
-    private void UpdateExistingProgress(StageProgress progress, bool isCleared, int starsEarned, int score)
-    {
-        progress.IsCleared |= isCleared;
-        progress.StarsEarned = Mathf.Max(progress.StarsEarned, starsEarned);
-        progress.BestScore = Mathf.Max(progress.BestScore, score);
-        progress.PlayCount++;
-    }
-
-    private void AddNewStageProgress(int stageId, bool isCleared, int starsEarned, int score)
-    {
-        var newProgress = new StageProgress
+        // 기존 데이터 찾기
+        int index = _currentPlayer.StageProgress.FindIndex(p => p.StageID == progress.StageID);
+        
+        if (index >= 0)
         {
-            StageID = stageId,
-            IsCleared = isCleared,
-            StarsEarned = starsEarned,
-            BestScore = score,
-            PlayCount = 1
-        };
+            // 업데이트
+            _currentPlayer.StageProgress[index] = progress;
+        }
+        else
+        {
+            // 새로 추가
+            _currentPlayer.StageProgress.Add(progress);
+        }
 
-        var newArray = new StageProgress[_currentPlayer.StageProgress.Length + 1];
-        _currentPlayer.StageProgress.CopyTo(newArray, 0);
-        newArray[^1] = newProgress;
-        _currentPlayer.StageProgress = newArray;
+        SaveData();
     }
 
     #endregion
@@ -263,8 +204,20 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
     private void TestLoad()
     {
         LoadData();
-        Debug.Log($"[PlayerDataManager] 로드 완료 - 플레이어 수: {_saveData.Players.Length}, 현재: {GetPlayerID()}");
+        Debug.Log($"[PlayerDataManager] 로드 완료 - 플레이어 수: {_saveData.Players.Count}, 현재: {GetPlayerID()}");
     }
+
+    [ContextMenu("Test/Print All Stage Progress")]
+    private void TestPrintAllProgress()
+    {
+        var allProgress = GetAllStageProgress();
+        Debug.Log($"=== 전체 스테이지 진행도 ({allProgress.Count}개) ===");
+        foreach (var progress in allProgress)
+        {
+            Debug.Log($"Stage {progress.StageID}: Stars={progress.StarsEarned}, Best={progress.BestScore}, Plays={progress.PlayCount}");
+        }
+    }
+
     #endregion
 #endif
 }

@@ -73,15 +73,8 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
         _highScore = _currentScore;
     }
     
-    public GradeConfig GetRanking()
+    public GradeConfig GetGradeConfig()
     {
-        if (_isTest)
-        {
-            return _gradeData.GetGrade(_testScore);
-        }
-        else
-        {
-            return _gradeData.GetGrade(_currentScore);
-        }
+        return StageManager.Instance.GetGradeConfig(_currentScore);
     }
 }

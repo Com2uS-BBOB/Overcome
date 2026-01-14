@@ -49,11 +49,11 @@ public class UI_Result : MonoBehaviour
     private void ShowResultUI()
     {
         _canvasGroup.alpha = 1;
-        ResetState();
         foreach (Transform child in _resultUiObjects)
         {
             child.gameObject.SetActive(true);
         }
+        ResetState();
     }
 
     private void ResetState()

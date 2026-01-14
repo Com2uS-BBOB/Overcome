@@ -1,5 +1,5 @@
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
 [System.Serializable]
 public class PlayerData
@@ -7,7 +7,7 @@ public class PlayerData
     public string PlayerID;
     public PlayerSettings Settings;
     // public CustomizationData customization;
-    public StageProgress[] StageProgress;
+    public List<StageProgress> StageProgress;
 
     public int TotalStarsEarned => StageProgress?.Sum(s => s.StarsEarned) ?? 0;
 }
