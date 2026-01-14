@@ -14,7 +14,10 @@ public class EnemyMovement : MonoBehaviour
     [Header("스피드 보간")]
     [SerializeField] private float _speedLerpSpeed = 6f;
 
+    private bool _movementLocked;
+
     private NavMeshAgent _agent;
+    private EnemyAnimatorController _anim;
 
     private float _currentSpeedMultiplier = 1f;
     private float _targetSpeedMultiplier = 1f;
@@ -25,6 +28,7 @@ public class EnemyMovement : MonoBehaviour
     {
         _agent = GetComponent<NavMeshAgent>();
         _enemy = GetComponent<EnemyBase>();
+        _anim = GetComponent<EnemyAnimatorController>();
 
         _agent.updateRotation = false;
         _agent.updateUpAxis = false;
@@ -38,14 +42,40 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
+        if (_movementLocked) return;
+
         UpdateSpeed();
         UpdateRotation();
+        _anim?.SetMove(IsMoving);
     }
 
     #region Movement
 
+    public void LockMovement(bool locked)
+    {
+        _movementLocked = locked;
+
+        if (_agent != null && _agent.enabled)
+        {
+            if (locked)
+            {
+                _agent.isStopped = true;
+                _agent.ResetPath();
+                _agent.velocity = Vector3.zero;
+            }
+            else
+            {
+                _agent.isStopped = false;
+            }
+        }
+
+        // 애니도 확실히 Move=false로 고정
+        _anim?.SetMove(false);
+    }
+
     public void MoveTo(Vector3 target)
     {
+        if (_movementLocked) return;
         if (!_agent.enabled) return;
 
         _agent.isStopped = false;
@@ -58,6 +88,9 @@ public class EnemyMovement : MonoBehaviour
 
         _agent.isStopped = true;
         _agent.ResetPath();
+        _agent.velocity = Vector3.zero;
+
+        _anim?.SetMove(false);
     }
 
     public bool IsArrived(float stopDistance)

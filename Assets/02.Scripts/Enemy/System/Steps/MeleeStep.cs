@@ -55,7 +55,7 @@ public class MeleeStep : IEnemyAttackStep
             _context.Enemy,
             _context.Player,
             _context.KnockbackHitbox,
-            _context.Animator,
+            _context.Anim,
             _context.Agent,
             _context.Damage,
             _knockbackDistance

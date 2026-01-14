@@ -190,6 +190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0030aa212c73949b7a5d3eec10705853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.CrescentSkill
+  _skillDataSet: {fileID: 0}
   _projectilePrefab: {fileID: 5555896469636686190, guid: 90608efcaac7e4bf7bb4ffe905db7674, type: 3}
   _firePoint: {fileID: 759827957}
   _cameraTransform: {fileID: 2040839884}
@@ -219,7 +220,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c0b21b9940874d6986e9f80223aae4c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.PlayerCombat
-  _attackDuration: 0.3
+  _skillDataSet: {fileID: 0}
   _hitbox: {fileID: 1155862747}
 --- !u!114 &547553579
 MonoBehaviour:
@@ -237,6 +238,9 @@ MonoBehaviour:
   _crescent: {fileID: 547553576}
   _dashAttack: {fileID: 547553575}
   _gaugeManager: {fileID: 0}
+  _playerAnimatorController: {fileID: 0}
+  _combatStateHandler: {fileID: 0}
+  _inputBuffer: {fileID: 0}
 --- !u!114 &547553580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -250,7 +254,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Movement.PlayerMovement
   _rotationSpeed: 10
-  _gravity: -30
+  _gravity: -50
+  _groundedGravity: -15
+  _groundCheckDistance: 0.3
+  _groundCheckRadius: 0.2
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _coyoteTime: 0.1
   _cameraTransform: {fileID: 2040839884}
 --- !u!114 &547553581
 MonoBehaviour:
@@ -557,7 +568,7 @@ GameObject:
   - component: {fileID: 677510116}
   - component: {fileID: 677510117}
   - component: {fileID: 677510118}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: NavMesh Surface
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -608,7 +619,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.4
+  m_VoxelSize: 0.53333336
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: e3e59a7365ecd2340a859d1e7a6c68ac, type: 2}
   m_BuildHeightMesh: 0
@@ -640,7 +651,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.4
+  m_VoxelSize: 0.4333333
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 55c571a23d0b808428ce12244eca42ac, type: 2}
   m_BuildHeightMesh: 0
@@ -672,7 +683,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.33333334
+  m_VoxelSize: 0.26666668
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: f263d5db33c75084baa5fa418485a0ee, type: 2}
   m_BuildHeightMesh: 0
@@ -785,7 +796,7 @@ GameObject:
   - component: {fileID: 1661236430}
   - component: {fileID: 1661236429}
   - component: {fileID: 1661236428}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1035,7 +1046,7 @@ GameObject:
   - component: {fileID: 2095604434}
   - component: {fileID: 2095604433}
   - component: {fileID: 2095604432}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Ground (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1150,7 +1161,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3925722291729619585, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7318016410296134547, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1158,11 +1169,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7318016410296134547, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7318016410296134547, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7318016410296134547, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1274,6 +1285,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 5034534909042179694, guid: e598a457e994e31418203720141d3c67, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6688767809611053625, guid: e598a457e994e31418203720141d3c67, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1324,7 +1339,11 @@ PrefabInstance:
       objectReference: {fileID: 642449878}
     - target: {fileID: 7750734187541774591, guid: e598a457e994e31418203720141d3c67, type: 3}
       propertyPath: _aroundCount
-      value: 3
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7750734187541774591, guid: e598a457e994e31418203720141d3c67, type: 3}
+      propertyPath: _respawnDelay
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
