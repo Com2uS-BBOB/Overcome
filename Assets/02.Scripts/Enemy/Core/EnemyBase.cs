@@ -184,6 +184,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         // 죽었다면 풀면 안 됨
         if (!IsDead)
+        {
             _movement.LockMovement(false);
+        }
     }
 }

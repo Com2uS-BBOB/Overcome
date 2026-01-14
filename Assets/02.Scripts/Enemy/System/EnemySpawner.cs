@@ -113,7 +113,11 @@ public class EnemySpawner : MonoBehaviour
     private IEnumerator RespawnEnemy_Coroutine(EnemyBase enemy)
     {
         Vector3 respawnPosition = enemy.GetSpawnBasePosition();
-        EEnemyType type = RandomEnemySelect();
+
+        EEnemyType type =
+       enemy.EnemyType == EEnemyType.Elite
+           ? EEnemyType.Elite
+           : RandomEnemySelect();
 
         yield return new WaitForSeconds(_respawnDelay);
 
