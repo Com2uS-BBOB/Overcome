@@ -26,6 +26,7 @@ namespace _02.Scripts.Player.Combat
             _startPosition = transform.position;
             _owner = owner;
             _returnToPool = returnCallback;
+            _spawnHitEffect = true;  // 플레이어 투사체는 히트 이펙트 스폰
 
             EnableHitDetection(damage);
 
@@ -63,12 +64,7 @@ namespace _02.Scripts.Player.Combat
                 Destroy(gameObject);
         }
 
-        /// <summary>
-        /// 히트 성공 시 Hit 이펙트 스폰
-        /// </summary>
-        protected override void OnHitSuccess(Collider other, IDamageable damageable)
-        {
-            _vfxController?.SpawnHitEffect(other.bounds.center);
-        }
+        // 히트 이펙트는 HitboxBase.ProcessHit()에서 _spawnHitEffect 플래그로 처리
+        protected override void OnHitSuccess(Collider other, IDamageable damageable) { }
     }
 }

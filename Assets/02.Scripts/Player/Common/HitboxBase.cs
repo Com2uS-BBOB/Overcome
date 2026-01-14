@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Interfaces;
 
 namespace _02.Scripts.Player.Common
@@ -9,6 +10,8 @@ namespace _02.Scripts.Player.Common
     [RequireComponent(typeof(Collider))]
     public abstract class HitboxBase : MonoBehaviour, IHitDetector
     {
+        [SerializeField] protected bool _spawnHitEffect = false;
+
         protected HashSet<IDamageable> _hitTargets = new();
         protected float _damage;
         protected bool _isActive;
@@ -43,6 +46,13 @@ namespace _02.Scripts.Player.Common
 
             if (damageable == null) return;
             if (_hitTargets.Contains(damageable)) return;  // IDamageable 기준 중복 체크
+
+            // 히트 이펙트 스폰 (플레이어 히트박스만)
+            if (_spawnHitEffect)
+            {
+                Vector3 hitPoint = other.ClosestPoint(transform.position);
+                HitEffectPool.Instance?.SpawnAt(hitPoint);
+            }
 
             _hitTargets.Add(damageable);
             damageable.TakeDamage(_damage, GetOwner());

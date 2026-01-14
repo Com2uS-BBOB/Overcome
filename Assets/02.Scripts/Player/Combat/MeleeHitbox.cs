@@ -12,6 +12,7 @@ namespace _02.Scripts.Player.Combat
         {
             base.Awake();
             _collider = GetComponent<Collider>();
+            _spawnHitEffect = true;  // 플레이어 히트박스는 히트 이펙트 스폰
             DisableHitDetection();
         }
 
