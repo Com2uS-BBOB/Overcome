@@ -11,8 +11,10 @@ namespace _02.Scripts.Player.Animation
     {
         [SerializeField] private Animator _animator;
         [SerializeField] private RootMotionProxy _rootMotionProxy;
+        [SerializeField] private AnimationEventProxy _animEventProxy;
 
         public event Action<Vector3> OnRootMotionUpdate;
+        public event Action OnCrescentFireEvent;
 
         // Animator 파라미터 해시 - Locomotion
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
@@ -36,6 +38,14 @@ namespace _02.Scripts.Player.Animation
 
             if (_rootMotionProxy != null)
                 _rootMotionProxy.OnRootMotionUpdate += HandleRootMotionUpdate;
+
+            if (_animEventProxy != null)
+                _animEventProxy.OnCrescentFire += HandleCrescentFire;
+        }
+
+        private void HandleCrescentFire()
+        {
+            OnCrescentFireEvent?.Invoke();
         }
 
         #region Root Motion
@@ -141,6 +151,9 @@ namespace _02.Scripts.Player.Animation
 
             if (_rootMotionProxy != null)
                 _rootMotionProxy.OnRootMotionUpdate -= HandleRootMotionUpdate;
+
+            if (_animEventProxy != null)
+                _animEventProxy.OnCrescentFire -= HandleCrescentFire;
         }
     }
 }

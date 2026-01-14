@@ -562,6 +562,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69644ecdc3550364cab7d40bb0bea931, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyPool
+--- !u!1 &423708232 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 188815996246225958, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+  m_PrefabInstance: {fileID: 1375713067}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &597739654
 GameObject:
   m_ObjectHideFlags: 0
@@ -1513,6 +1518,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Animation.PlayerAnimator
   _animator: {fileID: 2017195265}
   _rootMotionProxy: {fileID: 2017195266}
+  _animEventProxy: {fileID: 2017195268}
 --- !u!114 &1089555358
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1896,44 +1902,47 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 20.8568
+      value: 35.6362
       objectReference: {fileID: 0}
     - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 1.7136962
+      value: 1.9704906
       objectReference: {fileID: 0}
     - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 97.24063
+      value: 97.77871
       objectReference: {fileID: 0}
     - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 0.86928433
+      value: 2.5635936
       objectReference: {fileID: 0}
     - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 20.906048
+      value: 35.60272
       objectReference: {fileID: 0}
     - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -96.76452
+      value: -96.32184
       objectReference: {fileID: 0}
     - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -4.588973
+      value: -28.862339
       objectReference: {fileID: 0}
     - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 166.3255
+      value: -101.96907
       objectReference: {fileID: 0}
     - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 106.654106
+      value: 66.91448
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 188815996246225958, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2017195268}
   m_SourcePrefab: {fileID: 100100000, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
 --- !u!4 &1375713068 stripped
 Transform:
@@ -1965,7 +1974,7 @@ Transform:
   m_GameObject: {fileID: 1441109179}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.309, z: 0.3}
+  m_LocalPosition: {x: 0, y: 0.309, z: 0.159}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2220,12 +2229,24 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5375706219993101799, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
   m_PrefabInstance: {fileID: 1375713067}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 423708232}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cf7a85acb678245c293c06479a233ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Animation.RootMotionProxy
+--- !u!114 &2017195268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 423708232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b821c3afa3c8e4723b9b6fa9c6e89e45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Animation.AnimationEventProxy
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

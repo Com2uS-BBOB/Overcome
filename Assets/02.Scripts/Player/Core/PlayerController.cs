@@ -101,6 +101,10 @@ namespace _02.Scripts.Player.Core
             // PlayerAnimator 초기화 (State 변경 구독)
             _playerAnimatorController?.Initialize(StateMachine);
 
+            // 애니메이션 이벤트 연결 (크레센트 발사)
+            if (_playerAnimatorController != null && _crescent != null)
+                _playerAnimatorController.OnCrescentFireEvent += _crescent.FireFromAnimationEvent;
+
             StateMachine.Initialize<IdleState>();
         }
 

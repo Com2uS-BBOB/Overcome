@@ -84,6 +84,15 @@ namespace _02.Scripts.Player.Combat
 
         protected override void OnSkillStart()
         {
+            // 애니메이션 이벤트에서 발사하도록 변경
+            // FireProjectile()은 FireFromAnimationEvent()에서 호출됨
+        }
+
+        /// <summary>
+        /// 애니메이션 이벤트에서 호출되는 발사 메서드
+        /// </summary>
+        public void FireFromAnimationEvent()
+        {
             FireProjectile();
         }
 
