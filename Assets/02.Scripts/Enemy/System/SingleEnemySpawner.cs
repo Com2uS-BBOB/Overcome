@@ -5,6 +5,8 @@ public class SingleEnemySpawner : MonoBehaviour, IEnemyDespawnHandler
 {
     [Header("플레이어")]
     [SerializeField] private Transform _player;
+    [SerializeField] private EnemyAttackDirector _attackDirector;
+    [SerializeField] private EnemySlotCoordinator _slots;
 
     [Header("풀링")]
     [SerializeField] private EnemyPool _enemyPool;
@@ -20,9 +22,7 @@ public class SingleEnemySpawner : MonoBehaviour, IEnemyDespawnHandler
 
     private void Start()
     {
-        var director = _player != null ? _player.GetComponent<EnemyAttackDirector>() : null;
-        var slots = _player != null ? _player.GetComponent<EnemySlotCoordinator>() : null;
-        _enemyCombatContext = new EnemyCombatContext(_player, director, slots);
+        _enemyCombatContext = new EnemyCombatContext(_player, _attackDirector, _slots);
 
         SpawnAt(transform.position);
     }

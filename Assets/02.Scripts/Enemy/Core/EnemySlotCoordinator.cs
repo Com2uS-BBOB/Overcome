@@ -6,7 +6,7 @@ public class EnemySlotCoordinator : MonoBehaviour
 {
     [SerializeField] private Transform _player;
     [SerializeField] private float _radius = 3.2f;
-    [SerializeField] private int _slotCount = 6;
+    [SerializeField] private int _slotCount = 8;
 
     private Dictionary<int, Transform> _occupiedSlots = new();
     private void Awake()
