@@ -54,8 +54,8 @@ public abstract class PoolBase<TEnum, TObject> : MonoBehaviour
         }
 
         TObject obj = _pool[type].Dequeue();
+        obj.gameObject.SetActive(false);
         obj.transform.SetPositionAndRotation(position, rotation);
-        obj.gameObject.SetActive(true);
         return obj;
     }
 

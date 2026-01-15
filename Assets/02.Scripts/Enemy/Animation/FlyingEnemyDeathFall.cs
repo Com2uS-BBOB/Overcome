@@ -13,9 +13,9 @@ public class FlyingEnemyDeathFall : MonoBehaviour
     [SerializeField] private float _groundCheckDistance = 0.8f;  // 바닥 탐지 거리
 
     [Header("낙하 이동")]
-    [SerializeField] private float _initialFallSpeed = 0f;  // 초기 낙하 속도
-    [SerializeField] private float _gravity = 2f;
-    [SerializeField] private float _maxFallSpeed = 5f;     // 최대 낙하 속도
+    [SerializeField] private float _initialFallSpeed = 2f;  // 초기 낙하 속도
+    [SerializeField] private float _gravity = 40f;
+    [SerializeField] private float _maxFallSpeed = 50f;     // 최대 낙하 속도
 
     [Header("착지 관련")]
     [SerializeField] private float _groundSnapOffset = 0.01f;  // 착지 시 약간 띄우기 (뚫림 방지)

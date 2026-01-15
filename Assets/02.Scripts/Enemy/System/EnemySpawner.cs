@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawner : MonoBehaviour, IEnemyDespawnHandler
 {
     [Header("플레이어")]
     [SerializeField] private Transform _player;
@@ -29,14 +29,6 @@ public class EnemySpawner : MonoBehaviour
         _enemyCombatContext = new EnemyCombatContext(_player, director, slots);
 
         SpawnInitialEnemies();
-    }
-
-    private void HandleEnemyDespawn(EnemyBase enemy)
-    {
-        enemy.OnDespawn -= HandleEnemyDespawn;
-
-        _enemyPool.Despawn(enemy.EnemyType, enemy);
-        RequestRespawn(enemy);
     }
 
     private void SpawnInitialEnemies()
@@ -87,11 +79,10 @@ public class EnemySpawner : MonoBehaviour
             finalPosition,
             Quaternion.identity
         );
+        if (enemy == null) return;
 
-        enemy.SetSpawner(this);
-        enemy.SetSpawnBasePosition(basePosition);  // 리스폰용 (높이 재설정 제외)
-
-        enemy.OnDespawn += HandleEnemyDespawn;
+        enemy.SetDespawnHandler(this);
+        enemy.SetSpawnBasePosition(basePosition);
 
         // todo. EnemyBase 활성화 시점으로 위치 이동 예정
         EnemyEventController.Enemy.RaiseSpawned(new EnemySpawnedEvent(enemy));
@@ -104,16 +95,23 @@ public class EnemySpawner : MonoBehaviour
         return Vector3.up * _enemyPool.GetSpawnHeightForType(type);
     }
 
-    // 리스폰 요청 처리
-    public void RequestRespawn(EnemyBase enemy)
+    public void HandleDespawn(EnemyBase enemy)
     {
+        // 풀에 반환
+        _enemyPool.Despawn(enemy.EnemyType, enemy);
+
+        // 리스폰 요청
         StartCoroutine(RespawnEnemy_Coroutine(enemy));
     }
 
     private IEnumerator RespawnEnemy_Coroutine(EnemyBase enemy)
     {
         Vector3 respawnPosition = enemy.GetSpawnBasePosition();
-        EEnemyType type = RandomEnemySelect();
+
+        EEnemyType type =
+       enemy.EnemyType == EEnemyType.Elite
+           ? EEnemyType.Elite
+           : RandomEnemySelect();
 
         yield return new WaitForSeconds(_respawnDelay);
 

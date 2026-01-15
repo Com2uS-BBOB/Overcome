@@ -14,6 +14,17 @@ public class EnemyMovement : MonoBehaviour
     [Header("스피드 보간")]
     [SerializeField] private float _speedLerpSpeed = 6f;
 
+    [Header("회전 보간")]
+    [SerializeField] private float _rotationLerpSpeed = 14f;
+
+    [Header("적 피격 넉백 옵션")]
+    [SerializeField] private bool _allowKnockbackWhileLocked = true;
+    [SerializeField] private float _knockbackDamping = 16f;    // 클수록 빨리 멈춤
+    [SerializeField] private float _maxKnockbackSpeed = 12f;  // 넉백 최대치
+    private Vector3 _knockbackVelocity;
+
+    private int _moveLockCount = 0;     // 여러 군데에서 락 걸 때 대비 안전 장치
+    private float _lockUntilTime = 0f;  // 최소 락 유지 시간 (경로 복귀 지연용)
     private bool _movementLocked;
 
     private NavMeshAgent _agent;
@@ -22,7 +33,7 @@ public class EnemyMovement : MonoBehaviour
     private float _currentSpeedMultiplier = 1f;
     private float _targetSpeedMultiplier = 1f;
 
-    public bool IsMoving => _agent.enabled && _agent.velocity.sqrMagnitude > 0.01f;
+    public bool IsMoving => _agent != null && _agent.enabled && _agent.velocity.sqrMagnitude > 0.01f;
 
     private void Awake()
     {
@@ -30,53 +41,205 @@ public class EnemyMovement : MonoBehaviour
         _enemy = GetComponent<EnemyBase>();
         _anim = GetComponent<EnemyAnimatorController>();
 
-        _agent.updateRotation = false;
-        _agent.updateUpAxis = false;
+        if (_agent != null)
+        {
+            _agent.updateRotation = false;
+            _agent.updateUpAxis = false;
+        }
+    }
+
+    private void OnEnable()
+    {
+        _knockbackVelocity = Vector3.zero;
+
+        // 풀링 대비 락이 남아있을 가능성 제거
+        ForceUnlockAll();
+    }
+
+    private void OnDisable()
+    {
+        _knockbackVelocity = Vector3.zero;
     }
 
     public void Initialize()
     {
         _enemyStatData = _enemy.EnemyStatData;
-        _agent.speed = _enemyStatData.MoveSpeed;
+        if (_agent != null) _agent.speed = _enemyStatData.MoveSpeed;
     }
 
     private void Update()
     {
-        if (_movementLocked) return;
+        // 죽었으면 아무것도 하지 않음
+        if (_enemy != null && _enemy.IsDead) return;
+
+        // 경직 중에도 밀리게 넉백 먼저 처리
+        ApplyKnockback();
+
+        // 락 시간 지나면 자동으로 해제
+        if (_movementLocked && _moveLockCount == 0 && Time.time >= _lockUntilTime)
+        {
+            InternalUnlock();
+        }
+
+        // 회전은 Lock 상태에서도 계속 업데이트
+        UpdateRotation();
+
+        // 이동 Lock 상태면 목적지 이동 / 애니 멈추기
+        if (_movementLocked)
+        {
+            _anim?.SetMove(false);
+            return;
+        }
 
         UpdateSpeed();
-        UpdateRotation();
         _anim?.SetMove(IsMoving);
     }
 
-    #region Movement
+    #region Knockback
 
-    public void LockMovement(bool locked)
+    public void AddKnockback(Vector3 direction, float strength)
     {
-        _movementLocked = locked;
+        if (_agent == null || !_agent.enabled) return;
 
-        if (_agent != null && _agent.enabled)
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.0001f) return;
+
+        // 누적 (연속 히트 시 경직되듯 조금씩 밀림)
+        _knockbackVelocity += direction.normalized * strength;
+
+        // 과도한 누적 방지
+        float magnitude = _knockbackVelocity.magnitude;
+        if (magnitude > _maxKnockbackSpeed)
         {
-            if (locked)
+            _knockbackVelocity = _knockbackVelocity / magnitude * _maxKnockbackSpeed;
+        }
+    }
+
+    private void ApplyKnockback()
+    {
+        if (_agent == null || !_agent.enabled) return;
+        if (_knockbackVelocity.sqrMagnitude < 0.000001f) return;
+
+        if (_movementLocked && !_allowKnockbackWhileLocked) return;
+
+        // 경직 느낌 살리기
+        Vector3 delta = _knockbackVelocity * Time.deltaTime;
+        _agent.Move(delta);
+
+        // 점점 느려짐
+        _knockbackVelocity = Vector3.Lerp(
+            _knockbackVelocity,
+            Vector3.zero,
+            Time.deltaTime * _knockbackDamping
+        );
+    }
+
+    #endregion
+
+    #region Movement Lock
+
+    public void LockMovement(bool locked, float minLockTime = 0f)
+    {
+        if (locked)
+        {
+            _moveLockCount++;
+            _movementLocked = true;
+
+            if (minLockTime > 0f)
+            {
+                _lockUntilTime = Mathf.Max(_lockUntilTime, Time.time + minLockTime);
+            }
+
+            if (_agent != null && _agent.enabled)
             {
                 _agent.isStopped = true;
                 _agent.ResetPath();
                 _agent.velocity = Vector3.zero;
             }
-            else
-            {
-                _agent.isStopped = false;
-            }
+
+            _anim?.SetMove(false);
+            return;
         }
 
-        // 애니도 확실히 Move=false로 고정
+        // unlock
+        _moveLockCount = Mathf.Max(0, _moveLockCount - 1);
+
+        // 다른 곳에 락 걸려있으면 유지
+        if (_moveLockCount > 0) return;
+
+        // 최소 락 시간 남아있으면 Update에서 자동 해제되도록 유지
+        if (Time.time < _lockUntilTime) return;
+
+        _movementLocked = false;
+
+        InternalUnlock();
+    }
+
+    private void InternalUnlock()
+    {
+        _movementLocked = false;
+
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.isStopped = false;
+        }
+
         _anim?.SetMove(false);
     }
+
+    // 풀링 / 리스폰 대비 락 상태 강제 초기화
+    public void ForceUnlockAll()
+    {
+        _moveLockCount = 0;
+        _lockUntilTime = 0f;
+        _movementLocked = false;
+
+        // 넉백 제거
+        _knockbackVelocity = Vector3.zero;
+
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.isStopped = false;
+            
+            // FullStop에서 비활성화했을 수 있는 업데이트 복구
+            _agent.updatePosition = true;
+            _agent.updateRotation = false; // 기본값 유지 (Awake에서 설정한 대로)
+        }
+    }
+
+    // 완전 정지 (Death 시 사용)
+    public void FullStop()
+    {
+        // 넉백 제거
+        _knockbackVelocity = Vector3.zero;
+
+        // 이동 Lock
+        _movementLocked = true;
+        _moveLockCount = 1;
+
+        // Agent 완전 정지
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.isStopped = true;
+            _agent.ResetPath();
+            _agent.velocity = Vector3.zero;
+            
+            // 여러 프레임에 걸쳐 velocity가 다시 생기는 것을 방지
+            _agent.updatePosition = false;
+            _agent.updateRotation = false;
+        }
+
+        _anim?.SetMove(false);
+    }
+
+    #endregion
+
+    #region Movement Commands
 
     public void MoveTo(Vector3 target)
     {
         if (_movementLocked) return;
-        if (!_agent.enabled) return;
+        if (_agent == null || !_agent.enabled) return;
 
         _agent.isStopped = false;
         _agent.SetDestination(target);
@@ -84,7 +247,7 @@ public class EnemyMovement : MonoBehaviour
 
     public void Stop()
     {
-        if (!_agent.enabled) return;
+        if (_agent == null || !_agent.enabled) return;
 
         _agent.isStopped = true;
         _agent.ResetPath();
@@ -135,7 +298,10 @@ public class EnemyMovement : MonoBehaviour
 
         if (direction.sqrMagnitude > 0.001f)
         {
-            transform.rotation = Quaternion.LookRotation(direction.normalized);
+            Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
+
+            // 부드럽게 회전
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotationLerpSpeed);
         }
     }
 
@@ -175,4 +341,5 @@ public class EnemyMovement : MonoBehaviour
     }
 
     #endregion
+
 }
