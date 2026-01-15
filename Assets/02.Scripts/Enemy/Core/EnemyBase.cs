@@ -25,8 +25,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public virtual bool CanAttack => true;
 
     private EnemyPool _pool;
-    private EnemySpawner _spawner;
-    private FloatSmallEnemySpawner _floatSpawner;
+    private IEnemyDespawnHandler _despawnHandler;
 
     private EnemyMovement _movement;
     private NavMeshAgent _agent;
@@ -103,14 +102,9 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         EnemyType = type;
     }
 
-    public void SetSpawner(EnemySpawner spawner)
+    public void SetDespawnHandler(IEnemyDespawnHandler handler)
     {
-        _spawner = spawner;
-    }
-
-    public void SetFloatSmallEnemySpawner(FloatSmallEnemySpawner floatSpawner)
-    {
-        _floatSpawner = floatSpawner;
+        _despawnHandler = handler;
     }
 
     // 최초 스폰 위치 저장 (리스폰용)
@@ -200,6 +194,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         _despawnRequested = false;
 
+        _despawnHandler?.HandleDespawn(this);  // 스포너 / 풀링 처리 요청
         OnDespawn?.Invoke(this);
     }
 }
