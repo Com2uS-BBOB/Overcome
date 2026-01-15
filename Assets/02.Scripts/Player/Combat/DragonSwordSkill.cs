@@ -61,11 +61,19 @@ namespace _02.Scripts.Player.Combat
         private void OnEnable()
         {
             if (_hitbox != null) _hitbox.OnHit += HandleHit;
+            OnSkillEnded += HandleSkillEnded;
         }
 
         private void OnDisable()
         {
             if (_hitbox != null) _hitbox.OnHit -= HandleHit;
+            OnSkillEnded -= HandleSkillEnded;
+        }
+
+        private void HandleSkillEnded()
+        {
+            Debug.Log("[DragonSwordSkill] HandleSkillEnded, invoking OnAttackEnded");
+            OnAttackEnded?.Invoke();
         }
 
         // === BaseSkill Override ===

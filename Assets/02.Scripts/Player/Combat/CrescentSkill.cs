@@ -62,6 +62,21 @@ namespace _02.Scripts.Player.Combat
             if (_cameraTransform == null) _cameraTransform = Camera.main?.transform;
         }
 
+        private void OnEnable()
+        {
+            OnSkillEnded += HandleSkillEnded;
+        }
+
+        private void OnDisable()
+        {
+            OnSkillEnded -= HandleSkillEnded;
+        }
+
+        private void HandleSkillEnded()
+        {
+            OnCrescentEnded?.Invoke();
+        }
+
         public void Initialize(PlayerStats stats, GaugeManager gaugeManager)
         {
             _stats = stats;

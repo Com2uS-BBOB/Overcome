@@ -16,6 +16,13 @@ namespace _02.Scripts.Player.Animation
         public event Action<Vector3> OnRootMotionUpdate;
         public event Action OnCrescentFireEvent;
 
+        // Animation Event 전달용 이벤트
+        public event Action OnAttackHitboxEnable;
+        public event Action OnAttackHitboxDisable;
+        public event Action OnAttackEnd;
+        public event Action OnCancelWindowEnter;
+        public event Action OnCancelWindowExit;
+
         // Animator 파라미터 해시 - Locomotion
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
@@ -40,13 +47,35 @@ namespace _02.Scripts.Player.Animation
                 _rootMotionProxy.OnRootMotionUpdate += HandleRootMotionUpdate;
 
             if (_animEventProxy != null)
+            {
+                Debug.Log("[PlayerAnimatorController] AnimEventProxy connected successfully");
                 _animEventProxy.OnCrescentFire += HandleCrescentFire;
+                _animEventProxy.OnAttackHitboxEnable += HandleAttackHitboxEnable;
+                _animEventProxy.OnAttackHitboxDisable += HandleAttackHitboxDisable;
+                _animEventProxy.OnAttackEnd += HandleAttackEnd;
+                _animEventProxy.OnCancelWindowEnter += HandleCancelWindowEnter;
+                _animEventProxy.OnCancelWindowExit += HandleCancelWindowExit;
+            }
+            else
+            {
+                Debug.LogError("[PlayerAnimatorController] AnimEventProxy is NULL! Animation events will not work.");
+            }
         }
 
-        private void HandleCrescentFire()
+        #region Animation Event Handlers
+
+        private void HandleCrescentFire() => OnCrescentFireEvent?.Invoke();
+        private void HandleAttackHitboxEnable() => OnAttackHitboxEnable?.Invoke();
+        private void HandleAttackHitboxDisable() => OnAttackHitboxDisable?.Invoke();
+        private void HandleAttackEnd()
         {
-            OnCrescentFireEvent?.Invoke();
+            Debug.Log("[PlayerAnimatorController] HandleAttackEnd called");
+            OnAttackEnd?.Invoke();
         }
+        private void HandleCancelWindowEnter() => OnCancelWindowEnter?.Invoke();
+        private void HandleCancelWindowExit() => OnCancelWindowExit?.Invoke();
+
+        #endregion
 
         #region Root Motion
 
@@ -93,19 +122,33 @@ namespace _02.Scripts.Player.Animation
             {
                 PlayDashAttack();
             }
-            // Idle/Move 상태로 복귀 시 모든 Combat Layer 비활성화
-            else if (newState == typeof(IdleState) || newState == typeof(MoveState))
+            // 전투 상태에서 비전투 상태로 전환될 때만 EndCombat() 호출
+            // 착지 시 공격 입력이 씹히는 문제 방지
+            else if (IsCombatState(previousState) && IsNonCombatState(newState))
             {
                 EndCombat();
             }
         }
+
+        private bool IsCombatState(Type state) =>
+            state == typeof(DragonSwordState) || state == typeof(AirDragonSwordState) ||
+            state == typeof(CrescentState) || state == typeof(AirCrescentState) ||
+            state == typeof(DashAttackState) || state == typeof(AirDashAttackState);
+
+        private bool IsNonCombatState(Type state) =>
+            state == typeof(IdleState) || state == typeof(MoveState) ||
+            state == typeof(FallState) || state == typeof(JumpState);
 
         /// <summary>
         /// 용검 공격
         /// </summary>
         public void PlayAttack(int comboStep, bool isGrounded)
         {
-            Debug.Log($"[Anim] PlayAttack called - comboStep: {comboStep}, isGrounded: {isGrounded}");
+            var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
+            Debug.Log($"[Anim] PlayAttack - combo: {comboStep}, grounded: {isGrounded}, " +
+                      $"currentState: {stateInfo.shortNameHash}, inTransition: {_animator.IsInTransition(0)}");
+            // 기존 트리거 리셋 (이전 상태의 잔여 트리거 제거)
+            _animator.ResetTrigger(AttackHash);
             // 공격 시작 시점에 IsGrounded 즉시 동기화
             _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.SetInteger(AttackComboCountHash, comboStep);
@@ -125,6 +168,8 @@ namespace _02.Scripts.Player.Animation
         /// </summary>
         public void PlayCrescent(int comboStep, bool isGrounded)
         {
+            // 기존 트리거 리셋 (이전 상태의 잔여 트리거 제거)
+            _animator.ResetTrigger(CrescentHash);
             // 공격 시작 시점에 IsGrounded 즉시 동기화
             _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.SetInteger(CrescentComboCountHash, comboStep);
@@ -138,6 +183,7 @@ namespace _02.Scripts.Player.Animation
         {
             _animator.ResetTrigger(AttackHash);
             _animator.ResetTrigger(CrescentHash);
+            _animator.ResetTrigger(DashAttackHash);
             _animator.SetInteger(AttackComboCountHash, 0);
             _animator.SetInteger(CrescentComboCountHash, 0);
         }
@@ -153,7 +199,14 @@ namespace _02.Scripts.Player.Animation
                 _rootMotionProxy.OnRootMotionUpdate -= HandleRootMotionUpdate;
 
             if (_animEventProxy != null)
+            {
                 _animEventProxy.OnCrescentFire -= HandleCrescentFire;
+                _animEventProxy.OnAttackHitboxEnable -= HandleAttackHitboxEnable;
+                _animEventProxy.OnAttackHitboxDisable -= HandleAttackHitboxDisable;
+                _animEventProxy.OnAttackEnd -= HandleAttackEnd;
+                _animEventProxy.OnCancelWindowEnter -= HandleCancelWindowEnter;
+                _animEventProxy.OnCancelWindowExit -= HandleCancelWindowExit;
+            }
         }
     }
 }

@@ -15,6 +15,9 @@ namespace _02.Scripts.Player.Animation
         // === 용검 이벤트 ===
         public event Action OnAttackHitboxEnable;
         public event Action OnAttackHitboxDisable;
+        public event Action OnAttackEnd;           // 공격 애니메이션 종료
+        public event Action OnCancelWindowEnter;   // 캔슬 가능 시작
+        public event Action OnCancelWindowExit;    // 캔슬 가능 종료
 
         // === 공통 이벤트 ===
         public event Action<string> OnAnimationEvent;
@@ -33,6 +36,22 @@ namespace _02.Scripts.Player.Animation
         public void DisableAttackHitbox()
         {
             OnAttackHitboxDisable?.Invoke();
+        }
+
+        public void EndAttack()
+        {
+            Debug.Log("[AnimEventProxy] EndAttack called");
+            OnAttackEnd?.Invoke();
+        }
+
+        public void EnterCancelWindow()
+        {
+            OnCancelWindowEnter?.Invoke();
+        }
+
+        public void ExitCancelWindow()
+        {
+            OnCancelWindowExit?.Invoke();
         }
 
         // 범용 이벤트 (문자열 파라미터)

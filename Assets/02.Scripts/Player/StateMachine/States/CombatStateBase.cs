@@ -1,3 +1,4 @@
+using UnityEngine;
 using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Core;
 using _02.Scripts.Player.Data;
@@ -96,6 +97,9 @@ namespace _02.Scripts.Player.StateMachine.States
 
             if (IsAirCombat)
                 Movement.ResetGravityScale();
+
+            // 스킬 상태 정리 (점프 등으로 캔슬 시 Animation Event 미발동 대비)
+            ResetCombo();
         }
 
         // 서브클래스에서 구현해야 할 추상 멤버
@@ -117,20 +121,35 @@ namespace _02.Scripts.Player.StateMachine.States
         /// </summary>
         protected void ReturnToPreviousState()
         {
-            // 공중이면 Idle로 전환 (Animator가 IsGrounded=false로 Fall 처리)
+            Debug.Log($"[CombatStateBase] ReturnToPreviousState - IsGrounded={Movement.IsGrounded}, HasMoveInput={HasMoveInput()}");
+
+            // 공중이면 FallState로 전환 (착지까지 대기)
             if (!Movement.IsGrounded)
             {
-                StateMachine.ChangeState<IdleState>();
+                Debug.Log("[CombatStateBase] Changing to FallState");
+                StateMachine.ChangeState<FallState>();
                 return;
             }
 
-            if (HasMoveInput()) StateMachine.ChangeState<MoveState>();
-            else StateMachine.ChangeState<IdleState>();
+            if (HasMoveInput())
+            {
+                Debug.Log("[CombatStateBase] Changing to MoveState");
+                StateMachine.ChangeState<MoveState>();
+            }
+            else
+            {
+                Debug.Log("[CombatStateBase] Changing to IdleState");
+                StateMachine.ChangeState<IdleState>();
+            }
         }
 
         /// <summary>
         /// 공격 종료 이벤트 핸들러
         /// </summary>
-        protected void OnSkillEnded() => ReturnToPreviousState();
+        protected void OnSkillEnded()
+        {
+            Debug.Log("[CombatStateBase] OnSkillEnded called, calling ReturnToPreviousState");
+            ReturnToPreviousState();
+        }
     }
 }

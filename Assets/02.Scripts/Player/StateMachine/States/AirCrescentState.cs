@@ -37,6 +37,8 @@ namespace _02.Scripts.Player.StateMachine.States
             // 착지 시 지상 State로 전환
             if (Movement.IsGrounded && IsSkillActive)
             {
+                // 착지 시 Animator IsGrounded도 즉시 동기화
+                Controller.PlayerAnimatorController?.SetGrounded(true);
                 StateMachine.ChangeState<CrescentState>();
             }
         }
