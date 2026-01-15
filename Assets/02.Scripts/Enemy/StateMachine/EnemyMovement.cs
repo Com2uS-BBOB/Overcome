@@ -16,8 +16,8 @@ public class EnemyMovement : MonoBehaviour
 
     [Header("적 피격 넉백 옵션")]
     [SerializeField] private bool _allowKnockbackWhileLocked = true;
-    [SerializeField] private float _knockbackDamping = 18f;     // 클수록 빨리 멈춤
-    [SerializeField] private float _maxKnockbackSpeed = 1.8f;   // 넉백 최대치
+    [SerializeField] private float _knockbackDamping = 12f;   // 클수록 빨리 멈춤
+    [SerializeField] private float _maxKnockbackSpeed = 3.2f;   // 넉백 최대치
     private Vector3 _knockbackVelocity;
 
     private bool _movementLocked;

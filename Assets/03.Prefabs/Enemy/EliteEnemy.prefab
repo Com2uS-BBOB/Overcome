@@ -170,6 +170,7 @@ GameObject:
   - component: {fileID: -7759355659396950810}
   - component: {fileID: 6350010626198602367}
   - component: {fileID: 6507501800201012299}
+  - component: {fileID: -4543710031751717480}
   m_Layer: 0
   m_Name: EliteEnemy
   m_TagString: Untagged
@@ -322,6 +323,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   _rotationMode: 0
   _speedLerpSpeed: 6
+  _allowKnockbackWhileLocked: 1
+  _knockbackDamping: 12
+  _maxKnockbackSpeed: 3.2
 --- !u!114 &-6303558022810326248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -439,6 +443,23 @@ MonoBehaviour:
   _ripBoolName: Rip
   _fallingTriggerName: Falling
   _onGroundTriggerName: OnGround
+--- !u!114 &-4543710031751717480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258497289072480065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48361054c9edce04dac6ea448695d735, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyHitReaction
+  _pushStrength: 6
+  _consecutionHitTime: 0.25
+  _consecutionHitBonus: 0.8
+  _eliteStrengthMultiplier: 1.3
+  _player: {fileID: 0}
 --- !u!1 &384098602305931006
 GameObject:
   m_ObjectHideFlags: 0
