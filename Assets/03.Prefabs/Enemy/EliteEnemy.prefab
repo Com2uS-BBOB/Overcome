@@ -163,8 +163,8 @@ GameObject:
   - component: {fileID: 9107366382558538416}
   - component: {fileID: 933362062976253205}
   - component: {fileID: 211374651718498087}
-  - component: {fileID: 7941721044486324764}
   - component: {fileID: -6883950643001174605}
+  - component: {fileID: 7941721044486324764}
   - component: {fileID: -6303558022810326248}
   - component: {fileID: 5666727357644055194}
   - component: {fileID: -7759355659396950810}
@@ -291,6 +291,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BigEnemy
   _spawnHeight: 0
+--- !u!114 &-6883950643001174605
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258497289072480065}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ae850c4419471e489ee7014c8f704ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
+  _rotationMode: 0
+  _speedLerpSpeed: 6
+  _rotationLerpSpeed: 14
+  _hitRotateFadeSpeed: 8
+  _allowKnockbackWhileLocked: 1
+  _knockbackDamping: 12
+  _maxKnockbackSpeed: 3
 --- !u!114 &7941721044486324764
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,23 +328,6 @@ MonoBehaviour:
   _outRange: 28
   _returnStopDistance: 0.3
   _attackRange: 20
---- !u!114 &-6883950643001174605
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 258497289072480065}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ae850c4419471e489ee7014c8f704ee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
-  _rotationMode: 0
-  _speedLerpSpeed: 6
-  _allowKnockbackWhileLocked: 1
-  _knockbackDamping: 12
-  _maxKnockbackSpeed: 3.2
 --- !u!114 &-6303558022810326248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -459,6 +461,9 @@ MonoBehaviour:
   _consecutionHitTime: 0.25
   _consecutionHitBonus: 0.8
   _eliteStrengthMultiplier: 1.3
+  _interruptPathTime: 0.18
+  _hitRotationValue: 2
+  _recoverDelay: 0.12
   _player: {fileID: 0}
 --- !u!1 &384098602305931006
 GameObject:

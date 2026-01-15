@@ -317,9 +317,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   _rotationMode: 0
   _speedLerpSpeed: 6
+  _rotationLerpSpeed: 14
+  _hitRotateFadeSpeed: 8
   _allowKnockbackWhileLocked: 1
   _knockbackDamping: 12
-  _maxKnockbackSpeed: 3.2
+  _maxKnockbackSpeed: 3
 --- !u!54 &-2531178561615523393
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -471,6 +473,9 @@ MonoBehaviour:
   _consecutionHitTime: 0.25
   _consecutionHitBonus: 0.8
   _eliteStrengthMultiplier: 1.3
+  _interruptPathTime: 0.18
+  _hitRotationValue: 2
+  _recoverDelay: 0.12
   _player: {fileID: 0}
 --- !u!1 &988415760477271679
 GameObject:
