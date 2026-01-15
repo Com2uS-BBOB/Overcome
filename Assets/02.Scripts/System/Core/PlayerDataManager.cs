@@ -9,7 +9,8 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     [Header("Start Settings")]
     [SerializeField] private string _startPlayerID;
-
+    [SerializeField] private RewardUnlockConfig _rewardUnlockConfig;
+    
     [Header("Debug")]
     [SerializeField] private GameSaveData _saveData;
 
@@ -27,7 +28,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
         if (!HasPlayer(targetID))
         {
-            CreatePlayer(targetID);
+            RegistNewPlayer(targetID);
         }
 
         SwitchPlayer(targetID);
@@ -80,7 +81,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
     public PlayerData GetCurrentPlayer() => _currentPlayer;
     public bool HasPlayer(string playerId) => FindPlayer(playerId) != null;
 
-    public bool CreatePlayer(string playerId)
+    public bool RegistNewPlayer(string playerId)
     {
         if (HasPlayer(playerId)) return false;
 
@@ -145,6 +146,11 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
         _currentPlayer.Settings.MasterVolume = masterVolume;
         _currentPlayer.Settings.MusicVolume = musicVolume;
         _currentPlayer.Settings.SfxVolume = sfxVolume;
+    }
+
+    public bool IsRewardUnlocked(ERewardType rewardType)
+    {
+        return _rewardUnlockConfig.IsRewardUnlocked(rewardType, _currentPlayer.TotalStarsEarned);
     }
 
     #endregion

@@ -185,7 +185,7 @@ public class GradeDataImporter : EditorWindow
         serializedObject.ApplyModifiedProperties();
 
         // 파일 저장
-        string path = "Assets/Resources/GradeData.asset";
+        string path = "Assets/10.ScriptableObjects/GradeData.asset";
         AssetDatabase.CreateAsset(gradeData, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
