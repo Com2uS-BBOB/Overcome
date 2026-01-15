@@ -47,6 +47,17 @@ public class EnemyState : MonoBehaviour
         ChangeState(EEnemyState.Idle);
     }
 
+    private void OnEnable()
+    {
+        // 리스폰 시 상태 초기화 (Idle로 리셋)
+        if (_currentState != EEnemyState.Idle)
+        {
+            _currentState = EEnemyState.Idle;
+            _pressureReserved = false;
+            _standOffRepathTimer = 0f;
+        }
+    }
+
     private void Update()
     {
         switch (_currentState)

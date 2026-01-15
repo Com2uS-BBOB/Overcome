@@ -83,6 +83,16 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _movement?.ForceUnlockAll();
     }
 
+    protected virtual void OnDisable()
+    {
+        // 코루틴 정리
+        if (_hitStopRoutine != null)
+        {
+            StopCoroutine(_hitStopRoutine);
+            _hitStopRoutine = null;
+        }
+    }
+
     public void SetPool(EnemyPool pool)
     {
         _pool = pool;
@@ -166,7 +176,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (_despawnRequested) return;
         _despawnRequested = true;
 
-        _movement?.LockMovement(true);
+        _movement?.FullStop ();
 
 #if UNITY_EDITOR
         Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");

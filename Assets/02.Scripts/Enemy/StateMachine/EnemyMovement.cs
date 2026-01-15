@@ -69,6 +69,9 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
+        // 죽었으면 아무것도 하지 않음
+        if (_enemy != null && _enemy.IsDead) return;
+
         // 경직 중에도 밀리게 넉백 먼저 처리
         ApplyKnockback();
 
@@ -191,10 +194,45 @@ public class EnemyMovement : MonoBehaviour
         _lockUntilTime = 0f;
         _movementLocked = false;
 
+        // 넉백 제거
+        _knockbackVelocity = Vector3.zero;
+
         if (_agent != null && _agent.enabled)
         {
             _agent.isStopped = false;
+            
+            // FullStop에서 비활성화했을 수 있는 업데이트 복구
+            _agent.updatePosition = true;
+            _agent.updateRotation = false; // 기본값 유지 (Awake에서 설정한 대로)
         }
+    }
+
+    /// <summary>
+    /// 완전 정지 (Death 시 사용)
+    /// NavMeshAgent를 완전히 정지시키고 넉백도 제거
+    /// </summary>
+    public void FullStop()
+    {
+        // 넉백 제거
+        _knockbackVelocity = Vector3.zero;
+
+        // 이동 Lock
+        _movementLocked = true;
+        _moveLockCount = 1;
+
+        // Agent 완전 정지
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.isStopped = true;
+            _agent.ResetPath();
+            _agent.velocity = Vector3.zero;
+            
+            // 여러 프레임에 걸쳐 velocity가 다시 생기는 것을 방지
+            _agent.updatePosition = false;
+            _agent.updateRotation = false;
+        }
+
+        _anim?.SetMove(false);
     }
 
     #endregion
