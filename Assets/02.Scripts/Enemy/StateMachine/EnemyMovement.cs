@@ -78,7 +78,10 @@ public class EnemyMovement : MonoBehaviour
             InternalUnlock();
         }
 
-        // 이동 Lock 상태면 목적지 이동 / 회전 / 애니 멈추기
+        // 회전은 Lock 상태에서도 계속 업데이트
+        UpdateRotation();
+
+        // 이동 Lock 상태면 목적지 이동 / 애니 멈추기
         if (_movementLocked)
         {
             _anim?.SetMove(false);
@@ -86,7 +89,6 @@ public class EnemyMovement : MonoBehaviour
         }
 
         UpdateSpeed();
-        UpdateRotation();
         _anim?.SetMove(IsMoving);
     }
 
