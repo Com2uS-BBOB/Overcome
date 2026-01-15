@@ -23,6 +23,10 @@ namespace _02.Scripts.Player.Core
         [SerializeField] private DashAttackSkill _dashAttack;
         [SerializeField] private GaugeManager _gaugeManager;
 
+        [Header("Guard System")]
+        [SerializeField] private GuardManager _guardManager;
+        [SerializeField] private GuardSettings _guardSettings;
+
         [Header("Animation")]
         [SerializeField] private PlayerAnimatorController _playerAnimatorController;
 
@@ -38,6 +42,7 @@ namespace _02.Scripts.Player.Core
         public CrescentSkill Crescent => _crescent;
         public DashAttackSkill DashAttack => _dashAttack;
         public GaugeManager GaugeManager => _gaugeManager;
+        public GuardManager GuardManager => _guardManager;
         public CharacterController CharacterController { get; private set; }
         public PlayerStats Stats { get; private set; }
         public PlayerStateMachine StateMachine { get; private set; }
@@ -88,6 +93,11 @@ namespace _02.Scripts.Player.Core
             StateMachine.RegisterState(new AirDragonSwordState(this, StateMachine));
             StateMachine.RegisterState(new AirCrescentState(this, StateMachine));
             StateMachine.RegisterState(new AirDashAttackState(this, StateMachine));
+
+            // 피격/가드 상태
+            StateMachine.RegisterState(new HitState(this, StateMachine, _guardSettings, _guardManager));
+            StateMachine.RegisterState(new GuardState(this, StateMachine, _guardSettings, _guardManager, _gaugeManager));
+            StateMachine.RegisterState(new GuardBreakState(this, StateMachine, _guardSettings));
 
             // CancelManager 초기화
             CancelManager = new CancelManager(StateMachine);
@@ -281,6 +291,7 @@ namespace _02.Scripts.Player.Core
             Input.OnAttackPerformed += HandleAttack;
             Input.OnCrescentPerformed += HandleCrescent;
             Input.OnOverDrivePerformed += HandleOverDrive;
+            Input.OnGuardStarted += HandleGuard;
 
             // 오버드라이브 게이지 충전 연결
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnEnemyHit += HandleEnemyHitForOverDrive;
@@ -293,6 +304,15 @@ namespace _02.Scripts.Player.Core
             // Root Motion 이벤트 연결
             if (_playerAnimatorController != null)
                 _playerAnimatorController.OnRootMotionUpdate += HandleRootMotion;
+
+            // 피격/가드 이벤트 연결
+            if (Stats != null)
+            {
+                Stats.OnHit += HandleHit;
+                Stats.OnGuardBreak += HandleGuardBreak;
+                Stats.OnJustGuardSuccess += HandleJustGuard;
+                Stats.OnNormalGuardSuccess += HandleNormalGuard;
+            }
         }
 
         private void OnDisable()
@@ -302,6 +322,7 @@ namespace _02.Scripts.Player.Core
             Input.OnAttackPerformed -= HandleAttack;
             Input.OnCrescentPerformed -= HandleCrescent;
             Input.OnOverDrivePerformed -= HandleOverDrive;
+            Input.OnGuardStarted -= HandleGuard;
 
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnEnemyHit -= HandleEnemyHitForOverDrive;
             if (_crescent != null) _crescent.OnEnemyHit -= HandleEnemyHitForOverDrive;
@@ -313,6 +334,15 @@ namespace _02.Scripts.Player.Core
             // Root Motion 이벤트 연결 해제
             if (_playerAnimatorController != null)
                 _playerAnimatorController.OnRootMotionUpdate -= HandleRootMotion;
+
+            // 피격/가드 이벤트 연결 해제
+            if (Stats != null)
+            {
+                Stats.OnHit -= HandleHit;
+                Stats.OnGuardBreak -= HandleGuardBreak;
+                Stats.OnJustGuardSuccess -= HandleJustGuard;
+                Stats.OnNormalGuardSuccess -= HandleNormalGuard;
+            }
         }
 
         private void Update()
@@ -524,5 +554,47 @@ namespace _02.Scripts.Player.Core
                 CharacterController.Move(worldMovement);
             }
         }
+
+        #region Guard/Hit Handlers
+
+        private void HandleGuard()
+        {
+            // 가드 가능한 상태인지 체크
+            if (!CancelManager.CanCancelTo<GuardState>()) return;
+
+            StateMachine.ChangeState<GuardState>();
+        }
+
+        private void HandleHit(AttackInfo attackInfo)
+        {
+            var hitState = StateMachine.GetState<HitState>();
+            hitState?.SetAttackInfo(attackInfo);
+            StateMachine.ChangeState<HitState>();
+
+            // 피격 카메라 쉐이크
+            CameraShakeManager.Instance?.OnHit(attackInfo.KnockbackLevel);
+        }
+
+        private void HandleGuardBreak(AttackInfo attackInfo)
+        {
+            StateMachine.ChangeState<GuardBreakState>();
+
+            // 가드 브레이크 카메라 쉐이크
+            CameraShakeManager.Instance?.OnGuardBreak();
+        }
+
+        private void HandleJustGuard(AttackInfo attackInfo)
+        {
+            // 저스트 가드 성공 카메라 쉐이크
+            CameraShakeManager.Instance?.OnJustGuard();
+        }
+
+        private void HandleNormalGuard(AttackInfo attackInfo)
+        {
+            // 일반 가드 성공 카메라 쉐이크
+            CameraShakeManager.Instance?.OnNormalGuard();
+        }
+
+        #endregion
     }
 }

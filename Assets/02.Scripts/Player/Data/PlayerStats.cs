@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Interfaces;
 
 namespace _02.Scripts.Player.Data
@@ -9,6 +10,9 @@ namespace _02.Scripts.Player.Data
     {
         [Header("Base Stats")]
         [SerializeField] private PlayerBaseStats _baseStats;
+
+        [Header("Guard System")]
+        [SerializeField] private GuardManager _guardManager;
 
         public float CurrentHp { get; private set; }
         public float MaxHp => _baseStats.MaxHp;
@@ -32,22 +36,80 @@ namespace _02.Scripts.Player.Data
         public event Action<float, float> OnHpChanged;
         public event Action OnDeath;
 
+        // 피격/가드 이벤트
+        public event Action<AttackInfo> OnHit;
+        public event Action<AttackInfo> OnJustGuardSuccess;
+        public event Action<AttackInfo> OnNormalGuardSuccess;
+        public event Action<AttackInfo> OnGuardBreak;
+
         private void Awake()
         {
             if (_baseStats != null) CurrentHp = MaxHp;
         }
 
+        /// <summary>
+        /// 피해 처리 (가드 시스템 연동)
+        /// </summary>
+        public void TakeDamage(AttackInfo attackInfo)
+        {
+            if (IsDead) return;
+
+            // 가드 판정
+            GuardResult guardResult = GuardResult.None;
+            if (_guardManager != null)
+            {
+                guardResult = _guardManager.TryBlock(attackInfo, transform);
+            }
+
+            // 결과에 따른 처리
+            switch (guardResult)
+            {
+                case GuardResult.JustGuard:
+                    // 저스트 가드 - 데미지/피격 없음, VFX/SFX만
+                    OnJustGuardSuccess?.Invoke(attackInfo);
+                    return;
+
+                case GuardResult.NormalBlock:
+                    // 일반 가드 - 데미지/피격 없음
+                    OnNormalGuardSuccess?.Invoke(attackInfo);
+                    return;
+
+                case GuardResult.GuardBreak:
+                    // 가드 브레이크 - 별도 상태로 전환
+                    OnGuardBreak?.Invoke(attackInfo);
+                    return;
+
+                case GuardResult.RearAttack:
+                    // 후방 공격 - 가드 실패, 피격 처리
+                    break;
+
+                default:
+                    // 가드 없음 - 피격 처리
+                    break;
+            }
+
+            // 피격 처리
+            TimeSystem.Instance.SubtractTimeLimit(attackInfo.Damage);
+            OnHit?.Invoke(attackInfo);
+        }
+
+        /// <summary>
+        /// Legacy 호환성 유지
+        /// </summary>
         public void TakeDamage(float damage, GameObject attacker = null)
         {
             if (IsDead) return;
 
-            // todo. Damage 처리 방식 수정 필요
-            TimeSystem.Instance.SubtractTimeLimit(damage);
-            
-            // CurrentHp = Mathf.Max(0, CurrentHp - damage);
-            // OnHpChanged?.Invoke(CurrentHp, MaxHp);
+            // 공격 방향 계산
+            Vector3 direction = Vector3.zero;
+            if (attacker != null)
+            {
+                direction = (transform.position - attacker.transform.position);
+                direction.y = 0f;
+                direction.Normalize();
+            }
 
-            // if (CurrentHp <= 0) OnDeath?.Invoke();
+            TakeDamage(new AttackInfo(damage, KnockbackLevel.Light, direction, attacker));
         }
 
         public void Heal(float amount)

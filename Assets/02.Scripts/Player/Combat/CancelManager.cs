@@ -18,6 +18,8 @@ namespace _02.Scripts.Player.Combat
             // 대시 공격 (최고 우선순위)
             { typeof(DashAttackState), 100 },
             { typeof(AirDashAttackState), 100 },
+            // 가드 (높은 우선순위)
+            { typeof(GuardState), 80 },
             // 전투 스킬
             { typeof(DragonSwordState), 50 },
             { typeof(AirDragonSwordState), 50 },
@@ -27,7 +29,10 @@ namespace _02.Scripts.Player.Combat
             { typeof(JumpState), 20 },
             // 이동
             { typeof(MoveState), 10 },
-            { typeof(IdleState), 0 }
+            { typeof(IdleState), 0 },
+            // 피격/가드 브레이크 (캔슬 불가 상태)
+            { typeof(HitState), -50 },
+            { typeof(GuardBreakState), -100 }
         };
 
         // 캔슬 규칙 정의: (현재 상태, 목표 상태) -> 캔슬 가능 여부
@@ -79,6 +84,21 @@ namespace _02.Scripts.Player.Combat
             (typeof(DashAttackState), typeof(CrescentState)),
             (typeof(AirDashAttackState), typeof(AirDragonSwordState)),
             (typeof(AirDashAttackState), typeof(AirCrescentState)),
+
+            // === 가드 관련 규칙 ===
+            // Idle/Move에서 가드로
+            (typeof(IdleState), typeof(GuardState)),
+            (typeof(MoveState), typeof(GuardState)),
+
+            // 피격 중 가드로 전환 가능 (유일한 탈출구)
+            (typeof(HitState), typeof(GuardState)),
+
+            // 가드에서 공격/스킬/대시로 즉시 전환 (선딜 0)
+            (typeof(GuardState), typeof(DragonSwordState)),
+            (typeof(GuardState), typeof(CrescentState)),
+            (typeof(GuardState), typeof(DashAttackState)),
+            (typeof(GuardState), typeof(IdleState)),
+            (typeof(GuardState), typeof(MoveState)),
         };
 
         // ActionType -> State Type 매핑
@@ -88,6 +108,7 @@ namespace _02.Scripts.Player.Combat
             { ActionType.Skill, typeof(CrescentState) },
             { ActionType.DashAttack, typeof(DashAttackState) },
             { ActionType.Move, typeof(MoveState) },
+            { ActionType.Guard, typeof(GuardState) },
         };
 
         private readonly PlayerStateMachine _stateMachine;

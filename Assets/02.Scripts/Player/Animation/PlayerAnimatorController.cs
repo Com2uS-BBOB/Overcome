@@ -36,6 +36,11 @@ namespace _02.Scripts.Player.Animation
         private static readonly int CrescentHash = Animator.StringToHash("Crescent");
         private static readonly int CrescentComboCountHash = Animator.StringToHash("CrescentComboCount");
 
+        // Animator 파라미터 해시 - Hit/Guard
+        private static readonly int HitHash = Animator.StringToHash("Hit");
+        private static readonly int IsGuardingHash = Animator.StringToHash("IsGuarding");
+        private static readonly int GuardBreakHash = Animator.StringToHash("GuardBreak");
+
         private PlayerStateMachine _stateMachine;
 
         public void Initialize(PlayerStateMachine stateMachine)
@@ -186,6 +191,37 @@ namespace _02.Scripts.Player.Animation
             _animator.ResetTrigger(DashAttackHash);
             _animator.SetInteger(AttackComboCountHash, 0);
             _animator.SetInteger(CrescentComboCountHash, 0);
+        }
+
+        #endregion
+
+        #region Hit/Guard
+
+        /// <summary>
+        /// 피격 애니메이션 재생
+        /// </summary>
+        public void PlayHit()
+        {
+            _animator.ResetTrigger(HitHash);
+            _animator.SetTrigger(HitHash);
+        }
+
+        /// <summary>
+        /// 가드 포즈 설정
+        /// </summary>
+        public void SetGuarding(bool isGuarding)
+        {
+            _animator.SetBool(IsGuardingHash, isGuarding);
+        }
+
+        /// <summary>
+        /// 가드 브레이크 애니메이션 재생
+        /// </summary>
+        public void PlayGuardBreak()
+        {
+            _animator.SetBool(IsGuardingHash, false);
+            _animator.ResetTrigger(GuardBreakHash);
+            _animator.SetTrigger(GuardBreakHash);
         }
 
         #endregion

@@ -844,6 +844,7 @@ GameObject:
   - component: {fileID: 937650201}
   - component: {fileID: 937650200}
   - component: {fileID: 937650202}
+  - component: {fileID: 937650203}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -1053,6 +1054,24 @@ MonoBehaviour:
         DecelTime: 0
   PlayerIndex: -1
   AutoEnableInputs: 1
+--- !u!114 &937650203
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937650197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbe310de1881043aeadb878bfe9b6556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.CameraShakeManager
+  _impulseSource: {fileID: 0}
+  _justGuardIntensity: 0.3
+  _normalGuardIntensity: 0.15
+  _guardBreakIntensity: 0.5
+  _hitLightIntensity: 0.2
+  _hitHeavyIntensity: 0.4
 --- !u!1001 &944097658
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1283,6 +1302,7 @@ GameObject:
   - component: {fileID: 1089555357}
   - component: {fileID: 1089555359}
   - component: {fileID: 1089555358}
+  - component: {fileID: 1089555360}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -1404,6 +1424,8 @@ MonoBehaviour:
   _crescent: {fileID: 1089555354}
   _dashAttack: {fileID: 1089555355}
   _gaugeManager: {fileID: 1089555356}
+  _guardManager: {fileID: 1089555360}
+  _guardSettings: {fileID: 11400000, guid: d2a1dc6a82c2542eab769f2a49e40895, type: 2}
   _playerAnimatorController: {fileID: 1089555357}
   _combatStateHandler: {fileID: 1089555358}
   _inputBuffer: {fileID: 1089555359}
@@ -1494,6 +1516,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Data.PlayerRuntimeStats
   _baseStats: {fileID: 11400000, guid: 2cd159078aefe4700b7944e6e84870d7, type: 2}
+  _guardManager: {fileID: 1089555360}
 --- !u!114 &1089555354
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1585,6 +1608,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.InputBuffer
   _bufferDuration: 0.15
+--- !u!114 &1089555360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089555343}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03d7db508957a461f9101013cb7b158c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.GuardManager
+  _settings: {fileID: 11400000, guid: d2a1dc6a82c2542eab769f2a49e40895, type: 2}
+  _gaugeManager: {fileID: 1089555356}
 --- !u!1 &1211813245
 GameObject:
   m_ObjectHideFlags: 0
@@ -1987,39 +2024,39 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 22.903687
+      value: 65.1975
       objectReference: {fileID: 0}
     - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 1.7383684
+      value: -0.5707362
       objectReference: {fileID: 0}
     - target: {fileID: 2392235515311318195, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 97.307
+      value: 97.88834
       objectReference: {fileID: 0}
     - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 1.1099184
+      value: 7.725767
       objectReference: {fileID: 0}
     - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 22.939865
+      value: 64.955284
       objectReference: {fileID: 0}
     - target: {fileID: 5604617627446233844, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -96.72966
+      value: -93.33124
       objectReference: {fileID: 0}
     - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 15.657506
+      value: 39.9329
       objectReference: {fileID: 0}
     - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -158.38666
+      value: 169.83038
       objectReference: {fileID: 0}
     - target: {fileID: 8641381018518137330, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -31.54018
+      value: 112.04351
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
