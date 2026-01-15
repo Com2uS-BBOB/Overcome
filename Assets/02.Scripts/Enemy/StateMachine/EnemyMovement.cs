@@ -207,10 +207,7 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 완전 정지 (Death 시 사용)
-    /// NavMeshAgent를 완전히 정지시키고 넉백도 제거
-    /// </summary>
+    // 완전 정지 (Death 시 사용)
     public void FullStop()
     {
         // 넉백 제거

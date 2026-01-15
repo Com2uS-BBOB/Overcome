@@ -5,6 +5,7 @@ public class HowlAction : IEnemyAction
 {
     private readonly EnemyAnimatorController _anim;
     private readonly NavMeshAgent _agent;
+    private readonly EnemyMovement _movement;
     private readonly float _duration;
 
     private float _timer;
@@ -12,10 +13,11 @@ public class HowlAction : IEnemyAction
 
     public bool IsFinished => _finished;
 
-    public HowlAction(EnemyAnimatorController anim, NavMeshAgent agent, float duration)
+    public HowlAction(EnemyAnimatorController anim, NavMeshAgent agent, EnemyMovement movement, float duration)
     {
         _anim = anim;
         _agent = agent;
+        _movement = movement;
         _duration = duration;
     }
 
@@ -25,6 +27,8 @@ public class HowlAction : IEnemyAction
         _timer = 0f;
         _agent.isStopped = true;
         _agent.ResetPath();
+
+        _movement.LockMovement(true, _duration);
 
         _anim.TryPlayHowl();
 #if UNITY_EDITOR
@@ -42,5 +46,8 @@ public class HowlAction : IEnemyAction
         }
     }
 
-    public void Exit() { }
+    public void Exit()
+    {
+        _movement.LockMovement(false);
+    }
 }

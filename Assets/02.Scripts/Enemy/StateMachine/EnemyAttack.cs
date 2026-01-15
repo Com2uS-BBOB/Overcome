@@ -54,6 +54,7 @@ public class EnemyAttack : MonoBehaviour
 
     public void StartAttack()
     {
+        if (_enemy != null && _enemy.IsDead) return;
         if (_currentPattern != null) return;
 
         SelectPattern();

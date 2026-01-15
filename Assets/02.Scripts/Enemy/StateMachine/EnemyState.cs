@@ -60,6 +60,17 @@ public class EnemyState : MonoBehaviour
 
     private void Update()
     {
+        if (_enemy != null && _enemy.IsDead)
+        {
+            // 죽었으면 전투 / 공격 루프를 끊어버림
+            _attack?.Stop();
+            CleanupEngagement();
+
+            // 죽은 뒤 상태 고정
+            _currentState = EEnemyState.Idle;
+            return;
+        }
+
         switch (_currentState)
         {
             case EEnemyState.Idle:
