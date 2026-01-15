@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using _02.Scripts.Player.Interfaces;
+using UnityEngine.AI;
 
 public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
@@ -28,6 +29,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     private FloatSmallEnemySpawner _floatSpawner;
 
     private EnemyMovement _movement;
+    private NavMeshAgent _agent;
 
     private Vector3 _spawnBasePosition;  // 최초 스폰 위치 저장용 (리스폰 때 사용)
 
@@ -48,6 +50,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         _anim = GetComponent<EnemyAnimatorController>();
         _movement = GetComponent<EnemyMovement>();
+        _agent = GetComponent<NavMeshAgent>();
     }
 
     public void Initialize(EnemyStatData statData)
@@ -77,7 +80,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
 
         _anim?.ReviveReset();
-        _movement?.LockMovement(false);
+        _movement?.ForceUnlockAll();
     }
 
     public void SetPool(EnemyPool pool)
@@ -148,7 +151,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private IEnumerator HitStop_Coroutine(float time)
     {
-        _movement.LockMovement(true);
+        _movement.LockMovement(true, time);
         yield return new WaitForSeconds(time);
 
         // 죽었다면 풀면 안 됨

@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.AI;
-using System.Collections;
 
 public class EnemyMovement : MonoBehaviour
 {
@@ -12,23 +11,20 @@ public class EnemyMovement : MonoBehaviour
     [SerializeField] private ERotationMode _rotationMode = ERotationMode.MoveDirection;
     private Transform _lookTarget;
 
-    private Coroutine _hitRotationCoroutine;
-
     [Header("스피드 보간")]
     [SerializeField] private float _speedLerpSpeed = 6f;
 
     [Header("회전 보간")]
     [SerializeField] private float _rotationLerpSpeed = 14f;
-    [SerializeField] private float _hitRotateFadeSpeed = 8f;
-    private float _hitRotateSpeed = 0.4f;
-    private float _hitRotateWeight = 0f;
 
     [Header("적 피격 넉백 옵션")]
     [SerializeField] private bool _allowKnockbackWhileLocked = true;
-    [SerializeField] private float _knockbackDamping = 12f;    // 클수록 빨리 멈춤
-    [SerializeField] private float _maxKnockbackSpeed = 3f;  // 넉백 최대치
+    [SerializeField] private float _knockbackDamping = 16f;    // 클수록 빨리 멈춤
+    [SerializeField] private float _maxKnockbackSpeed = 12f;  // 넉백 최대치
     private Vector3 _knockbackVelocity;
 
+    private int _moveLockCount = 0;     // 여러 군데에서 락 걸 때 대비 안전 장치
+    private float _lockUntilTime = 0f;  // 최소 락 유지 시간 (경로 복귀 지연용)
     private bool _movementLocked;
 
     private NavMeshAgent _agent;
@@ -37,7 +33,7 @@ public class EnemyMovement : MonoBehaviour
     private float _currentSpeedMultiplier = 1f;
     private float _targetSpeedMultiplier = 1f;
 
-    public bool IsMoving => _agent.enabled && _agent.velocity.sqrMagnitude > 0.01f;
+    public bool IsMoving => _agent != null && _agent.enabled && _agent.velocity.sqrMagnitude > 0.01f;
 
     private void Awake()
     {
@@ -45,14 +41,19 @@ public class EnemyMovement : MonoBehaviour
         _enemy = GetComponent<EnemyBase>();
         _anim = GetComponent<EnemyAnimatorController>();
 
-        _agent.updateRotation = false;
-        _agent.updateUpAxis = false;
+        if (_agent != null)
+        {
+            _agent.updateRotation = false;
+            _agent.updateUpAxis = false;
+        }
     }
 
     private void OnEnable()
     {
-        // 풀링 재스폰 대비 넉백 초기화
         _knockbackVelocity = Vector3.zero;
+
+        // 풀링 대비 락이 남아있을 가능성 제거
+        ForceUnlockAll();
     }
 
     private void OnDisable()
@@ -63,13 +64,19 @@ public class EnemyMovement : MonoBehaviour
     public void Initialize()
     {
         _enemyStatData = _enemy.EnemyStatData;
-        _agent.speed = _enemyStatData.MoveSpeed;
+        if (_agent != null) _agent.speed = _enemyStatData.MoveSpeed;
     }
 
     private void Update()
     {
         // 경직 중에도 밀리게 넉백 먼저 처리
         ApplyKnockback();
+
+        // 락 시간 지나면 자동으로 해제
+        if (_movementLocked && _moveLockCount == 0 && Time.time >= _lockUntilTime)
+        {
+            InternalUnlock();
+        }
 
         // 이동 Lock 상태면 목적지 이동 / 회전 / 애니 멈추기
         if (_movementLocked)
@@ -92,7 +99,7 @@ public class EnemyMovement : MonoBehaviour
         direction.y = 0f;
         if (direction.sqrMagnitude < 0.0001f) return;
 
-        // 누적 (연속 히트 시 "경직되듯 조금씩 밀림")
+        // 누적 (연속 히트 시 경직되듯 조금씩 밀림)
         _knockbackVelocity += direction.normalized * strength;
 
         // 과도한 누적 방지
@@ -110,7 +117,7 @@ public class EnemyMovement : MonoBehaviour
 
         if (_movementLocked && !_allowKnockbackWhileLocked) return;
 
-        // agent.Move는 isStopped 상태에서도 위치를 움직일 수 있음 (경직 느낌 살리기)
+        // 경직 느낌 살리기
         Vector3 delta = _knockbackVelocity * Time.deltaTime;
         _agent.Move(delta);
 
@@ -122,61 +129,80 @@ public class EnemyMovement : MonoBehaviour
         );
     }
 
-    public void InterruptPathForHit(float lockTime = 0.12f)
-    {
-        if (_agent == null || !_agent.enabled) return;
-
-        // 기존 경로 완전히 끊기
-        _agent.ResetPath();
-        _agent.isStopped = true;
-
-        // 이동 잠깐 Lock
-        LockMovement(true);
-
-        // 잠깐 후 다시 풀기
-        StartCoroutine(ResumeMovementAfter_Coroutine(lockTime));
-    }
-
-    private IEnumerator ResumeMovementAfter_Coroutine(float time)
-    {
-        yield return new WaitForSeconds(time);
-
-        // 죽었으면 풀지 않음
-        if (_enemy != null && _enemy.IsDead) yield break;
-
-        LockMovement(false);
-    }
-
     #endregion
 
-    #region Movement
+    #region Movement Lock
 
-    public void LockMovement(bool locked)
+    public void LockMovement(bool locked, float minLockTime = 0f)
     {
-        _movementLocked = locked;
-
-        if (_agent != null && _agent.enabled)
+        if (locked)
         {
-            if (locked)
+            _moveLockCount++;
+            _movementLocked = true;
+
+            if (minLockTime > 0f)
+            {
+                _lockUntilTime = Mathf.Max(_lockUntilTime, Time.time + minLockTime);
+            }
+
+            if (_agent != null && _agent.enabled)
             {
                 _agent.isStopped = true;
                 _agent.ResetPath();
                 _agent.velocity = Vector3.zero;
             }
-            else
-            {
-                _agent.isStopped = false;
-            }
+
+            _anim?.SetMove(false);
+            return;
         }
 
-        // 애니도 확실히 Move=false로 고정
+        // unlock
+        _moveLockCount = Mathf.Max(0, _moveLockCount - 1);
+
+        // 다른 곳에 락 걸려있으면 유지
+        if (_moveLockCount > 0) return;
+
+        // 최소 락 시간 남아있으면 Update에서 자동 해제되도록 유지
+        if (Time.time < _lockUntilTime) return;
+
+        _movementLocked = false;
+
+        InternalUnlock();
+    }
+
+    private void InternalUnlock()
+    {
+        _movementLocked = false;
+
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.isStopped = false;
+        }
+
         _anim?.SetMove(false);
     }
+
+    // 풀링 / 리스폰 대비 락 상태 강제 초기화
+    public void ForceUnlockAll()
+    {
+        _moveLockCount = 0;
+        _lockUntilTime = 0f;
+        _movementLocked = false;
+
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.isStopped = false;
+        }
+    }
+
+    #endregion
+
+    #region Movement Commands
 
     public void MoveTo(Vector3 target)
     {
         if (_movementLocked) return;
-        if (!_agent.enabled) return;
+        if (_agent == null || !_agent.enabled) return;
 
         _agent.isStopped = false;
         _agent.SetDestination(target);
@@ -184,7 +210,7 @@ public class EnemyMovement : MonoBehaviour
 
     public void Stop()
     {
-        if (!_agent.enabled) return;
+        if (_agent == null || !_agent.enabled) return;
 
         _agent.isStopped = true;
         _agent.ResetPath();
@@ -237,13 +263,8 @@ public class EnemyMovement : MonoBehaviour
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction.normalized);
 
-            // 히트 시 더 무겁게 회전
-            _hitRotateWeight = Mathf.MoveTowards(_hitRotateWeight, 0f, Time.deltaTime * _hitRotateFadeSpeed);
-
-            float speed = Mathf.Lerp(_rotationLerpSpeed, _rotationLerpSpeed * _hitRotateSpeed, _hitRotateWeight);
-
             // 부드럽게 회전
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * speed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _rotationLerpSpeed);
         }
     }
 
@@ -257,41 +278,6 @@ public class EnemyMovement : MonoBehaviour
     {
         _rotationMode = ERotationMode.LookAtTarget;
         _lookTarget = target;
-    }
-
-    public void ApplyHitRotationWithRecovery(Vector3 hitDirection, float rotateSpeed, float recoverDelay)
-    {
-        hitDirection.y = 0f;
-        if (hitDirection.sqrMagnitude < 0.0001f) return;
-
-        if (_hitRotationCoroutine != null)
-        {
-            StopCoroutine(_hitRotationCoroutine);
-        }
-
-        _hitRotationCoroutine = StartCoroutine(HitRotation_Coroutine(hitDirection, rotateSpeed, recoverDelay));
-    }
-
-    private IEnumerator HitRotation_Coroutine(Vector3 hitDirection, float rotateSpeed, float recoverDelay)
-    {
-        _hitRotateWeight = 1f;
-
-        Quaternion target = Quaternion.LookRotation(hitDirection.normalized);
-
-        float t = 0f;
-        while (t < recoverDelay)
-        {
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,
-                target,
-                Time.deltaTime * rotateSpeed
-            );
-            t += Time.deltaTime;
-            yield return null;
-        }
-
-        // 각도 복귀
-        SetRotationToMoveDirection();
     }
 
     #endregion

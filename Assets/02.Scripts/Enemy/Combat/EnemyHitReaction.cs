@@ -1,25 +1,23 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyHitReaction : MonoBehaviour
 {
     [Header("넉백 옵션")]
-    [SerializeField] private float _pushStrength = 6f;   // 한 대당 기본 밀림
-    [SerializeField] private float _consecutionHitTime = 0.25f;    // 연속 히트 판정 시간
+    [SerializeField] private float _pushStrength = 18f;   // 한 대당 기본 밀림
+    [SerializeField] private float _consecutionHitTime = 0.6f;    // 연속 히트 판정 시간
     [SerializeField] private float _consecutionHitBonus = 0.8f;    // 연속 히트 시 추가
-    [SerializeField] private float _eliteStrengthMultiplier = 1.3f;
+    [SerializeField] private float _eliteStrengthMultiplier = 1.4f;
 
     [Header("넉백 경로 끊기 (되돌아오기 방지)")]
     [SerializeField] private float _interruptPathTime = 0.18f;
-
-    [Header("플레이어 히트 시 넉백 회전값")]
-    [SerializeField] private float _hitRotationValue = 2f;
-    [SerializeField] private float _recoverDelay = 0.12f;
 
     [Header("플레이어 (Attacker가 null일 때 사용)")]
     [SerializeField] private Transform _player;
 
     private EnemyBase _enemy;
     private EnemyMovement _movement;
+    private NavMeshAgent _agent;
 
     private float _lastHitTime;
     private int _consecutionHit;
@@ -28,6 +26,7 @@ public class EnemyHitReaction : MonoBehaviour
     {
         _enemy = GetComponent<EnemyBase>();
         _movement = GetComponent<EnemyMovement>();
+        _agent = GetComponent<NavMeshAgent>();
 
         if (_player == null)
         {
@@ -72,16 +71,21 @@ public class EnemyHitReaction : MonoBehaviour
             return;
         }
 
-        Vector3 direction = transform.position - source.transform.position;
+        Vector3 direction = transform.position - source.position;
         direction.y = 0f;
 
         if (direction.sqrMagnitude < 0.0001f) return;
         direction.Normalize();
 
-        _movement.ApplyHitRotationWithRecovery(direction, _hitRotationValue, _recoverDelay);
+        // 넉백 시 바로 원래 경로로 붙는 느낌 최소화
+        if (_agent != null && _agent.enabled)
+        {
+            _agent.ResetPath();
+        }
 
-        // 넉백 직전에 경로 잠깐 끊기
-        _movement.InterruptPathForHit(_interruptPathTime);
+        // 최소 시간만큼 멈추게 하고, Unlock은 바로 요청
+        _movement.LockMovement(true, _interruptPathTime);
+        _movement.LockMovement(false);
 
         float now = Time.time;
         if (now - _lastHitTime <= _consecutionHitTime)
