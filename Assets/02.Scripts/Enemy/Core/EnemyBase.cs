@@ -16,9 +16,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     [Header("스폰 높이")]
     [SerializeField] private float _spawnHeight = 0f;  // 바닥과 적의 중심 높이 차이
 
-    private float _hitCoolTime = 0.1f;   // 다시 Hit 가능 시간
-    private float _hitStopTime = 0.14f;  // hitCoolTime + hitStopTime = Hit동안 적이 멈춰있는 시간
-    private bool _onHit = false;
+    private float _hitStopTime = 0.24f;  // Hit 시 적이 멈춰있는 시간
     private Coroutine _hitStopRoutine;
 
     public virtual bool CanMove => true;
@@ -121,15 +119,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public virtual void TakeDamage(float damage, GameObject attacker = null)
     {
         if (IsDead) return;
-        if (_onHit == true) return;
 
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(_currentHealth, 0);
 
-        EnemyEventController.Enemy.RaiseHit(new EnemyHitEvent(this, damage));
+        EnemyEventController.Enemy.RaiseHit(new EnemyHitEvent(this, damage, attacker));
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
 
-        StopOnHit(_hitCoolTime, _hitStopTime);
+        StopOnHit(_hitStopTime);
         _anim?.PlayHit();
 
         if (_currentHealth <= 0)
@@ -138,7 +135,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         }
     }
 
-    private void StopOnHit(float coolTime, float stopTime)
+    private void StopOnHit(float time)
     {
         if (_movement == null) return;
 
@@ -146,18 +143,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         {
             StopCoroutine(_hitStopRoutine);
         }
-        _hitStopRoutine = StartCoroutine(HitStop_Coroutine(_hitCoolTime, _hitStopTime));
+        _hitStopRoutine = StartCoroutine(HitStop_Coroutine(time));
     }
 
-    private IEnumerator HitStop_Coroutine(float coolTime, float stopTime)
+    private IEnumerator HitStop_Coroutine(float time)
     {
-        _onHit = true;
         _movement.LockMovement(true);
-
-        yield return new WaitForSeconds(coolTime);
-        _onHit = false;
-
-        yield return new WaitForSeconds(stopTime);
+        yield return new WaitForSeconds(time);
 
         // 죽었다면 풀면 안 됨
         if (!IsDead)
@@ -171,7 +163,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (_despawnRequested) return;
         _despawnRequested = true;
 
-        _onHit = true;
         _movement?.LockMovement(true);
 
 #if UNITY_EDITOR
@@ -194,7 +185,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (!_despawnRequested) return; // 혹시 모를 중복 방지
 
-        _onHit = false;
         _despawnRequested = false;
 
         OnDespawn?.Invoke(this);

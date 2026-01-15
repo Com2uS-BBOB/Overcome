@@ -18,11 +18,13 @@ public readonly struct EnemyHitEvent
 {
     public readonly EnemyBase Enemy;
     public readonly float Damage;
+    public readonly GameObject Attacker;
 
-    public EnemyHitEvent(EnemyBase enemy, float damage)
+    public EnemyHitEvent(EnemyBase enemy, float damage, GameObject attacker)
     {
         Enemy = enemy;
         Damage = damage;
+        Attacker = attacker;
     }
 }
 

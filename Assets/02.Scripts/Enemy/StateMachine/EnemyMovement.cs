@@ -14,6 +14,12 @@ public class EnemyMovement : MonoBehaviour
     [Header("스피드 보간")]
     [SerializeField] private float _speedLerpSpeed = 6f;
 
+    [Header("적 피격 넉백 옵션")]
+    [SerializeField] private bool _allowKnockbackWhileLocked = true;
+    [SerializeField] private float _knockbackDamping = 18f;     // 클수록 빨리 멈춤
+    [SerializeField] private float _maxKnockbackSpeed = 1.8f;   // 넉백 최대치
+    private Vector3 _knockbackVelocity;
+
     private bool _movementLocked;
 
     private NavMeshAgent _agent;
@@ -34,6 +40,17 @@ public class EnemyMovement : MonoBehaviour
         _agent.updateUpAxis = false;
     }
 
+    private void OnEnable()
+    {
+        // 풀링 재스폰 대비 넉백 초기화
+        _knockbackVelocity = Vector3.zero;
+    }
+
+    private void OnDisable()
+    {
+        _knockbackVelocity = Vector3.zero;
+    }
+
     public void Initialize()
     {
         _enemyStatData = _enemy.EnemyStatData;
@@ -42,12 +59,61 @@ public class EnemyMovement : MonoBehaviour
 
     private void Update()
     {
-        if (_movementLocked) return;
+        // 경직 중에도 밀리게 넉백 먼저 처리
+        ApplyKnockback();
+
+        // 이동 Lock 상태면 목적지 이동 / 회전 / 애니 멈추기
+        if (_movementLocked)
+        {
+            _anim?.SetMove(false);
+            return;
+        }
 
         UpdateSpeed();
         UpdateRotation();
         _anim?.SetMove(IsMoving);
     }
+
+    #region Knockback
+
+    public void AddKnockback(Vector3 direction, float strength)
+    {
+        if (_agent == null || !_agent.enabled) return;
+
+        direction.y = 0f;
+        if (direction.sqrMagnitude < 0.0001f) return;
+
+        // 누적 (연속 히트 시 "경직되듯 조금씩 밀림")
+        _knockbackVelocity += direction.normalized * strength;
+
+        // 과도한 누적 방지
+        float magnitude = _knockbackVelocity.magnitude;
+        if (magnitude > _maxKnockbackSpeed)
+        {
+            _knockbackVelocity = _knockbackVelocity / magnitude * _maxKnockbackSpeed;
+        }
+    }
+
+    private void ApplyKnockback()
+    {
+        if (_agent == null || !_agent.enabled) return;
+        if (_knockbackVelocity.sqrMagnitude < 0.000001f) return;
+
+        if (_movementLocked && !_allowKnockbackWhileLocked) return;
+
+        // agent.Move는 isStopped 상태에서도 위치를 움직일 수 있음 (경직 느낌 살리기)
+        Vector3 delta = _knockbackVelocity * Time.deltaTime;
+        _agent.Move(delta);
+
+        // 점점 느려짐
+        _knockbackVelocity = Vector3.Lerp(
+            _knockbackVelocity,
+            Vector3.zero,
+            Time.deltaTime * _knockbackDamping
+        );
+    }
+
+    #endregion
 
     #region Movement
 
