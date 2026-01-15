@@ -41,7 +41,6 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
         enemy.Initialize(statData);
         enemy.GetComponent<EnemyMovement>()?.Initialize();
 
-        enemy.transform.SetPositionAndRotation(position, rotation);
         enemy.gameObject.SetActive(true);
 
         return enemy;

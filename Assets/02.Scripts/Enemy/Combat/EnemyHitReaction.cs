@@ -49,45 +49,77 @@ public class EnemyHitReaction : MonoBehaviour
 
     private void OnHit(EnemyHitEvent hitEvent)
     {
-        if (hitEvent.Enemy != _enemy) return;
-        if (_movement == null) return;
+        if (!IsValidHit(hitEvent)) return;
 
-        Transform source = null;
+        if (!TryGetAttackSource(hitEvent, out Transform source)) return;
+        if (!TryGetKnockbackDirection(source, out Vector3 direction)) return;
 
+        PrepareMovementForKnockback();
+
+        UpdateConsecutiveHit();
+        float strength = CalculateKnockbackStrength();
+
+        ApplyKnockback(direction, strength);
+    }
+
+    private bool IsValidHit(EnemyHitEvent hitEvent)
+    {
+        if (hitEvent.Enemy != _enemy) return false;
+        if (_movement == null) return false;
+        return true;
+    }
+
+    private bool TryGetAttackSource(EnemyHitEvent hitEvent, out Transform source)
+    {
         if (hitEvent.Attacker != null)
         {
             source = hitEvent.Attacker.transform;
+            return true;
         }
-        else if (_player != null)
+
+        if (_player != null)
         {
             source = _player;
+            return true;
         }
 
-        if (source == null)
-        {
 #if UNITY_EDITOR
-            Debug.LogWarning("[EnemyHitReaction] attacker/player 둘 다 없어서 넉백 스킵");
+        Debug.LogWarning("[EnemyHitReaction] attacker/player 둘 다 없어서 넉백 스킵");
 #endif
-            return;
-        }
+        source = null;
+        return false;
+    }
 
-        Vector3 direction = transform.position - source.position;
+    private bool TryGetKnockbackDirection(Transform source, out Vector3 direction)
+    {
+        direction = transform.position - source.position;
         direction.y = 0f;
 
-        if (direction.sqrMagnitude < 0.0001f) return;
-        direction.Normalize();
+        if (direction.sqrMagnitude < 0.0001f)
+            return false;
 
-        // 넉백 시 바로 원래 경로로 붙는 느낌 최소화
+        direction.Normalize();
+        return true;
+    }
+
+    // 이동 상태 정리
+    private void PrepareMovementForKnockback()
+    {
         if (_agent != null && _agent.enabled)
         {
             _agent.ResetPath();
         }
 
-        // 최소 시간만큼 멈추게 하고, Unlock은 바로 요청
+        // 잠깐 멈췄다가 바로 풀어서 되돌아붙는 느낌 제거
         _movement.LockMovement(true, _interruptPathTime);
         _movement.LockMovement(false);
+    }
 
+    // 연속 히트 누적 관리
+    private void UpdateConsecutiveHit()
+    {
         float now = Time.time;
+
         if (now - _lastHitTime <= _consecutionHitTime)
         {
             _consecutionHit++;
@@ -98,13 +130,24 @@ public class EnemyHitReaction : MonoBehaviour
         }
 
         _lastHitTime = now;
+    }
 
+    // 누적된 넉백 힘 계산
+    private float CalculateKnockbackStrength()
+    {
         float strength = _pushStrength * (1f + _consecutionHit * _consecutionHitBonus);
 
-        // 엘리트는 취향껏
-        float eliteMultiplier = (_enemy.EnemyType == EEnemyType.Elite) ? _eliteStrengthMultiplier : 1f;
-        strength *= eliteMultiplier;
+        if (_enemy.EnemyType == EEnemyType.Elite)
+        {
+            strength *= _eliteStrengthMultiplier;
+        }
 
+        return strength;
+    }
+
+    // 넉백 계산
+    private void ApplyKnockback(Vector3 direction, float strength)
+    {
         _movement.AddKnockback(direction, strength);
     }
 }
