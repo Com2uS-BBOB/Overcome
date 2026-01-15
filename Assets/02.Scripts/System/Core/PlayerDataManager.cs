@@ -22,9 +22,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     private void InitializeStartPlayer()
     {
-        string targetID = string.IsNullOrEmpty(_startPlayerID)
-            ? GenerateTempPlayerID()
-            : _startPlayerID;
+        string targetID = string.IsNullOrEmpty(_startPlayerID) ? GenerateTempPlayerID() : _startPlayerID;
 
         if (!HasPlayer(targetID))
         {
