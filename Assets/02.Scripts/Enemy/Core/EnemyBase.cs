@@ -1,8 +1,9 @@
-using UnityEngine;
+using _02.Scripts.Player.Interfaces;
 using System;
 using System.Collections;
-using _02.Scripts.Player.Interfaces;
+using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Audio;
 
 public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
@@ -16,6 +17,12 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     [Header("스폰 높이")]
     [SerializeField] private float _spawnHeight = 0f;  // 바닥과 적의 중심 높이 차이
+
+    [Header("오디오 클립")]
+    [SerializeField] private AudioClip _enemyHitAudioClip;
+    [SerializeField] private AudioClip _enemyDeathAudioClip;
+
+    private AudioSource _enemyAudioSource;
 
     private float _hitStopTime = 0.24f;  // Hit 시 적이 멈춰있는 시간
     private Coroutine _hitStopRoutine;
@@ -50,6 +57,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _anim = GetComponent<EnemyAnimatorController>();
         _movement = GetComponent<EnemyMovement>();
         _agent = GetComponent<NavMeshAgent>();
+        _enemyAudioSource = GetComponent<AudioSource>();
     }
 
     public void Initialize(EnemyStatData statData)
@@ -139,6 +147,16 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (_currentHealth <= 0)
         {
             Die();
+        }
+
+        if (IsDead)
+        {
+            // todo. 추후 적 Death 오디오 클립 삽입
+            // _enemyAudioSource.PlayOneShot(_enemyDeathAudioClip);
+        }
+        else
+        {
+            _enemyAudioSource.PlayOneShot(_enemyHitAudioClip);
         }
     }
 
