@@ -14,9 +14,9 @@ public struct AttackWaitActionConfig
     public float MinStoppingDistance;
 
     public AttackWaitActionConfig(
-        float minWait,
-        float maxWait,
-        float waitSpeedMultiplier,
+        float minWait = 999f,
+        float maxWait = 999f,
+        float waitSpeedMultiplier = 0.6f,
         bool releaseSlotOnExit = true,
         int fixedSlotIndex = -1,
         float arrivedThreshold = 0.2f,
