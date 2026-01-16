@@ -6,6 +6,7 @@ using UnityEngine.Audio;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using DG.Tweening;
+using _02.Scripts.Player.Common;
 
 public enum AudioType
 {
@@ -21,21 +22,22 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     [SerializeField] private AudioMixerGroup _musicGroup;
     [SerializeField] private AudioMixerGroup _effectGroup;
 
-    [Header("AudioSource Settings")]
+    [Header("Pool Settings")]
+    [SerializeField] private AudioSource _audioSourcePrefab;
     [SerializeField] private int _sfxPoolSize = 15;
 
     [Header("Common Settings")]
-    [Tooltip("게임 전체 동안 유지할 공통 사운드 라벨 (예: UISound_Common)")]
     [SerializeField] private string _commonSoundLabel = "Common";
 
     private AudioSource _bgmSource;
-    private readonly List<AudioSource> _sfxPool = new List<AudioSource>();
+    private ObjectPool<AudioSource> _sfxPool;
 
     // clipName(Address 또는 이름) -> AudioClip 캐시
     private readonly Dictionary<string, AudioClip> _sceneClips = new Dictionary<string, AudioClip>();
     private readonly Dictionary<string, AudioClip> _commonClips = new Dictionary<string, AudioClip>();
 
-    // Common 라벨 로드 핸들 (게임 끝날 때 한 번에 Release)
+    // Addressables Handle 저장 (메모리 누수 방지)
+    private readonly Dictionary<string, AsyncOperationHandle<AudioClip>> _sceneHandles = new Dictionary<string, AsyncOperationHandle<AudioClip>>();
     private readonly List<AsyncOperationHandle> _commonHandles = new List<AsyncOperationHandle>();
 
     private float _masterVolume = 1f;
@@ -61,7 +63,20 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     {
         LoadVolumeSettings();
     }
-    
+
+    protected override void Clear()
+    {
+        // BGM 정리
+        _bgmSource?.Stop();
+        _bgmFadeTween?.Kill();
+
+        // SFX Pool 완전 정리
+        _sfxPool?.Clear();
+
+        // Addressables 리소스 해제 (Editor에서 중요)
+        ReleaseAllAudioClips();
+    }
+
     private void InitializeAudioSources()
     {
         // BGM Source
@@ -73,11 +88,8 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         _bgmSource.playOnAwake = false;
         _bgmSource.spatialBlend = 0f;
 
-        // SFX Pool
-        for (int i = 0; i < _sfxPoolSize; i++)
-        {
-            CreateSfxAudioSource(i);
-        }
+        // SFX Pool 초기화
+        _sfxPool = new ObjectPool<AudioSource>(_audioSourcePrefab, transform, _sfxPoolSize);
     }
 
     #region Volume Setting
@@ -106,13 +118,13 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         switch (audioType)
         {
             case AudioType.Master:
-                _masterVolume =  volume;
+                _masterVolume = volume;
                 break;
             case AudioType.Music:
-                _musicVolume =  volume;
+                _musicVolume = volume;
                 break;
             case AudioType.Effect:
-                _effectVolume =  volume;
+                _effectVolume = volume;
                 break;
         }
 
@@ -128,12 +140,12 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     public void PauseAudio()
     {
-        _audioMixer?.SetFloat(nameof(AudioType.Effect), Mathf.Log10(0.0001f) * 20);
+        _audioMixer?.SetFloat(nameof(AudioType.Master), Mathf.Log10(0.0001f) * 20);
     }
 
     public void ResumeAudio()
     {
-        SetAudioVolume(AudioType.Effect, _effectVolume);
+        SetAudioVolume(AudioType.Master, _masterVolume);
     }
 
     private void SaveVolumeSettings()
@@ -153,7 +165,16 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     #endregion
 
     #region BGM Control
-    public async void PlayBGM(string clipName, float fadeTime = 0f)
+    public void PlayBGM(string clipName, float fadeTime = 0f)
+    {
+        _ = PlayBGMAsync(clipName, fadeTime)
+            .ContinueWith(t =>
+            {
+                if (t.IsFaulted) Debug.LogException(t.Exception);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+    }
+
+    public async Task PlayBGMAsync(string clipName, float fadeTime = 0f)
     {
         if (_bgmSource.isPlaying && fadeTime > 0f)
         {
@@ -181,9 +202,21 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         }
     }
 
-    public async void StopBGM(float fadeTime = 0f)
+    public void StopBGM(float fadeTime = 0f)
     {
-        if (fadeTime > 0f) await FadeBGMAsync(0f, fadeTime);
+        _ = StopBGMAsync(fadeTime)
+            .ContinueWith(t =>
+            {
+                if (t.IsFaulted) Debug.LogException(t.Exception);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+    }
+
+    public async Task StopBGMAsync(float fadeTime = 0f)
+    {
+        if (fadeTime > 0f)
+        {
+            await FadeBGMAsync(0f, fadeTime);
+        }
 
         _bgmSource.Stop();
         _bgmSource.clip = null;
@@ -201,13 +234,16 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     #endregion
 
     #region SFX Control
-    
     /// <summary>
     /// 평면적인 SFX 실행 (UI SFX 등)
     /// </summary>
     public void PlaySfx(string clipName)
     {
-        _= PlaySfxInternalAsync(clipName, Vector3.zero, null, true);
+        _ = PlaySfxInternalAsync(clipName, Vector3.zero, null, true)
+            .ContinueWith(t =>
+            {
+                if (t.IsFaulted) Debug.LogException(t.Exception);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     /// <summary>
@@ -215,7 +251,11 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     /// </summary>
     public void PlaySfx(string clipName, Vector3 position)
     {
-        _=  PlaySfxInternalAsync(clipName, position, null, false);
+        _ = PlaySfxInternalAsync(clipName, position, null, false)
+            .ContinueWith(t =>
+            {
+                if (t.IsFaulted) Debug.LogException(t.Exception);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     /// <summary>
@@ -223,7 +263,11 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     /// </summary>
     public void PlaySfx(string clipName, Transform target)
     {
-        _= PlaySfxInternalAsync(clipName, Vector3.zero, target, false);
+        _ = PlaySfxInternalAsync(clipName, Vector3.zero, target, false)
+            .ContinueWith(t =>
+            {
+                if (t.IsFaulted) Debug.LogException(t.Exception);
+            }, TaskScheduler.FromCurrentSynchronizationContext());
     }
 
     private async Task PlaySfxInternalAsync(string clipName, Vector3 position, Transform target, bool is2D)
@@ -235,13 +279,12 @@ public class SoundManager : SingletonBehaviour<SoundManager>
             return;
         }
 
-        AudioSource source = GetAvailableSfxSource();
+        AudioSource source = _sfxPool.Get();
         if (source == null)
         {
             Debug.LogWarning($"[SoundManager] 사용 가능한 SFX Source가 없음: {clipName}");
             return;
         }
-
         source.clip = clip;
         source.spatialBlend = is2D ? 0f : 1f;
 
@@ -255,67 +298,30 @@ public class SoundManager : SingletonBehaviour<SoundManager>
             source.transform.SetParent(transform);
             source.transform.position = position;
         }
-
-        source.gameObject.SetActive(true);
         source.Play();
-
         await WaitForSfxFinishedAsync(source);
     }
 
     private async Task WaitForSfxFinishedAsync(AudioSource source)
     {
-        while (source != null && source.isPlaying)
+        if (source == null || source.clip == null) return;
+
+        float duration = source.clip.length;
+        float startTime = Time.time;
+
+        while (source != null && source.isPlaying && (Time.time - startTime) < duration + 1f)
         {
             await Task.Yield();
         }
 
         if (source == null) return;
 
-        // todo. Pool 반환 방식으로 수정
         source.clip = null;
         source.transform.SetParent(transform);
-        source.gameObject.SetActive(false);
-    }
-
-    private AudioSource GetAvailableSfxSource()
-    {
-        // todo. Object Pooling 방식 수정 필요
-        foreach (AudioSource source in _sfxPool)
-        {
-            if (!source.gameObject.activeSelf) 
-            {
-                return source;
-            }
-        }
-        return CreateSfxAudioSource();
-    }
-
-    public void StopAllSfx()
-    {
-        foreach (AudioSource source in _sfxPool)
-        {
-            if (!source.isPlaying) continue;
-            source.Stop();
-            source.clip = null;
-            source.gameObject.SetActive(false);
-        }
-    }
-
-    private AudioSource CreateSfxAudioSource(int i = -1)
-    {
-        int index = (i == -1) ? _sfxPool.Count : i;
-        GameObject sfxObject = new GameObject($"SFX_Source_{index}");
-        sfxObject.transform.SetParent(transform);
-        AudioSource newSource = sfxObject.AddComponent<AudioSource>();
-        newSource.outputAudioMixerGroup = _effectGroup;
-        newSource.playOnAwake = false;
-        newSource.spatialBlend = 1f;
-        sfxObject.SetActive(false);
-        _sfxPool.Add(newSource);
-        return newSource;
+        _sfxPool.Return(source);
     }
     #endregion
-    
+
     #region Load Resource
     private async Task PreloadCommonSoundsAsync()
     {
@@ -329,12 +335,13 @@ public class SoundManager : SingletonBehaviour<SoundManager>
                     if (clip == null) return;
                     _commonClips.TryAdd(clip.name, clip);
                 });
-
         _commonHandles.Add(handle);
         await handle.Task;
     }
 
-    // clipName과 실제 Addressables에 등록된 이름과 일치해야 한다.
+    /// <summary>
+    /// ! 실제 Addressables에 등록된 clipName 사용.
+    /// </summary>
     private async Task<AudioClip> LoadAudioClipAsync(string clipName)
     {
         if (string.IsNullOrEmpty(clipName)) return null;
@@ -349,36 +356,35 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
         AsyncOperationHandle<AudioClip> handle = Addressables.LoadAssetAsync<AudioClip>(clipName);
         AudioClip clip = await handle.Task;
-        if (handle.Status != AsyncOperationStatus.Succeeded || clip == null)                        
-        {                                                                                           
-            if (handle.IsValid()) Addressables.Release(handle);
-            return null;                                                                            
-        }  
+        if (handle.Status != AsyncOperationStatus.Succeeded || clip == null)
+        {
+            if (handle.IsValid())
+            {
+                Addressables.Release(handle);
+            }
+            return null;
+        }
 
+        _sceneHandles[clipName] = handle;
         _sceneClips[clipName] = clip;
         return clip;
     }
 
-    // todo. SceneChage 시점 고려 후 구독 필요
     private void ReleaseCurrentSceneAudioClips()
     {
-        foreach (KeyValuePair<string, AudioClip> kv in _sceneClips)
+        foreach (AsyncOperationHandle<AudioClip> handle in _sceneHandles.Values)
         {
-            if (kv.Value == null) continue;
-            Addressables.Release(kv.Value);
+            if (!handle.IsValid()) continue;
+            Addressables.Release(handle);
         }
+        _sceneHandles.Clear();
         _sceneClips.Clear();
     }
 
     private void ReleaseCommonAudioClips()
     {
-        foreach (KeyValuePair<string, AudioClip> kv in _commonClips)
-        {
-            if (kv.Value == null) continue;
-            Addressables.Release(kv.Value);
-        }
         _commonClips.Clear();
-        
+
         foreach (AsyncOperationHandle handle in _commonHandles)
         {
             if (!handle.IsValid()) continue;
@@ -386,7 +392,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         }
         _commonHandles.Clear();
     }
-    
+
     private void ReleaseAllAudioClips()
     {
         ReleaseCurrentSceneAudioClips();
@@ -401,7 +407,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     [SerializeField] private string _testBGMName = "MainTheme";
     [SerializeField] private string _testSfxName = "Click";
     [SerializeField] private float _testFadeTime = 1f;
-    
+
     [ContextMenu("Test/Set Volume")]
     private void TestSetVolume()
     {

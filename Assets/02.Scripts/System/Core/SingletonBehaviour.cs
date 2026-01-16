@@ -27,12 +27,12 @@ public class SingletonBehaviour<T> : MonoBehaviour where T : MonoBehaviour
     }
 
     protected virtual void Init() { }
+    protected virtual void Clear() { }
 
     private void OnDestroy()
     {
-        if (_instance == this)
-        {
-            _instance = null;
-        }
+        Clear();
+        if (_instance != this) return;
+        _instance = null;
     }
 }
