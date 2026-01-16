@@ -74,7 +74,7 @@ GameObject:
   - component: {fileID: 3907646187636614984}
   - component: {fileID: 8046807168864619985}
   - component: {fileID: 2241512097802256620}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Health_Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -221,7 +221,7 @@ GameObject:
   - component: {fileID: -2607970238799787965}
   - component: {fileID: -4471165230191658703}
   - component: {fileID: 7588981516338341651}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SmallEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -443,6 +443,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyMovement
   _rotationMode: 0
   _speedLerpSpeed: 6
+  _rotationLerpSpeed: 14
+  _allowKnockbackWhileLocked: 1
+  _knockbackDamping: 16
+  _maxKnockbackSpeed: 12
 --- !u!114 &-4471165230191658703
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,7 +535,7 @@ GameObject:
   - component: {fileID: 3590444087307501660}
   - component: {fileID: 7715408368244992012}
   - component: {fileID: 4693825242698180136}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Health_Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -894,7 +898,7 @@ GameObject:
   - component: {fileID: 5703704168234262836}
   - component: {fileID: 314187912386983186}
   - component: {fileID: 3232577496751273397}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1797,7 +1801,7 @@ GameObject:
   - component: {fileID: 10881489281388158}
   - component: {fileID: 707635174343730964}
   - component: {fileID: 2919159384755718638}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2175,7 +2179,7 @@ GameObject:
   - component: {fileID: 3447261333693142009}
   - component: {fileID: 638928480172688495}
   - component: {fileID: 6907515565683870486}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Health_Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2281,7 +2285,7 @@ GameObject:
   - component: {fileID: 7166625152123933091}
   - component: {fileID: 4130531208184408078}
   - component: {fileID: 1257591834359292312}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Health_Delay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2570,6 +2574,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1908e5a768471c94f92b5a89b68004dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockbackHitbox
+  _spawnHitEffect: 0
   _useKnockback: 1
   _knockbackDuration: 0.2
   _defaultKnockbackDistance: 2
