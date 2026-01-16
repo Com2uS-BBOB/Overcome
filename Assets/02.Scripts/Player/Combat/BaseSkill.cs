@@ -22,8 +22,6 @@ namespace _02.Scripts.Player.Combat
         protected bool _comboQueued;
         protected bool _inComboGrace;
         protected bool _wasGroundedOnComboStart;
-        protected float _elapsedTime;
-        protected float _currentDuration;
 
         protected Coroutine _skillCoroutine;
         protected Coroutine _graceCoroutine;
@@ -104,32 +102,6 @@ namespace _02.Scripts.Player.Combat
             return CurrentSkillData?.ComboGraceTime ?? 0.1f;
         }
 
-        /// <summary>
-        /// 현재 콤보의 지속 시간
-        /// </summary>
-        protected virtual float GetCurrentDuration()
-        {
-            return CurrentSkillData?.GetDuration(_comboStep) ?? 0.8f;
-        }
-
-        /// <summary>
-        /// 히트박스 시작 시간 (정규화 시간 → 실제 시간)
-        /// </summary>
-        protected virtual float GetHitboxStartTime()
-        {
-            float normalizedStart = CurrentSkillData?.GetHitboxStart(_comboStep) ?? 0.15f;
-            return _currentDuration * normalizedStart;
-        }
-
-        /// <summary>
-        /// 히트박스 종료 시간 (정규화 시간 → 실제 시간)
-        /// </summary>
-        protected virtual float GetHitboxEndTime()
-        {
-            float normalizedEnd = CurrentSkillData?.GetHitboxEnd(_comboStep) ?? 0.45f;
-            return _currentDuration * normalizedEnd;
-        }
-
         // === Core Methods ===
 
         /// <summary>
@@ -184,56 +156,45 @@ namespace _02.Scripts.Player.Combat
 
         // === Coroutine Logic ===
 
+        /// <summary>
+        /// 스킬 코루틴 (Animation Event 기반)
+        /// 히트박스/스킬종료는 Animation Event에서 처리
+        /// </summary>
         protected virtual IEnumerator SkillCoroutine()
         {
             _isActive = true;
             _comboQueued = false;
             _inComboGrace = false;
-            _elapsedTime = 0f;
-
-            _currentDuration = GetCurrentDuration();
-            float hitboxStartTime = GetHitboxStartTime();
-            float hitboxEndTime = GetHitboxEndTime();
-            bool hitboxEnabled = false;
 
             // 스킬 시작 콜백
             OnSkillStart();
             OnSkillUsed?.Invoke();
             OnComboAttack?.Invoke(_comboStep);
 
-            // 매 프레임 경과 시간 추적
-            while (_elapsedTime < _currentDuration)
+            // Animation Event에서 OnAnimEventSkillEnd()가 호출될 때까지 대기
+            while (_isActive)
             {
-                _elapsedTime += Time.deltaTime;
-
-                // 히트박스 활성화
-                if (!hitboxEnabled && _elapsedTime >= hitboxStartTime)
-                {
-                    hitboxEnabled = true;
-                    EnableHitbox();
-                }
-
-                // 히트박스 비활성화
-                if (hitboxEnabled && _elapsedTime >= hitboxEndTime)
-                {
-                    hitboxEnabled = false;
-                    DisableHitbox();
-                }
-
                 // 콤보 큐잉 시 즉시 다음 콤보로
-                if (_comboQueued)
+                if (_comboQueued && CanContinueCombo)
                 {
                     DisableHitbox();
-                    break;
+                    ExecuteNextCombo();
+                    yield break;
                 }
 
                 yield return null;
             }
 
-            // 스킬 종료
-            _isActive = false;
+            // 스킬 종료 처리 (OnAnimEventSkillEnd에서 _isActive = false 설정됨)
+            HandleSkillEnd();
+        }
 
-            // 콤보 처리
+        /// <summary>
+        /// 스킬 종료 처리
+        /// </summary>
+        private void HandleSkillEnd()
+        {
+            Debug.Log($"[BaseSkill] HandleSkillEnd - comboStep={_comboStep}, MaxCombo={MaxCombo}, CanContinueCombo={CanContinueCombo}");
             if (_comboQueued && CanContinueCombo)
             {
                 ExecuteNextCombo();
@@ -245,9 +206,42 @@ namespace _02.Scripts.Player.Combat
             else
             {
                 // 마지막 콤보 완료
+                Debug.Log("[BaseSkill] Last combo finished, invoking OnSkillEnded");
                 _comboStep = 0;
                 OnSkillEnded?.Invoke();
             }
+        }
+
+        // === Animation Event Handlers ===
+
+        /// <summary>
+        /// Animation Event: 히트박스 활성화
+        /// </summary>
+        public void OnAnimEventEnableHitbox()
+        {
+            if (_isActive)
+                EnableHitbox();
+        }
+
+        /// <summary>
+        /// Animation Event: 히트박스 비활성화
+        /// </summary>
+        public void OnAnimEventDisableHitbox()
+        {
+            DisableHitbox();
+        }
+
+        /// <summary>
+        /// Animation Event: 스킬 종료
+        /// </summary>
+        public void OnAnimEventSkillEnd()
+        {
+            Debug.Log($"[BaseSkill] OnAnimEventSkillEnd called, _isActive={_isActive}");
+            if (!_isActive) return;
+
+            _isActive = false;
+            DisableHitbox();  // 안전장치
+            Debug.Log("[BaseSkill] _isActive set to false");
         }
 
         protected void ExecuteNextCombo()

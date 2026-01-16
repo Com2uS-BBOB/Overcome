@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 550631eedc27aa64b92974c08f462558, type: 3}
+  m_Name: ComboConfigData
+  m_EditorClassIdentifier: Assembly-CSharp::ComboConfigData
+  MaxCombo: 100
+  ComboDuration: 2
+  Configs:
+  - MinCombo: 0
+    MaxComboInclusive: 29
+    ComboText: NICE
+    DamageMultiplier: 1
+    ComboColorMode: 0
+    ComboColor: {r: 1, g: 1, b: 0, a: 0}
+    ComboGradient:
+      topLeft: {r: 0, g: 0, b: 0, a: 0}
+      topRight: {r: 0, g: 0, b: 0, a: 0}
+      bottomLeft: {r: 0, g: 0, b: 0, a: 0}
+      bottomRight: {r: 0, g: 0, b: 0, a: 0}
+    GradeColorMode: 0
+    GradeColor: {r: 1, g: 1, b: 0, a: 0}
+    GradeGradient:
+      topLeft: {r: 0, g: 0, b: 0, a: 0}
+      topRight: {r: 0, g: 0, b: 0, a: 0}
+      bottomLeft: {r: 0, g: 0, b: 0, a: 0}
+      bottomRight: {r: 0, g: 0, b: 0, a: 0}
+  - MinCombo: 30
+    MaxComboInclusive: 59
+    ComboText: GREAT
+    DamageMultiplier: 1.2
+    ComboColorMode: 0
+    ComboColor: {r: 1, g: 0.5019608, b: 0, a: 0}
+    ComboGradient:
+      topLeft: {r: 0, g: 0, b: 0, a: 0}
+      topRight: {r: 0, g: 0, b: 0, a: 0}
+      bottomLeft: {r: 0, g: 0, b: 0, a: 0}
+      bottomRight: {r: 0, g: 0, b: 0, a: 0}
+    GradeColorMode: 0
+    GradeColor: {r: 1, g: 0.5019608, b: 0, a: 0}
+    GradeGradient:
+      topLeft: {r: 0, g: 0, b: 0, a: 0}
+      topRight: {r: 0, g: 0, b: 0, a: 0}
+      bottomLeft: {r: 0, g: 0, b: 0, a: 0}
+      bottomRight: {r: 0, g: 0, b: 0, a: 0}
+  - MinCombo: 60
+    MaxComboInclusive: 79
+    ComboText: EXCELLENT
+    DamageMultiplier: 1.5
+    ComboColorMode: 0
+    ComboColor: {r: 1, g: 0, b: 0, a: 0}
+    ComboGradient:
+      topLeft: {r: 0, g: 0, b: 0, a: 0}
+      topRight: {r: 0, g: 0, b: 0, a: 0}
+      bottomLeft: {r: 0, g: 0, b: 0, a: 0}
+      bottomRight: {r: 0, g: 0, b: 0, a: 0}
+    GradeColorMode: 0
+    GradeColor: {r: 1, g: 0, b: 0, a: 0}
+    GradeGradient:
+      topLeft: {r: 0, g: 0, b: 0, a: 0}
+      topRight: {r: 0, g: 0, b: 0, a: 0}
+      bottomLeft: {r: 0, g: 0, b: 0, a: 0}
+      bottomRight: {r: 0, g: 0, b: 0, a: 0}
+  - MinCombo: 80
+    MaxComboInclusive: 100
+    ComboText: PERFECT
+    DamageMultiplier: 2
+    ComboColorMode: 1
+    ComboColor: {r: 0, g: 0, b: 0, a: 0}
+    ComboGradient:
+      topLeft: {r: 1, g: 0, b: 0, a: 0}
+      topRight: {r: 1, g: 1, b: 0, a: 0}
+      bottomLeft: {r: 0, g: 1, b: 0, a: 0}
+      bottomRight: {r: 0, g: 0, b: 1, a: 0}
+    GradeColorMode: 1
+    GradeColor: {r: 0, g: 0, b: 0, a: 0}
+    GradeGradient:
+      topLeft: {r: 1, g: 0, b: 0, a: 0}
+      topRight: {r: 1, g: 1, b: 0, a: 0}
+      bottomLeft: {r: 0, g: 1, b: 0, a: 0}
+      bottomRight: {r: 0, g: 0, b: 1, a: 0}

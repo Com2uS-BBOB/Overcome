@@ -5,71 +5,53 @@ namespace _02.Scripts.Player.Combat
 {
     /// <summary>
     /// 전투 상태 핸들러
-    /// Animator 정규화 시간 기반 캔슬 윈도우 관리
+    /// Animation Event 기반 캔슬 윈도우 관리
     /// BaseSkill에서 AttackData를 직접 참조 (중복 할당 불필요)
     /// </summary>
     public class CombatStateHandler : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private Animator _animator;
         [SerializeField] private InputBuffer _inputBuffer;
 
         private AttackData _currentAttack;
         private bool _isInCancelWindow;
-        private bool _isInHitboxWindow;
 
         public bool IsInCancelWindow => _isInCancelWindow;
-        public bool IsInHitboxWindow => _isInHitboxWindow;
         public AttackData CurrentAttack => _currentAttack;
         public InputBuffer InputBuffer => _inputBuffer;
 
         public event Action OnCancelWindowEnter;
         public event Action OnCancelWindowExit;
-        public event Action OnHitboxWindowEnter;
-        public event Action OnHitboxWindowExit;
+        public event Action<InputBuffer.BufferedInput> OnBufferedActionReady;
 
-        private void Update()
+        #region Animation Event Handlers
+
+        /// <summary>
+        /// Animation Event: 캔슬 윈도우 진입
+        /// </summary>
+        public void OnAnimEventCancelWindowEnter()
         {
+            // _currentAttack이 null이어도 캔슬 윈도우 상태는 설정 (콤보 동기화 타이밍 문제 방지)
+            _isInCancelWindow = true;
+            OnCancelWindowEnter?.Invoke();
+
+            // 버퍼 소비는 _currentAttack이 있을 때만
             if (_currentAttack != null)
-            {
-                CheckWindows();
-            }
-        }
-
-        private void CheckWindows()
-        {
-            if (_animator == null || _currentAttack == null) return;
-
-            AnimatorStateInfo stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            float normalizedTime = stateInfo.normalizedTime % 1f;
-
-            // 캔슬 윈도우 체크
-            bool wasInCancelWindow = _isInCancelWindow;
-            _isInCancelWindow = _currentAttack.IsInCancelWindow(normalizedTime);
-
-            if (!wasInCancelWindow && _isInCancelWindow)
-            {
-                OnCancelWindowEnter?.Invoke();
                 TryConsumeBuffer();
-            }
-            else if (wasInCancelWindow && !_isInCancelWindow)
-            {
-                OnCancelWindowExit?.Invoke();
-            }
-
-            // 히트박스 윈도우 체크
-            bool wasInHitboxWindow = _isInHitboxWindow;
-            _isInHitboxWindow = _currentAttack.IsInHitboxWindow(normalizedTime);
-
-            if (!wasInHitboxWindow && _isInHitboxWindow)
-            {
-                OnHitboxWindowEnter?.Invoke();
-            }
-            else if (wasInHitboxWindow && !_isInHitboxWindow)
-            {
-                OnHitboxWindowExit?.Invoke();
-            }
         }
+
+        /// <summary>
+        /// Animation Event: 캔슬 윈도우 종료
+        /// </summary>
+        public void OnAnimEventCancelWindowExit()
+        {
+            _isInCancelWindow = false;
+            OnCancelWindowExit?.Invoke();
+        }
+
+        #endregion
+
+        #region Buffer
 
         private void TryConsumeBuffer()
         {
@@ -83,7 +65,9 @@ namespace _02.Scripts.Player.Combat
             }
         }
 
-        public event Action<InputBuffer.BufferedInput> OnBufferedActionReady;
+        #endregion
+
+        #region Attack Management
 
         /// <summary>
         /// 현재 공격 설정 (AttackData 직접 전달)
@@ -92,7 +76,6 @@ namespace _02.Scripts.Player.Combat
         {
             _currentAttack = attackData;
             _isInCancelWindow = false;
-            _isInHitboxWindow = false;
         }
 
         /// <summary>
@@ -117,8 +100,11 @@ namespace _02.Scripts.Player.Combat
         {
             _currentAttack = null;
             _isInCancelWindow = false;
-            _isInHitboxWindow = false;
         }
+
+        #endregion
+
+        #region Cancel Queries
 
         /// <summary>
         /// 특정 액션으로 캔슬 가능한지 확인
@@ -148,6 +134,10 @@ namespace _02.Scripts.Player.Combat
         /// </summary>
         public bool IsInCombat => _currentAttack != null;
 
+        #endregion
+
+        #region Input Buffer
+
         /// <summary>
         /// 캔슬 불가 시 입력을 버퍼에 저장
         /// </summary>
@@ -160,5 +150,7 @@ namespace _02.Scripts.Player.Combat
 
             _inputBuffer.Buffer(action, direction);
         }
+
+        #endregion
     }
 }

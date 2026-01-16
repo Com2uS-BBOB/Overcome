@@ -14,9 +14,12 @@ namespace _02.Scripts.Player.StateMachine.States
         {
             // 점프 애니메이션은 이미 PlayerController.HandleJump()에서 트리거됨
         }
-
+        
         public override void Update()
         {
+            // 공중 이동 처리
+            Movement.Move(Input.MoveInput);
+
             // 착지 시 이전 상태로 복귀
             if (Movement.IsGrounded)
             {

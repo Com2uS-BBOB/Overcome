@@ -17,6 +17,7 @@ namespace _02.Scripts.Player.Core
         private InputAction _jumpAction;
         private InputAction _crescentAction;
         private InputAction _overDriveAction;
+        private InputAction _guardAction;
 
         public Vector2 MoveInput { get; private set; }
         public Vector2 LookInput { get; private set; }
@@ -27,6 +28,8 @@ namespace _02.Scripts.Player.Core
         public event Action OnJumpPerformed;
         public event Action OnCrescentPerformed;
         public event Action OnOverDrivePerformed;
+        public event Action OnGuardStarted;
+        public event Action OnGuardCanceled;
 
         private void Awake() => SetupActions();
         private void OnEnable() { EnableActions(); SubscribeEvents(); }
@@ -46,6 +49,7 @@ namespace _02.Scripts.Player.Core
             _jumpAction = playerMap.FindAction("Jump");
             _crescentAction = playerMap.FindAction("Crescent");
             _overDriveAction = playerMap.FindAction("OverDrive");
+            _guardAction = playerMap.FindAction("Guard");
         }
 
         private void EnableActions()
@@ -57,6 +61,7 @@ namespace _02.Scripts.Player.Core
             _jumpAction?.Enable();
             _crescentAction?.Enable();
             _overDriveAction?.Enable();
+            _guardAction?.Enable();
         }
 
         private void DisableActions()
@@ -68,6 +73,7 @@ namespace _02.Scripts.Player.Core
             _jumpAction?.Disable();
             _crescentAction?.Disable();
             _overDriveAction?.Disable();
+            _guardAction?.Disable();
         }
 
         private void SubscribeEvents()
@@ -79,6 +85,7 @@ namespace _02.Scripts.Player.Core
             if (_jumpAction != null) _jumpAction.performed += OnJumpActionPerformed;
             if (_crescentAction != null) _crescentAction.performed += OnCrescentActionPerformed;
             if (_overDriveAction != null) _overDriveAction.performed += OnOverDriveActionPerformed;
+            if (_guardAction != null) { _guardAction.started += OnGuardActionStarted; _guardAction.canceled += OnGuardActionCanceled; }
         }
 
         private void UnsubscribeEvents()
@@ -90,6 +97,7 @@ namespace _02.Scripts.Player.Core
             if (_jumpAction != null) _jumpAction.performed -= OnJumpActionPerformed;
             if (_crescentAction != null) _crescentAction.performed -= OnCrescentActionPerformed;
             if (_overDriveAction != null) _overDriveAction.performed -= OnOverDriveActionPerformed;
+            if (_guardAction != null) { _guardAction.started -= OnGuardActionStarted; _guardAction.canceled -= OnGuardActionCanceled; }
         }
 
         #region Event Handlers
@@ -103,6 +111,8 @@ namespace _02.Scripts.Player.Core
         private void OnJumpActionPerformed(InputAction.CallbackContext _) => OnJumpPerformed?.Invoke();
         private void OnCrescentActionPerformed(InputAction.CallbackContext _) => OnCrescentPerformed?.Invoke();
         private void OnOverDriveActionPerformed(InputAction.CallbackContext _) => OnOverDrivePerformed?.Invoke();
+        private void OnGuardActionStarted(InputAction.CallbackContext _) => OnGuardStarted?.Invoke();
+        private void OnGuardActionCanceled(InputAction.CallbackContext _) => OnGuardCanceled?.Invoke();
         #endregion
     }
 }
