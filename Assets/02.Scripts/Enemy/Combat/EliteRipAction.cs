@@ -8,16 +8,18 @@ public class EliteRipAction : IEnemyAction
     private readonly EnemyMovement _movement;
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
-    private readonly Animator _animator;
+    private readonly EnemyAnimatorController _anim;
 
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;
     private readonly float _ripKnockbackDistance;
 
     private float _ratio;
-    private bool _finished;
+    private bool _isFinished;
 
-    public bool IsFinished => _finished;
+    private bool _cycleEnded;
+
+    public bool IsFinished => _isFinished;
 
     public EliteRipAction(
         Transform enemy,
@@ -25,7 +27,7 @@ public class EliteRipAction : IEnemyAction
         EnemyMovement movement,
         EnemyKnockbackHitbox hitbox,
         NavMeshAgent agent,
-        Animator animator,
+        EnemyAnimatorController anim,
         float damagePerHit,
         float ripMoveSpeed,
         float ripKnockbackDistance
@@ -36,7 +38,7 @@ public class EliteRipAction : IEnemyAction
         _movement = movement;
         _hitbox = hitbox;
         _agent = agent;
-        _animator = animator;
+        _anim = anim;
         _damagePerHit = damagePerHit;
         _ripMoveSpeed = ripMoveSpeed;
         _ripKnockbackDistance = ripKnockbackDistance;
@@ -44,7 +46,7 @@ public class EliteRipAction : IEnemyAction
 
     public void Enter()
     {
-        _finished = false;
+        _isFinished = false;
 
         // 난도질 중엔 계속 전진
         _agent.isStopped = false;
@@ -53,7 +55,7 @@ public class EliteRipAction : IEnemyAction
         _ratio = _ripMoveSpeed / _agent.speed;
         _movement.SetSpeedMultiplier(_ratio);
 
-        // _animator.SetBool("IsRipping", true); 혹은 트리거
+        _anim.SetRip(true);
 #if UNITY_EDITOR
         Debug.Log("난도질 공격 시도");
 #endif
@@ -61,7 +63,7 @@ public class EliteRipAction : IEnemyAction
 
     public void Update()
     {
-        if (_finished) return;
+        if (_isFinished) return;
         if (_player == null) return;
 
         // 난도질 중 전진
@@ -71,7 +73,10 @@ public class EliteRipAction : IEnemyAction
 
     public void Exit()
     {
-        // _animator.SetBool("IsRipping", false); 혹은 트리거
+        _isFinished = true;
+
+        _anim.SetRip(false);
+
         _movement.Stop();
         _hitbox?.Disable();
         _movement.ResetSpeedMultiplier();
@@ -80,7 +85,7 @@ public class EliteRipAction : IEnemyAction
     // 애니메이션 이벤트
     public void OnAnimStart()
     {
-        // 난도질 시작 시 처리
+        _cycleEnded = false;
     }
 
     public void OnHitStart()
@@ -95,6 +100,7 @@ public class EliteRipAction : IEnemyAction
 
     public void OnAnimEnd()
     {
-        _finished = true;
+        _hitbox?.Disable();
+        _cycleEnded = true;
     }
 }

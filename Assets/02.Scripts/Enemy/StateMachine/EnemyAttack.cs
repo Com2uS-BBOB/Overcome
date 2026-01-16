@@ -8,7 +8,7 @@ public class EnemyAttack : MonoBehaviour
     private float _damage;
     private EnemyMovement _movement;
     private EnemyKnockbackHitbox _knockbackHitbox;
-    private Animator _animator;
+    private EnemyAnimatorController _anim;
     private EnemySlotCoordinator _slotCoordinator;
     private EnemyAttackDirector _attackDirector;
     private NavMeshAgent _agent;
@@ -29,8 +29,18 @@ public class EnemyAttack : MonoBehaviour
         _enemy = GetComponent<EnemyBase>();
         _movement = GetComponent<EnemyMovement>();
         _knockbackHitbox = GetComponentInChildren<EnemyKnockbackHitbox>();
-        _animator = GetComponent<Animator>();
+        _anim = GetComponent<EnemyAnimatorController>();
         _agent = GetComponent<NavMeshAgent>();
+    }
+
+    private void OnEnable()
+    {
+        // 리스폰 시 공격 상태 초기화
+        _currentPattern?.Stop();
+        _currentPattern = null;
+        _hasRushedOnce = false;
+        _needRecoveryAfterRush = false;
+        _needRecoveryAfterMelee = false;
     }
 
     public void Initialize(EnemyCombatContext context)
@@ -44,6 +54,7 @@ public class EnemyAttack : MonoBehaviour
 
     public void StartAttack()
     {
+        if (_enemy != null && _enemy.IsDead) return;
         if (_currentPattern != null) return;
 
         SelectPattern();
@@ -69,7 +80,7 @@ public class EnemyAttack : MonoBehaviour
             _damage,
             _movement,
             _knockbackHitbox,
-            _animator,
+            _anim,
             _agent,
             _slotCoordinator,
             _attackDirector
@@ -123,12 +134,12 @@ public class EnemyAttack : MonoBehaviour
             case EEnemyType.Elite:
                 var eliteConfig = new EliteAttackPatternConfig(
                     openingRushDuration: 0.5f,
-                    ripRange: 5f,
+                    ripRange: 10f,
                     ripMoveSpeed: 2f,
                     ripDamagePerHit: 2f,
                     ripTouchDelay: 0.25f,
                     ripKnockbackDistance: 1f,
-                    howlDuration: 3.2f
+                    howlDuration: 3.4f
                 );
 
                 _currentPattern = new EliteAttackPattern(patternContext, eliteConfig);
@@ -136,11 +147,18 @@ public class EnemyAttack : MonoBehaviour
         }
     }
 
-    // 애니메이션 이벤트 포워딩
+    #region Animation Event Fowarding
+
     public void OnMeleeStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeStart);
     public void OnMeleeHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitStart);
     public void OnMeleeHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeHitEnd);
     public void OnMeleeEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.MeleeEnd);
+    public void OnRipStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipStart);
+    public void OnRipHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipHitStart);
+    public void OnRipHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipHitEnd);
+    public void OnRipEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipEnd);
+
+    #endregion
 
     // 후딜 관련
     public void MarkNeedRecoveryAfterRush() => _needRecoveryAfterRush = true;

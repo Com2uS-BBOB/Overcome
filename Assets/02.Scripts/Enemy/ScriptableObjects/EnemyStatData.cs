@@ -4,6 +4,7 @@ using UnityEngine;
 public class EnemyStatData : ScriptableObject
 {
     public EEnemyType EnemyType;
+    public EEnemyDeathMode EnemyDeathMode;
 
     [Header("기본 스탯")]
     [SerializeField] private float _maxHealth;
