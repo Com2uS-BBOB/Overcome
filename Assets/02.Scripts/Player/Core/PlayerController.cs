@@ -538,10 +538,20 @@ namespace _02.Scripts.Player.Core
         }
 
         // 용검 콤보 공격 애니메이션 (현재 IsGrounded 사용 - 착지 시 지상 애니메이션으로 전환)
-        private void HandleComboAttack(int comboStep) => _playerAnimatorController?.PlayAttack(comboStep, Movement.IsGrounded);
+        private void HandleComboAttack(int comboStep)
+        {
+            _playerAnimatorController?.PlayAttack(comboStep, Movement.IsGrounded);
+            // 콤보 진행 시 CombatStateHandler의 CurrentAttack 동기화 (캔슬 윈도우 정상 작동을 위해 필수)
+            _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
+        }
 
         // 크레센트 콤보 공격 애니메이션
-        private void HandleCrescentCombo(int comboStep) => _playerAnimatorController?.PlayCrescent(comboStep, Movement.IsGrounded);
+        private void HandleCrescentCombo(int comboStep)
+        {
+            _playerAnimatorController?.PlayCrescent(comboStep, Movement.IsGrounded);
+            // 콤보 진행 시 CombatStateHandler의 CurrentAttack 동기화 (캔슬 윈도우 정상 작동을 위해 필수)
+            _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
+        }
 
         // Root Motion 처리 - 로컬 좌표를 플레이어 기준 월드 좌표로 변환
         private void HandleRootMotion(Vector3 localDelta)
