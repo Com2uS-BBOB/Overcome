@@ -1998,7 +1998,7 @@ MonoBehaviour:
     _fillImage: {fileID: 1499789253}
     _duration: 0.25
     _ease: 1
-  _gaugeManager: {fileID: 0}
+  _gaugeManager: {fileID: 537896997}
 --- !u!1001 &477424969
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3622,7 +3622,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e103aa57c27007c4299425cbcdc206bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_LightningVignette
-  _gaugeManager: {fileID: 0}
+  _gaugeManager: {fileID: 537896997}
   _canvas: {fileID: 1646997476}
   _edgeParticles:
   - Prefab: {fileID: 5052367711346404104, guid: 06b1f104e5108744299dde2a1a060c78, type: 3}
@@ -3750,7 +3750,7 @@ PrefabInstance:
       objectReference: {fileID: 537897011}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _spawnEnemyType
-      value: 2
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4525,7 +4525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f03d71d1f7a785479d8afb1a3231e64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_DashSkill
-  _dashSkill: {fileID: 0}
+  _dashSkill: {fileID: 537896998}
   _coolDownGauge: {fileID: 2083910884}
   _coolDownCountText: {fileID: 574023153}
   _coolDownBackground: {fileID: 311152798}
@@ -6434,7 +6434,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20423e3e8e305904880575600cf984fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_Gauge
-  _gaugeManager: {fileID: 0}
+  _gaugeManager: {fileID: 537896997}
   _gaugeEffectImage: {fileID: 908097282}
   _overDriveIcon: {fileID: 1317425742}
   _gauge:
