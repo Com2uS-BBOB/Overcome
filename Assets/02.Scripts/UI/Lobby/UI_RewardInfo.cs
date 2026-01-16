@@ -10,13 +10,13 @@ public class UI_RewardInfo : MonoBehaviour
     [SerializeField] private Image _clearImage;
     [SerializeField] private TextMeshProUGUI _requiredStarText;
 
-    private PlayerDataManager _dataManager;
+    private RewardManager _rewardManager;
     private RewardUnlockConfig _rewardUnlockConfig;
 
     private void Start()
     {
-        _dataManager = PlayerDataManager.Instance;
-        _rewardUnlockConfig = _dataManager.GetRewardUnlockInfo(_rewardType);
+        _rewardManager = RewardManager.Instance;
+        _rewardUnlockConfig = _rewardManager.GetRewardUnlockInfo(_rewardType);
         if (_rewardUnlockConfig == null)
         {
             enabled = false;
@@ -39,7 +39,7 @@ public class UI_RewardInfo : MonoBehaviour
     }
     private void ShowClearImage()
     {
-        if (!_dataManager.IsRewardUnlocked(_rewardType)) return;
+        if (!_rewardManager.IsRewardUnlocked(_rewardType)) return;
         _clearImage.gameObject.SetActive(true);
     }
 }

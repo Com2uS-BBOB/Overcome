@@ -9,7 +9,6 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     [Header("Start Settings")]
     [SerializeField] private string _startPlayerID;
-    [SerializeField] private RewardUnlockData _rewardUnlockData;
     
     [Header("Debug")]
     [SerializeField] private GameSaveData _saveData;
@@ -144,21 +143,6 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
         _currentPlayer.Settings.MasterVolume = masterVolume;
         _currentPlayer.Settings.MusicVolume = musicVolume;
         _currentPlayer.Settings.SfxVolume = sfxVolume;
-    }
-
-    public bool IsRewardUnlocked(ERewardType rewardType)
-    {
-        return _rewardUnlockData.IsRewardUnlocked(rewardType, _currentPlayer.TotalStarsEarned);
-    }
-
-    public int GetRequiredStars(ERewardType rewardType)
-    {
-        return _rewardUnlockData.GetRequiredStars(rewardType);
-    }
-
-    public RewardUnlockConfig GetRewardUnlockInfo(ERewardType rewardType)
-    {
-        return _rewardUnlockData.GetRewardUnlockInfo(rewardType);
     }
 
     #endregion

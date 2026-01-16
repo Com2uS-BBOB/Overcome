@@ -990,6 +990,51 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &284994883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 284994885}
+  - component: {fileID: 284994884}
+  m_Layer: 0
+  m_Name: RewardManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &284994884
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 284994883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 431d4fd70f33cf14c800bd04388103cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RewardManager
+  _rewardUnlockData: {fileID: 11400000, guid: 7d623f8a76ab39f4285b06dc27ef03f8, type: 2}
+--- !u!4 &284994885
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 284994883}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &344046657 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7201790071586069903, guid: 0d41b4c8e19570d4cbeb0f2816502563, type: 3}
@@ -3438,14 +3483,13 @@ MonoBehaviour:
   _audioMixer: {fileID: 24100000, guid: 326bf4a06be20954196fbc98e776b05b, type: 2}
   _musicGroup: {fileID: 506091618601412412, guid: 326bf4a06be20954196fbc98e776b05b, type: 2}
   _effectGroup: {fileID: -2436650132829220088, guid: 326bf4a06be20954196fbc98e776b05b, type: 2}
+  _audioSourcePrefab: {fileID: 3486552615249160598, guid: 8aa7dfb4a0062b142a29e1ff05deec29, type: 3}
   _sfxPoolSize: 15
   _commonSoundLabel: Common
-  _scenePreloadClipNames: []
-  _testAudioType: 1
+  _testEAudioType: 1
   _testVolume: 1
   _testBGMName: MainTheme
   _testSfxName: Jump
-  _testFadeTime: 1
 --- !u!4 &1039170765
 Transform:
   m_ObjectHideFlags: 0
@@ -9125,7 +9169,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DataManager
   _startPlayerID: CJJ
-  _rewardUnlockData: {fileID: 11400000, guid: 7d623f8a76ab39f4285b06dc27ef03f8, type: 2}
   _saveData:
     CurrentPlayerID: Player_002
     Players:
@@ -9174,8 +9217,8 @@ MonoBehaviour:
         PlayCount: 17
       - StageID: 13
         IsCleared: 1
-        StarsEarned: 1
-        BestScore: 18700
+        StarsEarned: 2
+        BestScore: 30000
         PlayCount: 4
       - StageID: 21
         IsCleared: 1
@@ -10211,3 +10254,4 @@ SceneRoots:
   - {fileID: 1468392052}
   - {fileID: 271142184}
   - {fileID: 1039170765}
+  - {fileID: 284994885}
