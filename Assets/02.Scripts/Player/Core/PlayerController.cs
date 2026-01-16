@@ -23,6 +23,10 @@ namespace _02.Scripts.Player.Core
         [SerializeField] private DashAttackSkill _dashAttack;
         [SerializeField] private GaugeManager _gaugeManager;
 
+        [Header("Guard System")]
+        [SerializeField] private GuardManager _guardManager;
+        [SerializeField] private GuardSettings _guardSettings;
+
         [Header("Animation")]
         [SerializeField] private PlayerAnimatorController _playerAnimatorController;
 
@@ -38,6 +42,7 @@ namespace _02.Scripts.Player.Core
         public CrescentSkill Crescent => _crescent;
         public DashAttackSkill DashAttack => _dashAttack;
         public GaugeManager GaugeManager => _gaugeManager;
+        public GuardManager GuardManager => _guardManager;
         public CharacterController CharacterController { get; private set; }
         public PlayerStats Stats { get; private set; }
         public PlayerStateMachine StateMachine { get; private set; }
@@ -77,6 +82,7 @@ namespace _02.Scripts.Player.Core
             StateMachine.RegisterState(new IdleState(this, StateMachine));
             StateMachine.RegisterState(new MoveState(this, StateMachine));
             StateMachine.RegisterState(new JumpState(this, StateMachine));
+            StateMachine.RegisterState(new FallState(this, StateMachine));
 
             // 지상 전투 상태
             StateMachine.RegisterState(new DragonSwordState(this, StateMachine));
@@ -87,6 +93,11 @@ namespace _02.Scripts.Player.Core
             StateMachine.RegisterState(new AirDragonSwordState(this, StateMachine));
             StateMachine.RegisterState(new AirCrescentState(this, StateMachine));
             StateMachine.RegisterState(new AirDashAttackState(this, StateMachine));
+
+            // 피격/가드 상태
+            StateMachine.RegisterState(new HitState(this, StateMachine, _guardSettings, _guardManager));
+            StateMachine.RegisterState(new GuardState(this, StateMachine, _guardSettings, _guardManager, _gaugeManager));
+            StateMachine.RegisterState(new GuardBreakState(this, StateMachine, _guardSettings));
 
             // CancelManager 초기화
             CancelManager = new CancelManager(StateMachine);
@@ -101,7 +112,40 @@ namespace _02.Scripts.Player.Core
             // PlayerAnimator 초기화 (State 변경 구독)
             _playerAnimatorController?.Initialize(StateMachine);
 
+            // 애니메이션 이벤트 연결
+            ConnectAnimatorToSkills();
+
             StateMachine.Initialize<IdleState>();
+        }
+
+        /// <summary>
+        /// AnimatorController와 스킬 이벤트 연결
+        /// </summary>
+        private void ConnectAnimatorToSkills()
+        {
+            if (_playerAnimatorController == null) return;
+
+            // 크레센트 이벤트
+            if (_crescent != null)
+            {
+                _playerAnimatorController.OnCrescentFireEvent += _crescent.FireFromAnimationEvent;
+                _playerAnimatorController.OnAttackEnd += _crescent.OnAnimEventSkillEnd;
+            }
+
+            // 용검 히트박스 이벤트
+            if (_dragonSwordSkill != null)
+            {
+                _playerAnimatorController.OnAttackHitboxEnable += _dragonSwordSkill.OnAnimEventEnableHitbox;
+                _playerAnimatorController.OnAttackHitboxDisable += _dragonSwordSkill.OnAnimEventDisableHitbox;
+                _playerAnimatorController.OnAttackEnd += _dragonSwordSkill.OnAnimEventSkillEnd;
+            }
+
+            // 캔슬 윈도우 이벤트
+            if (_combatStateHandler != null)
+            {
+                _playerAnimatorController.OnCancelWindowEnter += _combatStateHandler.OnAnimEventCancelWindowEnter;
+                _playerAnimatorController.OnCancelWindowExit += _combatStateHandler.OnAnimEventCancelWindowExit;
+            }
         }
 
         /// <summary>
@@ -181,6 +225,17 @@ namespace _02.Scripts.Player.Core
                 _dragonSwordSkill.ExecuteGraceCombo();
                 _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
             }
+            // Case 4: 마지막 콤보 중 새 콤보 시작 (캔슬 윈도우에서)
+            else if (_dragonSwordSkill.IsAttacking && !_dragonSwordSkill.CanContinueCombo)
+            {
+                _dragonSwordSkill.ResetCombo();
+                if (isGrounded)
+                    StateMachine.ChangeState<DragonSwordState>();
+                else
+                    StateMachine.ChangeState<AirDragonSwordState>();
+                _dragonSwordSkill.Attack();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
+            }
         }
 
         private void ExecuteCrescent()
@@ -212,6 +267,17 @@ namespace _02.Scripts.Player.Core
                 else
                     StateMachine.ChangeState<AirCrescentState>();
                 _crescent.ExecuteGraceCombo();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
+            }
+            // Case 4: 마지막 콤보 중 새 콤보 시작 (캔슬 윈도우에서)
+            else if (_crescent.IsUsing && !_crescent.CanContinueCombo)
+            {
+                _crescent.ResetCombo();
+                if (isGrounded)
+                    StateMachine.ChangeState<CrescentState>();
+                else
+                    StateMachine.ChangeState<AirCrescentState>();
+                _crescent.Attack();
                 _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
             }
         }
@@ -247,6 +313,7 @@ namespace _02.Scripts.Player.Core
             Input.OnAttackPerformed += HandleAttack;
             Input.OnCrescentPerformed += HandleCrescent;
             Input.OnOverDrivePerformed += HandleOverDrive;
+            Input.OnGuardStarted += HandleGuard;
 
             // 오버드라이브 게이지 충전 연결
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnEnemyHit += HandleEnemyHitForOverDrive;
@@ -259,6 +326,15 @@ namespace _02.Scripts.Player.Core
             // Root Motion 이벤트 연결
             if (_playerAnimatorController != null)
                 _playerAnimatorController.OnRootMotionUpdate += HandleRootMotion;
+
+            // 피격/가드 이벤트 연결
+            if (Stats != null)
+            {
+                Stats.OnHit += HandleHit;
+                Stats.OnGuardBreak += HandleGuardBreak;
+                Stats.OnJustGuardSuccess += HandleJustGuard;
+                Stats.OnNormalGuardSuccess += HandleNormalGuard;
+            }
         }
 
         private void OnDisable()
@@ -268,6 +344,7 @@ namespace _02.Scripts.Player.Core
             Input.OnAttackPerformed -= HandleAttack;
             Input.OnCrescentPerformed -= HandleCrescent;
             Input.OnOverDrivePerformed -= HandleOverDrive;
+            Input.OnGuardStarted -= HandleGuard;
 
             if (_dragonSwordSkill != null) _dragonSwordSkill.OnEnemyHit -= HandleEnemyHitForOverDrive;
             if (_crescent != null) _crescent.OnEnemyHit -= HandleEnemyHitForOverDrive;
@@ -279,14 +356,23 @@ namespace _02.Scripts.Player.Core
             // Root Motion 이벤트 연결 해제
             if (_playerAnimatorController != null)
                 _playerAnimatorController.OnRootMotionUpdate -= HandleRootMotion;
+
+            // 피격/가드 이벤트 연결 해제
+            if (Stats != null)
+            {
+                Stats.OnHit -= HandleHit;
+                Stats.OnGuardBreak -= HandleGuardBreak;
+                Stats.OnJustGuardSuccess -= HandleJustGuard;
+                Stats.OnNormalGuardSuccess -= HandleNormalGuard;
+            }
         }
 
         private void Update()
         {
-            StateMachine.Update();
-
-            // 지면 상태 동기화
+            // 지면 상태 먼저 동기화 (상태 전환 전에 Animator 파라미터 업데이트)
             _playerAnimatorController?.SetGrounded(Movement.IsGrounded);
+
+            StateMachine.Update();
         }
 
         private void FixedUpdate() => StateMachine.FixedUpdate();
@@ -299,9 +385,11 @@ namespace _02.Scripts.Player.Core
             {
                 case 1: // 1단 점프
                     _playerAnimatorController?.PlayJump();
+                    StateMachine.ChangeState<JumpState>();
                     break;
                 case 2: // 2단 점프
                     _playerAnimatorController?.PlayDoubleJump();
+                    // JumpState 유지
                     break;
             }
         }
@@ -348,14 +436,25 @@ namespace _02.Scripts.Player.Core
                 return;
             }
 
-            // Case 2: 콤보 큐잉 (CombatStateHandler가 윈도우 체크)
-            if (_combatStateHandler != null && _combatStateHandler.CanQueueCombo(ActionType.Attack))
+            // Case 2: 콤보 큐잉 (마지막 콤보가 아닐 때)
+            if (_dragonSwordSkill.CanContinueCombo &&
+                _combatStateHandler != null && _combatStateHandler.CanQueueCombo(ActionType.Attack))
             {
                 _dragonSwordSkill.QueueCombo();
                 return;
             }
 
-            // Case 3: 콤보 유예 (공격 끝난 직후)
+            // Case 3: 마지막 콤보 캔슬 → 새 콤보 시작
+            if (!_dragonSwordSkill.CanContinueCombo &&
+                _combatStateHandler != null && _combatStateHandler.IsInCancelWindow &&
+                _combatStateHandler.CanCancelInto(ActionType.Attack))
+            {
+                _dragonSwordSkill.ResetCombo();
+                StartNewDragonSwordCombo(isGrounded);
+                return;
+            }
+
+            // Case 4: 콤보 유예 (공격 끝난 직후)
             if (_dragonSwordSkill.CanComboGrace)
             {
                 if (isGrounded)
@@ -367,7 +466,7 @@ namespace _02.Scripts.Player.Core
                 return;
             }
 
-            // Case 4: 캔슬 불가 → 입력 버퍼링
+            // Case 5: 캔슬 불가 → 입력 버퍼링
             _combatStateHandler?.BufferIfNeeded(ActionType.Attack);
         }
 
@@ -405,14 +504,25 @@ namespace _02.Scripts.Player.Core
                 return;
             }
 
-            // Case 2: 콤보 큐잉 (CombatStateHandler가 윈도우 체크)
-            if (_combatStateHandler != null && _combatStateHandler.CanQueueCombo(ActionType.Skill))
+            // Case 2: 콤보 큐잉 (마지막 콤보가 아닐 때)
+            if (_crescent.CanContinueCombo &&
+                _combatStateHandler != null && _combatStateHandler.CanQueueCombo(ActionType.Skill))
             {
                 _crescent.QueueCombo();
                 return;
             }
 
-            // Case 3: 콤보 유예 (스킬 끝난 직후)
+            // Case 3: 마지막 콤보 캔슬 → 새 콤보 시작
+            if (!_crescent.CanContinueCombo &&
+                _combatStateHandler != null && _combatStateHandler.IsInCancelWindow &&
+                _combatStateHandler.CanCancelInto(ActionType.Skill))
+            {
+                _crescent.ResetCombo();
+                StartNewCrescentCombo(isGrounded);
+                return;
+            }
+
+            // Case 4: 콤보 유예 (스킬 끝난 직후)
             if (_crescent.CanComboGrace)
             {
                 if (isGrounded)
@@ -424,7 +534,7 @@ namespace _02.Scripts.Player.Core
                 return;
             }
 
-            // Case 4: 캔슬 불가 → 입력 버퍼링
+            // Case 5: 캔슬 불가 → 입력 버퍼링
             _combatStateHandler?.BufferIfNeeded(ActionType.Skill);
         }
 
@@ -449,11 +559,21 @@ namespace _02.Scripts.Player.Core
             HitEventManager.Instance?.NotifyDamageDealt(damage);
         }
 
-        // 용검 콤보 공격 애니메이션 (콤보 시작 시점의 IsGrounded 사용)
-        private void HandleComboAttack(int comboStep) => _playerAnimatorController?.PlayAttack(comboStep, _dragonSwordSkill.WasGroundedOnComboStart);
+        // 용검 콤보 공격 애니메이션 (현재 IsGrounded 사용 - 착지 시 지상 애니메이션으로 전환)
+        private void HandleComboAttack(int comboStep)
+        {
+            _playerAnimatorController?.PlayAttack(comboStep, Movement.IsGrounded);
+            // 콤보 진행 시 CombatStateHandler의 CurrentAttack 동기화 (캔슬 윈도우 정상 작동을 위해 필수)
+            _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
+        }
 
         // 크레센트 콤보 공격 애니메이션
-        private void HandleCrescentCombo(int comboStep) => _playerAnimatorController?.PlayCrescent(comboStep, Movement.IsGrounded);
+        private void HandleCrescentCombo(int comboStep)
+        {
+            _playerAnimatorController?.PlayCrescent(comboStep, Movement.IsGrounded);
+            // 콤보 진행 시 CombatStateHandler의 CurrentAttack 동기화 (캔슬 윈도우 정상 작동을 위해 필수)
+            _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
+        }
 
         // Root Motion 처리 - 로컬 좌표를 플레이어 기준 월드 좌표로 변환
         private void HandleRootMotion(Vector3 localDelta)
@@ -466,5 +586,49 @@ namespace _02.Scripts.Player.Core
                 CharacterController.Move(worldMovement);
             }
         }
+
+        #region Guard/Hit Handlers
+
+        private void HandleGuard()
+        {
+            // 가드 가능한 상태인지 체크
+            if (!CancelManager.CanCancelTo<GuardState>()) return;
+
+            StateMachine.ChangeState<GuardState>();
+        }
+
+        private void HandleHit(AttackInfo attackInfo)
+        {
+            var hitState = StateMachine.GetState<HitState>();
+            hitState?.SetAttackInfo(attackInfo);
+            StateMachine.ChangeState<HitState>();
+
+            // 피격 카메라 쉐이크
+            CameraShakeManager.Instance?.OnHit(attackInfo.KnockbackLevel);
+        }
+
+        private void HandleGuardBreak(AttackInfo attackInfo)
+        {
+            StateMachine.ChangeState<GuardBreakState>();
+
+            // 가드 브레이크 카메라 쉐이크
+            CameraShakeManager.Instance?.OnGuardBreak();
+        }
+
+        private void HandleJustGuard(AttackInfo attackInfo)
+        {
+            // 저스트 가드 성공 애니메이션 + 카메라 쉐이크
+            _playerAnimatorController?.PlayGuardBlock();
+            CameraShakeManager.Instance?.OnJustGuard();
+        }
+
+        private void HandleNormalGuard(AttackInfo attackInfo)
+        {
+            // 일반 가드 성공 애니메이션 + 카메라 쉐이크
+            _playerAnimatorController?.PlayGuardBlock();
+            CameraShakeManager.Instance?.OnNormalGuard();
+        }
+
+        #endregion
     }
 }

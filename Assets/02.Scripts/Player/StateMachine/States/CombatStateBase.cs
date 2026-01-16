@@ -1,3 +1,4 @@
+using UnityEngine;
 using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Core;
 using _02.Scripts.Player.Data;
@@ -22,11 +23,24 @@ namespace _02.Scripts.Player.StateMachine.States
         /// </summary>
         protected SkillData CurrentSkillData => GetSkill()?.CurrentSkillData;
 
-        // SkillData에서 동적으로 값 가져오기 (폴백 값 포함)
-        protected virtual bool UseRootMotion => CurrentSkillData?.UseRootMotion ?? !IsAirCombat;
-        protected virtual float AirGravityScale => CurrentSkillData?.GravityScale ?? 0.3f;
-        protected virtual float ComboLiftForce => CurrentSkillData?.ComboLiftForce ?? 1.5f;
-        protected virtual float CombatMoveSpeedMultiplier => CurrentSkillData?.MoveSpeedMultiplier ?? 0.2f;
+        // SkillData에서 동적으로 값 가져오기
+        // 주의: CurrentSkillData는 _wasGroundedOnComboStart 기반이므로 Enter() 시점에 잘못된 값 참조 가능
+        // 공중 상태에서는 AirSkill을, 지상 상태에서는 GroundSkill을 직접 참조
+        protected virtual bool UseRootMotion => GetCurrentContextSkillData()?.UseRootMotion ?? !IsAirCombat;
+        protected virtual float AirGravityScale => GetCurrentContextSkillData()?.GravityScale ?? 0.3f;
+        protected virtual float ComboLiftForce => GetCurrentContextSkillData()?.ComboLiftForce ?? 1.5f;
+        protected virtual float CombatMoveSpeedMultiplier => GetCurrentContextSkillData()?.MoveSpeedMultiplier ?? 0.2f;
+
+        /// <summary>
+        /// 현재 상태(공중/지상)에 맞는 SkillData 반환
+        /// CurrentSkillData와 달리 _wasGroundedOnComboStart가 아닌 IsAirCombat 기반
+        /// </summary>
+        private Data.SkillData GetCurrentContextSkillData()
+        {
+            var skillDataSet = GetSkill()?.SkillDataSet;
+            if (skillDataSet == null) return null;
+            return IsAirCombat ? skillDataSet.AirSkill : skillDataSet.GroundSkill;
+        }
 
         // 공격 중 자유 이동/회전 설정
         protected virtual bool AllowMovementDuringAttack => true;   // 이동 허용
@@ -96,6 +110,9 @@ namespace _02.Scripts.Player.StateMachine.States
 
             if (IsAirCombat)
                 Movement.ResetGravityScale();
+
+            // 스킬 상태 정리 (점프 등으로 캔슬 시 Animation Event 미발동 대비)
+            ResetCombo();
         }
 
         // 서브클래스에서 구현해야 할 추상 멤버
@@ -117,20 +134,35 @@ namespace _02.Scripts.Player.StateMachine.States
         /// </summary>
         protected void ReturnToPreviousState()
         {
-            // 공중이면 Idle로 전환 (Animator가 IsGrounded=false로 Fall 처리)
+            Debug.Log($"[CombatStateBase] ReturnToPreviousState - IsGrounded={Movement.IsGrounded}, HasMoveInput={HasMoveInput()}");
+
+            // 공중이면 FallState로 전환 (착지까지 대기)
             if (!Movement.IsGrounded)
             {
-                StateMachine.ChangeState<IdleState>();
+                Debug.Log("[CombatStateBase] Changing to FallState");
+                StateMachine.ChangeState<FallState>();
                 return;
             }
 
-            if (HasMoveInput()) StateMachine.ChangeState<MoveState>();
-            else StateMachine.ChangeState<IdleState>();
+            if (HasMoveInput())
+            {
+                Debug.Log("[CombatStateBase] Changing to MoveState");
+                StateMachine.ChangeState<MoveState>();
+            }
+            else
+            {
+                Debug.Log("[CombatStateBase] Changing to IdleState");
+                StateMachine.ChangeState<IdleState>();
+            }
         }
 
         /// <summary>
         /// 공격 종료 이벤트 핸들러
         /// </summary>
-        protected void OnSkillEnded() => ReturnToPreviousState();
+        protected void OnSkillEnded()
+        {
+            Debug.Log("[CombatStateBase] OnSkillEnded called, calling ReturnToPreviousState");
+            ReturnToPreviousState();
+        }
     }
 }

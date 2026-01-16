@@ -5,7 +5,7 @@ namespace _02.Scripts.Player.Data
 {
     /// <summary>
     /// 스킬 데이터 (ScriptableObject)
-    /// 콤보 체인, 타이밍, 물리 설정 등을 관리
+    /// 콤보 체인, 물리 설정 등을 관리 (타이밍은 Animation Event로 처리)
     /// 지상/공중 스킬을 별도의 에셋으로 분리하여 데이터 드리븐 설계 구현
     /// </summary>
     [CreateAssetMenu(fileName = "SkillData", menuName = "Combat/SkillData")]
@@ -66,51 +66,6 @@ namespace _02.Scripts.Player.Data
             if (ComboChain == null || step < 1 || step > ComboChain.Length)
                 return null;
             return ComboChain[step - 1];
-        }
-
-        /// <summary>
-        /// 특정 콤보 단계의 지속 시간 반환
-        /// </summary>
-        public float GetDuration(int comboStep)
-        {
-            var data = GetComboData(comboStep);
-            return data?.Duration ?? 0.8f;
-        }
-
-        /// <summary>
-        /// 특정 콤보 단계의 히트박스 시작 시간 반환 (정규화 시간)
-        /// </summary>
-        public float GetHitboxStart(int comboStep)
-        {
-            var data = GetComboData(comboStep);
-            return data?.HitboxStart ?? 0.15f;
-        }
-
-        /// <summary>
-        /// 특정 콤보 단계의 히트박스 종료 시간 반환 (정규화 시간)
-        /// </summary>
-        public float GetHitboxEnd(int comboStep)
-        {
-            var data = GetComboData(comboStep);
-            return data?.HitboxEnd ?? 0.45f;
-        }
-
-        /// <summary>
-        /// 특정 콤보 단계의 캔슬 윈도우 시작 시간 반환 (정규화 시간)
-        /// </summary>
-        public float GetCancelWindowStart(int comboStep)
-        {
-            var data = GetComboData(comboStep);
-            return data?.CancelWindowStart ?? 0.4f;
-        }
-
-        /// <summary>
-        /// 특정 콤보 단계의 캔슬 윈도우 종료 시간 반환 (정규화 시간)
-        /// </summary>
-        public float GetCancelWindowEnd(int comboStep)
-        {
-            var data = GetComboData(comboStep);
-            return data?.CancelWindowEnd ?? 0.9f;
         }
 
         /// <summary>

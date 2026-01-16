@@ -65,6 +65,26 @@ namespace _02.Scripts.Player.Gauge
             _crescentGauge.Consume(_settings.CrescentCostPerShot);
             OnCrescentGaugeChanged?.Invoke(_crescentGauge.Current, _crescentGauge.Max);
         }
+
+        /// <summary>
+        /// 가드용 크레센트 소모
+        /// </summary>
+        public void ConsumeCrescentForGuard(float amount)
+        {
+            if (IsOverDriveActive) return;
+
+            _crescentGauge.Consume(amount);
+            OnCrescentGaugeChanged?.Invoke(_crescentGauge.Current, _crescentGauge.Max);
+        }
+
+        /// <summary>
+        /// 크레센트 회복 (저스트 가드 보상용)
+        /// </summary>
+        public void AddCrescentCharge(float amount)
+        {
+            _crescentGauge.Add(amount);
+            OnCrescentGaugeChanged?.Invoke(_crescentGauge.Current, _crescentGauge.Max);
+        }
         
         // 오버드라이브 게이지 충전
         public void ChargeOverDrive(float amount)

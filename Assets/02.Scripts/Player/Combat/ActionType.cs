@@ -12,6 +12,7 @@ namespace _02.Scripts.Player.Combat
         Attack,         // 기본 공격 (DragonSword)
         Skill,          // 스킬 (Crescent)
         DashAttack,     // 대시 공격
+        Guard,          // 가드
         Any             // 모든 액션 허용 (캔슬 규칙용)
     }
 }
