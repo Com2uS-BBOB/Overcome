@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6601e3b661146e469a21c68b3366ca5, type: 3}
+  m_Name: GradeData
+  m_EditorClassIdentifier: Assembly-CSharp::GradeData
+  _stageConfigs:
+  - StageId: 1_1
+    Grades:
+    - Grade: S
+      RequiredScore: 50000
+      RewardStars: 3
+    - Grade: A
+      RequiredScore: 30000
+      RewardStars: 2
+    - Grade: B
+      RequiredScore: 15000
+      RewardStars: 1
+    - Grade: C
+      RequiredScore: 0
+      RewardStars: 0
+  - StageId: 1_2
+    Grades:
+    - Grade: S
+      RequiredScore: 37000
+      RewardStars: 3
+    - Grade: A
+      RequiredScore: 23500
+      RewardStars: 2
+    - Grade: B
+      RequiredScore: 10000
+      RewardStars: 1
+    - Grade: C
+      RequiredScore: 0
+      RewardStars: 0
+  - StageId: 1_3
+    Grades:
+    - Grade: S
+      RequiredScore: 30000
+      RewardStars: 3
+    - Grade: A
+      RequiredScore: 18500
+      RewardStars: 2
+    - Grade: B
+      RequiredScore: 7000
+      RewardStars: 1
+    - Grade: C
+      RequiredScore: 0
+      RewardStars: 0
+  - StageId: 2_1
+    Grades:
+    - Grade: S
+      RequiredScore: 75000
+      RewardStars: 3
+    - Grade: A
+      RequiredScore: 43500
+      RewardStars: 2
+    - Grade: B
+      RequiredScore: 12000
+      RewardStars: 1
+    - Grade: C
+      RequiredScore: 0
+      RewardStars: 0
+  - StageId: 2_2
+    Grades:
+    - Grade: S
+      RequiredScore: 18000
+      RewardStars: 3
+    - Grade: A
+      RequiredScore: 15500
+      RewardStars: 2
+    - Grade: B
+      RequiredScore: 13000
+      RewardStars: 1
+    - Grade: C
+      RequiredScore: 0
+      RewardStars: 0
+  - StageId: 2_3
+    Grades:
+    - Grade: S
+      RequiredScore: 30000
+      RewardStars: 3
+    - Grade: A
+      RequiredScore: 24000
+      RewardStars: 2
+    - Grade: B
+      RequiredScore: 18000
+      RewardStars: 1
+    - Grade: C
+      RequiredScore: 0
+      RewardStars: 0
