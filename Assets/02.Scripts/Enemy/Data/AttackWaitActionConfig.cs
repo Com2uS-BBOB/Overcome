@@ -16,7 +16,7 @@ public struct AttackWaitActionConfig
     public AttackWaitActionConfig(
         float minWait = 999f,
         float maxWait = 999f,
-        float waitSpeedMultiplier = 0.6f,
+        float waitSpeedMultiplier = 0.9f,
         bool releaseSlotOnExit = true,
         int fixedSlotIndex = -1,
         float arrivedThreshold = 0.2f,

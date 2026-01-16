@@ -92,7 +92,7 @@ public class EnemyAttack : MonoBehaviour
                 var normalWaitConfig = new AttackWaitActionConfig(
                     minWait: 999f,
                     maxWait: 999f,
-                    waitSpeedMultiplier: 0.6f,
+                    waitSpeedMultiplier: 0.9f,
                     releaseSlotOnExit: true,
                     fixedSlotIndex: -1,
                     arrivedThreshold: 0.2f,
@@ -114,7 +114,7 @@ public class EnemyAttack : MonoBehaviour
                 var smallWaitConfig = new AttackWaitActionConfig(
                     minWait: 999f,
                     maxWait: 999f,
-                    waitSpeedMultiplier: 0.6f,
+                    waitSpeedMultiplier: 0.9f,
                     releaseSlotOnExit: true,
                     fixedSlotIndex: -1,
                     arrivedThreshold: 0.2f,
@@ -134,7 +134,7 @@ public class EnemyAttack : MonoBehaviour
             case EEnemyType.Elite:
                 var eliteConfig = new EliteAttackPatternConfig(
                     openingRushDuration: 0.5f,
-                    ripRange: 10f,
+                    ripRange: 12f,
                     ripMoveSpeed: 2f,
                     ripDamagePerHit: 2f,
                     ripTouchDelay: 0.25f,
