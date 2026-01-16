@@ -5,6 +5,7 @@ using System.Collections;
 public class EnemyHealthUI : MonoBehaviour
 {
     [Header("UI")]
+    [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private Image _healthFill;
     [SerializeField] private Image _healthDelay;
     [SerializeField] private Image _healthBorder;
@@ -22,6 +23,11 @@ public class EnemyHealthUI : MonoBehaviour
     private void Awake()
     {
         _enemy = GetComponentInParent<EnemyBase>();
+
+        if (_canvasGroup == null)
+        {
+            _canvasGroup = GetComponent<CanvasGroup>();
+        }
     }
 
     private void OnEnable()
@@ -29,6 +35,8 @@ public class EnemyHealthUI : MonoBehaviour
         if (_enemy == null) return;
 
         _enemy.OnHpChanged += OnHealthChanged;
+        _enemy.OnDeath += HandleDeath;
+        SetVisible(true);
 
         if (_enemy.EnemyStatData == null) return;
 
@@ -40,9 +48,28 @@ public class EnemyHealthUI : MonoBehaviour
         if (_enemy == null) return;
 
         _enemy.OnHpChanged -= OnHealthChanged;
+        _enemy.OnDeath -= HandleDeath;
 
         Cleanup_Coroutines();
     }
+
+    private void HandleDeath()
+    {
+        Cleanup_Coroutines();
+        SetVisible(false);
+    }
+
+    private void SetVisible(bool visible)
+    {
+        if (_canvasGroup != null)
+        {
+            _canvasGroup.alpha = visible ? 1f : 0f;
+            _canvasGroup.interactable = visible;
+            _canvasGroup.blocksRaycasts = visible;
+            return;
+        }
+    }
+
     private void ForceRefresh()
     {
         Cleanup_Coroutines();
