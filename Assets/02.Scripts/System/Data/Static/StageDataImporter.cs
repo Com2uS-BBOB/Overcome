@@ -3,14 +3,14 @@ using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
 
-public class GradeDataImporter : EditorWindow
+public class StageDataImporter : EditorWindow
 {
     private TextAsset _csvFile;
 
     [MenuItem("Tools/Import Grade Data from CSV")]
     public static void ShowWindow()
     {
-        GetWindow<GradeDataImporter>("Grade Data Importer");
+        GetWindow<StageDataImporter>("Grade Data Importer");
     }
 
     private void OnGUI()
