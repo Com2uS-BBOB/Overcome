@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ScoreSystem : SingletonBehaviour<ScoreSystem>
 {
-    [SerializeField] private GradeData _gradeData;
+    [SerializeField] private StageData _stageData;
     protected override bool DontDestroy => false;
     
     private int _currentScore;

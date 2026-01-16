@@ -63,7 +63,6 @@ public class AnimatedNumber
 
     private void UpdateText()
     {
-        // todo. 시간 기반 Text 표시 기능 필요
         _text.SetText(_format, _currentValue);
     }
     

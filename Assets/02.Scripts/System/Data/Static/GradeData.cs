@@ -1,10 +1,12 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "GradeData", menuName = "Game/Grade Data")]
-public class GradeData : ScriptableObject
+[CreateAssetMenu(fileName = "StageData", menuName = "Game/Stage Data")]
+public class StageData : ScriptableObject
 {
     [SerializeField] private StageGradeConfig[] _stageConfigs;
+    private Dictionary<int, int> _chapterStageCountCache;
 
     public GradeConfig GetGrade(string stageId, int currentScore)
     {
@@ -37,12 +39,47 @@ public class GradeData : ScriptableObject
     }
 
     public StageGradeConfig GetStageGradeConfig(string stageId) => Array.Find(_stageConfigs, config => config.StageId == stageId);
-    
+
     public int GetStageCount() => _stageConfigs?.Length ?? 0;
+
+    public int GetStagesInChapter(int chapter)
+    {
+        if (_stageConfigs == null) return 0;
+
+        if (_chapterStageCountCache == null)
+        {
+            BuildChapterCache();
+        }
+
+        return _chapterStageCountCache.TryGetValue(chapter, out int count) ? count : 0;
+    }
+
+    private void BuildChapterCache()
+    {
+        _chapterStageCountCache = new Dictionary<int, int>();
+
+        foreach (var config in _stageConfigs)
+        {
+            if (string.IsNullOrEmpty(config.StageId)) continue;
+
+            string[] parts = config.StageId.Split('_');
+            if (parts.Length >= 2 && int.TryParse(parts[0], out int chapter))
+            {
+                if (!_chapterStageCountCache.ContainsKey(chapter))
+                {
+                    _chapterStageCountCache[chapter] = 0;
+                }
+                _chapterStageCountCache[chapter]++;
+            }
+        }
+    }
     
     private void OnValidate()
     {
         if (_stageConfigs == null) return;
+
+        // 캐시 무효화 (에디터에서 데이터 변경 시)
+        _chapterStageCountCache = null;
 
         foreach (var stageConfig in _stageConfigs)
         {

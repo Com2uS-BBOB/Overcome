@@ -3,7 +3,7 @@ using UnityEngine;
 public class RewardManager : SingletonBehaviour<RewardManager>
 {
     [SerializeField] private RewardUnlockData _rewardUnlockData;
-
+    
     public bool IsRewardUnlocked(ERewardType rewardType)
     {
         int totalStars = PlayerDataManager.Instance.GetPlayerStarCount();

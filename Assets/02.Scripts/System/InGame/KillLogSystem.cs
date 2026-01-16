@@ -29,8 +29,6 @@ public class KillLogSystem : SingletonBehaviour<KillLogSystem>
     
     private void LogKill(EnemyKilledEvent killedEvent)
     {
-        // todo. EnemyData를 받아 출력할 수 있게 수정 필요
-        // todo. KillLog 기록 로직 추가
         _killLogs[killedEvent.Enemy.EnemyType]++;
         var killLogConfig = new KillLogConfig
         {

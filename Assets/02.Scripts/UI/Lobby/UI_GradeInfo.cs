@@ -2,10 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-/// <summary>
-/// 등급 정보를 표시하는 단순 뷰 컴포넌트
-/// 외부에서 SetInfo()를 통해 데이터를 주입받아 표시만 담당
-/// </summary>
 public class UI_GradeInfo : MonoBehaviour
 {
     [Header("UI References")]

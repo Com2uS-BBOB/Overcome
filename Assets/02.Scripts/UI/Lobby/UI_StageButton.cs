@@ -59,7 +59,7 @@ public class UI_StageButton : MonoBehaviour
         if (!isUnlocked)
         {
             _stageSelectImage.color = _blockColor;
-            _stageSelectImage.GetComponent<Button>().interactable = false;
+            _openButton.interactable = false;
         }
         else if (_isBossStage)
         {

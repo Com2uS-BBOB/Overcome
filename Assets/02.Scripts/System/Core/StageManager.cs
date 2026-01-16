@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class StageManager : SingletonBehaviour<StageManager>
 {
-    [SerializeField] private GradeData _gradeData;
+    [SerializeField] private StageData _stageData;
 
-    private const int StageCount = 3;
+    private const int MaxStarCount = 3;
     private string _currentStageId = "1_1"; // "1_1", "1_2" 형식
     private int _currentStageIntId; // 11, 12, 13... (저장용 ID)
 
@@ -19,23 +19,23 @@ public class StageManager : SingletonBehaviour<StageManager>
     #region Grade Query
     public GradeConfig GetGradeConfig(int score)
     {
-        if (_gradeData == null)
+        if (_stageData == null)
         {
-            Debug.LogError("[StageManager] GradeData is not assigned!");
+            Debug.LogError("[StageManager] StageData is not assigned!");
             return null;
         }
 
-        return _gradeData.GetGrade(_currentStageId, score);
+        return _stageData.GetGrade(_currentStageId, score);
     }
 
     public GradeConfig GetGradeConfig(string stageId, int score)
     {
-        return _gradeData?.GetGrade(stageId, score);
+        return _stageData?.GetGrade(stageId, score);
     }
 
     public StageGradeConfig GetStageGradeConfig(string stageId)
     {
-        return _gradeData?.GetStageGradeConfig(stageId);
+        return _stageData?.GetStageGradeConfig(stageId);
     }
     #endregion
 
@@ -43,7 +43,7 @@ public class StageManager : SingletonBehaviour<StageManager>
     public void CompleteStage(int finalScore)
     {
         // Previous Data
-        GradeConfig grade = _gradeData.GetGrade(_currentStageId, finalScore);
+        GradeConfig grade = _stageData.GetGrade(_currentStageId, finalScore);
         StageProgress progress = PlayerDataManager.Instance.GetStageProgress(_currentStageIntId);
 
         // Update Data
@@ -56,6 +56,7 @@ public class StageManager : SingletonBehaviour<StageManager>
 
     private void UpdateStageProgress(StageProgress previousProgress, GradeConfig grade, int score)
     {
+        previousProgress.PlayCount++;
         if (previousProgress.BestScore > score) return;
         // Update Star Info
         if (grade.RewardStars > 0)
@@ -63,7 +64,6 @@ public class StageManager : SingletonBehaviour<StageManager>
             previousProgress.IsCleared = true;
             previousProgress.StarsEarned = Mathf.Max(previousProgress.StarsEarned, grade.RewardStars);
         }
-        previousProgress.PlayCount++;
         previousProgress.BestScore = score;
     }
 
@@ -92,7 +92,8 @@ public class StageManager : SingletonBehaviour<StageManager>
         int prevStageId;
         if (level == 1)
         {
-            prevStageId = (chapter - 1) * 10 + StageCount;
+            int prevChapterStageCount = _stageData.GetStagesInChapter(chapter - 1);
+            prevStageId = (chapter - 1) * 10 + prevChapterStageCount;
         }
         else
         {
@@ -105,7 +106,7 @@ public class StageManager : SingletonBehaviour<StageManager>
 
     public int GetPlayerStarCount() => PlayerDataManager.Instance.GetPlayerStarCount();
 
-    public int GetTotalStars() => StageCount * _gradeData.GetStageCount();
+    public int GetTotalStars() => MaxStarCount * _stageData.GetStageCount();
     #endregion
 
 #if UNITY_EDITOR

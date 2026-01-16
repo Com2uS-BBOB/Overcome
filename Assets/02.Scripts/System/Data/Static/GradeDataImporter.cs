@@ -20,7 +20,7 @@ public class GradeDataImporter : EditorWindow
         
         _csvFile = (TextAsset)EditorGUILayout.ObjectField("CSV File", _csvFile, typeof(TextAsset), false);
 
-        if (GUILayout.Button("Import and Create GradeData"))
+        if (GUILayout.Button("Import and Create StageData"))
         {
             if (_csvFile != null)
             {
@@ -148,7 +148,7 @@ public class GradeDataImporter : EditorWindow
         }
 
         // ScriptableObject 생성
-        GradeData gradeData = ScriptableObject.CreateInstance<GradeData>();
+        StageData stageData = ScriptableObject.CreateInstance<StageData>();
         
         List<StageGradeConfig> stageConfigs = new List<StageGradeConfig>();
         foreach (var kvp in stageGrades)
@@ -161,7 +161,7 @@ public class GradeDataImporter : EditorWindow
         }
 
         // SerializedObject를 통해 private 필드 설정
-        SerializedObject serializedObject = new SerializedObject(gradeData);
+        SerializedObject serializedObject = new SerializedObject(stageData);
         SerializedProperty stageConfigsProp = serializedObject.FindProperty("_stageConfigs");
         
         stageConfigsProp.arraySize = stageConfigs.Count;
@@ -185,8 +185,8 @@ public class GradeDataImporter : EditorWindow
         serializedObject.ApplyModifiedProperties();
 
         // 파일 저장
-        string path = "Assets/10.ScriptableObjects/GradeData.asset";
-        AssetDatabase.CreateAsset(gradeData, path);
+        string path = "Assets/10.ScriptableObjects/StageData.asset";
+        AssetDatabase.CreateAsset(stageData, path);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
 
@@ -197,10 +197,10 @@ public class GradeDataImporter : EditorWindow
             rewardInfo += $"{kvp.Key} = {kvp.Value} stars\n";
         }
 
-        EditorUtility.DisplayDialog("Success", 
-            $"GradeData created at {path}\n\n{rewardInfo}\n\nStages: {stageIds.Count}", 
+        EditorUtility.DisplayDialog("Success",
+            $"StageData created at {path}\n\n{rewardInfo}\n\nStages: {stageIds.Count}",
             "OK");
-        Selection.activeObject = gradeData;
+        Selection.activeObject = stageData;
         
         Debug.Log($"[GradeDataImporter] Import completed successfully!");
         Debug.Log($"[GradeDataImporter] Stages imported: {string.Join(", ", stageIds)}");

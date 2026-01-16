@@ -23,6 +23,10 @@ public class UI_Settings : MonoBehaviour
         if (!_isOpen) return;
         _isOpen = false;
         _animator.SetTrigger("Panel Out");
+    }
+
+    public void DeactivePanel()
+    {
         gameObject.SetActive(false);
     }
 }
