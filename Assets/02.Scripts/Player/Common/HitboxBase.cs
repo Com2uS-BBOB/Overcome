@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Interfaces;
 
 namespace _02.Scripts.Player.Common
@@ -9,7 +10,9 @@ namespace _02.Scripts.Player.Common
     [RequireComponent(typeof(Collider))]
     public abstract class HitboxBase : MonoBehaviour, IHitDetector
     {
-        protected HashSet<Collider> _hitTargets = new();
+        [SerializeField] protected bool _spawnHitEffect = false;
+
+        protected HashSet<IDamageable> _hitTargets = new();
         protected float _damage;
         protected bool _isActive;
 
@@ -37,19 +40,24 @@ namespace _02.Scripts.Player.Common
 
         protected virtual void ProcessHit(Collider other)
         {
-            if (_hitTargets.Contains(other)) return;
             if (ShouldIgnore(other)) return;
 
-            var damageable = other.GetComponent<IDamageable>()
-                          ?? other.GetComponentInParent<IDamageable>();
+            var damageable = other.GetComponent<IDamageable>();
 
-            if (damageable != null)
+            if (damageable == null) return;
+            if (_hitTargets.Contains(damageable)) return;  // IDamageable 기준 중복 체크
+
+            // 히트 이펙트 스폰 (플레이어 히트박스만)
+            if (_spawnHitEffect)
             {
-                _hitTargets.Add(other);
-                damageable.TakeDamage(_damage, GetOwner());
-                OnHit?.Invoke(damageable, _damage);
-                OnHitSuccess(other, damageable);
+                Vector3 hitPoint = other.ClosestPoint(transform.position);
+                HitEffectPool.Instance?.SpawnAt(hitPoint);
             }
+
+            _hitTargets.Add(damageable);
+            damageable.TakeDamage(_damage, GetOwner());
+            OnHit?.Invoke(damageable, _damage);
+            OnHitSuccess(other, damageable);
         }
 
         // 무시 대상 체크

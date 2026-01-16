@@ -1,12 +1,16 @@
 using System;
 using UnityEngine;
 using _02.Scripts.Player.Common;
+using _02.Scripts.Player.Interfaces;
 
 namespace _02.Scripts.Player.Combat
 {
     // 검기
     public class CrescentProjectile : HitboxBase
     {
+        [Header("VFX")]
+        [SerializeField] private ProjectileVFXController _vfxController;
+
         private float _speed;
         private float _maxDistance;
         private Vector3 _startPosition;
@@ -22,11 +26,15 @@ namespace _02.Scripts.Player.Combat
             _startPosition = transform.position;
             _owner = owner;
             _returnToPool = returnCallback;
+            _spawnHitEffect = true;  // 플레이어 투사체는 히트 이펙트 스폰
 
             EnableHitDetection(damage);
 
             if (_direction != Vector3.zero)
                 transform.rotation = Quaternion.LookRotation(_direction);
+
+            // VFX 활성화
+            _vfxController?.OnFired();
         }
 
         private void Update()
@@ -47,10 +55,16 @@ namespace _02.Scripts.Player.Combat
         {
             DisableHitDetection();
 
+            // VFX 비활성화
+            _vfxController?.OnReturned();
+
             if (_returnToPool != null)
                 _returnToPool.Invoke(this);
             else
                 Destroy(gameObject);
         }
+
+        // 히트 이펙트는 HitboxBase.ProcessHit()에서 _spawnHitEffect 플래그로 처리
+        protected override void OnHitSuccess(Collider other, IDamageable damageable) { }
     }
 }

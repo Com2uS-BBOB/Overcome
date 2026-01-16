@@ -13,7 +13,7 @@ namespace _02.Scripts.Player.Combat
     /// </summary>
     public class CrescentSkill : BaseSkill, IOverDriveAffected
     {
-        private const int PoolInitialSize = 5;
+        private const int PoolInitialSize = 10;
 
         [Header("Projectile")]
         [SerializeField] private CrescentProjectile _projectilePrefab;
@@ -62,6 +62,21 @@ namespace _02.Scripts.Player.Combat
             if (_cameraTransform == null) _cameraTransform = Camera.main?.transform;
         }
 
+        private void OnEnable()
+        {
+            OnSkillEnded += HandleSkillEnded;
+        }
+
+        private void OnDisable()
+        {
+            OnSkillEnded -= HandleSkillEnded;
+        }
+
+        private void HandleSkillEnded()
+        {
+            OnCrescentEnded?.Invoke();
+        }
+
         public void Initialize(PlayerStats stats, GaugeManager gaugeManager)
         {
             _stats = stats;
@@ -83,6 +98,15 @@ namespace _02.Scripts.Player.Combat
         }
 
         protected override void OnSkillStart()
+        {
+            // 애니메이션 이벤트에서 발사하도록 변경
+            // FireProjectile()은 FireFromAnimationEvent()에서 호출됨
+        }
+
+        /// <summary>
+        /// 애니메이션 이벤트에서 호출되는 발사 메서드
+        /// </summary>
+        public void FireFromAnimationEvent()
         {
             FireProjectile();
         }
@@ -144,6 +168,8 @@ namespace _02.Scripts.Player.Combat
             Vector3 direction = _cameraTransform != null ? _cameraTransform.forward : transform.forward;
             CrescentProjectile projectile = _projectilePool.Get();
             projectile.transform.position = _firePoint.position;
+            direction.y += 0.2f;
+            direction.Normalize();
             projectile.Initialize(Damage, Speed, Range, direction, gameObject, ReturnProjectile);
             projectile.OnHit += HandleProjectileHit;
         }
