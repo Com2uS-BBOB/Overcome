@@ -7,7 +7,7 @@ public class EnemyAttackDirector : MonoBehaviour
     [SerializeField] private int _maxAttackers = 3;
 
     [Header("동시 압박자 제한 (플레이어 바짝 추적)")]
-    [SerializeField] private int _maxPressurers = 2;
+    [SerializeField] private int _maxPressurers = 5;
 
     [Header("최근 공격자 패널티")]
     [SerializeField] private float _fairnessCooldown = 2f;

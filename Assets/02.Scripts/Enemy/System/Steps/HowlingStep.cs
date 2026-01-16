@@ -40,7 +40,7 @@ public class HowlingStep : IEnemyAttackStep
 
         _finished = false;
 
-        _howl = new HowlAction(_context.Anim, _context.Agent, _howlDuration);
+        _howl = new HowlAction(_context.Anim, _context.Agent, _context.Movement, _howlDuration);
         _howl.Enter();
 
         return true;

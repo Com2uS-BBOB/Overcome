@@ -33,6 +33,16 @@ public class EnemyAttack : MonoBehaviour
         _agent = GetComponent<NavMeshAgent>();
     }
 
+    private void OnEnable()
+    {
+        // 리스폰 시 공격 상태 초기화
+        _currentPattern?.Stop();
+        _currentPattern = null;
+        _hasRushedOnce = false;
+        _needRecoveryAfterRush = false;
+        _needRecoveryAfterMelee = false;
+    }
+
     public void Initialize(EnemyCombatContext context)
     {
         _player = context.Player;
@@ -44,6 +54,7 @@ public class EnemyAttack : MonoBehaviour
 
     public void StartAttack()
     {
+        if (_enemy != null && _enemy.IsDead) return;
         if (_currentPattern != null) return;
 
         SelectPattern();

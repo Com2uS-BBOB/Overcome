@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7318016410296134547}
   - component: {fileID: 8433518643530307828}
   m_Layer: 0
-  m_Name: FloatSmallEnemySpawner
+  m_Name: SingleEnemySpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24b55b410d11d9d49ae0d704a7d4c4a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloatSmallEnemySpawner
-  _player: {fileID: 0}
   _enemyPool: {fileID: 0}
-  _respawnDelay: 3
+  _spawnEnemyType: 0
+  _respawnDelay: 10
