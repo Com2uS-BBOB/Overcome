@@ -47,6 +47,7 @@ public class EliteRipStep : IEnemyAttackStep
 
         _finished = false;
 
+        string ripKey = _context.SfxSet != null ? _context.SfxSet.EnemyRip : null;
         _rip = new EliteRipAction(
             _context.Enemy,
             _context.Player,
@@ -56,7 +57,8 @@ public class EliteRipStep : IEnemyAttackStep
             _context.Anim,
             _config.RipDamagePerHit,
             _config.RipMoveSpeed,
-            _config.RipKnockbackDistance
+            _config.RipKnockbackDistance,
+            ripKey
         );
         _rip.Enter();
         return true;
@@ -136,6 +138,9 @@ public class EliteRipStep : IEnemyAttackStep
                 break;
             case EAttackAnimEvent.RipEnd:
                 _rip.OnAnimEnd();
+                break;
+            case EAttackAnimEvent.SfxStart:
+                _rip.OnSfxStart();
                 break;
         }
     }

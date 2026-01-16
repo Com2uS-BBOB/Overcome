@@ -51,6 +51,8 @@ public class MeleeStep : IEnemyAttackStep
 
         _reserved = (_context.AttackDirector != null);
 
+        string meleeKey = _context.SfxSet != null ? _context.SfxSet.EnemyMelee : null;
+
         _melee = new MeleeAction(
             _context.Enemy,
             _context.Player,
@@ -58,7 +60,8 @@ public class MeleeStep : IEnemyAttackStep
             _context.Anim,
             _context.Agent,
             _context.Damage,
-            _knockbackDistance
+            _knockbackDistance,
+            meleeKey
         );
         _melee.Enter();
         return true;
@@ -119,6 +122,9 @@ public class MeleeStep : IEnemyAttackStep
                 break;
             case EAttackAnimEvent.MeleeEnd:
                 _melee.OnAnimEnd();
+                break;
+            case EAttackAnimEvent.SfxStart:
+                _melee.OnSfxStart();
                 break;
         }
     }

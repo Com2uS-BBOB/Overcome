@@ -9,12 +9,16 @@ public class EliteRipAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
     private readonly EnemyAnimatorController _anim;
+    private readonly string _ripSfxKey;
 
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;
     private readonly float _ripKnockbackDistance;
 
     private float _ratio;
+
+    private bool _sfxPlayed;
+
     private bool _isFinished;
 
     private bool _cycleEnded;
@@ -30,7 +34,8 @@ public class EliteRipAction : IEnemyAction
         EnemyAnimatorController anim,
         float damagePerHit,
         float ripMoveSpeed,
-        float ripKnockbackDistance
+        float ripKnockbackDistance,
+        string ripSfxKey
     )
     {
         _enemy = enemy;
@@ -42,11 +47,14 @@ public class EliteRipAction : IEnemyAction
         _damagePerHit = damagePerHit;
         _ripMoveSpeed = ripMoveSpeed;
         _ripKnockbackDistance = ripKnockbackDistance;
+        _ripSfxKey = ripSfxKey;
     }
 
     public void Enter()
     {
         _isFinished = false;
+
+        _sfxPlayed = false;
 
         // 난도질 중엔 계속 전진
         _agent.isStopped = false;
@@ -102,5 +110,16 @@ public class EliteRipAction : IEnemyAction
     {
         _hitbox?.Disable();
         _cycleEnded = true;
+    }
+
+    public void OnSfxStart()
+    {
+        if (_sfxPlayed) return;
+        _sfxPlayed = true;
+
+        if (string.IsNullOrEmpty(_ripSfxKey)) return;
+
+        // todo. 사운드 재생
+        // SoundManager.Instance.PlaySfx(_ripSfxKey, _enemy.position);
     }
 }

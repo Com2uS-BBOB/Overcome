@@ -12,6 +12,7 @@ public class EnemyAttack : MonoBehaviour
     private EnemySlotCoordinator _slotCoordinator;
     private EnemyAttackDirector _attackDirector;
     private NavMeshAgent _agent;
+    private EnemyStatData _statData;
 
     private bool _hasRushedOnce;
     public bool HasRushedOnce => _hasRushedOnce;
@@ -46,7 +47,9 @@ public class EnemyAttack : MonoBehaviour
     public void Initialize(EnemyCombatContext context)
     {
         _player = context.Player;
-        _damage = _enemy.EnemyStatData.Damage;
+
+        _statData = _enemy != null ? _enemy.EnemyStatData : null;
+        _damage = _statData != null ? _statData.Damage : 0f;
 
         _slotCoordinator = context.SlotCoordinator;
         _attackDirector = context.AttackDirector;
@@ -83,7 +86,8 @@ public class EnemyAttack : MonoBehaviour
             _anim,
             _agent,
             _slotCoordinator,
-            _attackDirector
+            _attackDirector,
+            _statData
         );
 
         switch (_enemy.EnemyStatData.EnemyType)
@@ -157,6 +161,7 @@ public class EnemyAttack : MonoBehaviour
     public void OnRipHitStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipHitStart);
     public void OnRipHitEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipHitEnd);
     public void OnRipEnd() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.RipEnd);
+    public void OnSfxStart() => _currentPattern?.OnAnimEvent(EAttackAnimEvent.SfxStart);
 
     #endregion
 

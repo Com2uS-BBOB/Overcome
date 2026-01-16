@@ -7,24 +7,36 @@ public class HowlAction : IEnemyAction
     private readonly NavMeshAgent _agent;
     private readonly EnemyMovement _movement;
     private readonly float _duration;
+    private readonly string _howlSfxKey;
 
     private float _timer;
     private bool _finished;
 
+    private bool _sfxPlayed;
+
     public bool IsFinished => _finished;
 
-    public HowlAction(EnemyAnimatorController anim, NavMeshAgent agent, EnemyMovement movement, float duration)
+    public HowlAction(
+        EnemyAnimatorController anim, 
+        NavMeshAgent agent, 
+        EnemyMovement movement, 
+        float duration, 
+        string howlSfxKey)
     {
         _anim = anim;
         _agent = agent;
         _movement = movement;
         _duration = duration;
+        _howlSfxKey = howlSfxKey;
     }
 
     public void Enter()
     {
         _finished = false;
         _timer = 0f;
+
+        _sfxPlayed = false;
+
         _agent.isStopped = true;
         _agent.ResetPath();
 
@@ -49,5 +61,16 @@ public class HowlAction : IEnemyAction
     public void Exit()
     {
         _movement.LockMovement(false);
+    }
+
+    public void OnSfxStart()
+    {
+        if (_sfxPlayed) return;
+        _sfxPlayed = true;
+
+        if (string.IsNullOrEmpty(_howlSfxKey)) return;
+
+        // todo. 사운드 재생
+        // SoundManager.Instance.PlaySfx(_howlSfxKey, _enemy.position);
     }
 }

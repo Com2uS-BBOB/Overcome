@@ -21,4 +21,8 @@ public class EnemyStatData : ScriptableObject
 
     public int Score => _score;
     public int Playtime => _playtime;
+
+    [Header("SFX Set")]
+    [SerializeField] private EnemySfxSet _enemySfxSet;
+    public EnemySfxSet EnemySfxSet => _enemySfxSet;
 }

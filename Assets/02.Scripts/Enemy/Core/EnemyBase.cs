@@ -3,7 +3,6 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Audio;
 
 public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
@@ -17,12 +16,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     [Header("스폰 높이")]
     [SerializeField] private float _spawnHeight = 0f;  // 바닥과 적의 중심 높이 차이
-
-    [Header("오디오 클립")]
-    [SerializeField] private AudioClip _enemyHitAudioClip;
-    [SerializeField] private AudioClip _enemyDeathAudioClip;
-
-    private AudioSource _enemyAudioSource;
 
     private float _hitStopTime = 0.24f;  // Hit 시 적이 멈춰있는 시간
     private Coroutine _hitStopRoutine;
@@ -57,7 +50,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _anim = GetComponent<EnemyAnimatorController>();
         _movement = GetComponent<EnemyMovement>();
         _agent = GetComponent<NavMeshAgent>();
-        _enemyAudioSource = GetComponent<AudioSource>();
     }
 
     public void Initialize(EnemyStatData statData)
@@ -147,18 +139,36 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (_currentHealth <= 0)
         {
             Die();
-        }
-
-        if (IsDead)
-        {
-            // todo. 추후 적 Death 오디오 클립 삽입
-            // _enemyAudioSource.PlayOneShot(_enemyDeathAudioClip);
+            PlaySfx_Death();
         }
         else
         {
-            _enemyAudioSource.PlayOneShot(_enemyHitAudioClip);
+            PlaySfx_Hit();
         }
     }
+
+    #region Play Sfx
+
+    private void PlaySfx_Hit()
+    {
+        var key = EnemyStatData != null ? EnemyStatData.EnemySfxSet?.EnemyHit : null;
+        if (string.IsNullOrEmpty(key)) return;
+
+        // todo. 사운드 매니저 연결
+        // SoundManager.Instance.PlaySfx(key, transform);
+    }
+
+    private void PlaySfx_Death()
+    {
+        var key = EnemyStatData != null ? EnemyStatData.EnemySfxSet?.EnemyDeath : null;
+        if (string.IsNullOrEmpty(key)) return;
+
+        // SoundManager.Instance.PlaySfx(key, transform);
+    }
+
+    #endregion
+
+    #region Hit
 
     private void StopOnHit(float time)
     {
@@ -182,6 +192,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             _movement.LockMovement(false);
         }
     }
+
+    #endregion
+
+    #region Die and Despawn
 
     protected virtual void Die()
     {
@@ -215,4 +229,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _despawnHandler?.HandleDespawn(this);  // 스포너 / 풀링 처리 요청
         OnDespawn?.Invoke(this);
     }
+
+    #endregion
 }

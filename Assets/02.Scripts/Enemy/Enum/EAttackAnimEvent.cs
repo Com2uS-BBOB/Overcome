@@ -8,5 +8,7 @@ public enum EAttackAnimEvent
     RipStart,
     RipHitStart,
     RipHitEnd,
-    RipEnd
+    RipEnd,
+
+    SfxStart
 }

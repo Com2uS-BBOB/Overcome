@@ -8,9 +8,12 @@ public class MeleeAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly EnemyAnimatorController _anim;
     private readonly NavMeshAgent _agent;
-    private readonly float _knockbackDistance;
-
     private readonly float _damage;
+    private readonly float _knockbackDistance;
+    private readonly string _meleeSfxKey;
+
+    private bool _sfxPlayed;
+
     private bool _isFinished;
 
     public bool IsFinished => _isFinished;
@@ -22,7 +25,8 @@ public class MeleeAction : IEnemyAction
         EnemyAnimatorController anim,
         NavMeshAgent agent,
         float damage,
-        float knockbackDistance
+        float knockbackDistance,
+        string meleeSfxKey
     )
     {
         _enemy = enemy;
@@ -32,11 +36,14 @@ public class MeleeAction : IEnemyAction
         _agent = agent;
         _damage = damage;
         _knockbackDistance = knockbackDistance;
+        _meleeSfxKey = meleeSfxKey;
     }
 
     public void Enter()
     {
         _isFinished = false;
+
+        _sfxPlayed = false;
 
         _agent.isStopped = true;
         _agent.ResetPath();
@@ -84,4 +91,15 @@ public class MeleeAction : IEnemyAction
     }
     
     public void OnAnimEnd() => _isFinished = true;
+
+    public void OnSfxStart()
+    {
+        if (_sfxPlayed) return;
+        _sfxPlayed = true;
+
+        if (string.IsNullOrEmpty(_meleeSfxKey)) return;
+
+        // todo. 사운드 재생
+        // SoundManager.Instance.PlaySfx(_meleeSfxKey, _enemy.position);
+    }
 }

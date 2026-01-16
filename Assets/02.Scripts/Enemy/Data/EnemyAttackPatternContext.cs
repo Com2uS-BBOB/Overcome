@@ -5,6 +5,7 @@ public sealed class EnemyAttackPatternContext
 {
     public Transform Player { get; }
     public Transform Enemy { get; }
+    public float Damage { get; }
 
     public EnemyMovement Movement { get; }
     public EnemyKnockbackHitbox KnockbackHitbox { get; }
@@ -14,7 +15,8 @@ public sealed class EnemyAttackPatternContext
     public EnemySlotCoordinator SlotCoordinator { get; }
     public EnemyAttackDirector AttackDirector { get; }
 
-    public float Damage { get; }
+    public EnemyStatData StatData { get; }
+    public EnemySfxSet SfxSet => StatData != null ? StatData.EnemySfxSet : null;
 
     public EnemyAttackPatternContext(
         Transform player,
@@ -25,7 +27,8 @@ public sealed class EnemyAttackPatternContext
         EnemyAnimatorController anim,
         NavMeshAgent agent,
         EnemySlotCoordinator slotCoordinator,
-        EnemyAttackDirector attackDirector
+        EnemyAttackDirector attackDirector,
+        EnemyStatData statData
     )
     {
         Player = player;
@@ -37,5 +40,6 @@ public sealed class EnemyAttackPatternContext
         Agent = agent;
         SlotCoordinator = slotCoordinator;
         AttackDirector = attackDirector;
+        StatData = statData;
     }
 }
