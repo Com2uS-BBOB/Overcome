@@ -4,6 +4,7 @@ using UnityEngine;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Interfaces;
 using _02.Scripts.Player.Data;
+using _02.Scripts.CameraFX;
 
 namespace _02.Scripts.Player.Combat
 {
@@ -82,6 +83,9 @@ namespace _02.Scripts.Player.Combat
             OnDashStarted?.Invoke();
             OnSkillUsed?.Invoke();
 
+            // 카메라 효과: FOV 확대 (스피드감)
+            CameraEffectsManager.Instance?.StartDashFOV();
+
             // 히트박스 활성화
             _hitbox?.EnableHitDetection(_dashDamage);
 
@@ -110,6 +114,9 @@ namespace _02.Scripts.Player.Combat
 
             // 히트박스 비활성화
             _hitbox?.DisableHitDetection();
+
+            // 카메라 효과: FOV 복귀
+            CameraEffectsManager.Instance?.EndDashFOV();
 
             _isDashing = false;
             OnDashEnded?.Invoke();
