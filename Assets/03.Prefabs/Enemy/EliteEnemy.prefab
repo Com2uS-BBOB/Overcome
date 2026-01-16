@@ -171,7 +171,7 @@ GameObject:
   - component: {fileID: 6350010626198602367}
   - component: {fileID: 6507501800201012299}
   - component: {fileID: -4543710031751717480}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EliteEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -306,7 +306,6 @@ MonoBehaviour:
   _rotationMode: 0
   _speedLerpSpeed: 6
   _rotationLerpSpeed: 14
-  _hitRotateFadeSpeed: 12
   _allowKnockbackWhileLocked: 1
   _knockbackDamping: 16
   _maxKnockbackSpeed: 14
@@ -462,7 +461,6 @@ MonoBehaviour:
   _consecutionHitBonus: 1
   _eliteStrengthMultiplier: 1.4
   _interruptPathTime: 0.18
-  _hitRotationValue: 8
   _player: {fileID: 0}
 --- !u!1 &384098602305931006
 GameObject:
@@ -640,7 +638,7 @@ GameObject:
   - component: {fileID: 3530484968068948657}
   - component: {fileID: 8521469533530646712}
   - component: {fileID: 1745921247313392899}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -794,7 +792,7 @@ GameObject:
   - component: {fileID: 8116319403890005380}
   - component: {fileID: 8647098671589723412}
   - component: {fileID: 1636371631435820403}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Health_Delay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1383,7 +1381,7 @@ GameObject:
   - component: {fileID: 6775614741785822899}
   - component: {fileID: 6312337607593611778}
   - component: {fileID: 4764286757871144382}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Health_Fill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2161,7 +2159,7 @@ GameObject:
   - component: {fileID: 5221921287370394607}
   - component: {fileID: 2364469122391346348}
   - component: {fileID: 6731067591082457662}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Health_Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2293,6 +2291,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1908e5a768471c94f92b5a89b68004dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockbackHitbox
+  _spawnHitEffect: 0
   _useKnockback: 1
   _knockbackDuration: 0.2
   _defaultKnockbackDistance: 1
@@ -2502,7 +2501,7 @@ GameObject:
   - component: {fileID: 1251226409437271868}
   - component: {fileID: 8837359365556749323}
   - component: {fileID: 3503943041545228798}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2642,7 +2641,7 @@ GameObject:
   - component: {fileID: 7567722384238689130}
   - component: {fileID: 3874167494632531717}
   - component: {fileID: 5718133852861008923}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RushAttackHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2699,6 +2698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1908e5a768471c94f92b5a89b68004dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockbackHitbox
+  _spawnHitEffect: 0
   _useKnockback: 1
   _knockbackDuration: 0.2
   _defaultKnockbackDistance: 2
@@ -2840,7 +2840,7 @@ GameObject:
   - component: {fileID: 5480062875769524260}
   - component: {fileID: 4265088115307233055}
   - component: {fileID: 344629847773328072}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Health_Border
   m_TagString: Untagged
   m_Icon: {fileID: 0}
