@@ -9,7 +9,7 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using _02.Scripts.Player.Common;
 
-public enum AudioType
+public enum EAudioType
 {
     Master,
     Music,
@@ -120,48 +120,48 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         var settings = PlayerDataManager.Instance?.GetSettings();
         if (settings != null)
         {
-            SetAudioVolume(AudioType.Master, settings.MasterVolume);
-            SetAudioVolume(AudioType.Music, settings.MusicVolume);
-            SetAudioVolume(AudioType.Effect, settings.SfxVolume);
+            SetAudioVolume(EAudioType.Master, settings.MasterVolume);
+            SetAudioVolume(EAudioType.Music, settings.MusicVolume);
+            SetAudioVolume(EAudioType.Effect, settings.SfxVolume);
         }
         else
         {
-            SetAudioVolume(AudioType.Master, 1f);
-            SetAudioVolume(AudioType.Music, 1f);
-            SetAudioVolume(AudioType.Effect, 1f);
+            SetAudioVolume(EAudioType.Master, 1f);
+            SetAudioVolume(EAudioType.Music, 1f);
+            SetAudioVolume(EAudioType.Effect, 1f);
         }
     }
 
-    public void SetAudioVolume(AudioType audioType, float volume)
+    public void SetAudioVolume(EAudioType eAudioType, float volume)
     {
         volume = Mathf.Clamp01(volume);
         float value = Mathf.Max(0.0001f, volume);
 
-        switch (audioType)
+        switch (eAudioType)
         {
-            case AudioType.Master:
+            case EAudioType.Master:
                 _masterVolume = volume;
                 break;
-            case AudioType.Music:
+            case EAudioType.Music:
                 _musicVolume = volume;
                 break;
-            case AudioType.Effect:
+            case EAudioType.Effect:
                 _effectVolume = volume;
                 break;
         }
 
-        _audioMixer.SetFloat(audioType.ToString(), Mathf.Log10(value) * 20);
+        _audioMixer.SetFloat(eAudioType.ToString(), Mathf.Log10(value) * 20);
         SaveVolumeSettings();
     }
 
-    public float GetVolume(AudioType audioType)
+    public float GetVolume(EAudioType eAudioType)
     {
-        if (audioType == AudioType.Master) return _masterVolume;
-        return audioType == AudioType.Music ? _musicVolume : _effectVolume;
+        if (eAudioType == EAudioType.Master) return _masterVolume;
+        return eAudioType == EAudioType.Music ? _musicVolume : _effectVolume;
     }
 
-    public void PauseAudio() => _audioMixer.SetFloat(nameof(AudioType.Master), Mathf.Log10(0.0001f) * 20);
-    public void ResumeAudio() => SetAudioVolume(AudioType.Master, _masterVolume);
+    public void PauseAudio() => _audioMixer.SetFloat(nameof(EAudioType.Master), Mathf.Log10(0.0001f) * 20);
+    public void ResumeAudio() => SetAudioVolume(EAudioType.Master, _masterVolume);
 
     private void SaveVolumeSettings()
     {
@@ -391,7 +391,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
 #if UNITY_EDITOR
     [Header("Test Settings")]
-    [SerializeField] private AudioType _testAudioType = AudioType.Music;
+    [SerializeField] private EAudioType _testEAudioType = EAudioType.Music;
     [SerializeField] [Range(0f, 1f)] private float _testVolume = 0.5f;
     [SerializeField] private string _testBGMName = "MainTheme";
     [SerializeField] private string _testSfxName = "Click";
@@ -399,15 +399,15 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     [ContextMenu("Test/Set Volume")]
     private void TestSetVolume()
     {
-        SetAudioVolume(_testAudioType, _testVolume);
-        Debug.Log($"[SoundManager] {_testAudioType} 볼륨 설정: {_testVolume}");
+        SetAudioVolume(_testEAudioType, _testVolume);
+        Debug.Log($"[SoundManager] {_testEAudioType} 볼륨 설정: {_testVolume}");
     }
 
     [ContextMenu("Test/Get Volume")]
     private void TestGetVolume()
     {
-        float volume = GetVolume(_testAudioType);
-        Debug.Log($"[SoundManager] {_testAudioType} 현재 볼륨: {volume}");
+        float volume = GetVolume(_testEAudioType);
+        Debug.Log($"[SoundManager] {_testEAudioType} 현재 볼륨: {volume}");
     }
 
     [ContextMenu("Test/Play BGM")]
