@@ -585,13 +585,15 @@ namespace _02.Scripts.Player.Core
 
         private void HandleJustGuard(AttackInfo attackInfo)
         {
-            // 저스트 가드 성공 카메라 쉐이크
+            // 저스트 가드 성공 애니메이션 + 카메라 쉐이크
+            _playerAnimatorController?.PlayGuardBlock();
             CameraShakeManager.Instance?.OnJustGuard();
         }
 
         private void HandleNormalGuard(AttackInfo attackInfo)
         {
-            // 일반 가드 성공 카메라 쉐이크
+            // 일반 가드 성공 애니메이션 + 카메라 쉐이크
+            _playerAnimatorController?.PlayGuardBlock();
             CameraShakeManager.Instance?.OnNormalGuard();
         }
 

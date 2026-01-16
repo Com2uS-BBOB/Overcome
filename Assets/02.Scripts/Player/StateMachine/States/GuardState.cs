@@ -9,7 +9,6 @@ namespace _02.Scripts.Player.StateMachine.States
     /// 가드 상태
     /// - E키 홀드로 유지
     /// - 전방 180도 가드 가능
-    /// - 이동속도 50% 감소
     /// - 선딜/후딜 0 (즉시 전환)
     /// </summary>
     public class GuardState : PlayerStateBase
@@ -17,9 +16,6 @@ namespace _02.Scripts.Player.StateMachine.States
         private readonly GuardSettings _guardSettings;
         private readonly GuardManager _guardManager;
         private readonly GaugeManager _gaugeManager;
-
-        private bool _isGuardKeyHeld;
-        private float _guardReleaseTime;
 
         public GuardState(PlayerController controller, PlayerStateMachine stateMachine,
             GuardSettings guardSettings, GuardManager guardManager, GaugeManager gaugeManager)
@@ -32,14 +28,11 @@ namespace _02.Scripts.Player.StateMachine.States
 
         public override void Enter()
         {
-            _isGuardKeyHeld = true;
-            _guardReleaseTime = -1f;
-
             // 가드 시작 알림
             _guardManager.StartGuard();
 
-            // 가드 포즈 애니메이션
-            Controller.PlayerAnimatorController?.SetGuarding(true);
+            // 가드 포즈 애니메이션 (Trigger + Bool)
+            Controller.PlayerAnimatorController?.PlayGuard();
 
             // 입력 이벤트 구독
             Input.OnGuardCanceled += HandleGuardRelease;
@@ -59,30 +52,13 @@ namespace _02.Scripts.Player.StateMachine.States
 
             // 카메라 방향으로 회전
             Movement.RotateToCamera();
-
-            // 가드 중 이동 (감소된 속도)
-            if (HasMoveInput())
-            {
-                var moveInput = Input.MoveInput;
-                Movement.MoveWithoutRotation(moveInput, _guardSettings.GuardMoveSpeedMultiplier);
-            }
-
-            // 가드 키 해제 후 버퍼 시간 경과 체크
-            if (!_isGuardKeyHeld)
-            {
-                float timeSinceRelease = Time.time - _guardReleaseTime;
-                if (timeSinceRelease >= _guardSettings.GuardInputBuffer)
-                {
-                    ExitGuard();
-                }
-            }
         }
 
         public override void Exit()
         {
             _guardManager.EndGuard();
 
-            Controller.PlayerAnimatorController?.SetGuarding(false);
+            Controller.PlayerAnimatorController?.StopGuard();
 
             Input.OnGuardCanceled -= HandleGuardRelease;
             Input.OnAttackPerformed -= HandleAttackInput;
@@ -92,8 +68,7 @@ namespace _02.Scripts.Player.StateMachine.States
 
         private void HandleGuardRelease()
         {
-            _isGuardKeyHeld = false;
-            _guardReleaseTime = Time.time;
+            ExitGuard();
         }
 
         private void HandleAttackInput()

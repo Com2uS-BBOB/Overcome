@@ -38,7 +38,9 @@ namespace _02.Scripts.Player.Animation
 
         // Animator 파라미터 해시 - Hit/Guard
         private static readonly int HitHash = Animator.StringToHash("Hit");
+        private static readonly int GuardHash = Animator.StringToHash("Guard");
         private static readonly int IsGuardingHash = Animator.StringToHash("IsGuarding");
+        private static readonly int GuardBlockHash = Animator.StringToHash("GuardBlock");
         private static readonly int GuardBreakHash = Animator.StringToHash("GuardBreak");
 
         private PlayerStateMachine _stateMachine;
@@ -207,11 +209,37 @@ namespace _02.Scripts.Player.Animation
         }
 
         /// <summary>
-        /// 가드 포즈 설정
+        /// 가드 시작 (Trigger + Bool)
+        /// </summary>
+        public void PlayGuard()
+        {
+            _animator.SetTrigger(GuardHash);
+            _animator.SetBool(IsGuardingHash, true);
+        }
+
+        /// <summary>
+        /// 가드 종료 (Bool만 false)
+        /// </summary>
+        public void StopGuard()
+        {
+            _animator.SetBool(IsGuardingHash, false);
+        }
+
+        /// <summary>
+        /// 가드 포즈 설정 (Legacy)
         /// </summary>
         public void SetGuarding(bool isGuarding)
         {
             _animator.SetBool(IsGuardingHash, isGuarding);
+        }
+
+        /// <summary>
+        /// 가드 성공 리액션 (일반/저스트 공용)
+        /// </summary>
+        public void PlayGuardBlock()
+        {
+            _animator.ResetTrigger(GuardBlockHash);
+            _animator.SetTrigger(GuardBlockHash);
         }
 
         /// <summary>
