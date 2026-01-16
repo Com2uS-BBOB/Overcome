@@ -39,8 +39,9 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
         }
 
         enemy.Initialize(statData);
-
         enemy.GetComponent<EnemyMovement>()?.Initialize();
+
+        enemy.gameObject.SetActive(true);
 
         return enemy;
     }

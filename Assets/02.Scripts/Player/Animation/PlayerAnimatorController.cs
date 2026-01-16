@@ -10,6 +10,9 @@ namespace _02.Scripts.Player.Animation
     public class PlayerAnimatorController : MonoBehaviour
     {
         [SerializeField] private Animator _animator;
+        [SerializeField] private RootMotionProxy _rootMotionProxy;
+
+        public event Action<Vector3> OnRootMotionUpdate;
 
         // Animator 파라미터 해시 - Locomotion
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
@@ -30,7 +33,20 @@ namespace _02.Scripts.Player.Animation
         {
             _stateMachine = stateMachine;
             _stateMachine.OnStateChanged += HandleStateChanged;
+
+            if (_rootMotionProxy != null)
+                _rootMotionProxy.OnRootMotionUpdate += HandleRootMotionUpdate;
         }
+
+        #region Root Motion
+
+        public void EnableRootMotion() => _rootMotionProxy?.EnableRootMotion();
+        public void DisableRootMotion() => _rootMotionProxy?.DisableRootMotion();
+
+        private void HandleRootMotionUpdate(Vector3 deltaPosition)
+            => OnRootMotionUpdate?.Invoke(deltaPosition);
+
+        #endregion
 
 
         #region Locomotion
@@ -62,8 +78,8 @@ namespace _02.Scripts.Player.Animation
         private void HandleStateChanged(Type previousState, Type newState)
         {
             // DragonSwordState: 애니메이션은 OnComboAttack 이벤트에서 처리
-            // DashAttackState: 여기서 직접 처리
-            if (newState == typeof(DashAttackState))
+            // DashAttackState / AirDashAttackState: 여기서 직접 처리
+            if (newState == typeof(DashAttackState) || newState == typeof(AirDashAttackState))
             {
                 PlayDashAttack();
             }
@@ -80,6 +96,8 @@ namespace _02.Scripts.Player.Animation
         public void PlayAttack(int comboStep, bool isGrounded)
         {
             Debug.Log($"[Anim] PlayAttack called - comboStep: {comboStep}, isGrounded: {isGrounded}");
+            // 공격 시작 시점에 IsGrounded 즉시 동기화
+            _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.SetInteger(AttackComboCountHash, comboStep);
             _animator.SetTrigger(AttackHash);
         }
@@ -97,6 +115,8 @@ namespace _02.Scripts.Player.Animation
         /// </summary>
         public void PlayCrescent(int comboStep, bool isGrounded)
         {
+            // 공격 시작 시점에 IsGrounded 즉시 동기화
+            _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.SetInteger(CrescentComboCountHash, comboStep);
             _animator.SetTrigger(CrescentHash);
         }
@@ -118,6 +138,9 @@ namespace _02.Scripts.Player.Animation
         {
             if (_stateMachine != null)
                 _stateMachine.OnStateChanged -= HandleStateChanged;
+
+            if (_rootMotionProxy != null)
+                _rootMotionProxy.OnRootMotionUpdate -= HandleRootMotionUpdate;
         }
     }
 }

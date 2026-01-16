@@ -36,6 +36,7 @@ public class OpeningRushStep : IEnemyAttackStep
             _context.Movement,
             _context.KnockbackHitbox,
             _context.Agent,
+            _context.Anim,
             _rushDuration,
             _context.Damage
         );

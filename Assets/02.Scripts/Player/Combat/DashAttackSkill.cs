@@ -13,7 +13,7 @@ namespace _02.Scripts.Player.Combat
         private const string CooldownKey = "DashAttack";
 
         [Header("Settings")]
-        [SerializeField] private float _dashDuration = 0.3f;
+        [SerializeField] private float _dashDuration = 0.2f;
 
         [Header("References")]
         [SerializeField] private Transform _cameraTransform;

@@ -14,12 +14,12 @@ public struct EliteAttackPatternConfig
 
     public EliteAttackPatternConfig(
         float openingRushDuration = 0.5f,
-        float ripRange = 5f,
+        float ripRange = 10f,
         float ripMoveSpeed = 2f,
         float ripDamagePerHit = 2f,
         float ripTouchDelay = 0.25f,
         float ripKnockbackDistance = 1f,
-        float howlDuration = 3.2f
+        float howlDuration = 3.4f
     )
     {
         OpeningRushDuration = openingRushDuration;

@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5f6aaf9188d24b6491a61f45a852969, type: 3}
+  m_Name: Crescent_Air
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Data.SkillData
+  SkillName: "\uD06C\uB808\uC13C\uD2B8_\uACF5\uC911"
+  ActionType: 4
+  ComboChain:
+  - {fileID: 11400000, guid: 9ca00f79b70cb4a2bb970fae6c5bcbbd, type: 2}
+  - {fileID: 11400000, guid: 34f8bf2b90c84470eaff839be8db41b7, type: 2}
+  ComboGraceTime: 0.1
+  UseRootMotion: 0
+  GravityScale: 0.9
+  ComboLiftForce: 0.1
+  MoveSpeedMultiplier: 0.2
+  RequiresGauge: 1
+  GaugeCostPerCombo: 1
