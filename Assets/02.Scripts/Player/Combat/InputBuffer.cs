@@ -9,7 +9,7 @@ namespace _02.Scripts.Player.Combat
     /// </summary>
     public class InputBuffer : MonoBehaviour
     {
-        [SerializeField] private float _bufferDuration = 0.15f;
+        [SerializeField] private float _bufferDuration = 0.3f;
 
         public struct BufferedInput
         {

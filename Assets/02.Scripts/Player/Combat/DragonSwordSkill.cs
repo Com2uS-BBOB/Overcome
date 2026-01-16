@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Interfaces;
 using _02.Scripts.Player.Data;
 using _02.Scripts.Player.Movement;
@@ -10,29 +9,27 @@ namespace _02.Scripts.Player.Combat
     /// <summary>
     /// 용검 (기본 공격) 스킬
     /// 지상 콤보와 공중 콤보가 SkillDataSet으로 분리되어 관리됨
+    /// 쿨다운 없음 - 캔슬 윈도우와 콤보 상태로만 제어
     /// </summary>
     public class DragonSwordSkill : BaseSkill
     {
-        private const string CooldownKey = "Attack";
-
         [Header("Hitbox")]
         [SerializeField] private MeleeHitbox _hitbox;
 
         private PlayerStats _stats;
         private PlayerMovement _movement;
-        private CooldownManager _cooldownManager;
 
         // === ISkill 구현 ===
         public override string SkillName => "용검";
-        public override float Cooldown => _stats != null ? _stats.AttackCooldown : 0.5f;
+        public override float Cooldown => 0f;  // 쿨다운 없음
         public override bool CanUse => CanAttack;
 
         // === Properties ===
 
         /// <summary>
-        /// 공격 가능 조건: 공격 중 아님 + 쿨다운 OK + 유예 구간 아님
+        /// 공격 가능 조건: 공격 중 아님 + 유예 구간 아님
         /// </summary>
-        public bool CanAttack => !_isActive && !_inComboGrace && _cooldownManager.IsReady(CooldownKey, Cooldown);
+        public bool CanAttack => !_isActive && !_inComboGrace;
 
         /// <summary>
         /// 공격 중 여부 (State 체크용)
@@ -46,11 +43,6 @@ namespace _02.Scripts.Player.Combat
         public event Action OnAttackEnded;
 
         // === Initialization ===
-
-        private void Awake()
-        {
-            _cooldownManager = new CooldownManager();
-        }
 
         public void Initialize(PlayerStats stats, PlayerMovement movement)
         {
@@ -90,7 +82,6 @@ namespace _02.Scripts.Player.Combat
 
         protected override void OnSkillStart()
         {
-            _cooldownManager.Use(CooldownKey);
             OnAttackStarted?.Invoke();
         }
 
@@ -117,7 +108,7 @@ namespace _02.Scripts.Player.Combat
         }
 
         /// <summary>
-        /// 콤보 리셋 Override (히트박스 정리 추가)
+        /// 콤보 리셋 Override (히트박스 정리)
         /// </summary>
         public override void ResetCombo()
         {

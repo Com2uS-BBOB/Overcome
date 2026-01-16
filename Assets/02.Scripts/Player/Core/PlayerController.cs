@@ -225,6 +225,17 @@ namespace _02.Scripts.Player.Core
                 _dragonSwordSkill.ExecuteGraceCombo();
                 _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
             }
+            // Case 4: 마지막 콤보 중 새 콤보 시작 (캔슬 윈도우에서)
+            else if (_dragonSwordSkill.IsAttacking && !_dragonSwordSkill.CanContinueCombo)
+            {
+                _dragonSwordSkill.ResetCombo();
+                if (isGrounded)
+                    StateMachine.ChangeState<DragonSwordState>();
+                else
+                    StateMachine.ChangeState<AirDragonSwordState>();
+                _dragonSwordSkill.Attack();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_dragonSwordSkill);
+            }
         }
 
         private void ExecuteCrescent()
@@ -256,6 +267,17 @@ namespace _02.Scripts.Player.Core
                 else
                     StateMachine.ChangeState<AirCrescentState>();
                 _crescent.ExecuteGraceCombo();
+                _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
+            }
+            // Case 4: 마지막 콤보 중 새 콤보 시작 (캔슬 윈도우에서)
+            else if (_crescent.IsUsing && !_crescent.CanContinueCombo)
+            {
+                _crescent.ResetCombo();
+                if (isGrounded)
+                    StateMachine.ChangeState<CrescentState>();
+                else
+                    StateMachine.ChangeState<AirCrescentState>();
+                _crescent.Attack();
                 _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
             }
         }

@@ -31,11 +31,13 @@ namespace _02.Scripts.Player.Combat
         /// </summary>
         public void OnAnimEventCancelWindowEnter()
         {
-            if (_currentAttack == null) return;
-
+            // _currentAttack이 null이어도 캔슬 윈도우 상태는 설정 (콤보 동기화 타이밍 문제 방지)
             _isInCancelWindow = true;
             OnCancelWindowEnter?.Invoke();
-            TryConsumeBuffer();
+
+            // 버퍼 소비는 _currentAttack이 있을 때만
+            if (_currentAttack != null)
+                TryConsumeBuffer();
         }
 
         /// <summary>
