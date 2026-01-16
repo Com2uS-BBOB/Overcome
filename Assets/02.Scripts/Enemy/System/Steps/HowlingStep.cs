@@ -40,7 +40,7 @@ public class HowlingStep : IEnemyAttackStep
 
         _finished = false;
 
-        string howlKey = _context.SfxSet != null ? _context.SfxSet.EnemyHowl : null;
+        string howlKey = _context.SfxSet != null ? _context.SfxSet.EnemyHowlSound : null;
         _howl = new HowlAction(
             _context.Anim,
             _context.Agent,

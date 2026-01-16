@@ -151,19 +151,18 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private void PlaySfx_Hit()
     {
-        var key = EnemyStatData != null ? EnemyStatData.EnemySfxSet?.EnemyHit : null;
+        var key = EnemyStatData != null ? EnemyStatData.EnemySfxSet?.EnemyHitSound : null;
         if (string.IsNullOrEmpty(key)) return;
 
-        // todo. 사운드 매니저 연결
-        // SoundManager.Instance.PlaySfx(key, transform);
+        SoundManager.Instance.PlaySfx(key, transform);
     }
 
     private void PlaySfx_Death()
     {
-        var key = EnemyStatData != null ? EnemyStatData.EnemySfxSet?.EnemyDeath : null;
+        var key = EnemyStatData != null ? EnemyStatData.EnemySfxSet?.EnemyDeathSound : null;
         if (string.IsNullOrEmpty(key)) return;
 
-        // SoundManager.Instance.PlaySfx(key, transform);
+        SoundManager.Instance.PlaySfx(key, transform);
     }
 
     #endregion

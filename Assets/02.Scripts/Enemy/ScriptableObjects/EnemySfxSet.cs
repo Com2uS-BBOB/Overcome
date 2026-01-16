@@ -4,15 +4,15 @@ using UnityEngine;
 public class EnemySfxSet : ScriptableObject
 {
     [Header("리액션")]
-    public string EnemyHit;
-    public string EnemyDeath;
+    public string EnemyHitSound;
+    public string EnemyDeathSound;
 
     [Header("공격")]
-    public string EnemyHowl;
-    public string EnemyMelee;
-    public string EnemyRip;
-    public string EnemyRush;
+    public string EnemyHowlSound;
+    public string EnemyMeleeSound;
+    public string EnemyRipSound;
+    public string EnemyRushSound;
 
     [Header("스폰")]
-    public string EnemySpawn;
+    public string EnemySpawnSound;
 }

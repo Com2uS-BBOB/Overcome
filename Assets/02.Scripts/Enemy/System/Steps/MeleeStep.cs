@@ -51,7 +51,7 @@ public class MeleeStep : IEnemyAttackStep
 
         _reserved = (_context.AttackDirector != null);
 
-        string meleeKey = _context.SfxSet != null ? _context.SfxSet.EnemyMelee : null;
+        string meleeKey = _context.SfxSet != null ? _context.SfxSet.EnemyMeleeSound : null;
 
         _melee = new MeleeAction(
             _context.Enemy,

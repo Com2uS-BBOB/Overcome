@@ -30,7 +30,7 @@ public class OpeningRushStep : IEnemyAttackStep
 
         _finished = false;
 
-        string rushKey = _context.SfxSet != null ? _context.SfxSet.EnemyRush : null;
+        string rushKey = _context.SfxSet != null ? _context.SfxSet.EnemyRushSound : null;
         _rush = new RushAction(
             _context.Enemy,
             _context.Player,

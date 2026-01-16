@@ -47,7 +47,7 @@ public class EliteRipStep : IEnemyAttackStep
 
         _finished = false;
 
-        string ripKey = _context.SfxSet != null ? _context.SfxSet.EnemyRip : null;
+        string ripKey = _context.SfxSet != null ? _context.SfxSet.EnemyRipSound : null;
         _rip = new EliteRipAction(
             _context.Enemy,
             _context.Player,
