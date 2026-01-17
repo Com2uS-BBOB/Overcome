@@ -1,3 +1,4 @@
+using _02.Scripts.Player.Data;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,6 +14,7 @@ public class EliteRipAction : IEnemyAction
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;
     private readonly float _ripKnockbackDistance;
+    private readonly KnockbackLevel _knockbackLevel;
 
     private float _ratio;
     private bool _isFinished;
@@ -30,7 +32,8 @@ public class EliteRipAction : IEnemyAction
         EnemyAnimatorController anim,
         float damagePerHit,
         float ripMoveSpeed,
-        float ripKnockbackDistance
+        float ripKnockbackDistance,
+        KnockbackLevel knockbackLevel = KnockbackLevel.Light
     )
     {
         _enemy = enemy;
@@ -42,6 +45,7 @@ public class EliteRipAction : IEnemyAction
         _damagePerHit = damagePerHit;
         _ripMoveSpeed = ripMoveSpeed;
         _ripKnockbackDistance = ripKnockbackDistance;
+        _knockbackLevel = knockbackLevel;
     }
 
     public void Enter()
@@ -90,7 +94,7 @@ public class EliteRipAction : IEnemyAction
 
     public void OnHitStart()
     {
-        _hitbox?.Enable(_damagePerHit, _ripKnockbackDistance);
+        _hitbox?.Enable(_damagePerHit, _ripKnockbackDistance, _knockbackLevel);
     }
 
     public void OnHitEnd()

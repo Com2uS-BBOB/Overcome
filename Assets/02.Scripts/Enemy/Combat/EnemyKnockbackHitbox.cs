@@ -1,5 +1,6 @@
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Core;
+using _02.Scripts.Player.Data;
 using _02.Scripts.Player.Interfaces;
 using System.Collections;
 using UnityEngine;
@@ -11,6 +12,7 @@ public class EnemyKnockbackHitbox : HitboxBase
     [SerializeField] private float _knockbackDuration = 0.2f;
     [SerializeField] private float _defaultKnockbackDistance = 2f;  // 기본값
     private float _currentKnockbackDistance;
+    private KnockbackLevel _currentKnockbackLevel = KnockbackLevel.Light;
 
     private Coroutine _knockbackRoutine;
 
@@ -31,6 +33,15 @@ public class EnemyKnockbackHitbox : HitboxBase
     public void Enable(float damage, float knockbackDistance)
     {
         _currentKnockbackDistance = Mathf.Max(0f, knockbackDistance);
+        _currentKnockbackLevel = KnockbackLevel.Light;
+        EnableHitDetection(damage);
+    }
+
+    // 공격별 넉백 + 레벨 지정 (카메라 쉐이크 강도용)
+    public void Enable(float damage, float knockbackDistance, KnockbackLevel knockbackLevel)
+    {
+        _currentKnockbackDistance = Mathf.Max(0f, knockbackDistance);
+        _currentKnockbackLevel = knockbackLevel;
         EnableHitDetection(damage);
     }
 
@@ -116,5 +127,39 @@ public class EnemyKnockbackHitbox : HitboxBase
             if (collider == myCollider) continue;
             ProcessHit(collider);
         }
+    }
+
+    protected override void ProcessHit(Collider other)
+    {
+        if (ShouldIgnore(other)) return;
+
+        var damageable = other.GetComponent<IDamageable>();
+        if (damageable == null) return;
+        if (_hitTargets.Contains(damageable)) return;
+
+        _hitTargets.Add(damageable);
+
+        // PlayerStats인 경우 KnockbackLevel을 포함한 AttackInfo로 전달 (카메라 쉐이크용)
+        var playerStats = other.GetComponent<PlayerStats>();
+        if (playerStats != null)
+        {
+            Vector3 direction = (other.transform.position - transform.position);
+            direction.y = 0f;
+            direction.Normalize();
+
+            var attackInfo = new AttackInfo(
+                _damage,
+                _currentKnockbackLevel,
+                direction,
+                transform.root.gameObject
+            );
+            playerStats.TakeDamage(attackInfo);
+        }
+        else
+        {
+            damageable.TakeDamage(_damage, GetOwner());
+        }
+
+        OnHitSuccess(other, damageable);
     }
 }
