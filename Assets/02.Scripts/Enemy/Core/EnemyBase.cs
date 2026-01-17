@@ -75,6 +75,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (EnemyStatData == null) return;
 
+        _collider.enabled = true;
         _despawnRequested = false;
 
         _currentHealth = EnemyStatData.MaxHealth;
@@ -195,7 +196,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (!_despawnRequested) return; // 혹시 모를 중복 방지
 
-        _collider.enabled = true;
         _despawnRequested = false;
 
         _despawnHandler?.HandleDespawn(this);  // 스포너 / 풀링 처리 요청
