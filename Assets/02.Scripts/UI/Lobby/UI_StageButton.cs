@@ -19,9 +19,9 @@ public class UI_StageButton : MonoBehaviour
     [Space(10)]
     [Header("Background Image Setting")]
     [SerializeField] private bool _isBossStage;
-    [SerializeField] private Color _blockColor = Color.gray2;
-    [SerializeField] private Color _normalColor = Color.mediumAquamarine;
-    [SerializeField] private Color _bossColor = Color.coral;
+    [SerializeField] private Color _blockColor = Color.gray;
+    [SerializeField] private Color _normalColor = Color.green;
+    [SerializeField] private Color _bossColor = Color.yellow;
     
     [Space(10)]
     [Header("Star Image")]
