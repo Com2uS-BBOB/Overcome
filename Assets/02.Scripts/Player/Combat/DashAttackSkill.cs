@@ -44,6 +44,7 @@ namespace _02.Scripts.Player.Combat
         public event Action OnDashStarted;
         public event Action OnDashEnded;
         public event Action<IDamageable, float> OnEnemyHit;
+        public event Action OnCooldownReset;
 
         private void Awake()
         {
@@ -129,6 +130,10 @@ namespace _02.Scripts.Player.Combat
             OnDashEnded?.Invoke();
         }
 
-        public void ResetCooldown() => _cooldownManager.Reset(CooldownKey);
+        public void ResetCooldown()
+        {
+            _cooldownManager.Reset(CooldownKey);
+            OnCooldownReset?.Invoke();
+        }
     }
 }
