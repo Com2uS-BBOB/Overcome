@@ -13,8 +13,8 @@ public class UI_Login : MonoBehaviour
 
     private static readonly string[] WelcomeMessages = new string[]
     {
-        "Oh, it's good to be back!",
-        "WELCOME TO THE OVERCOME, "
+        "Oh, it's good\nto be back!",
+        "WELCOME TO THE OVERCOME\n"
     };
 
     private void Awake()
@@ -37,7 +37,6 @@ public class UI_Login : MonoBehaviour
             string text = WelcomeMessages[1];
             loginPopup?.SetTitle($"{text} {_username.text}");
         }
-        // SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
     }
 
     public void OnSelectLogin()

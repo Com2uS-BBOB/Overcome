@@ -1,18 +1,10 @@
 using System;
 using UnityEngine;
 
-public class BaseUIEvent
-{
-    public Action OnOpenComplete;
-    public Action OnCloseComplete;
-}
-
 public abstract class BaseUI : MonoBehaviour
 {
     public UIConfig Config;
-
-    public BaseUIEvent UIEventHandler;
-
+    
     private void Awake()
     {
         Init();
@@ -28,10 +20,6 @@ public abstract class BaseUI : MonoBehaviour
         {
             PlayOpenAnimation();
         }
-        else
-        {
-            UIEventHandler?.OnOpenComplete?.Invoke();
-        }
     }
 
     public virtual void OnClose()
@@ -42,7 +30,6 @@ public abstract class BaseUI : MonoBehaviour
         }
         else
         {
-            UIEventHandler?.OnCloseComplete?.Invoke();
             gameObject.SetActive(false);
         }
     }

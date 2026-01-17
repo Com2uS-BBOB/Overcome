@@ -77,15 +77,26 @@ public class UIController : SingletonBehaviour<UIController>
         _activeUI.Remove(typeof(T));
         _activeUIList.Remove(ui);
     }
-    
+
+    public void CloseUI(BaseUI ui)
+    {
+        if (ui == null) return;
+        Type type = ui.GetType();
+        if (!_activeUI.ContainsKey(type)) return;
+
+        ui.OnClose();
+        _activeUI.Remove(type);
+        _activeUIList.Remove(ui);
+    }
+
     public void CloseLastUI()
     {
         if (_activeUIList.Count == 0) return;
-        
+
         BaseUI lastOpenedUI = _activeUIList[^1];
         _activeUI.Remove(lastOpenedUI.GetType());
         _activeUIList.Remove(lastOpenedUI);
-        
+
         lastOpenedUI.OnClose();
     }
     #endregion
