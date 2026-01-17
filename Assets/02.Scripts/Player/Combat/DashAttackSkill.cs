@@ -106,6 +106,16 @@ namespace _02.Scripts.Player.Combat
                 Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
 
             Vector3 dashDirection = _cameraTransform.forward;
+
+            // 플레이어를 대시 방향으로 회전 (Y축만, 수평 방향)
+            Vector3 horizontalDirection = dashDirection;
+            horizontalDirection.y = 0f;
+            if (horizontalDirection.sqrMagnitude > 0.01f)
+            {
+                horizontalDirection.Normalize();
+                transform.rotation = Quaternion.LookRotation(horizontalDirection);
+            }
+
             float dashSpeed = DashDistance / _dashDuration;
 
             float elapsed = 0f;
