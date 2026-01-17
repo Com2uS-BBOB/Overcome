@@ -35470,6 +35470,7 @@ GameObject:
   - component: {fileID: 1248975201}
   - component: {fileID: 1248975206}
   - component: {fileID: 1248975207}
+  - component: {fileID: 1248975208}
   m_Layer: 0
   m_Name: CinemachineCamera
   m_TagString: Untagged
@@ -35733,9 +35734,9 @@ MonoBehaviour:
   _impulseSource: {fileID: 1248975207}
   _justGuardIntensity: 0.3
   _normalGuardIntensity: 0.15
-  _guardBreakIntensity: 0.5
-  _hitLightIntensity: 0.2
-  _hitHeavyIntensity: 0.4
+  _guardBreakIntensity: 1
+  _hitLightIntensity: 0.5
+  _hitHeavyIntensity: 1
 --- !u!114 &1248975207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -35789,6 +35790,30 @@ MonoBehaviour:
     DissipationDistance: 100
     PropagationSpeed: 343
   DefaultVelocity: {x: 0, y: -1, z: 0}
+--- !u!114 &1248975208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1248975199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00b2d199b96b516448144ab30fb26aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ApplyAfter: 2
+  ChannelMask: 1
+  Gain: 1
+  Use2DDistance: 0
+  UseCameraSpace: 1
+  SignalCombinationMode: 0
+  ReactionSettings:
+    m_SecondaryNoise: {fileID: 0}
+    AmplitudeGain: 1
+    FrequencyGain: 1
+    Duration: 1
+    m_NoiseOffsets: {x: 0, y: 0, z: 0}
 --- !u!1 &1255229659
 GameObject:
   m_ObjectHideFlags: 0
@@ -37748,7 +37773,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayTimeSystem
   _uiSequencer: {fileID: 0}
   _difficultyConfigData: {fileID: 11400000, guid: bae2da0e7a83ffc47b7e18b34867a97f, type: 2}
-  _currentDifficulty: 0
+  _currentDifficulty: 1
 --- !u!1 &1843722248
 GameObject:
   m_ObjectHideFlags: 0
