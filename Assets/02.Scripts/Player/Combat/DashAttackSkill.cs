@@ -56,11 +56,18 @@ namespace _02.Scripts.Player.Combat
         private void OnEnable()
         {
             if (_hitbox != null) _hitbox.OnHit += HandleHit;
+            EnemyEventController.Enemy.OnKilled += HandleEnemyKilled;
         }
 
         private void OnDisable()
         {
             if (_hitbox != null) _hitbox.OnHit -= HandleHit;
+            EnemyEventController.Enemy.OnKilled -= HandleEnemyKilled;
+        }
+
+        private void HandleEnemyKilled(EnemyKilledEvent e)
+        {
+            ResetCooldown();
         }
 
         public void Initialize(PlayerStats stats) => _stats = stats;
