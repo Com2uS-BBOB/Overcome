@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,18 +10,34 @@ public class UI_Login : MonoBehaviour
     private static readonly int _onSelectLogin = Animator.StringToHash("OnSelectLogin");
     private TMP_InputField _username;
     private Animator _animator;
-    
+
+    private static readonly string[] WelcomeMessages = new string[]
+    {
+        "Oh, it's good to be back!",
+        "WELCOME TO THE OVERCOME, "
+    };
+
     private void Awake()
     {
         _animator = GetComponent<Animator>();
         _username = GetComponent<TMP_InputField>();
     }
     
-    public void TryLogin()
+    public async void TryLogin()
     {
+        if (_username.text == "") return;
         bool existingUser = PlayerDataManager.Instance.InitializeStartPlayer(_username.text);
-        // todo. 기존 유저 여부에 따라 popup 출력
-        SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
+        UI_LoginPopup loginPopup = await UIController.Instance.OpenUI<UI_LoginPopup>();
+        if (existingUser)
+        {
+            loginPopup?.SetTitle(WelcomeMessages[0]);
+        }
+        else
+        {
+            string text = WelcomeMessages[1];
+            loginPopup?.SetTitle($"{text} {_username.text}");
+        }
+        // SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
     }
 
     public void OnSelectLogin()

@@ -13,17 +13,13 @@ public abstract class BaseUI : MonoBehaviour
 
     public BaseUIEvent UIEventHandler;
 
-    protected virtual void Start()
+    private void Awake()
     {
-        UIController.Instance.RegisterUI(this);
-        gameObject.SetActive(false);
+        Init();
     }
 
-    protected virtual void OnDestroy()
-    {
-        UIController.Instance.UnregisterUI(this);
-    }
-
+    protected virtual void Init() { }
+    
     public virtual void OnOpen()
     {
         gameObject.SetActive(true);
@@ -54,9 +50,4 @@ public abstract class BaseUI : MonoBehaviour
     protected virtual void PlayOpenAnimation() { }
 
     protected virtual void PlayCloseAnimation() { }
-
-    public void BringToFront()
-    {
-        transform.SetAsLastSibling();
-    }
 }
