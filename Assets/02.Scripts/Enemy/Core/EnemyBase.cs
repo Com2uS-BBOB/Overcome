@@ -11,6 +11,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public EnemyStatData EnemyStatData { get; private set; }
 
     private EnemyAnimatorController _anim;
+    private Collider _collider;
 
     protected float _currentHealth;
 
@@ -50,6 +51,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _anim = GetComponent<EnemyAnimatorController>();
         _movement = GetComponent<EnemyMovement>();
         _agent = GetComponent<NavMeshAgent>();
+        _collider = GetComponent<Collider>();
     }
 
     public void Initialize(EnemyStatData statData)
@@ -171,6 +173,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _despawnRequested = true;
 
         _movement?.FullStop ();
+        _collider.enabled = false;
 
 #if UNITY_EDITOR
         Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");
@@ -192,6 +195,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (!_despawnRequested) return; // 혹시 모를 중복 방지
 
+        _collider.enabled = true;
         _despawnRequested = false;
 
         _despawnHandler?.HandleDespawn(this);  // 스포너 / 풀링 처리 요청
