@@ -71,6 +71,13 @@ public class EnemyState : MonoBehaviour
             return;
         }
 
+        if (_enemy != null && _enemy.IsSpawnGap)
+        {
+            // 스폰 텀 동안은 AI 로직 자체를 돌리지 않음
+            _movement?.Stop();
+            return;
+        }
+
         switch (_currentState)
         {
             case EEnemyState.Idle:
