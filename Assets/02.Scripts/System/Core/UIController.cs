@@ -8,8 +8,10 @@ using UnityEngine.SceneManagement;
 
 public class UIController : SingletonBehaviour<UIController>
 {
-    [SerializeField] private GameObject _canvasPrefab;
-    private Transform _uiRoot;
+    [SerializeField] private GameObject _popupCanvasPrefab;
+    [SerializeField] private GameObject _panelCanvasPrefab;
+    private Transform _popupUIRoot;
+    private Transform _panelUIRoot;
     
     // 지금 Hierarchy 창에 있는 UI 목록
     private readonly Dictionary<Type, BaseUI> _uiInstances = new Dictionary<Type, BaseUI>();
@@ -25,14 +27,14 @@ public class UIController : SingletonBehaviour<UIController>
     #region Unity Lifecycle Functions
     protected override void Init()
     {
-        if (_canvasPrefab == null)
-        {
-            Debug.LogError($"[UIController] Missing canvas prefab");
-        }
-        GameObject uiRoot = Instantiate(_canvasPrefab);
-        _uiRoot = uiRoot.transform;
-        DontDestroyOnLoad(_uiRoot);
+        GameObject popupUIRoot = Instantiate(_popupCanvasPrefab);
+        _popupUIRoot = popupUIRoot.transform;
+        DontDestroyOnLoad(_popupUIRoot);
 
+        GameObject panelUIRoot = Instantiate(_panelCanvasPrefab);
+        _panelUIRoot = panelUIRoot.transform;
+        DontDestroyOnLoad(_panelUIRoot);
+        
         SceneManager.sceneUnloaded += ClearSceneUI;
     }
     
@@ -131,7 +133,7 @@ public class UIController : SingletonBehaviour<UIController>
                 return null;
             }
 
-            GameObject uiInstance = Instantiate(handle.Result, _uiRoot);
+            GameObject uiInstance = Instantiate(handle.Result, _popupUIRoot);
             uiInstance.SetActive(false);
 
             T uiComponent = uiInstance.GetComponent<T>();
@@ -142,6 +144,10 @@ public class UIController : SingletonBehaviour<UIController>
                 return null;
             }
 
+            if (uiComponent.Config.UIType == EUIType.Panel)
+            {
+                uiInstance.transform.SetParent(_panelUIRoot);
+            }
             _loadedHandles[type] = handle;
             _uiInstances[type] = uiComponent;
 
