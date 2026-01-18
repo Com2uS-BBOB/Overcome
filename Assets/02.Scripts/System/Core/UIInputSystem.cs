@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -30,22 +31,27 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     
     private void OnPausePerformed(InputAction.CallbackContext context)
     {
-        if (!CanPause()) return;
-        if (!UIController.Instance.CloseLastUI())
+        if (UIController.Instance.CloseLastUI()) return;
+        switch (SceneController.Instance.CurrentScene)
         {
-            // 닫을 UI가 없으면 Pause UI를 연다
-            Pause();
+            case ESceneType.SampleScene:
+            case ESceneType.TutorialScene:
+            case ESceneType.LobbyScene:
+                Pause();
+                break;
+            case ESceneType.LoginScene:
+                Exit();
+                break;
         }
-    }
-    
-    private bool CanPause()
-    {
-        ESceneType currentScene = SceneController.Instance.CurrentScene;
-        return currentScene != ESceneType.LoginScene;
     }
     
     private void Pause()
     {
-        UIController.Instance.OpenUI<UI_Pause>();
+        _= UIController.Instance.OpenUI<UI_Pause>();
+    }
+
+    private void Exit()
+    {
+        _= UIController.Instance.OpenUI<UI_Exit>();
     }
 }
