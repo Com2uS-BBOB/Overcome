@@ -16,6 +16,7 @@ Shader "CustomRenderTexture/EnemyOutline"
             Cull Front          // 인버티드 헐 핵심
             ZWrite Off
             ZTest LEqual        // 가려짐은 기본적으로 반영 (필요시 Always로 바꿔 '벽 넘어 표시'도 가능)
+            Offset 50, 50
             Blend SrcAlpha OneMinusSrcAlpha
 
             HLSLPROGRAM
@@ -31,9 +32,6 @@ Shader "CustomRenderTexture/EnemyOutline"
             {
                 float4 positionOS : POSITION;
                 float3 normalOS   : NORMAL;
-                // SkinnedMeshRenderer는 내부적으로 추가 스트림을 붙이지만,
-                // 보통 URP/HDRP는 별도 include 없이도 POSITION/NORMAL만으로 스키닝된 OS가 들어옵니다.
-                // (프로젝트 설정/버전에 따라 다르면, 복제 오브젝트 방식이 더 확실합니다.)
             };
 
             struct Varyings
