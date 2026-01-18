@@ -765,6 +765,12 @@ MonoBehaviour:
   _useKnockback: 1
   _knockbackDuration: 0.2
   _defaultKnockbackDistance: 2
+  _enemyMask:
+    serializedVersion: 2
+    m_Bits: 128
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &2095826785115124734
 GameObject:
   m_ObjectHideFlags: 0
@@ -960,6 +966,12 @@ MonoBehaviour:
   _useKnockback: 1
   _knockbackDuration: 0.2
   _defaultKnockbackDistance: 2
+  _enemyMask:
+    serializedVersion: 2
+    m_Bits: 128
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1 &2245404678219337048
 GameObject:
   m_ObjectHideFlags: 0
