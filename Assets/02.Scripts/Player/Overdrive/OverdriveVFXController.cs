@@ -36,10 +36,14 @@ namespace _02.Scripts.Player.Overdrive
         private MaterialPropertyBlock _weaponPropertyBlock;
         private Color[] _originalEmissionColors;
 
+        [Header("Afterimage Effect")]
+        [SerializeField] private AfterimageController _afterimageController;
+
         [Header("Particle Effects (Optional)")]
         [SerializeField] private ParticleSystem _activationFlashVFX;
         [SerializeField] private ParticleSystem _auraVFX;
         [SerializeField] private ParticleSystem _deactivationShockwaveVFX;
+        [SerializeField] private ParticleSystem _groundEnergyVFX;
 
         // Post Processing Components
         private Bloom _bloom;
@@ -180,10 +184,17 @@ namespace _02.Scripts.Player.Overdrive
             if (_auraVFX != null)
                 _auraVFX.Play();
 
+            if (_groundEnergyVFX != null)
+                _groundEnergyVFX.Play();
+
+            // 5. 잔상 효과 시작
+            if (_afterimageController != null)
+                _afterimageController.StartAfterimage();
+
             // 슬로우모션 종료 대기
             yield return new WaitForSecondsRealtime(_settings.ActivationSlowDuration);
 
-            // 4. 지속 효과 시작 (펄스)
+            // 6. 지속 효과 시작 (펄스)
             _pulseCoroutine = StartCoroutine(PulseEffect());
 
             _activationCoroutine = null;
@@ -267,6 +278,13 @@ namespace _02.Scripts.Player.Overdrive
             // 7. 오라 VFX 종료
             if (_auraVFX != null)
                 _auraVFX.Stop();
+
+            if (_groundEnergyVFX != null)
+                _groundEnergyVFX.Stop();
+
+            // 8. 잔상 효과 종료
+            if (_afterimageController != null)
+                _afterimageController.StopAfterimage();
 
             yield return new WaitForSeconds(_settings.DeactivationFadeDuration);
 
