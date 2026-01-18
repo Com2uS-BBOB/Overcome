@@ -203,24 +203,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     private void StopOnHit(float time)
     {
         if (_movement == null) return;
-
-        if (_hitStopRoutine != null)
-        {
-            StopCoroutine(_hitStopRoutine);
-        }
-        _hitStopRoutine = StartCoroutine(HitStop_Coroutine(time));
-    }
-
-    private IEnumerator HitStop_Coroutine(float time)
-    {
-        _movement.LockMovement(true, time);
-        yield return new WaitForSeconds(time);
-
-        // 죽었다면 풀면 안 됨
-        if (!IsDead)
-        {
-            _movement.LockMovement(false);
-        }
+        _movement.ApplyHitStop(time);
     }
 
     #endregion
