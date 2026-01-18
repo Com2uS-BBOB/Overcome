@@ -1,6 +1,7 @@
 public enum ERewardType
 {
-    DashSkill,
+    None,
     CrescentSkill,
+    OverDriveSkill,
     MoveSpeedUp
 }

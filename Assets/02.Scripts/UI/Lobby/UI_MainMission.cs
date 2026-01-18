@@ -9,6 +9,6 @@ public class UI_MainMission : MonoBehaviour
     
     public void LoadSelectScene()
     {
-        UIController.Instance.OpenUI<UI_StageSelect>();
+        _= UIController.Instance.OpenUI<UI_StageSelect>();
     }
 }

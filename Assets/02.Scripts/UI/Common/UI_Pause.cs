@@ -31,12 +31,14 @@ public class UI_Pause : BaseUI
 
     public void OpenControls()
     {
-
+        _= UIController.Instance.OpenUI<UI_ControlGuide>();
+        UIController.Instance.CloseUI(this);
     }
 
     public void OpenSettings()
     {
-        _ = UIController.Instance.OpenUI<UI_Settings>();
+        _= UIController.Instance.OpenUI<UI_Settings>();
+        UIController.Instance.CloseUI(this);
     }
 
     public void GotoLobby()
@@ -51,6 +53,6 @@ public class UI_Pause : BaseUI
 
     public void ExitGame()
     {
-        UIController.Instance.OpenUI<UI_Exit>();
+        _= UIController.Instance.OpenUI<UI_Exit>();
     }
 }
