@@ -5,6 +5,7 @@ using UnityEngine.Rendering.Universal;
 using _02.Scripts.Player.Gauge;
 using _02.Scripts.CameraFX;
 using _02.Scripts.Player.Combat;
+using Drakkar.GameUtils;
 
 namespace _02.Scripts.Player.Overdrive
 {
@@ -23,6 +24,17 @@ namespace _02.Scripts.Player.Overdrive
 
         [Header("Screen Flash")]
         [SerializeField] private CanvasGroup _flashCanvasGroup;
+
+        [Header("Trail Effects")]
+        [SerializeField] private Material _normalTrailMaterial;
+        [SerializeField] private Material _overdriveTrailMaterial;
+        [SerializeField] private DrakkarTrail[] _playerTrails;
+
+        [Header("Weapon Emission")]
+        [SerializeField] private Renderer[] _weaponRenderers;
+        private static readonly int EmissionColor = Shader.PropertyToID("_EmissionColor");
+        private MaterialPropertyBlock _weaponPropertyBlock;
+        private Color[] _originalEmissionColors;
 
         [Header("Particle Effects (Optional)")]
         [SerializeField] private ParticleSystem _activationFlashVFX;
@@ -59,6 +71,7 @@ namespace _02.Scripts.Player.Overdrive
             }
 
             InitializePostProcessing();
+            InitializeWeaponEmission();
         }
 
         private void OnEnable()
@@ -156,7 +169,11 @@ namespace _02.Scripts.Player.Overdrive
             // 2. Post Processing 전환 (페이드인)
             StartCoroutine(TransitionPostProcessing(true));
 
-            // 3. 파티클 VFX (설정된 경우)
+            // 3. Trail 색상 변경 + 무기 발광
+            ApplyOverdriveTrailMaterial();
+            StartCoroutine(TransitionWeaponEmission(true));
+
+            // 4. 파티클 VFX (설정된 경우)
             if (_activationFlashVFX != null)
                 _activationFlashVFX.Play();
 
@@ -241,14 +258,20 @@ namespace _02.Scripts.Player.Overdrive
             // 4. Post Processing 페이드아웃
             StartCoroutine(TransitionPostProcessing(false));
 
-            // 5. 카메라 FOV 복귀
+            // 5. Trail 색상 복귀 + 무기 발광 해제
+            StartCoroutine(TransitionWeaponEmission(false));
+
+            // 6. 카메라 FOV 복귀
             CameraEffectsManager.Instance?.EndOverdriveFOV(_settings.DeactivationFadeDuration);
 
-            // 6. 오라 VFX 종료
+            // 7. 오라 VFX 종료
             if (_auraVFX != null)
                 _auraVFX.Stop();
 
             yield return new WaitForSeconds(_settings.DeactivationFadeDuration);
+
+            // Trail은 페이드아웃 후 복귀
+            RevertToNormalTrailMaterial();
 
             _isOverdriveActive = false;
             _deactivationCoroutine = null;
@@ -366,6 +389,118 @@ namespace _02.Scripts.Player.Overdrive
 
         #endregion
 
+        #region Trail Effects
+
+        private void ApplyOverdriveTrailMaterial()
+        {
+            if (_overdriveTrailMaterial == null) return;
+
+            if (_playerTrails != null && _playerTrails.Length > 0)
+            {
+                foreach (var trail in _playerTrails)
+                {
+                    if (trail != null)
+                        trail.TrailMaterial = _overdriveTrailMaterial;
+                }
+            }
+        }
+
+        private void RevertToNormalTrailMaterial()
+        {
+            if (_normalTrailMaterial == null) return;
+
+            if (_playerTrails != null && _playerTrails.Length > 0)
+            {
+                foreach (var trail in _playerTrails)
+                {
+                    if (trail != null)
+                        trail.TrailMaterial = _normalTrailMaterial;
+                }
+            }
+        }
+
+        #endregion
+
+        #region Weapon Emission
+
+        private void InitializeWeaponEmission()
+        {
+            _weaponPropertyBlock = new MaterialPropertyBlock();
+
+            if (_weaponRenderers == null || _weaponRenderers.Length == 0) return;
+
+            _originalEmissionColors = new Color[_weaponRenderers.Length];
+            for (int i = 0; i < _weaponRenderers.Length; i++)
+            {
+                if (_weaponRenderers[i] != null && _weaponRenderers[i].sharedMaterial != null)
+                {
+                    if (_weaponRenderers[i].sharedMaterial.HasProperty(EmissionColor))
+                        _originalEmissionColors[i] = _weaponRenderers[i].sharedMaterial.GetColor(EmissionColor);
+                    else
+                        _originalEmissionColors[i] = Color.black;
+                }
+            }
+        }
+
+        private IEnumerator TransitionWeaponEmission(bool toOverdrive)
+        {
+            if (_weaponRenderers == null || _weaponRenderers.Length == 0) yield break;
+
+            float elapsed = 0f;
+            float duration = _settings.TransitionDuration;
+
+            Color targetColor = _settings.WeaponEmissionColor * _settings.WeaponEmissionMultiplier;
+
+            while (elapsed < duration)
+            {
+                float t = elapsed / duration;
+                t = Mathf.SmoothStep(0f, 1f, t);
+
+                for (int i = 0; i < _weaponRenderers.Length; i++)
+                {
+                    if (_weaponRenderers[i] == null) continue;
+
+                    Color startColor = toOverdrive ? _originalEmissionColors[i] : targetColor;
+                    Color endColor = toOverdrive ? targetColor : _originalEmissionColors[i];
+                    Color currentColor = Color.Lerp(startColor, endColor, t);
+
+                    _weaponRenderers[i].GetPropertyBlock(_weaponPropertyBlock);
+                    _weaponPropertyBlock.SetColor(EmissionColor, currentColor);
+                    _weaponRenderers[i].SetPropertyBlock(_weaponPropertyBlock);
+                }
+
+                elapsed += Time.unscaledDeltaTime;
+                yield return null;
+            }
+
+            // 최종값 설정
+            for (int i = 0; i < _weaponRenderers.Length; i++)
+            {
+                if (_weaponRenderers[i] == null) continue;
+
+                Color finalColor = toOverdrive ? targetColor : _originalEmissionColors[i];
+                _weaponRenderers[i].GetPropertyBlock(_weaponPropertyBlock);
+                _weaponPropertyBlock.SetColor(EmissionColor, finalColor);
+                _weaponRenderers[i].SetPropertyBlock(_weaponPropertyBlock);
+            }
+        }
+
+        private void ResetWeaponEmission()
+        {
+            if (_weaponRenderers == null || _originalEmissionColors == null) return;
+
+            for (int i = 0; i < _weaponRenderers.Length; i++)
+            {
+                if (_weaponRenderers[i] == null) continue;
+
+                _weaponRenderers[i].GetPropertyBlock(_weaponPropertyBlock);
+                _weaponPropertyBlock.SetColor(EmissionColor, _originalEmissionColors[i]);
+                _weaponRenderers[i].SetPropertyBlock(_weaponPropertyBlock);
+            }
+        }
+
+        #endregion
+
         private void OnDestroy()
         {
             if (Instance == this)
@@ -377,6 +512,12 @@ namespace _02.Scripts.Player.Overdrive
 
             // Post Processing 복구
             ResetPostProcessing();
+
+            // Weapon Emission 복구
+            ResetWeaponEmission();
+
+            // Trail 복구
+            RevertToNormalTrailMaterial();
         }
 
         private void ResetPostProcessing()
