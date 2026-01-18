@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -33,8 +32,10 @@ public class UIController : SingletonBehaviour<UIController>
         GameObject uiRoot = Instantiate(_canvasPrefab);
         _uiRoot = uiRoot.transform;
         DontDestroyOnLoad(_uiRoot);
-    }
 
+        SceneManager.sceneUnloaded += ClearSceneUI;
+    }
+    
     protected override void Clear()
     {
         ReleaseAll();
@@ -89,15 +90,24 @@ public class UIController : SingletonBehaviour<UIController>
         _activeUIList.Remove(ui);
     }
 
-    public void CloseLastUI()
+    public bool CloseLastUI()
     {
-        if (_activeUIList.Count == 0) return;
+        if (_activeUIList.Count == 0) return false;
 
         BaseUI lastOpenedUI = _activeUIList[^1];
         _activeUI.Remove(lastOpenedUI.GetType());
         _activeUIList.Remove(lastOpenedUI);
 
         lastOpenedUI.OnClose();
+        return true;
+    }
+    
+    private void ClearSceneUI(Scene arg0)
+    {
+        while (_activeUIList.Count > 0)
+        {
+            CloseLastUI();
+        }
     }
     #endregion
     

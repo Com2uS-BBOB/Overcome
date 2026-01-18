@@ -9,8 +9,20 @@ public class UI_StageInfo : MonoBehaviour
     [SerializeField] private UI_EnemyInfo[] _enemyInfos;
     private readonly StringBuilder _stringBuilder = new StringBuilder();
 
+    private int _chapter;
+    private int _level;
+    
+    public void GameStart()
+    {
+        StageManager.Instance.SetCurrentStage(_chapter, _level);
+        SceneController.Instance.LoadScene(ESceneType.SampleScene);
+    }
+    
     public void OpenStageInfoPanel(int chapter, int level)
     {
+        _chapter = chapter;
+        _level = level;
+        
         SetEnemyInfo();
         SetStageInfo(chapter, level);
     }

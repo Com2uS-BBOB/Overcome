@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class UI_Settings : MonoBehaviour
+public class UI_Settings : BaseUI
 {
     private bool _isOpen;
     private Animator _animator;
