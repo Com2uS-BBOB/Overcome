@@ -16,8 +16,15 @@ public class TutorialDescriptionUI : MonoBehaviour
     [Space(10)]
     [Header("Animation")]
     [SerializeField] private float _fadeinTime = 0.3f;
-    
-    private readonly Vector2[] _candidatePositions = new Vector2[4];
+    [SerializeField] private float _fadeoutTime = 0.2f;
+
+    [Space(10)]
+    [Header("Dynamic Sizing")]
+    [SerializeField] private Vector2 _padding = new Vector2(40f, 40f);
+    [SerializeField] private Vector2 _minSize = new Vector2(200f, 100f);
+    [SerializeField] private Vector2 _maxSize = new Vector2(600f, 400f);
+
+    private const float OriginThreshold = 0.01f;
     private Action _onNextCallback;
 
     private void Awake()
@@ -31,62 +38,94 @@ public class TutorialDescriptionUI : MonoBehaviour
         _onNextCallback = onNext;
         _descriptionText.text = description;
 
-        gameObject.SetActive(true);
+        UpdateSizeBasedOnText();
         PositionNearTarget(target, offset);
 
+        gameObject.SetActive(true);
+
         _canvasGroup.alpha = 0;
-        _canvasGroup.DOFade(1f, _fadeinTime);
+        _canvasGroup.DOFade(1f, _fadeinTime).SetUpdate(true);
 
         transform.localScale = Vector3.zero;
-        transform.DOScale(1f, _fadeinTime).SetEase(Ease.OutBack);
+        transform.DOScale(1f, _fadeinTime).SetEase(Ease.OutBack).SetUpdate(true);
+    }
+
+    private void UpdateSizeBasedOnText()
+    {
+        _descriptionText.ForceMeshUpdate();
+
+        float maxTextWidth = _maxSize.x - _padding.x;
+        Vector2 preferredSize = _descriptionText.GetPreferredValues(maxTextWidth, 0);
+        Vector2 newSize = preferredSize + _padding;
+
+        newSize.x = Mathf.Clamp(newSize.x, _minSize.x, _maxSize.x);
+        newSize.y = Mathf.Clamp(newSize.y, _minSize.y, _maxSize.y);
+
+        _rectTransform.sizeDelta = newSize;
     }
 
     private void PositionNearTarget(RectTransform target, float offset)
     {
-        Vector2 targetScreenPos = target.position;
-        RectTransformUtility.ScreenPointToLocalPointInRectangle
-        (
+        Vector2 targetCenterWorld = target.TransformPoint(target.rect.center);
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
             _canvasRect,
-            targetScreenPos,
+            targetCenterWorld,
             null,
-            out Vector2 targetLocalPos
+            out Vector2 targetCenterLocal
         );
 
-        Vector2 targetSize = target.sizeDelta;
-        Vector2 descriptionSize = _rectTransform.sizeDelta;
-        Vector2 spawnPosition = CalculatePositionNearestToOrigin(targetLocalPos, targetSize, descriptionSize, offset);
+        Vector2 targetSize = new Vector2(
+            target.rect.width * target.lossyScale.x,
+            target.rect.height * target.lossyScale.y
+        );
 
-        _rectTransform.anchoredPosition = spawnPosition;
-        _rectTransform.pivot = target.pivot;
+        Vector2 position = CalculatePositionTowardOrigin(targetCenterLocal, targetSize, offset);
+        _rectTransform.anchoredPosition = position;
     }
 
-    private Vector2 CalculatePositionNearestToOrigin(Vector2 targetPos, Vector2 targetSize, Vector2 descSize, float offset)
+    private Vector2 CalculatePositionTowardOrigin(Vector2 targetPos, Vector2 targetSize, float offset)
     {
-        _candidatePositions[0] = new Vector2(targetPos.x + targetSize.x / 2 + descSize.x / 2 + offset, targetPos.y);
-        _candidatePositions[1] = new Vector2(targetPos.x - targetSize.x / 2 - descSize.x / 2 - offset, targetPos.y);
-        _candidatePositions[2] = new Vector2(targetPos.x, targetPos.y + targetSize.y / 2 + descSize.y / 2 + offset);
-        _candidatePositions[3] = new Vector2(targetPos.x, targetPos.y - targetSize.y / 2 - descSize.y / 2 - offset);
-
-        float minDistance = float.MaxValue;
-        Vector2 spawnPosition = _candidatePositions[0];
-
-        foreach (Vector2 v in _candidatePositions)
+        Vector2 directionToOrigin = -targetPos;
+        if (directionToOrigin.sqrMagnitude < OriginThreshold)
         {
-            float distance = v.magnitude;
-            if (distance >= minDistance) continue;
-            minDistance = distance;
-            spawnPosition = v;
+            directionToOrigin = Vector2.right;
+        }
+        else
+        {
+            directionToOrigin.Normalize();
         }
 
-        return spawnPosition;
+        Vector2 descSize = _rectTransform.sizeDelta;
+        float separationX = (targetSize.x + descSize.x) / 2f + offset;
+        float separationY = (targetSize.y + descSize.y) / 2f + offset;
+
+        float absX = Mathf.Abs(directionToOrigin.x);
+        float absY = Mathf.Abs(directionToOrigin.y);
+
+        float weightX = 1f;
+        float weightY = 1f;
+
+        if (absY > absX)
+        {
+            weightX = 0.5f;
+        }
+        else if (absX > absY)
+        {
+            weightY = 0.5f;
+        }
+
+        float moveX = directionToOrigin.x != 0 ? Mathf.Sign(directionToOrigin.x) * separationX * weightX : 0f;
+        float moveY = directionToOrigin.y != 0 ? Mathf.Sign(directionToOrigin.y) * separationY * weightY : 0f;
+
+        return targetPos + new Vector2(moveX, moveY);
     }
+
 
     public void Hide()
     {
-        _canvasGroup.DOFade(0f, 0.2f).OnComplete(() =>
-        {
-            gameObject.SetActive(false);
-        });
+        _canvasGroup.DOFade(0f, _fadeoutTime)
+                    .SetUpdate(true)
+                    .OnComplete(() => gameObject.SetActive(false));
     }
 
     private void OnNextButtonClicked()

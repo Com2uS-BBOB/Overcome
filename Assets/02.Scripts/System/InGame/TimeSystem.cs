@@ -14,6 +14,8 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     private float _remainTime;
     private float _playTime;
     private bool _isGameOver;
+    private float _updateTimer;
+    private const float UpdateInterval = 0.01f;
 
     // Property
     public float RemainTime => _remainTime;
@@ -21,6 +23,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
 
     // Event
     public event Action<float> OnRemainTimeDelta; // 변화량 기반(부호 명시 필요)
+    public event Action OnTimeChanged;
     public event Action OnGameOver;
     public event Action<int> OnClearGame;
 
@@ -48,21 +51,29 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
             enabled = false;
             return;
         }
-        _remainTime = (_difficultyConfig.HasTimeLimit) ? _difficultyConfig.StartTime : float.MaxValue;
+        _remainTime = _difficultyConfig.StartTime;
     }
 
     private void Update()
     {
-        UpdateTimers();
+        if (_isGameOver) return;
+        _updateTimer += Time.deltaTime;
+        if (_updateTimer < UpdateInterval) return;
+        
+        UpdateTimers(_updateTimer);
         CheckGameClear();
         CheckGameOver();
+        _updateTimer = 0f;
     }
 
-    private void UpdateTimers()
+    private void UpdateTimers(float deltaTime)
     {
-        float deltaTime = Time.deltaTime;
-        _remainTime -= deltaTime;
         _playTime += deltaTime;
+        if (_difficultyConfig.HasTimeLimit)
+        {
+            _remainTime -= deltaTime;
+        }
+        OnTimeChanged?.Invoke();
     }
 
     private void CheckGameOver()
@@ -71,6 +82,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         if (_isGameOver) return;
         if (_remainTime > 0f) return;
 
+        _remainTime = 0f;
         _isGameOver = true;
         OnGameOver?.Invoke();
     }
@@ -101,6 +113,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         }
         _remainTime += additionalValue;
         OnRemainTimeDelta?.Invoke(additionalValue);
+        OnTimeChanged?.Invoke();
     }
 
     public void SubtractTimeLimit(float reducedTime)
@@ -108,6 +121,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         if (!_difficultyConfig.HasTimeLimit) return;
         _remainTime -= reducedTime;
         OnRemainTimeDelta?.Invoke(-reducedTime);
+        OnTimeChanged?.Invoke();
         CheckGameOver();
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEngine.InputSystem;
 
 public class TutorialSequencer : MonoBehaviour
 {
@@ -12,32 +13,35 @@ public class TutorialSequencer : MonoBehaviour
         public RectTransform Target;
         [TextArea(2, 4)]
         public string Description;
+        public bool Deactivate;
     }
 
     [Header("Targets")]
     [SerializeField] private List<HighlightTarget> _targets = new List<HighlightTarget>();
+    [SerializeField] private InputActionAsset _inputActions;
 
     [Header("UI References")]
     [SerializeField] private Image _darkOverlay;
-    private RectTransform _darkCanvasRect;
     [SerializeField] private RectTransform _highlightMask;
     [SerializeField] private TutorialDescriptionUI _descriptionUI;
 
     [Header("Settings")]
     [SerializeField] private float _descriptionOffset = 50f;
+    [SerializeField] private float _transitionDelay = 0.3f;
+    [SerializeField] private float _fadeoutTime = 0.3f;
     [SerializeField] private bool _autoStart = false;
 
-    // Mask
     private Material _darkOverlayMaterial;
+    private RectTransform _darkCanvasRect;
     private readonly Vector3[] _worldCorners = new Vector3[4];
     private static readonly int HoleCenter = Shader.PropertyToID("_HoleCenter");
     private static readonly int HoleSize = Shader.PropertyToID("_HoleSize");
-    
-    // Sequence 
-    private int _currentIndex = 0;
-    private bool _isWaitingForNext = false;
-    private bool _isPlaying = false;
-    private readonly WaitForSeconds _delay = new WaitForSeconds(0.3f);
+
+    private int _currentIndex;
+    private bool _isWaitingForNext;
+    private bool _isPlaying;
+    private InputSystem_Actions _uiInputActions;
+    private float _prevTimeScale;
 
     private void Awake()
     {
@@ -48,7 +52,10 @@ public class TutorialSequencer : MonoBehaviour
         }
         _darkCanvasRect = _darkOverlay.canvas.GetComponent<RectTransform>();
         _darkOverlayMaterial = _darkOverlay.material;
-        
+
+        _uiInputActions = new InputSystem_Actions();
+        _uiInputActions.UI.Cancel.performed += OnCancelPerformed;
+
         _darkOverlay.gameObject.SetActive(false);
         _highlightMask.gameObject.SetActive(false);
     }
@@ -64,16 +71,23 @@ public class TutorialSequencer : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (_darkOverlayMaterial)
+        if (_uiInputActions != null)
         {
-            Destroy(_darkOverlayMaterial);
+            _uiInputActions.UI.Cancel.performed -= OnCancelPerformed;
+            _uiInputActions.Dispose();
         }
     }
-
+    
     public void PlayTutorial()
     {
         if (_isPlaying) return;
-
+        _prevTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+        
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+        _inputActions.Disable();
+        
         _currentIndex = 0;
         _isPlaying = true;
         StartCoroutine(TutorialSequenceCoroutine());
@@ -82,27 +96,31 @@ public class TutorialSequencer : MonoBehaviour
     private IEnumerator TutorialSequenceCoroutine()
     {
         _darkOverlay.gameObject.SetActive(true);
-        yield return _delay;
+        WaitForSecondsRealtime  transitionDelay = new WaitForSecondsRealtime(_transitionDelay);
+        yield return transitionDelay;
 
         while (_currentIndex < _targets.Count)
         {
-            var target = _targets[_currentIndex];
+            HighlightTarget target = _targets[_currentIndex];
 
             if (target.Target == null)
             {
-                Debug.LogWarning($"[TutorialSequencer] {_currentIndex} target is null");
+                Debug.LogWarning($"[TutorialSequencer] Target at index {_currentIndex} is null");
                 _currentIndex++;
                 continue;
             }
-
+            target.Target.gameObject.SetActive(true);
             SetHighlightUI(target.Target);
-
             _descriptionUI.ShowNearTarget(target.Description, target.Target, _descriptionOffset, OnNextClicked);
 
             _isWaitingForNext = true;
             yield return new WaitUntil(() => !_isWaitingForNext);
 
-            yield return _delay;
+            if (target.Deactivate)
+            {
+                target.Target.gameObject.SetActive(false);
+            }
+            yield return transitionDelay;
             _currentIndex++;
         }
 
@@ -130,16 +148,14 @@ public class TutorialSequencer : MonoBehaviour
     {
         target.GetWorldCorners(_worldCorners);
 
-        RectTransformUtility.ScreenPointToLocalPointInRectangle
-        (
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
             _darkCanvasRect,
             _worldCorners[0],
             null,
             out Vector2 minLocal
         );
-        
-        RectTransformUtility.ScreenPointToLocalPointInRectangle
-        (
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
             _darkCanvasRect,
             _worldCorners[2],
             null,
@@ -147,8 +163,9 @@ public class TutorialSequencer : MonoBehaviour
         );
 
         Vector2 canvasSize = _darkCanvasRect.sizeDelta;
-        Vector2 minUV = (minLocal / canvasSize) + new Vector2(0.5f, 0.5f);
-        Vector2 maxUV = (maxLocal / canvasSize) + new Vector2(0.5f, 0.5f);
+        Vector2 uvOffset = new Vector2(0.5f, 0.5f);
+        Vector2 minUV = (minLocal / canvasSize) + uvOffset;
+        Vector2 maxUV = (maxLocal / canvasSize) + uvOffset;
         Vector2 centerUV = (minUV + maxUV) * 0.5f;
         Vector2 sizeUV = (maxUV - minUV) * 0.5f;
 
@@ -161,17 +178,28 @@ public class TutorialSequencer : MonoBehaviour
         _isWaitingForNext = false;
     }
 
+    private void OnCancelPerformed(InputAction.CallbackContext context)
+    {
+        SkipTutorial();
+    }
+
     private void EndTutorial()
     {
         _isPlaying = false;
         _descriptionUI.Hide();
 
-        _darkOverlay.DOFade(0, 0.3f)
-                    .OnComplete(() =>
-                    {
-                        _darkOverlay.gameObject.SetActive(false);
-                        _highlightMask.gameObject.SetActive(false);
-                    });
+        _darkOverlay.DOFade(0, _fadeoutTime).OnComplete(() =>
+        {
+            _darkOverlay.gameObject.SetActive(false);
+            _highlightMask.gameObject.SetActive(false);
+        });
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
+        Time.timeScale = _prevTimeScale;
+        
+        _inputActions.Enable();
     }
 
     public void SkipTutorial()

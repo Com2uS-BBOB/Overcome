@@ -6,4 +6,9 @@ public class LobbyScene : MonoBehaviour
     {
         SceneController.Instance.LoadScene(ESceneType.SampleScene);
     }
+
+    public void LoadTutorialScene()
+    {
+        SceneController.Instance.LoadScene(ESceneType.TutorialScene);
+    }
 }
