@@ -45,7 +45,7 @@ Shader "Custom/FullChargingEffect"
                 half4  color : COLOR;
             };
 
-            struct Varyings
+            struct TexPos
             {
                 float4 positionHCS : SV_POSITION;
                 float2 uv : TEXCOORD0;
@@ -104,16 +104,16 @@ Shader "Custom/FullChargingEffect"
                 return value;
             }
 
-            Varyings vert(Attributes IN)
+            TexPos vert(Attributes IN)
             {
-                Varyings OUT;
+                TexPos OUT;
                 OUT.positionHCS = TransformObjectToHClip(IN.positionOS.xyz);
                 OUT.uv = TRANSFORM_TEX(IN.uv, _BaseMap);
                 OUT.color = IN.color;
                 return OUT;
             }
 
-            half4 frag(Varyings IN) : SV_Target
+            half4 frag(TexPos IN) : SV_Target
             {
                 // 시간 값 가져오기 (애니메이션용)
                 float time = _Time.y;

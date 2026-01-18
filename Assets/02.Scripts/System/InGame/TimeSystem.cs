@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class TimeSystem : SingletonBehaviour<TimeSystem>
 {
-    [Header("Test Code")]
-    [SerializeField] private UISequencer _uiSequencer;
-    
     protected override bool DontDestroy => false;
 
     [Header("난이도 설정")]
