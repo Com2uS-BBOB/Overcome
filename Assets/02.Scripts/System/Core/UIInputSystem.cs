@@ -1,14 +1,28 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class UIInputSystem : SingletonBehaviour<UIInputSystem>
 {
     private InputSystem_Actions _inputActions;
+    private Dictionary<ESceneType, Action> _pauseActions;
 
     protected override void Init()
     {
         _inputActions = new InputSystem_Actions();
+        InitializePauseActions();
+    }
+
+    private void InitializePauseActions()
+    {
+        _pauseActions = new Dictionary<ESceneType, Action>
+        {
+            { ESceneType.SampleScene, () => OpenPauseUI(PauseUIConfig.InGame) },
+            { ESceneType.TutorialScene, () => OpenPauseUI(PauseUIConfig.InGame) },
+            { ESceneType.LobbyScene, () => OpenPauseUI(PauseUIConfig.Lobby) },
+            { ESceneType.LoginScene, Exit }
+        };
     }
 
     private void OnEnable()
@@ -30,16 +44,11 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     private void OnPausePerformed(InputAction.CallbackContext context)
     {
         if (UIController.Instance.CloseLastUI()) return;
-        switch (SceneController.Instance.CurrentScene)
+
+        ESceneType currentScene = SceneController.Instance.CurrentScene;
+        if (_pauseActions.TryGetValue(currentScene, out Action action))
         {
-            case ESceneType.SampleScene:
-            case ESceneType.TutorialScene:
-            case ESceneType.LobbyScene:
-                Pause();
-                break;
-            case ESceneType.LoginScene:
-                Exit();
-                break;
+            action?.Invoke();
         }
     }
 
@@ -48,9 +57,10 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
         // UIController.Instance.OpenUI<UI_GuidePopup>();
     }
     
-    private void Pause()
+    private async void OpenPauseUI(PauseUIConfig config)
     {
-        _= UIController.Instance.OpenUI<UI_Pause>();
+        UI_Pause pauseUI = await UIController.Instance.OpenUI<UI_Pause>();
+        pauseUI.Setup(config);
     }
 
     private void Exit()

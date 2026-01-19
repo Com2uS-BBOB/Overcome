@@ -16,7 +16,7 @@ public class UI_Ranking : BaseUI
     private void LoadData()
     {
         int stageID = _chapter * 10 +  _level;
-        RankingData rankData = RankingDataManager.Instance.GetStageRanking(stageID);
+        RankingData rankData = RankingDataManager.Instance.GetOrCreateStageRanking(stageID);
         for (var i = 0; i < rankData.Ranks.Count; i++)
         {
             RankConfig rankConfig = rankData.Ranks[i];

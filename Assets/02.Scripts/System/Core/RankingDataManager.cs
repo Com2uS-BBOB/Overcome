@@ -35,7 +35,7 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
 
     #region Ranking Management
 
-    public RankingData GetStageRanking(int stageID)
+    public RankingData GetOrCreateStageRanking(int stageID)
     {
         RankingData ranking = _rankingsData.Rankings.FirstOrDefault(r => r.StageID == stageID);
 
@@ -48,34 +48,54 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
 
     public void UpdateRanking(int stageID, string userID, int score)
     {
-        RankingData ranking = GetStageRanking(stageID);
+        RankingData ranking = GetOrCreateStageRanking(stageID);
+    
+        if (TryUpdateExistingUser(ranking, userID, score))
+        {
+            FinalizeRanking(stageID, ranking);
+            return;
+        }
 
+        if (!CanEnterRanking(ranking, score)) return;
+        
+        AddNewEntry(ranking, userID, score);
+        FinalizeRanking(stageID, ranking);
+    }
+
+    private bool TryUpdateExistingUser(RankingData ranking, string userID, int score)
+    {
         RankConfig existingEntry = ranking.Ranks.FirstOrDefault(r => r.UserID == userID);
+    
+        if (existingEntry == null) return false;
+        if (score <= existingEntry.Score) return false;
+    
+        existingEntry.Score = score;
+        return true;
+    }
 
-        if (existingEntry != null)
-        {
-            if (score <= existingEntry.Score) return;
-            existingEntry.Score = score;
-        }
-        else
-        {
-            if (ranking.Ranks.Count >= MaxRanking)
-            {
-                int lowestScore = ranking.Ranks.Min(r => r.Score);
-                if (score <= lowestScore) return;
-            }
+    private bool CanEnterRanking(RankingData ranking, int score)
+    {
+        if (ranking.Ranks.Count < MaxRanking) return true;
+    
+        int lowestScore = ranking.Ranks.Min(r => r.Score);
+        return score > lowestScore;
+    }
 
-            ranking.Ranks.Add(new RankConfig(userID, score));
-        }
+    private void AddNewEntry(RankingData ranking, string userID, int score)
+    {
+        ranking.Ranks.Add(new RankConfig(userID, score));
+    }
 
+    private void FinalizeRanking(int stageID, RankingData ranking)
+    {
         ranking.Ranks = ranking.Ranks.OrderByDescending(r => r.Score).ToList();
         TrimRanking(stageID);
         SaveData();
     }
-
+    
     private void TrimRanking(int stageID)
     {
-        RankingData ranking = GetStageRanking(stageID);
+        RankingData ranking = GetOrCreateStageRanking(stageID);
 
         if (ranking.Ranks.Count > MaxRanking)
         {

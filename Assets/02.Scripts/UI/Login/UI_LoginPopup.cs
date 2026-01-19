@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class UI_LoginPopup : BaseUI
     [SerializeField] private float _popupMaintain = 1.0f;
     [SerializeField] private float _popupClose = 0.2f;
     [SerializeField] private TextMeshProUGUI _welcomeText;
+
+    public event Action OnLoginCompleted;
 
     protected override void Init()
     {
@@ -38,7 +41,7 @@ public class UI_LoginPopup : BaseUI
                  .OnComplete(() =>
                  {
                      gameObject.SetActive(false);
-                     SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
+                     OnLoginCompleted?.Invoke();
                  });
     }
 

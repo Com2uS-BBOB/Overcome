@@ -1,6 +1,27 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+public struct PauseUIConfig
+{
+    public bool ShowRetry;
+    public bool ShowToLobby;
+    public bool ShowToTitle;
+
+    public static PauseUIConfig InGame => new PauseUIConfig
+    {
+        ShowRetry = true,
+        ShowToLobby = true,
+        ShowToTitle = false
+    };
+
+    public static PauseUIConfig Lobby => new PauseUIConfig
+    {
+        ShowRetry = false,
+        ShowToLobby = false,
+        ShowToTitle = true
+    };
+}
+
 public class UI_Pause : BaseUI
 {
     [SerializeField] private Button _retryButton;
@@ -10,18 +31,11 @@ public class UI_Pause : BaseUI
     [SerializeField] private Button _toTitleButton;
     [SerializeField] private Button _exitGameButton;
 
-    private void OnEnable()
+    public void Setup(PauseUIConfig config)
     {
-        if (SceneController.Instance.CurrentScene == ESceneType.SampleScene || SceneController.Instance.CurrentScene == ESceneType.TutorialScene)
-        {
-            _retryButton.gameObject.SetActive(true);
-            _toLobbyButton.gameObject.SetActive(true);
-            _toTitleButton.gameObject.SetActive(false);
-            return;
-        }
-        _retryButton.gameObject.SetActive(false);
-        _toLobbyButton.gameObject.SetActive(false);
-        _toTitleButton.gameObject.SetActive(true);
+        _retryButton.gameObject.SetActive(config.ShowRetry);
+        _toLobbyButton.gameObject.SetActive(config.ShowToLobby);
+        _toTitleButton.gameObject.SetActive(config.ShowToTitle);
     }
 
     public void Retry()

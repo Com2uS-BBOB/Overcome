@@ -9,13 +9,14 @@ public class UI_StageButton : MonoBehaviour
     [Header("Stage Info")]
     [SerializeField] private int _chapter;
     [SerializeField] private int _level;
-    
+
     [Space(10)]
     [Header("UI References")]
     [SerializeField] private Image _stageSelectImage;
     [SerializeField] private TextMeshProUGUI _stageText;
     [SerializeField] private Image[] _starImages;
     private Button _openButton;
+    private LobbyScene _lobbyScene;
 
     [Space(10)]
     [Header("Background Image Setting")]
@@ -34,6 +35,7 @@ public class UI_StageButton : MonoBehaviour
     {
         _openButton = GetComponent<Button>();
         _openButton.onClick.AddListener(SelectStage);
+        _lobbyScene = FindFirstObjectByType<LobbyScene>();
     }
     
     private void Start()
@@ -87,5 +89,6 @@ public class UI_StageButton : MonoBehaviour
     {
         UI_StageInfo stageInfo = await UIController.Instance.OpenUI<UI_StageInfo>();
         stageInfo.OpenStageInfoPanel(_chapter, _level);
+        stageInfo.OnGameStartRequested += _lobbyScene.HandleGameStart;
     }
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(TMP_InputField))]
 public class UI_Login : MonoBehaviour
 {
+    [SerializeField] private LoginScene _loginScene;
     private static readonly int _onSelectLogin = Animator.StringToHash("OnSelectLogin");
     private TMP_InputField _username;
     private Animator _animator;
@@ -35,6 +36,7 @@ public class UI_Login : MonoBehaviour
             string text = WelcomeMessages[1];
             loginPopup?.SetTitle($"{text} {_username.text}");
         }
+        loginPopup.OnLoginCompleted += _loginScene.HandleLoginCompleted;
     }
 
     public void OnSelectLogin()

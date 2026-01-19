@@ -7,7 +7,13 @@ public class LobbyScene : MonoBehaviour
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
     }
-    
+
+    public void HandleGameStart(int chapter, int level)
+    {
+        StageManager.Instance.SetCurrentStage(chapter, level);
+        LoadGameScene();
+    }
+
     public void LoadGameScene()
     {
         SceneController.Instance.LoadSceneAsync(ESceneType.SampleScene);

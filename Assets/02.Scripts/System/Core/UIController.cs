@@ -35,7 +35,7 @@ public class UIController : SingletonBehaviour<UIController>
         _panelUIRoot = panelUIRoot.transform;
         DontDestroyOnLoad(_panelUIRoot);
         
-        SceneManager.sceneUnloaded += ClearSceneUI;
+        SceneManager.sceneUnloaded += CloseAllActiveUI;
     }
     
     protected override void Clear()
@@ -106,7 +106,7 @@ public class UIController : SingletonBehaviour<UIController>
         return true;
     }
     
-    private void ClearSceneUI(Scene arg0)
+    private void CloseAllActiveUI(Scene arg0)
     {
         while (_activeUIList.Count > 0)
         {

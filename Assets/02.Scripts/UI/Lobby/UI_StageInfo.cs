@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -11,11 +12,12 @@ public class UI_StageInfo : BaseUI
 
     private int _chapter;
     private int _level;
+
+    public event Action<int, int> OnGameStartRequested;
     
     public void GameStart()
     {
-        StageManager.Instance.SetCurrentStage(_chapter, _level);
-        SceneController.Instance.LoadScene(ESceneType.SampleScene);
+        OnGameStartRequested?.Invoke(_chapter, _level);
     }
     
     public void OpenStageInfoPanel(int chapter, int level)
@@ -38,9 +40,7 @@ public class UI_StageInfo : BaseUI
 
         foreach (var config in gradeConfigs.Grades)
         {
-            // C 등급 (0점 기준)은 출력하지 않음
-            if (config.RequiredScore <= 0)
-                continue;
+            if (config.RequiredScore <= 0) continue;
 
             if (!isFirst)
                 _stringBuilder.Append(" / ");
