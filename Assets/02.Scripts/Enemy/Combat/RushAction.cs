@@ -128,7 +128,7 @@ public class RushAction : IEnemyAction
         // 시작한 순간 방향 고정
         _enemy.rotation = Quaternion.LookRotation(_rushDirection);
 
-        _hitbox?.Enable(_damage, _knockbackDistance, _knockbackLevel);
+        _hitbox?.Enable(_damage, _knockbackDistance);
 
         _anim.TryPlayRush();
 #if UNITY_EDITOR

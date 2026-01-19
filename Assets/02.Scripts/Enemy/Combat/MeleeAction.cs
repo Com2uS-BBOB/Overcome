@@ -75,7 +75,7 @@ public class MeleeAction : IEnemyAction
     {
         if (_hitbox != null)
         {
-            _hitbox.Enable(_damage, _knockbackDistance, _knockbackLevel);
+            _hitbox.Enable(_damage, _knockbackDistance);
         }
     }
     
