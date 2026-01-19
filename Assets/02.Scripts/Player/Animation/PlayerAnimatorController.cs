@@ -23,6 +23,10 @@ namespace _02.Scripts.Player.Animation
         public event Action OnCancelWindowEnter;
         public event Action OnCancelWindowExit;
 
+        // Overdrive 이벤트
+        public event Action OnOverdriveReady;   // VFX 시작 타이밍
+        public event Action OnOverdriveEnd;     // 애니메이션 종료
+
         // Animator 파라미터 해시 - Locomotion
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
@@ -43,6 +47,9 @@ namespace _02.Scripts.Player.Animation
         private static readonly int GuardBlockHash = Animator.StringToHash("GuardBlock");
         private static readonly int GuardBreakHash = Animator.StringToHash("GuardBreak");
 
+        // Animator 파라미터 해시 - Overdrive
+        private static readonly int OverdriveActivationHash = Animator.StringToHash("OverdriveActivation");
+
         private PlayerStateMachine _stateMachine;
 
         public void Initialize(PlayerStateMachine stateMachine)
@@ -62,6 +69,8 @@ namespace _02.Scripts.Player.Animation
                 _animEventProxy.OnAttackEnd += HandleAttackEnd;
                 _animEventProxy.OnCancelWindowEnter += HandleCancelWindowEnter;
                 _animEventProxy.OnCancelWindowExit += HandleCancelWindowExit;
+                _animEventProxy.OnOverdriveReady += HandleOverdriveReady;
+                _animEventProxy.OnOverdriveEnd += HandleOverdriveEnd;
             }
             else
             {
@@ -81,6 +90,16 @@ namespace _02.Scripts.Player.Animation
         }
         private void HandleCancelWindowEnter() => OnCancelWindowEnter?.Invoke();
         private void HandleCancelWindowExit() => OnCancelWindowExit?.Invoke();
+        private void HandleOverdriveReady()
+        {
+            Debug.Log("[PlayerAnimatorController] HandleOverdriveReady called");
+            OnOverdriveReady?.Invoke();
+        }
+        private void HandleOverdriveEnd()
+        {
+            Debug.Log("[PlayerAnimatorController] HandleOverdriveEnd called");
+            OnOverdriveEnd?.Invoke();
+        }
 
         #endregion
 
@@ -240,6 +259,7 @@ namespace _02.Scripts.Player.Animation
         {
             _animator.ResetTrigger(GuardBlockHash);
             _animator.SetTrigger(GuardBlockHash);
+            _animator.SetBool(IsGuardingHash, true);  // 가드 상태 유지 보장
         }
 
         /// <summary>
@@ -250,6 +270,20 @@ namespace _02.Scripts.Player.Animation
             _animator.SetBool(IsGuardingHash, false);
             _animator.ResetTrigger(GuardBreakHash);
             _animator.SetTrigger(GuardBreakHash);
+        }
+
+        #endregion
+
+        #region Overdrive
+
+        /// <summary>
+        /// Overdrive 진입 애니메이션 재생
+        /// </summary>
+        public void PlayOverdriveActivation()
+        {
+            Debug.Log("[PlayerAnimatorController] PlayOverdriveActivation");
+            _animator.ResetTrigger(OverdriveActivationHash);
+            _animator.SetTrigger(OverdriveActivationHash);
         }
 
         #endregion
@@ -270,6 +304,8 @@ namespace _02.Scripts.Player.Animation
                 _animEventProxy.OnAttackEnd -= HandleAttackEnd;
                 _animEventProxy.OnCancelWindowEnter -= HandleCancelWindowEnter;
                 _animEventProxy.OnCancelWindowExit -= HandleCancelWindowExit;
+                _animEventProxy.OnOverdriveReady -= HandleOverdriveReady;
+                _animEventProxy.OnOverdriveEnd -= HandleOverdriveEnd;
             }
         }
     }

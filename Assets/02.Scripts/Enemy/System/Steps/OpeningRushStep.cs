@@ -35,7 +35,7 @@ public class OpeningRushStep : IEnemyAttackStep
             _context.Enemy,
             _context.Player,
             _context.Movement,
-            _context.KnockbackHitbox,
+            _context.GetHitbox?.Invoke(EEnemyHitboxType.Rush),
             _context.Agent,
             _context.Anim,
             _rushDuration,

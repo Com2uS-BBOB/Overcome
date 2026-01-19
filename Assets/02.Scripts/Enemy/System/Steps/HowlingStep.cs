@@ -12,6 +12,8 @@ public class HowlingStep : IEnemyAttackStep
     private readonly float _triggerRange;
     private float _nextAllowedTime;
 
+    private bool _forceFirstHowl = true;
+
     public bool IsFinished => _finished;
 
     public HowlingStep(
@@ -36,7 +38,10 @@ public class HowlingStep : IEnemyAttackStep
 
         // 플레이어가 일정 거리 밖이면 포효
         float distance = Vector3.Distance(_context.Enemy.position, _context.Player.position);
-        if (distance <= _triggerRange) return false;
+        if (!_forceFirstHowl)
+        {
+            if (distance <= _triggerRange) return false;
+        }
 
         _finished = false;
 
@@ -67,9 +72,12 @@ public class HowlingStep : IEnemyAttackStep
             _howl.Exit();
             _howl = null;
 
+            _forceFirstHowl = false;
+
             // 포효 끝나면 다음에 OpeningRush가 다시 발동
             _attack?.ResetRush();
 
+            // 포효 직후 재포효 방지
             _nextAllowedTime = Time.time + _howlDuration;
 
             _finished = true;
@@ -82,6 +90,7 @@ public class HowlingStep : IEnemyAttackStep
         {
             _howl.Exit();
             _howl = null;
+            _forceFirstHowl = false;
         }
         _finished = true;
     }
