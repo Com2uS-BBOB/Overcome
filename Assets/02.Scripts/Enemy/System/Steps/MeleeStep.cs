@@ -54,7 +54,7 @@ public class MeleeStep : IEnemyAttackStep
         _melee = new MeleeAction(
             _context.Enemy,
             _context.Player,
-            _context.GetHitbox?.Invoke(EEnemyHitboxType.Melee),
+            _context.KnockbackHitbox,
             _context.Anim,
             _context.Agent,
             _context.Damage,

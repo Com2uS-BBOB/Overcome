@@ -175,24 +175,6 @@ public class EnemyMovement : MonoBehaviour
         InternalUnlock();
     }
 
-    public void ApplyHitStop(float duration)
-    {
-        if (duration <= 0f) return;
-
-        // 최소 락 시간만 연장
-        _movementLocked = true;
-        _lockUntilTime = Mathf.Max(_lockUntilTime, Time.time + duration);
-
-        if (_agent != null && _agent.enabled)
-        {
-            _agent.isStopped = true;
-            _agent.ResetPath();
-            _agent.velocity = Vector3.zero;
-        }
-
-        _anim?.SetMove(false);
-    }
-
     private void InternalUnlock()
     {
         _movementLocked = false;
