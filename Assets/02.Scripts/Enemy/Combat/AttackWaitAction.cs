@@ -10,6 +10,8 @@ public class AttackWaitAction : IEnemyAction
     private readonly NavMeshAgent _agent;
     private readonly AttackWaitActionConfig _actionConfig;
 
+    private readonly float _waitSpeedMultiplier;
+
     private float _timer;
     private float _duration;
     private bool _isFinished;
@@ -65,8 +67,6 @@ public class AttackWaitAction : IEnemyAction
             ? _actionConfig.FixedSlotIndex
             : _slotCoordinator.ClaimSlot(_enemy);
 
-        if (_mySlotIndex < 0) return;
-
         _agent.isStopped = false;
         _movement.SetRotationToLookAt(_player);
 
@@ -92,10 +92,12 @@ public class AttackWaitAction : IEnemyAction
         Vector3 destination = GetModeDestination();
         _agent.SetDestination(destination);
 
+        // slotPosition과의 평면 거리 확인
+        float flat = Vector3.Distance(new Vector3(_enemy.position.x, 0, _enemy.position.z),new Vector3(destination.x, 0, destination.z));
+        
         // 슬롯 근처 또는 모드 목적지 근처면 대기 타이머 진행
-        bool arrived = (!_agent.pathPending && _agent.hasPath && _agent.remainingDistance
-            <= Mathf.Max(_agent.stoppingDistance, _actionConfig.MinStoppingDistance))
-            || FlatDistance(_enemy.position, destination) <= _actionConfig.ArrivedThreshold;
+        bool arrived = flat <= _actionConfig.ArrivedThreshold ||
+            (!_agent.pathPending && _agent.remainingDistance <= Mathf.Max(_agent.stoppingDistance, _actionConfig.MinStoppingDistance));
 
         if (!arrived)
         {
@@ -104,7 +106,7 @@ public class AttackWaitAction : IEnemyAction
             return;
         }
 
-        _movement.SetSpeedMultiplier(_actionConfig.WaitSpeedMultiplier);
+        _movement.SetSpeedMultiplier(_waitSpeedMultiplier);
         _timer += Time.deltaTime;
 
         if (_timer >= _duration)
@@ -130,20 +132,11 @@ public class AttackWaitAction : IEnemyAction
     {
         Vector3 slotPosition = _slotCoordinator.GetSlotPosition(_mySlotIndex);
 
-        Vector3 baseDirection = slotPosition - _player.position;
-        baseDirection.y = 0f;
-
-        if (baseDirection.sqrMagnitude < _magnitudeThreshold)
-        {
-            return slotPosition;
-        }
-
-        float desiredRadius = baseDirection.magnitude;
-        Vector3 baseDirN = baseDirection / desiredRadius;
-
         switch (_probeMode)
         {
             case EEnemyProbeMode.Reposition:
+                return slotPosition;
+
             case EEnemyProbeMode.Hold:
                 // 제자리 유지
                 return slotPosition;
@@ -151,11 +144,15 @@ public class AttackWaitAction : IEnemyAction
             case EEnemyProbeMode.Shuffle:
                 {
                     // 플레이어 중심 원호 이동
-                    float sign = (Random.value < _randomValue) ? -1f : 1f;
-                    Quaternion rotation = Quaternion.Euler(0f, sign * _shuffleAngle, 0f);
-                    Vector3 direction = rotation * baseDirN;
+                    Vector3 toEnemy = (_enemy.position - _player.position);
+                    toEnemy.y = 0f;
+                    if (toEnemy.sqrMagnitude < _magnitudeThreshold) return slotPosition;
 
-                    Vector3 raw = _player.position + direction * desiredRadius;
+                    float sign = Random.value < _randomValue ? -1f : 1f;
+                    Quaternion rot = Quaternion.Euler(0f, sign * _shuffleAngle, 0f);
+                    Vector3 shuffledDir = rot * toEnemy.normalized;
+
+                    Vector3 raw = _player.position + shuffledDir * toEnemy.magnitude;
 
                     if (NavMesh.SamplePosition(raw, out var hit, _navSampleRadius, NavMesh.AllAreas))
                     {
@@ -167,11 +164,14 @@ public class AttackWaitAction : IEnemyAction
 
             case EEnemyProbeMode.Feint:
                 {
-                    // slot 반지름 기준으로 살짝 안 혹은 밖으로
-                    float sign = (Random.value < _randomValue) ? 1f : -1f;
-                    float radius = Mathf.Max(0.5f, desiredRadius + sign * _feintDistance);
+                    // 플레이어 방향으로 살짝 전진 혹은 후퇴
+                    Vector3 direction = (_player.position - _enemy.position);
+                    direction.y = 0f;
+                    if (direction.sqrMagnitude < _magnitudeThreshold) return slotPosition;
+                    direction.Normalize();
 
-                    Vector3 raw = _player.position + baseDirN * radius;
+                    float sign = Random.value < _randomValue ? 1f : -1f;
+                    Vector3 raw = _enemy.position + direction * (_feintDistance * sign);
 
                     if (NavMesh.SamplePosition(raw, out var hit, _navSampleRadius, NavMesh.AllAreas))
                     {
@@ -185,16 +185,8 @@ public class AttackWaitAction : IEnemyAction
         return slotPosition;
     }
 
-    private static float FlatDistance(Vector3 a, Vector3 b)
-    {
-        a.y = 0f; b.y = 0f;
-        return Vector3.Distance(a, b);
-    }
-
     public void Exit()
     {
-        _movement.ResetSpeedMultiplier();
-
         // NavMeshAgent 경로 정리 - 이게 없으면 이전 목적지로 계속 가려고 함
         if (_agent != null && _agent.enabled)
         {
@@ -206,6 +198,8 @@ public class AttackWaitAction : IEnemyAction
         {
             ReleaseSlotNow();
         }
+
+        _movement.ResetSpeedMultiplier();
     }
 
     public void ReleaseSlotNow()

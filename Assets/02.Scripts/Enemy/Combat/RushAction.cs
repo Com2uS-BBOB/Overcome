@@ -1,3 +1,4 @@
+using _02.Scripts.Player.Data;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,6 +13,8 @@ public class RushAction : IEnemyAction
 
     private readonly float _maxDuration;  // 속도 계산용
     private readonly float _damage;
+    private readonly float _knockbackDistance;
+    private readonly KnockbackLevel _knockbackLevel;
 
     private bool _isFinished;
 
@@ -54,7 +57,9 @@ public class RushAction : IEnemyAction
         NavMeshAgent agent,
         EnemyAnimatorController anim,
         float maxDuration,
-        float damage
+        float damage,
+        float knockbackDistance = 2f,
+        KnockbackLevel knockbackLevel = KnockbackLevel.Heavy
     )
     {
         _enemy = enemy;
@@ -65,6 +70,8 @@ public class RushAction : IEnemyAction
         _anim = anim;
         _maxDuration = maxDuration;
         _damage = damage;
+        _knockbackDistance = knockbackDistance;
+        _knockbackLevel = knockbackLevel;
         _playerLayerMask = ~0;
     }
 
@@ -121,7 +128,7 @@ public class RushAction : IEnemyAction
         // 시작한 순간 방향 고정
         _enemy.rotation = Quaternion.LookRotation(_rushDirection);
 
-        _hitbox?.Enable(_damage);
+        _hitbox?.Enable(_damage, _knockbackDistance, _knockbackLevel);
 
         _anim.TryPlayRush();
 #if UNITY_EDITOR

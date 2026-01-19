@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using _02.Scripts.Player.Combat;
 using _02.Scripts.Player.Interfaces;
+using _02.Scripts.CameraFX;
 
 namespace _02.Scripts.Player.Common
 {
@@ -58,6 +59,10 @@ namespace _02.Scripts.Player.Common
             damageable.TakeDamage(_damage, GetOwner());
             OnHit?.Invoke(damageable, _damage);
             OnHitSuccess(other, damageable);
+
+            // 카메라 효과: 히트스톱 + 줌 펀치
+            HitStopManager.Instance?.TriggerHitStop();
+            CameraEffectsManager.Instance?.ZoomPunch();
         }
 
         // 무시 대상 체크

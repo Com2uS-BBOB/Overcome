@@ -51,7 +51,7 @@ public class EliteRipStep : IEnemyAttackStep
             _context.Enemy,
             _context.Player,
             _context.Movement,
-            _context.GetHitbox?.Invoke(EEnemyHitboxType.Rip),
+            _context.KnockbackHitbox,
             _context.Agent,
             _context.Anim,
             _config.RipDamagePerHit,

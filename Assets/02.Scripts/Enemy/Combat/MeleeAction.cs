@@ -1,3 +1,4 @@
+using _02.Scripts.Player.Data;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -9,6 +10,7 @@ public class MeleeAction : IEnemyAction
     private readonly EnemyAnimatorController _anim;
     private readonly NavMeshAgent _agent;
     private readonly float _knockbackDistance;
+    private readonly KnockbackLevel _knockbackLevel;
 
     private readonly float _damage;
     private bool _isFinished;
@@ -22,7 +24,8 @@ public class MeleeAction : IEnemyAction
         EnemyAnimatorController anim,
         NavMeshAgent agent,
         float damage,
-        float knockbackDistance
+        float knockbackDistance,
+        KnockbackLevel knockbackLevel = KnockbackLevel.Light
     )
     {
         _enemy = enemy;
@@ -32,6 +35,7 @@ public class MeleeAction : IEnemyAction
         _agent = agent;
         _damage = damage;
         _knockbackDistance = knockbackDistance;
+        _knockbackLevel = knockbackLevel;
     }
 
     public void Enter()
@@ -71,7 +75,7 @@ public class MeleeAction : IEnemyAction
     {
         if (_hitbox != null)
         {
-            _hitbox.Enable(_damage, _knockbackDistance);
+            _hitbox.Enable(_damage, _knockbackDistance, _knockbackLevel);
         }
     }
     

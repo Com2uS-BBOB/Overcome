@@ -20,8 +20,18 @@ public class UI_DashSkill : MonoBehaviour
     private void Start()
     {
         _dashSkill.OnDashEnded += SetCoolDown;
+        _dashSkill.OnCooldownReset += EndCoolDown;
         _blockSkillImage.gameObject.SetActive(!_dashSkill.CanUse);
         HideCooldownUI();
+    }
+
+    private void OnDestroy()
+    {
+        if (_dashSkill != null)
+        {
+            _dashSkill.OnDashEnded -= SetCoolDown;
+            _dashSkill.OnCooldownReset -= EndCoolDown;
+        }
     }
 
     public void SetCoolDown()
