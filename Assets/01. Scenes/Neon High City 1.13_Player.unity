@@ -686,7 +686,7 @@ GameObject:
   m_Component:
   - component: {fileID: 177490496}
   m_Layer: 0
-  m_Name: ---------------------Camera------------------------
+  m_Name: '---------------------Camera------------------------'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -921,6 +921,7 @@ MonoBehaviour:
   _firePoint: {fileID: 1067346362}
   _cameraTransform: {fileID: 1248975200}
   _poolContainer: {fileID: 1037955747}
+  _overdriveProjectilePrefab: {fileID: 5555896469636686190, guid: 00e529efc3a614da9a2fd02ca89ebf83, type: 3}
 --- !u!114 &201329465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2238,6 +2239,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 391525045}
   m_CullTransparentMesh: 1
+--- !u!114 &393074354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393074353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 790f4a378d5874e18ab5d7d668239ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.HitEffectPool
+  _hitEffectPrefab: {fileID: 8884371268655795233, guid: 784554bd4b0134d42a53528d66e14f1a, type: 3}
+  _initialPoolSize: 20
+  _overdriveHitEffectPrefab: {fileID: 8884371268655795233, guid: 045511d90a31a4af8a511b1f3dc7f2e4, type: 3}
 --- !u!1 &407125398
 GameObject:
   m_ObjectHideFlags: 0
@@ -2528,15 +2544,15 @@ PrefabInstance:
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
-      propertyPath: '_defaultGameObjects.Array.data[0]'
+      propertyPath: _defaultGameObjects.Array.data[0]
       value: 
       objectReference: {fileID: 477424973}
     - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
-      propertyPath: '_defaultGameObjects.Array.data[1]'
+      propertyPath: _defaultGameObjects.Array.data[1]
       value: 
       objectReference: {fileID: 477424972}
     - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
-      propertyPath: '_defaultGameObjects.Array.data[2]'
+      propertyPath: _defaultGameObjects.Array.data[2]
       value: 
       objectReference: {fileID: 477424971}
     - target: {fileID: 6074645322617408231, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
@@ -2794,7 +2810,7 @@ PrefabInstance:
     - target: {fileID: 671542251130911682, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: TrailMaterial
       value: 
-      objectReference: {fileID: 2100000, guid: dbd10b2e6f8662d4ba820adc07e5e569, type: 2}
+      objectReference: {fileID: 2100000, guid: 7b6fdb44bd58a476e8c4eeed7506f189, type: 2}
     - target: {fileID: 1782168504486438905, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -5603,7 +5619,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1542145056}
   m_Layer: 0
-  m_Name: ---------------------Player----------------------
+  m_Name: '---------------------Player----------------------'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5896,7 +5912,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1645048515}
   m_Layer: 0
-  m_Name: ----------UI----------
+  m_Name: '----------UI----------'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6196,7 +6212,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1739536746}
   m_Layer: 0
-  m_Name: ---------------------Enemy----------------------
+  m_Name: '---------------------Enemy----------------------'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6217,6 +6233,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1756040136 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 671542251130911682, guid: e044d05f1450d4566823bb6ce2e40581, type: 3}
+  m_PrefabInstance: {fileID: 545380563}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3351d65a5e49c64d9002bba88ce89a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: GameUtils::Drakkar.GameUtils.DrakkarTrail
 --- !u!1 &1834651157
 GameObject:
   m_ObjectHideFlags: 0
@@ -6274,7 +6301,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1843722249}
   m_Layer: 0
-  m_Name: -------System-------
+  m_Name: '-------System-------'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6290,6 +6317,59 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1865744310
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1865744312}
+  - component: {fileID: 1865744311}
+  m_Layer: 0
+  m_Name: OverdriveVFXController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1865744311
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865744310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 568a8f205dffe44b580fa154d025959a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gaugeManager: {fileID: 201329462}
+  _activationFOVIncrease: 10
+  _fovTransitionTime: 1
+  _activationShakeIntensity: 1.5
+  _deactivationShakeIntensity: 0.5
+  _normalTrailMaterial: {fileID: 2100000, guid: 7b6fdb44bd58a476e8c4eeed7506f189, type: 2}
+  _overdriveTrailMaterial: {fileID: 2100000, guid: 5bf0b334838664f6a91756106f84a11e, type: 2}
+  _playerTrails:
+  - {fileID: 1756040136}
+--- !u!4 &1865744312
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1865744310}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 17.908957, y: 13.683068, z: 10.15004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6892,6 +6972,7 @@ MonoBehaviour:
   m_ScreenCoordScaleBias: {x: 0, y: 0, z: 0, w: 0}
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
+  m_Version: 2
   m_TaaSettings:
     m_Quality: 3
     m_FrameInfluence: 0.1
@@ -6899,7 +6980,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
-  m_Version: 2
 --- !u!81 &1948944050
 AudioListener:
   m_ObjectHideFlags: 0
@@ -7159,7 +7239,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2021211201}
   m_Layer: 0
-  m_Name: ----InGameObject----
+  m_Name: '----InGameObject----'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7477,17 +7557,18 @@ SceneRoots:
   - {fileID: 1351897569}
   - {fileID: 1645048515}
   - {fileID: 1518009371}
-  - {fileID: 201681882}
+  - {fileID: 303100695}
   - {fileID: 1739536746}
+  - {fileID: 201681882}
   - {fileID: 1223731452}
   - {fileID: 1167465872}
-  - {fileID: 303100695}
   - {fileID: 177490496}
   - {fileID: 1248975200}
   - {fileID: 1948944052}
   - {fileID: 455737515}
   - {fileID: 1542145056}
+  - {fileID: 201329474}
   - {fileID: 290328935}
   - {fileID: 1037955747}
   - {fileID: 2081014876}
-  - {fileID: 201329474}
+  - {fileID: 1865744312}

@@ -7,23 +7,29 @@ namespace _02.Scripts.Player.Combat
     /// <summary>
     /// 히트 이펙트 풀링 관리자
     /// 타격 시 이펙트를 풀에서 가져와 스폰하고 재생 완료 후 반환
+    /// Overdrive 상태에 따라 다른 이펙트 사용
     /// </summary>
     public class HitEffectPool : MonoBehaviour
     {
         public static HitEffectPool Instance { get; private set; }
 
-        [Header("Settings")]
+        [Header("Normal Settings")]
         [SerializeField] private ParticleSystem _hitEffectPrefab;
         [SerializeField] private int _initialPoolSize = 10;
 
-        private ObjectPool<ParticleSystem> _pool;
+        [Header("Overdrive Settings")]
+        [SerializeField] private ParticleSystem _overdriveHitEffectPrefab;
+
+        private ObjectPool<ParticleSystem> _normalPool;
+        private ObjectPool<ParticleSystem> _overdrivePool;
+        private bool _isOverdriveActive;
 
         private void Awake()
         {
             if (Instance == null)
             {
                 Instance = this;
-                InitializePool();
+                InitializePools();
             }
             else
             {
@@ -31,15 +37,31 @@ namespace _02.Scripts.Player.Combat
             }
         }
 
-        private void InitializePool()
+        private void InitializePools()
         {
-            if (_hitEffectPrefab == null)
+            // Normal Pool
+            if (_hitEffectPrefab != null)
             {
-                Debug.LogWarning("[HitEffectPool] Hit effect prefab is not assigned.");
-                return;
+                _normalPool = new ObjectPool<ParticleSystem>(_hitEffectPrefab, transform, _initialPoolSize);
+            }
+            else
+            {
+                Debug.LogWarning("[HitEffectPool] Normal hit effect prefab is not assigned.");
             }
 
-            _pool = new ObjectPool<ParticleSystem>(_hitEffectPrefab, transform, _initialPoolSize);
+            // Overdrive Pool
+            if (_overdriveHitEffectPrefab != null)
+            {
+                _overdrivePool = new ObjectPool<ParticleSystem>(_overdriveHitEffectPrefab, transform, _initialPoolSize);
+            }
+        }
+
+        /// <summary>
+        /// Overdrive 상태 설정 (OverdriveVFXController에서 호출)
+        /// </summary>
+        public void SetOverdriveActive(bool active)
+        {
+            _isOverdriveActive = active;
         }
 
         /// <summary>
@@ -55,19 +77,30 @@ namespace _02.Scripts.Player.Combat
         /// </summary>
         public void SpawnAt(Vector3 position, Quaternion rotation)
         {
-            if (_pool == null) return;
+            // Overdrive 상태에 따라 풀 선택
+            var pool = GetActivePool();
+            if (pool == null) return;
 
-            var effect = _pool.Get();
+            var effect = pool.Get();
             if (effect == null) return;
 
             effect.transform.SetPositionAndRotation(position, rotation);
             effect.Clear();  // 이전 파티클 정리
             effect.Play();
 
-            StartCoroutine(ReturnAfterPlay(effect));
+            StartCoroutine(ReturnAfterPlay(effect, pool));
         }
 
-        private IEnumerator ReturnAfterPlay(ParticleSystem effect)
+        private ObjectPool<ParticleSystem> GetActivePool()
+        {
+            // Overdrive 상태이고 Overdrive 풀이 있으면 사용
+            if (_isOverdriveActive && _overdrivePool != null)
+                return _overdrivePool;
+
+            return _normalPool;
+        }
+
+        private IEnumerator ReturnAfterPlay(ParticleSystem effect, ObjectPool<ParticleSystem> pool)
         {
             // 파티클 재생 시간 + 수명 만큼 대기
             var main = effect.main;
@@ -75,12 +108,13 @@ namespace _02.Scripts.Player.Combat
             yield return new WaitForSeconds(duration);
 
             effect.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            _pool.Return(effect);
+            pool.Return(effect);
         }
 
         private void OnDestroy()
         {
-            _pool?.Clear();
+            _normalPool?.Clear();
+            _overdrivePool?.Clear();
         }
     }
 }
