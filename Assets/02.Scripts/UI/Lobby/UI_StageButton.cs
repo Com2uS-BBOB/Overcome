@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,13 +9,14 @@ public class UI_StageButton : MonoBehaviour
     [Header("Stage Info")]
     [SerializeField] private int _chapter;
     [SerializeField] private int _level;
-    
+
     [Space(10)]
     [Header("UI References")]
     [SerializeField] private Image _stageSelectImage;
     [SerializeField] private TextMeshProUGUI _stageText;
     [SerializeField] private Image[] _starImages;
     private Button _openButton;
+    private LobbyScene _lobbyScene;
 
     [Space(10)]
     [Header("Background Image Setting")]
@@ -28,17 +30,12 @@ public class UI_StageButton : MonoBehaviour
     [SerializeField] private Sprite[] _starSprites = new Sprite[2];
     
     private StageProgress _stageProgress;
-    private UI_StageButtons _uiStageButtons;
 
     private void Awake()
     {
-        _uiStageButtons = GetComponentInParent<UI_StageButtons>();
         _openButton = GetComponent<Button>();
-        if (_uiStageButtons == null)
-        {
-            Debug.LogError("[UI_StageButton] UI_StageButtons not found");
-        }
         _openButton.onClick.AddListener(SelectStage);
+        _lobbyScene = FindFirstObjectByType<LobbyScene>();
     }
     
     private void Start()
@@ -88,8 +85,10 @@ public class UI_StageButton : MonoBehaviour
         _stageText.text = $"{_chapter}_{_level}";
     }
 
-    private void SelectStage()
+    private async void SelectStage()
     {
-        _uiStageButtons.OpenStageInfoPanel(_chapter, _level);
+        UI_StageInfo stageInfo = await UIController.Instance.OpenUI<UI_StageInfo>();
+        stageInfo.OpenStageInfoPanel(_chapter, _level);
+        stageInfo.OnGameStartRequested += _lobbyScene.HandleGameStart;
     }
 }
