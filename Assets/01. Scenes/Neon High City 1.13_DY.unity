@@ -921,6 +921,7 @@ MonoBehaviour:
   _firePoint: {fileID: 1067346362}
   _cameraTransform: {fileID: 1248975200}
   _poolContainer: {fileID: 1037955747}
+  _overdriveProjectilePrefab: {fileID: 0}
 --- !u!114 &201329465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1453,6 +1454,10 @@ PrefabInstance:
     - target: {fileID: 3250372645272305097, guid: 8998b448bbdd4ed46b15f94d4dfd91c9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3281174809025625417, guid: 8998b448bbdd4ed46b15f94d4dfd91c9, type: 3}
+      propertyPath: m_Shadows.m_Strength
+      value: 0.41
       objectReference: {fileID: 0}
     - target: {fileID: 8424696402470815557, guid: 8998b448bbdd4ed46b15f94d4dfd91c9, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5243,6 +5248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.HitEffectPool
   _hitEffectPrefab: {fileID: 8884371268655795233, guid: 784554bd4b0134d42a53528d66e14f1a, type: 3}
   _initialPoolSize: 20
+  _overdriveHitEffectPrefab: {fileID: 0}
 --- !u!4 &1486968882
 Transform:
   m_ObjectHideFlags: 0
