@@ -259,6 +259,7 @@ namespace _02.Scripts.Player.Animation
         {
             _animator.ResetTrigger(GuardBlockHash);
             _animator.SetTrigger(GuardBlockHash);
+            _animator.SetBool(IsGuardingHash, true);  // 가드 상태 유지 보장
         }
 
         /// <summary>
