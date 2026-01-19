@@ -855,7 +855,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85c069f467a2a44e096131eb87ccddd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.InputBuffer
-  _bufferDuration: 0.25
+  _bufferDuration: 1
 --- !u!114 &201329461
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -986,7 +986,7 @@ MonoBehaviour:
   _rotationSpeed: 10
   _gravity: -30
   _groundedGravity: -5
-  _groundCheckDistance: 1
+  _groundCheckDistance: 2
   _groundCheckRadius: 0.2
   _groundLayer:
     serializedVersion: 2
@@ -4030,7 +4030,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 7750734187541774591, guid: e598a457e994e31418203720141d3c67, type: 3}
       propertyPath: _aroundCount
-      value: 20
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

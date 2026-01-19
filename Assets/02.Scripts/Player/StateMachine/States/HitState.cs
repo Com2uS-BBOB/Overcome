@@ -46,6 +46,10 @@ namespace _02.Scripts.Player.StateMachine.States
             Controller.DragonSwordSkill?.ResetCombo();
             Controller.Crescent?.ResetCombo();
 
+            // CombatStateHandler 상태 정리 (캔슬 체크 버그 방지)
+            Controller.CombatStateHandler?.ClearCurrentAttack();
+            Controller.InputBuffer?.Clear();
+
             // 가드 입력 이벤트 구독 (피격 중 가드로 탈출 가능)
             Input.OnGuardStarted += HandleGuardInput;
         }
@@ -77,6 +81,13 @@ namespace _02.Scripts.Player.StateMachine.States
 
         private void ReturnToNormalState()
         {
+            // 가드 키를 홀드 중이면 가드 상태로 복귀
+            if (Input.IsGuardHeld && _guardManager != null && Movement.IsGrounded)
+            {
+                StateMachine.ChangeState<GuardState>();
+                return;
+            }
+
             if (!Movement.IsGrounded)
             {
                 StateMachine.ChangeState<FallState>();
