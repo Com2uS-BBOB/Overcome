@@ -110,6 +110,10 @@ namespace _02.Scripts.Player.Gauge
             _overDriveGauge.Reset();
             OnOverDriveGaugeChanged?.Invoke(_overDriveGauge.Current, _overDriveGauge.Max);
 
+            // 오버드라이브 시작 시 크레센트 게이지 100으로 채움
+            _crescentGauge.Fill();
+            OnCrescentGaugeChanged?.Invoke(_crescentGauge.Current, _crescentGauge.Max);
+
             SetAffectedSkillsOverDriveState(true);
             OnOverDriveActivated?.Invoke();
 
@@ -127,6 +131,10 @@ namespace _02.Scripts.Player.Gauge
             IsOverDriveActive = true;
             _overDriveGauge.Reset();
             OnOverDriveGaugeChanged?.Invoke(_overDriveGauge.Current, _overDriveGauge.Max);
+
+            // 오버드라이브 시작 시 크레센트 게이지 100으로 채움
+            _crescentGauge.Fill();
+            OnCrescentGaugeChanged?.Invoke(_crescentGauge.Current, _crescentGauge.Max);
 
             SetAffectedSkillsOverDriveState(true);
             OnOverDriveActivated?.Invoke();
@@ -153,6 +161,11 @@ namespace _02.Scripts.Player.Gauge
         private void Deactivate()
         {
             IsOverDriveActive = false;
+
+            // 오버드라이브 종료 시 크레센트 게이지 100으로 채움
+            _crescentGauge.Fill();
+            OnCrescentGaugeChanged?.Invoke(_crescentGauge.Current, _crescentGauge.Max);
+
             SetAffectedSkillsOverDriveState(false);
             OnOverDriveDeactivated?.Invoke();
         }
