@@ -70,6 +70,8 @@ public class AttackWaitAction : IEnemyAction
 
         if (_mySlotIndex < 0) return;
 
+        _movement.SetSpeedMultiplier(_actionConfig.WaitSpeedMultiplier);
+
         _anim.SetWait(true);
         _agent.isStopped = false;
         _movement.SetRotationToLookAt(_player);
@@ -107,8 +109,6 @@ public class AttackWaitAction : IEnemyAction
             _timer = 0f;
             return;
         }
-
-        _movement.SetSpeedMultiplier(_actionConfig.WaitSpeedMultiplier);
         _timer += Time.deltaTime;
 
         if (_timer >= _duration)

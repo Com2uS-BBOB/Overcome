@@ -137,7 +137,7 @@ public class EnemyAttack : MonoBehaviour
                 var normalWaitConfig = new AttackWaitActionConfig(
                     minWait: 999f,
                     maxWait: 999f,
-                    waitSpeedMultiplier: 0.9f,
+                    waitSpeedMultiplier: 0.2f,
                     releaseSlotOnExit: true,
                     fixedSlotIndex: -1,
                     arrivedThreshold: 0.2f,
@@ -161,7 +161,7 @@ public class EnemyAttack : MonoBehaviour
                 var smallWaitConfig = new AttackWaitActionConfig(
                     minWait: 999f,
                     maxWait: 999f,
-                    waitSpeedMultiplier: 0.9f,
+                    waitSpeedMultiplier: 0.8f,
                     releaseSlotOnExit: true,
                     fixedSlotIndex: -1,
                     arrivedThreshold: 0.2f,
