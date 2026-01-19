@@ -17,8 +17,6 @@ public class EliteRipAction : IEnemyAction
     private float _ratio;
     private bool _isFinished;
 
-    private bool _cycleEnded;
-
     public bool IsFinished => _isFinished;
 
     public EliteRipAction(
@@ -85,22 +83,27 @@ public class EliteRipAction : IEnemyAction
     // 애니메이션 이벤트
     public void OnAnimStart()
     {
-        _cycleEnded = false;
+
     }
 
     public void OnHitStart()
     {
+#if UNITY_EDITOR
+        Debug.Log($"난도질 히트 시작");
+#endif
         _hitbox?.Enable(_damagePerHit, _ripKnockbackDistance);
     }
 
     public void OnHitEnd()
     {
+#if UNITY_EDITOR
+        Debug.Log($"난도질 히트 종료");
+#endif
         _hitbox?.Disable();
     }
 
     public void OnAnimEnd()
     {
-        _hitbox?.Disable();
-        _cycleEnded = true;
+
     }
 }
