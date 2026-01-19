@@ -1,8 +1,8 @@
 using UnityEngine;
+using UnityEngine.AI;
 using System;
 using System.Collections;
 using _02.Scripts.Player.Interfaces;
-using UnityEngine.AI;
 
 public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
@@ -211,6 +211,17 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         }
     }
 
+    private void StopOnHit(float time)
+    {
+        if (_movement == null)
+        {
+            return;
+        }
+        _movement.ApplyHitStop(time);
+    }
+
+    #endregion
+
     #region Play Sfx
 
     private void PlaySfx_Hit()
@@ -228,23 +239,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         SoundManager.Instance.PlaySfx(key, transform);
     }
-
-    #endregion
-
-    #region Hit
-
-    private void StopOnHit(float time)
-    {
-        if (_movement == null)
-        {
-            return;
-        }
-        _movement.ApplyHitStop(time);
-    }
-
-    #endregion
-
-    #region Die and Despawn
 
     #endregion
 
@@ -292,4 +286,5 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     }
 
     #endregion
+
 }
