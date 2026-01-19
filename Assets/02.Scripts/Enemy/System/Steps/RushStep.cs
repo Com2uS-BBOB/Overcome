@@ -6,6 +6,7 @@ public class RushStep : IEnemyAttackStep
 
     private readonly float _cooldownMin;
     private readonly float _cooldownMax;
+    private readonly float _attackDelay;
     private readonly float _rushDuration;
 
     private readonly EnemyAttack _attack;
@@ -21,13 +22,14 @@ public class RushStep : IEnemyAttackStep
         EnemyAttackPatternContext context,
         float cooldownMin,
         float cooldownMax,
-        float rushDuration,
-        float rushRange = 999f
+        float attackDelay,
+        float rushDuration
     )
     {
         _context = context;
         _cooldownMin = cooldownMin;
         _cooldownMax = cooldownMax;
+        _attackDelay = attackDelay;
         _rushDuration = rushDuration;
 
         _attack = _context.Enemy.GetComponent<EnemyAttack>();
@@ -55,7 +57,7 @@ public class RushStep : IEnemyAttackStep
         bool granted = (_context.AttackDirector == null) || _context.AttackDirector.TryReserve(_context.Enemy);
         if (!granted)
         {
-            _nextTime = Time.time + 0.2f;
+            _nextTime = Time.time + _attackDelay;
             return false;
         }
         _reserved = (_context.AttackDirector != null);
@@ -83,8 +85,7 @@ public class RushStep : IEnemyAttackStep
 
         if (_rush.IsFinished)
         {
-            _rush.Exit();
-            _rush = null;
+            CleanupRush();
 
             if (_reserved)
             {
@@ -102,8 +103,7 @@ public class RushStep : IEnemyAttackStep
     {
         if (_rush != null)
         {
-            _rush.Exit();
-            _rush = null;
+            CleanupRush();
         }
 
         if (_reserved)
@@ -111,6 +111,12 @@ public class RushStep : IEnemyAttackStep
             _context.AttackDirector?.Release(_context.Enemy);
             _reserved = false;
         }
+    }
+
+    private void CleanupRush()
+    {
+        _rush.Exit();
+        _rush = null;
     }
 
     public void OnAnimEvent(EAttackAnimEvent animEvent) { }

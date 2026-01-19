@@ -8,6 +8,7 @@ public class AttackWaitAction : IEnemyAction
     private readonly EnemyMovement _movement;
     private readonly EnemySlotCoordinator _slotCoordinator;
     private readonly NavMeshAgent _agent;
+    private readonly EnemyAnimatorController _anim;
     private readonly AttackWaitActionConfig _actionConfig;
 
     private float _timer;
@@ -23,7 +24,7 @@ public class AttackWaitAction : IEnemyAction
     // 대기 모드 관련 설정
     private float _minModeTime = 0.4f;
     private float _maxModeTime = 1.0f;
-    private float _shuffleAngle = 35f;     // 원호 이동 각도
+    private float _shuffleAngle = 40f;     // 원호 이동 각도
     private float _feintDistance = 1.4f;
     private float _navSampleRadius = 1.5f;
 
@@ -43,6 +44,7 @@ public class AttackWaitAction : IEnemyAction
         EnemyMovement movement,
         EnemySlotCoordinator slotCoordinator,
         NavMeshAgent agent,
+        EnemyAnimatorController anim,
         AttackWaitActionConfig config
     )
     {
@@ -51,6 +53,7 @@ public class AttackWaitAction : IEnemyAction
         _movement = movement;
         _slotCoordinator = slotCoordinator;
         _agent = agent;
+        _anim = anim;
         _actionConfig = config;
     }
 
@@ -67,6 +70,7 @@ public class AttackWaitAction : IEnemyAction
 
         if (_mySlotIndex < 0) return;
 
+        _anim.SetWait(true);
         _agent.isStopped = false;
         _movement.SetRotationToLookAt(_player);
 
@@ -201,6 +205,8 @@ public class AttackWaitAction : IEnemyAction
             _agent.ResetPath();
             _agent.isStopped = true;
         }
+
+        _anim.SetWait(false);
 
         if (_actionConfig.ReleaseSlotOnExit)
         {
