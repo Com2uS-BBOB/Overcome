@@ -182,8 +182,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public virtual void TakeDamage(float damage, GameObject attacker = null)
     {
-        if (IsDead) return;
-        if (IsSpawnGap) return;
+        if (IsDead)
+        {
+            return;
+        }
+        if (IsSpawnGap)
+        {
+            return;
+        }
 
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(_currentHealth, 0);
@@ -202,7 +208,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private void StopOnHit(float time)
     {
-        if (_movement == null) return;
+        if (_movement == null)
+        {
+            return;
+        }
         _movement.ApplyHitStop(time);
     }
 
@@ -212,7 +221,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void Die()
     {
-        if (_despawnRequested) return;
+        if (_despawnRequested)
+        {
+            return;
+        }
         _despawnRequested = true;
 
         _movement?.FullStop ();
@@ -236,7 +248,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private void DoDespawn()
     {
-        if (!_despawnRequested) return; // 혹시 모를 중복 방지
+        // 혹시 모를 중복 방지
+        if (!_despawnRequested)
+        {
+            return;
+        }
 
         _despawnRequested = false;
 

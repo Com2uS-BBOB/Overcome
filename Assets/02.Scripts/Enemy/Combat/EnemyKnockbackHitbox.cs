@@ -130,15 +130,27 @@ public class EnemyKnockbackHitbox : HitboxBase
         for (int i = 0; i < overlaps.Length; i++)
         {
             Collider collider = overlaps[i];
-            if (collider == null || collider == myCollider) continue;
-            if (ShouldIgnore(collider)) continue;
+            if (collider == null || collider == myCollider)
+            {
+                continue;
+            }
+            if (ShouldIgnore(collider))
+            {
+                continue;
+            }
 
             // 플레이어 계층인지 먼저 확정
             var player = collider.GetComponentInParent<PlayerController>();
-            if (player == null) continue;
+            if (player == null)
+            {
+                continue;
+            }
 
             // 플레이어 루트 기준 중복 방지
-            if (!processedPlayers.Add(player)) continue;
+            if (!processedPlayers.Add(player))
+            {
+                continue;
+            }
 
             // 플레이어의 IDamageable 자식에서 찾음
             IDamageable dmg = collider.GetComponent<IDamageable>() ??
@@ -148,7 +160,10 @@ public class EnemyKnockbackHitbox : HitboxBase
             {
                 dmg = player.GetComponentInChildren<IDamageable>(includeInactive: true);
             }
-            if (dmg == null) continue;
+            if (dmg == null)
+            {
+                continue;
+            }
 
             dmg.TakeDamage(_damage, GetOwner());
             OnHitSuccess(collider, dmg);
