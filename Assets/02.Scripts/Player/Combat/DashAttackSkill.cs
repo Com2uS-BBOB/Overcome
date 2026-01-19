@@ -4,7 +4,6 @@ using UnityEngine;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Interfaces;
 using _02.Scripts.Player.Data;
-using _02.Scripts.CameraFX;
 
 namespace _02.Scripts.Player.Combat
 {
@@ -44,7 +43,6 @@ namespace _02.Scripts.Player.Combat
         public event Action OnDashStarted;
         public event Action OnDashEnded;
         public event Action<IDamageable, float> OnEnemyHit;
-        public event Action OnCooldownReset;
 
         private void Awake()
         {
@@ -57,18 +55,11 @@ namespace _02.Scripts.Player.Combat
         private void OnEnable()
         {
             if (_hitbox != null) _hitbox.OnHit += HandleHit;
-            EnemyEventController.Enemy.OnKilled += HandleEnemyKilled;
         }
 
         private void OnDisable()
         {
             if (_hitbox != null) _hitbox.OnHit -= HandleHit;
-            EnemyEventController.Enemy.OnKilled -= HandleEnemyKilled;
-        }
-
-        private void HandleEnemyKilled(EnemyKilledEvent e)
-        {
-            ResetCooldown();
         }
 
         public void Initialize(PlayerStats stats) => _stats = stats;
@@ -91,10 +82,6 @@ namespace _02.Scripts.Player.Combat
             OnDashStarted?.Invoke();
             OnSkillUsed?.Invoke();
 
-            // 카메라 효과: FOV 확대 (스피드감)
-            CameraEffectsManager.Instance?.StartDashFOV();
-            
-
             // 히트박스 활성화
             _hitbox?.EnableHitDetection(_dashDamage);
 
@@ -107,16 +94,6 @@ namespace _02.Scripts.Player.Combat
                 Physics.IgnoreLayerCollision(playerLayer, enemyLayer, true);
 
             Vector3 dashDirection = _cameraTransform.forward;
-
-            // 플레이어를 대시 방향으로 회전 (Y축만, 수평 방향)
-            Vector3 horizontalDirection = dashDirection;
-            horizontalDirection.y = 0f;
-            if (horizontalDirection.sqrMagnitude > 0.01f)
-            {
-                horizontalDirection.Normalize();
-                transform.rotation = Quaternion.LookRotation(horizontalDirection);
-            }
-
             float dashSpeed = DashDistance / _dashDuration;
 
             float elapsed = 0f;
@@ -134,17 +111,10 @@ namespace _02.Scripts.Player.Combat
             // 히트박스 비활성화
             _hitbox?.DisableHitDetection();
 
-            // 카메라 효과: FOV 복귀
-            CameraEffectsManager.Instance?.EndDashFOV();
-
             _isDashing = false;
             OnDashEnded?.Invoke();
         }
 
-        public void ResetCooldown()
-        {
-            _cooldownManager.Reset(CooldownKey);
-            OnCooldownReset?.Invoke();
-        }
+        public void ResetCooldown() => _cooldownManager.Reset(CooldownKey);
     }
 }

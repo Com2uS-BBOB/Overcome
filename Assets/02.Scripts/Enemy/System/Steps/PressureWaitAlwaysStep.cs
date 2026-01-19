@@ -23,6 +23,7 @@ public class PressureWaitAlwaysStep : IEnemyAttackAlwaysStep
             _context.Movement,
             _context.SlotCoordinator,
             _context.Agent,
+            _context.Anim,
             _config
         );
         _pressure.Enter();
