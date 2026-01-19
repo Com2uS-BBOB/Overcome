@@ -1,9 +1,9 @@
+using UnityEngine;
+using System.Collections;
+using System.Collections.Generic;
 using _02.Scripts.Player.Common;
 using _02.Scripts.Player.Core;
-using _02.Scripts.Player.Data;
 using _02.Scripts.Player.Interfaces;
-using System.Collections;
-using UnityEngine;
 
 public class EnemyKnockbackHitbox : HitboxBase
 {
@@ -12,7 +12,10 @@ public class EnemyKnockbackHitbox : HitboxBase
     [SerializeField] private float _knockbackDuration = 0.2f;
     [SerializeField] private float _defaultKnockbackDistance = 2f;  // 기본값
     private float _currentKnockbackDistance;
-    private KnockbackLevel _currentKnockbackLevel = KnockbackLevel.Light;
+
+    [Header("레이어 마스크")]
+    [SerializeField] private LayerMask _enemyMask = 0;
+    [SerializeField] private LayerMask _playerMask = 0;
 
     private Coroutine _knockbackRoutine;
 
@@ -33,15 +36,6 @@ public class EnemyKnockbackHitbox : HitboxBase
     public void Enable(float damage, float knockbackDistance)
     {
         _currentKnockbackDistance = Mathf.Max(0f, knockbackDistance);
-        _currentKnockbackLevel = KnockbackLevel.Light;
-        EnableHitDetection(damage);
-    }
-
-    // 공격별 넉백 + 레벨 지정 (카메라 쉐이크 강도용)
-    public void Enable(float damage, float knockbackDistance, KnockbackLevel knockbackLevel)
-    {
-        _currentKnockbackDistance = Mathf.Max(0f, knockbackDistance);
-        _currentKnockbackLevel = knockbackLevel;
         EnableHitDetection(damage);
     }
 
@@ -52,11 +46,17 @@ public class EnemyKnockbackHitbox : HitboxBase
 
     protected override bool ShouldIgnore(Collider other)
     {
-        // 자기 자신
-        if (other.transform.root == transform.root) return true;
+        // 자기 자신 무시
+        if (other.transform.root == transform.root)
+        {
+            return true;
+        }
 
-        // 적
-        if (other.transform.root.GetComponent<EnemyBase>()) return true;
+        // Enemy 레이어 무시
+        if (((1 << other.gameObject.layer) & _enemyMask) != 0)
+        {
+            return true;
+        }
 
         return false;
     }
@@ -70,11 +70,13 @@ public class EnemyKnockbackHitbox : HitboxBase
 
         if (!_useKnockback) return;
 
-        var player = other.GetComponent<PlayerController>();
+        var player = other.GetComponentInParent<PlayerController>();
         if (player == null) return;
 
-        Vector3 direction = (other.transform.position - transform.position);
+        Vector3 direction = (player.transform.position - transform.position);
         direction.y = 0f;
+
+        if (direction.sqrMagnitude < 0.0001f) return;
         direction.Normalize();
 
         if (_knockbackRoutine != null)
@@ -118,48 +120,55 @@ public class EnemyKnockbackHitbox : HitboxBase
             myCollider.bounds.center,
             myCollider.bounds.extents,
             myCollider.transform.rotation,
-            ~0,
-            QueryTriggerInteraction.Ignore
+            _playerMask,
+            QueryTriggerInteraction.Collide
         );
 
-        foreach (var collider in overlaps)
+        // 플레이어 루트 기준 1회만 맞도록 하기
+        var processedPlayers = new HashSet<PlayerController>();
+
+        for (int i = 0; i < overlaps.Length; i++)
         {
-            if (collider == myCollider) continue;
-            ProcessHit(collider);
+            Collider collider = overlaps[i];
+            if (collider == null || collider == myCollider)
+            {
+                continue;
+            }
+            if (ShouldIgnore(collider))
+            {
+                continue;
+            }
+
+            // 플레이어 계층인지 먼저 확정
+            var player = collider.GetComponentInParent<PlayerController>();
+            if (player == null)
+            {
+                continue;
+            }
+
+            // 플레이어 루트 기준 중복 방지
+            if (!processedPlayers.Add(player))
+            {
+                continue;
+            }
+
+            // 플레이어의 IDamageable 자식에서 찾음
+            IDamageable dmg = collider.GetComponent<IDamageable>() ??
+                collider.GetComponentInParent<IDamageable>();
+
+            if (dmg == null)
+            {
+                dmg = player.GetComponentInChildren<IDamageable>(includeInactive: true);
+            }
+            if (dmg == null)
+            {
+                continue;
+            }
+
+            dmg.TakeDamage(_damage, GetOwner());
+            OnHitSuccess(collider, dmg);
         }
     }
 
-    protected override void ProcessHit(Collider other)
-    {
-        if (ShouldIgnore(other)) return;
-
-        var damageable = other.GetComponent<IDamageable>();
-        if (damageable == null) return;
-        if (_hitTargets.Contains(damageable)) return;
-
-        _hitTargets.Add(damageable);
-
-        // PlayerStats인 경우 KnockbackLevel을 포함한 AttackInfo로 전달 (카메라 쉐이크용)
-        var playerStats = other.GetComponent<PlayerStats>();
-        if (playerStats != null)
-        {
-            Vector3 direction = (other.transform.position - transform.position);
-            direction.y = 0f;
-            direction.Normalize();
-
-            var attackInfo = new AttackInfo(
-                _damage,
-                _currentKnockbackLevel,
-                direction,
-                transform.root.gameObject
-            );
-            playerStats.TakeDamage(attackInfo);
-        }
-        else
-        {
-            damageable.TakeDamage(_damage, GetOwner());
-        }
-
-        OnHitSuccess(other, damageable);
-    }
+    protected override GameObject GetOwner() => transform.root.gameObject;
 }

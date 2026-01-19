@@ -1,4 +1,3 @@
-using _02.Scripts.Player.Data;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -14,12 +13,9 @@ public class EliteRipAction : IEnemyAction
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;
     private readonly float _ripKnockbackDistance;
-    private readonly KnockbackLevel _knockbackLevel;
 
     private float _ratio;
     private bool _isFinished;
-
-    private bool _cycleEnded;
 
     public bool IsFinished => _isFinished;
 
@@ -32,8 +28,7 @@ public class EliteRipAction : IEnemyAction
         EnemyAnimatorController anim,
         float damagePerHit,
         float ripMoveSpeed,
-        float ripKnockbackDistance,
-        KnockbackLevel knockbackLevel = KnockbackLevel.Light
+        float ripKnockbackDistance
     )
     {
         _enemy = enemy;
@@ -45,7 +40,6 @@ public class EliteRipAction : IEnemyAction
         _damagePerHit = damagePerHit;
         _ripMoveSpeed = ripMoveSpeed;
         _ripKnockbackDistance = ripKnockbackDistance;
-        _knockbackLevel = knockbackLevel;
     }
 
     public void Enter()
@@ -89,22 +83,27 @@ public class EliteRipAction : IEnemyAction
     // 애니메이션 이벤트
     public void OnAnimStart()
     {
-        _cycleEnded = false;
+
     }
 
     public void OnHitStart()
     {
-        _hitbox?.Enable(_damagePerHit, _ripKnockbackDistance, _knockbackLevel);
+#if UNITY_EDITOR
+        Debug.Log($"난도질 히트 시작");
+#endif
+        _hitbox?.Enable(_damagePerHit, _ripKnockbackDistance);
     }
 
     public void OnHitEnd()
     {
+#if UNITY_EDITOR
+        Debug.Log($"난도질 히트 종료");
+#endif
         _hitbox?.Disable();
     }
 
     public void OnAnimEnd()
     {
-        _hitbox?.Disable();
-        _cycleEnded = true;
+
     }
 }
