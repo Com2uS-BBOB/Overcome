@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace _02.Scripts.Player.Data
 {
@@ -15,7 +16,7 @@ namespace _02.Scripts.Player.Data
     /// <summary>
     /// 공격 정보 (적 공격에서 플레이어 피격 시스템으로 전달)
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public struct AttackInfo
     {
         public float Damage;
