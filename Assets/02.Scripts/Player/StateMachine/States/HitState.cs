@@ -9,7 +9,7 @@ namespace _02.Scripts.Player.StateMachine.States
     /// 피격 상태
     /// - 0.3초 경직
     /// - 가드 입력만 허용
-    /// - 넉백 레벨에 따른 밀림
+    /// - 넉백은 EnemyKnockbackHitbox에서 처리
     /// </summary>
     public class HitState : PlayerStateBase
     {
@@ -18,8 +18,6 @@ namespace _02.Scripts.Player.StateMachine.States
 
         private float _hitTimer;
         private AttackInfo _attackInfo;
-        private Vector3 _knockbackVelocity;
-        private float _knockbackTimer;
 
         public HitState(PlayerController controller, PlayerStateMachine stateMachine,
             GuardSettings guardSettings, GuardManager guardManager)
@@ -40,21 +38,6 @@ namespace _02.Scripts.Player.StateMachine.States
         public override void Enter()
         {
             _hitTimer = 0f;
-            _knockbackTimer = 0f;
-
-            // 넉백 속도 계산
-            if (_attackInfo.KnockbackLevel != KnockbackLevel.None && _attackInfo.KnockbackDuration > 0f)
-            {
-                float speed = _attackInfo.KnockbackDistance / _attackInfo.KnockbackDuration;
-                Vector3 knockbackDir = _attackInfo.Direction;
-                knockbackDir.y = 0f;
-                knockbackDir.Normalize();
-                _knockbackVelocity = knockbackDir * speed;
-            }
-            else
-            {
-                _knockbackVelocity = Vector3.zero;
-            }
 
             // 피격 애니메이션 재생
             Controller.PlayerAnimatorController?.PlayHit();
@@ -71,14 +54,7 @@ namespace _02.Scripts.Player.StateMachine.States
         {
             _hitTimer += Time.deltaTime;
 
-            // 넉백 적용
-            if (_knockbackVelocity.sqrMagnitude > 0.01f && _knockbackTimer < _attackInfo.KnockbackDuration)
-            {
-                _knockbackTimer += Time.deltaTime;
-                CharacterController.Move(_knockbackVelocity * Time.deltaTime);
-            }
-
-            // 피격 시간 종료
+            // 피격 시간 종료 (넉백은 EnemyKnockbackHitbox에서 처리)
             if (_hitTimer >= _guardSettings.HitStaggerDuration)
             {
                 ReturnToNormalState();
@@ -88,7 +64,6 @@ namespace _02.Scripts.Player.StateMachine.States
         public override void Exit()
         {
             Input.OnGuardStarted -= HandleGuardInput;
-            _knockbackVelocity = Vector3.zero;
         }
 
         private void HandleGuardInput()

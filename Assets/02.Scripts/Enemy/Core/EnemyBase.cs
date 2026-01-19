@@ -1,8 +1,8 @@
 using UnityEngine;
-using UnityEngine.AI;
 using System;
 using System.Collections;
 using _02.Scripts.Player.Interfaces;
+using UnityEngine.AI;
 
 public abstract class EnemyBase : MonoBehaviour, IDamageable
 {
@@ -11,24 +11,17 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public EnemyStatData EnemyStatData { get; private set; }
 
     private EnemyAnimatorController _anim;
-    private Collider _collider;
 
     protected float _currentHealth;
 
     [Header("스폰 높이")]
     [SerializeField] private float _spawnHeight = 0f;  // 바닥과 적의 중심 높이 차이
 
-    [Header("스폰 텀")]
-    [SerializeField] private float _spawnGapTime = 0.6f;
-
-    private Coroutine _spawnGapRoutine;
-    public bool IsSpawnGap { get; private set; }
-
     private float _hitStopTime = 0.24f;  // Hit 시 적이 멈춰있는 시간
     private Coroutine _hitStopRoutine;
 
-    public virtual bool CanMove => !IsSpawnGap;
-    public virtual bool CanReturn => !IsSpawnGap;
+    public virtual bool CanMove => true;
+    public virtual bool CanReturn => true;
     public virtual bool CanAttack => true;
 
     private EnemyPool _pool;
@@ -57,7 +50,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _anim = GetComponent<EnemyAnimatorController>();
         _movement = GetComponent<EnemyMovement>();
         _agent = GetComponent<NavMeshAgent>();
-        _collider = GetComponent<Collider>();
     }
 
     public void Initialize(EnemyStatData statData)
@@ -81,7 +73,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (EnemyStatData == null) return;
 
-        _collider.enabled = true;
         _despawnRequested = false;
 
         _currentHealth = EnemyStatData.MaxHealth;
@@ -89,8 +80,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         _anim?.ReviveReset();
         _movement?.ForceUnlockAll();
-
-        BeginSpawnGap();
     }
 
     protected virtual void OnDisable()
@@ -101,14 +90,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             StopCoroutine(_hitStopRoutine);
             _hitStopRoutine = null;
         }
-
-        if (_spawnGapRoutine != null)
-        {
-            StopCoroutine(_spawnGapRoutine);
-            _spawnGapRoutine = null;
-        }
-
-        IsSpawnGap = false;
     }
 
     public void SetPool(EnemyPool pool)
@@ -142,54 +123,9 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         return _spawnHeight;
     }
 
-    #region Spawn Gap
-
-    private void BeginSpawnGap()
-    {
-        // 풀링 중복 방지
-        if (_spawnGapRoutine != null)
-        {
-            StopCoroutine(_spawnGapRoutine);
-            _spawnGapRoutine = null;
-        }
-
-        IsSpawnGap = true;
-
-        // 이동/공격을 확실히 끊기 (안전 장치)
-        _movement?.Stop();
-        _movement?.LockMovement(true, _spawnGapTime);
-
-        //todo. 스폰 이펙트 자리
-
-        _spawnGapRoutine = StartCoroutine(SpawnGap_Coroutine());
-    }
-
-    private IEnumerator SpawnGap_Coroutine()
-    {
-        yield return new WaitForSeconds(_spawnGapTime);
-
-        // 죽었거나 비활성화면 해제하지 않음
-        if (!gameObject.activeInHierarchy) yield break;
-        if (IsDead) yield break;
-
-        IsSpawnGap = false;
-        _movement?.LockMovement(false);
-    }
-
-    #endregion
-
-    #region Hit
-
     public virtual void TakeDamage(float damage, GameObject attacker = null)
     {
-        if (IsDead)
-        {
-            return;
-        }
-        if (IsSpawnGap)
-        {
-            return;
-        }
+        if (IsDead) return;
 
         _currentHealth -= damage;
         _currentHealth = Mathf.Max(_currentHealth, 0);
@@ -208,27 +144,33 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private void StopOnHit(float time)
     {
-        if (_movement == null)
+        if (_movement == null) return;
+
+        if (_hitStopRoutine != null)
         {
-            return;
+            StopCoroutine(_hitStopRoutine);
         }
-        _movement.ApplyHitStop(time);
+        _hitStopRoutine = StartCoroutine(HitStop_Coroutine(time));
     }
 
-    #endregion
+    private IEnumerator HitStop_Coroutine(float time)
+    {
+        _movement.LockMovement(true, time);
+        yield return new WaitForSeconds(time);
 
-    #region Die and Despawn
+        // 죽었다면 풀면 안 됨
+        if (!IsDead)
+        {
+            _movement.LockMovement(false);
+        }
+    }
 
     protected virtual void Die()
     {
-        if (_despawnRequested)
-        {
-            return;
-        }
+        if (_despawnRequested) return;
         _despawnRequested = true;
 
         _movement?.FullStop ();
-        _collider.enabled = false;
 
 #if UNITY_EDITOR
         Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");
@@ -248,17 +190,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private void DoDespawn()
     {
-        // 혹시 모를 중복 방지
-        if (!_despawnRequested)
-        {
-            return;
-        }
+        if (!_despawnRequested) return; // 혹시 모를 중복 방지
 
         _despawnRequested = false;
 
         _despawnHandler?.HandleDespawn(this);  // 스포너 / 풀링 처리 요청
         OnDespawn?.Invoke(this);
     }
-
-    #endregion
 }

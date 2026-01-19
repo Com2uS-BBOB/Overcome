@@ -15,8 +15,9 @@ public class NormalAttackPattern : IEnemyAttackPattern
             new HowlingStep(context, config.MeleeAttackRange, config.HowlDuration),
             new OpeningRushStep(context, config.OpeningRushDuration),
 
-            new RushStep(context, cooldownMin: config.MeleeCooldownMin, cooldownMax: config.MeleeCooldownMax,
-            attackDelay: config.MeleeAttackDelay, rushDuration: config.OpeningRushDuration),
+            new RecoveryStep(context),
+
+            new MeleeStep(context, config.MeleeCooldownMin, config.MeleeCooldownMax, config.MeleeAttackDelay, config.KnockbackDistance),
 
             new RecoveryStep(context)
         };

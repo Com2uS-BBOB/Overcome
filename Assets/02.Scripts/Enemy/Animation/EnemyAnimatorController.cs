@@ -35,9 +35,6 @@ public class EnemyAnimatorController : MonoBehaviour
     [SerializeField] private string _hitTriggerName = "Hit";
     [SerializeField] private string _deathTriggerName = "Death";
 
-    [Header("공격 대기 매개변수 명칭")]
-    [SerializeField] private string _waitBoolName = "Wait";
-
     [Header("엘리트 적 난도질 공격 매개변수 명칭")]
     [SerializeField] private string _ripBoolName = "Rip";
 
@@ -52,8 +49,6 @@ public class EnemyAnimatorController : MonoBehaviour
     private int _attackHash;
     private int _hitHash;
     private int _deathHash;
-
-    private int _waitHash;
 
     private int _ripHash;
 
@@ -82,7 +77,6 @@ public class EnemyAnimatorController : MonoBehaviour
         _hitHash = Animator.StringToHash(_hitTriggerName);
         _deathHash = Animator.StringToHash(_deathTriggerName);
 
-        _waitHash = Animator.StringToHash(_waitBoolName);
         _ripHash = Animator.StringToHash(_ripBoolName);
 
         _fallingHash = Animator.StringToHash(_fallingTriggerName);
@@ -98,7 +92,6 @@ public class EnemyAnimatorController : MonoBehaviour
 
         // Bools
         _resetBoolHashes.Add(_moveHash);
-        _resetBoolHashes.Add(_waitHash);
         _resetBoolHashes.Add(_ripHash);
 
         // Combat Triggers
@@ -144,18 +137,6 @@ public class EnemyAnimatorController : MonoBehaviour
     {
         if (_isDead || _animator == null) return;
         _animator.SetBool(_moveHash, isMoving);
-    }
-
-    public void SetWait(bool isWaiting)
-    {
-        if (_isDead || _animator == null) return;
-
-        if (isWaiting)
-        {
-            ClearCombatTriggersOnly();
-        }
-
-        _animator.SetBool(_waitHash, isWaiting);
     }
 
     public void SetRip(bool isRipping)
