@@ -12,6 +12,9 @@ public class SceneController : SingletonBehaviour<SceneController>
     public event Action<ESceneType> OnSceneChanged;
     public ESceneType CurrentScene => _currentScene;
     public bool IsLoading => _isLoading;
+
+    // LoadingScene에서 접근할 타겟 씬
+    public static ESceneType TargetScene { get; private set; }
     
     protected override void Init()
     {
@@ -74,14 +77,21 @@ public class SceneController : SingletonBehaviour<SceneController>
             return;
         }
         _currentScene = sceneType;
+
+        if (_isLoading && sceneType == TargetScene)
+        {
+            _isLoading = false;
+        }
+
         OnSceneChanged?.Invoke(sceneType);
     }
 
-    public void LoadScene(ESceneType nextScene)
+    private bool LoadScene(ESceneType nextScene)
     {
-        if (!_sceneNameMap.TryGetValue(nextScene, out string sceneName)) return;
+        if (!_sceneNameMap.TryGetValue(nextScene, out string sceneName)) return false;
 
         SceneManager.LoadScene(sceneName);
+        return true;
     }
 
     public void LoadSceneAsync(ESceneType nextScene)
@@ -89,34 +99,14 @@ public class SceneController : SingletonBehaviour<SceneController>
         if (_isLoading) return;
         if (!_sceneNameMap.TryGetValue(nextScene, out string sceneName)) return;
 
-        StartCoroutine(LoadSceneCoroutine(sceneName));
+        _isLoading = true;
+        TargetScene = nextScene;
+        if (LoadScene(ESceneType.LoadingScene)) return;
+        _isLoading = false;
     }
 
     public void ReloadCurrentScene()
     {
         LoadSceneAsync(_currentScene);
-    }
-
-    private IEnumerator LoadSceneCoroutine(string nextScene)
-    {
-        _isLoading = true;
-        // todo. Loading UI(또는 Scene) 표시
-
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(nextScene);
-        asyncLoad.allowSceneActivation = false;
-
-        while (!asyncLoad.isDone)
-        {
-            float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
-            // todo. Loading Ui Update
-            if (progress >= 1.0f)
-            {
-                asyncLoad.allowSceneActivation = true;
-            }
-            yield return null;
-        }
-
-        // todo. Loading UI(또는 Scene) 제거
-        _isLoading = false;
     }
 }

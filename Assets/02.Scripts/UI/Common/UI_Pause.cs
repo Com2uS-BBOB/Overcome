@@ -57,12 +57,12 @@ public class UI_Pause : BaseUI
 
     public void GotoLobby()
     {
-        SceneController.Instance.LoadScene(ESceneType.LobbyScene);
+        SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
     }
 
     public void GotoTitle()
     {
-        SceneController.Instance.LoadScene(ESceneType.LoginScene);
+        SceneController.Instance.LoadSceneAsync(ESceneType.LoginScene);
     }
 
     public void ExitGame()
