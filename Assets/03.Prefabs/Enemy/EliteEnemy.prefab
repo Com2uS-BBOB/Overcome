@@ -57,6 +57,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+  - {fileID: 2100000, guid: 714c132163a8c1c478d7ad3d496c89f1, type: 2}
   - {fileID: 2100000, guid: 677c56dffb9f8f74887bb027007a4b58, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -231,7 +232,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a0983cd87f441ca4589898f80659878a, type: 2}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -274,7 +275,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.1
+  m_Radius: 1
   m_Height: 2.5
   m_Direction: 2
   m_Center: {x: 0, y: -0.1, z: 0.15}
@@ -291,6 +292,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BigEnemy
   _spawnHeight: 0
+  _spawnGapTime: 0.6
 --- !u!114 &-6883950643001174605
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,12 +323,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56f7fe0cecdb42045bc6dd703591ef41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
-  _detectRange: 20
+  _detectRange: 28
   _standOffDistance: 8.5
   _standOffRepathInterval: 0.4
-  _outRange: 28
+  _outRange: 38
   _returnStopDistance: 0.3
-  _attackRange: 20
+  _attackRange: 28
 --- !u!114 &-6303558022810326248
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -441,6 +443,7 @@ MonoBehaviour:
   _attackTriggerName: Attack
   _hitTriggerName: Hit
   _deathTriggerName: Death
+  _waitBoolName: Wait
   _ripBoolName: Rip
   _fallingTriggerName: Falling
   _onGroundTriggerName: OnGround
@@ -664,7 +667,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 166, y: 21}
+  m_SizeDelta: {x: 100, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3530484968068948657
 CanvasRenderer:
@@ -816,7 +819,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 310, y: 80}
+  m_SizeDelta: {x: 198, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8647098671589723412
 CanvasRenderer:
@@ -846,7 +849,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fc01a4a612e79e14094d3a06a0ac5f35, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6d0e7b4cbc31762469067cda2c4136f9, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1405,7 +1408,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 310, y: 80}
+  m_SizeDelta: {x: 198, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6312337607593611778
 CanvasRenderer:
@@ -1435,7 +1438,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fc01a4a612e79e14094d3a06a0ac5f35, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6d0e7b4cbc31762469067cda2c4136f9, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -2183,7 +2186,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 165, y: 20}
+  m_SizeDelta: {x: 100, y: 4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2364469122391346348
 CanvasRenderer:
@@ -2234,6 +2237,7 @@ GameObject:
   - component: {fileID: 8876313357913329424}
   - component: {fileID: 8696602342276224037}
   - component: {fileID: 8676646909896205942}
+  - component: {fileID: 6378804082747023258}
   m_Layer: 7
   m_Name: RipAttackHitbox
   m_TagString: Untagged
@@ -2250,7 +2254,7 @@ Transform:
   m_GameObject: {fileID: 8015929198958707385}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.33, z: 1.59}
+  m_LocalPosition: {x: 0, y: -0.2, z: 1.5}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2295,6 +2299,25 @@ MonoBehaviour:
   _useKnockback: 1
   _knockbackDuration: 0.2
   _defaultKnockbackDistance: 1
+  _enemyMask:
+    serializedVersion: 2
+    m_Bits: 128
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 256
+--- !u!114 &6378804082747023258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8015929198958707385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e72ca1a0405244aabb4048a05c4016, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 2
 --- !u!1 &8063700974331820211
 GameObject:
   m_ObjectHideFlags: 0
@@ -2501,6 +2524,7 @@ GameObject:
   - component: {fileID: 1251226409437271868}
   - component: {fileID: 8837359365556749323}
   - component: {fileID: 3503943041545228798}
+  - component: {fileID: 6657301363836183266}
   m_Layer: 7
   m_Name: Canvas
   m_TagString: Untagged
@@ -2527,7 +2551,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1.6}
+  m_AnchoredPosition: {x: 0, y: 1.4}
   m_SizeDelta: {x: 100, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &4889231718152114935
@@ -2605,16 +2629,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
+  _canvasGroup: {fileID: 6657301363836183266}
   _healthFill: {fileID: 4764286757871144382}
   _healthDelay: {fileID: 1636371631435820403}
   _healthBorder: {fileID: 344629847773328072}
-  _normalBorderColor: {r: 0.19607843, g: 0.83137256, b: 0, a: 0.7058824}
-  _lowHpBorderColor: {r: 1, g: 0.55, b: 0, a: 0.7058824}
-  _lowHpThreshold: 0.5
-  _borderLerpSpeed: 6
-  _pulseOnlyElite: 1
-  _pulseSpeed: 6
-  _pulseAmount: 0.7
   _fillSpeed: 8
   _delaySpeed: 5
   _delayTime: 0.2
@@ -2630,6 +2648,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0228fe69fa8eef74799f1847f2dec21b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Billboard
+--- !u!225 &6657301363836183266
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8501243394835224492}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &8641275472943622570
 GameObject:
   m_ObjectHideFlags: 0
@@ -2641,6 +2671,7 @@ GameObject:
   - component: {fileID: 7567722384238689130}
   - component: {fileID: 3874167494632531717}
   - component: {fileID: 5718133852861008923}
+  - component: {fileID: 5973486785264137649}
   m_Layer: 7
   m_Name: RushAttackHitbox
   m_TagString: Untagged
@@ -2682,10 +2713,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.1
-  m_Height: 2.5
+  m_Radius: 1.2
+  m_Height: 3.2
   m_Direction: 2
-  m_Center: {x: 0, y: -0.1, z: 0.15}
+  m_Center: {x: 0, y: 0.2, z: 0.2}
 --- !u!114 &5718133852861008923
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2702,6 +2733,25 @@ MonoBehaviour:
   _useKnockback: 1
   _knockbackDuration: 0.2
   _defaultKnockbackDistance: 2
+  _enemyMask:
+    serializedVersion: 2
+    m_Bits: 128
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 256
+--- !u!114 &5973486785264137649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8641275472943622570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e72ca1a0405244aabb4048a05c4016, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 0
 --- !u!1 &8675562003550863087
 GameObject:
   m_ObjectHideFlags: 0
@@ -2864,7 +2914,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 190, y: 44}
+  m_SizeDelta: {x: 126, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4265088115307233055
 CanvasRenderer:
@@ -2887,7 +2937,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.83137256, b: 0, a: 0.7058824}
+  m_Color: {r: 0.078431375, g: 0.078431375, b: 0.078431375, a: 0.83137256}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

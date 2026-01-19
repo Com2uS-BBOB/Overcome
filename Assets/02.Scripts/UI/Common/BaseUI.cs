@@ -1,52 +1,61 @@
 using System;
 using UnityEngine;
 
-public class BaseUIEvent
-{
-    public Action OnOpenComplete;
-    public Action OnCloseComplete;
-}
-
 public abstract class BaseUI : MonoBehaviour
 {
     public UIConfig Config;
-
-    public BaseUIEvent UIEventHandler;
-
-    protected virtual void Start()
+    
+    private float _prevTimeScale;
+    private CursorLockMode _cursorState;
+    private bool _cursorVisible;
+    
+    private void Awake()
     {
-        UIController.Instance.RegisterUI(this);
-        gameObject.SetActive(false);
+        Init();
     }
 
-    protected virtual void OnDestroy()
-    {
-        UIController.Instance.UnregisterUI(this);
-    }
-
+    protected virtual void Init() { }
+    
     public virtual void OnOpen()
     {
         gameObject.SetActive(true);
 
+        if (Config.PauseGame)
+        {
+            _prevTimeScale = Time.timeScale;
+            Time.timeScale = 0f;
+        }
+        if (Config.ShowCursor)
+        {
+            _cursorState = Cursor.lockState;
+            _cursorVisible = Cursor.visible;
+            
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+        }
         if (Config.UseTransition)
         {
             PlayOpenAnimation();
-        }
-        else
-        {
-            UIEventHandler?.OnOpenComplete?.Invoke();
         }
     }
 
     public virtual void OnClose()
     {
+        if (Config.PauseGame)
+        {
+            Time.timeScale = _prevTimeScale;
+        }
+        if (Config.ShowCursor)
+        {
+            Cursor.lockState = _cursorState;
+            Cursor.visible = _cursorVisible;
+        }
         if (Config.UseTransition)
         {
             PlayCloseAnimation();
         }
         else
         {
-            UIEventHandler?.OnCloseComplete?.Invoke();
             gameObject.SetActive(false);
         }
     }
@@ -54,9 +63,4 @@ public abstract class BaseUI : MonoBehaviour
     protected virtual void PlayOpenAnimation() { }
 
     protected virtual void PlayCloseAnimation() { }
-
-    public void BringToFront()
-    {
-        transform.SetAsLastSibling();
-    }
 }

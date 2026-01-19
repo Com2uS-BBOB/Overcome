@@ -1,141 +1,209 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 
 public class UIController : SingletonBehaviour<UIController>
 {
-    private readonly Dictionary<Type, BaseUI> _uiObjects = new Dictionary<Type, BaseUI>();
-    private readonly List<BaseUI> _activeUIObjects = new List<BaseUI>();
+    [SerializeField] private GameObject _popupCanvasPrefab;
+    [SerializeField] private GameObject _panelCanvasPrefab;
+    private Transform _popupUIRoot;
+    private Transform _panelUIRoot;
+    
+    // 지금 Hierarchy 창에 있는 UI 목록
+    private readonly Dictionary<Type, BaseUI> _uiInstances = new Dictionary<Type, BaseUI>();
+    
+    // 현재 활성화된 UI 목록
+    private readonly Dictionary<Type, BaseUI> _activeUI = new Dictionary<Type, BaseUI>();
+    private readonly List<BaseUI> _activeUIList = new List<BaseUI>();
+    
+    // Addressables
+    private readonly Dictionary<Type, AsyncOperationHandle<GameObject>> _loadedHandles = new Dictionary<Type, AsyncOperationHandle<GameObject>>();
+    private readonly HashSet<Type> _loadingUIs = new HashSet<Type>();
 
-    private int _pauseGameCount;
-    private int _showCursorCount;
-
-    private void OnEnable()
+    #region Unity Lifecycle Functions
+    protected override void Init()
     {
-        SceneManager.activeSceneChanged += OnSceneChanged;
-    }
+        GameObject popupUIRoot = Instantiate(_popupCanvasPrefab);
+        _popupUIRoot = popupUIRoot.transform;
+        DontDestroyOnLoad(_popupUIRoot);
 
-    private void OnDisable()
+        GameObject panelUIRoot = Instantiate(_panelCanvasPrefab);
+        _panelUIRoot = panelUIRoot.transform;
+        DontDestroyOnLoad(_panelUIRoot);
+        
+        SceneManager.sceneUnloaded += CloseAllActiveUI;
+    }
+    
+    protected override void Clear()
     {
-        SceneManager.activeSceneChanged -= OnSceneChanged;
+        ReleaseAll();
     }
-
-    private void OnSceneChanged(Scene previousScene, Scene currentScene)
-    {
-        ClearAllUI();
-    }
-
-    public void RegisterUI<T>(T ui) where T : BaseUI
-    {
-        _uiObjects.TryAdd(typeof(T), ui);
-    }
-
-    public void UnregisterUI(BaseUI ui)
-    {
-        if (ui == null)
-        {
-            return;
-        }
-
-        Type type = ui.GetType();
-        if (_activeUIObjects.Contains(ui))
-        {
-            CloseUI(ui);
-        }
-        _uiObjects.Remove(type);
-    }
-
-    private void ClearAllUI()
-    {
-        CloseAllUI();
-        _uiObjects.Clear();
-        _activeUIObjects.Clear();
-        _pauseGameCount = 0;
-        _showCursorCount = 0;
-    }
-
-    public void TryOpenUI<T>() where T : BaseUI
+    #endregion
+    
+    #region UI Functions (UI Open, Close)
+    public async Task<T> OpenUI<T>() where T : BaseUI
     {
         Type type = typeof(T);
-        if (IsUIOpen<T>()) return;
-        if (!_uiObjects.TryGetValue(type, out BaseUI ui)) return;
+        if (_loadingUIs.Contains(type)) return null;
 
-        _activeUIObjects.Add(ui);
-        ui.BringToFront();
-
-        var openEvent = new BaseUIEvent
+        if (_activeUI.TryGetValue(type, out BaseUI ui)) return ui as T;
+        
+        if (_uiInstances.TryGetValue(type, out BaseUI uiInstance))
         {
-            OnOpenComplete = () => HandleOpenEvent(ui.Config)
-        };
-        ui.UIEventHandler = openEvent;
+            ShowUI(uiInstance);
+            return uiInstance as T;
+        }
+
+        T newUI = await LoadUIAsync<T>();
+        if (newUI == null)
+        {
+            Debug.LogError($"[UIController] Failed to load {typeof(T)}");
+            return null;
+        }
+        ShowUI(newUI);
+        return newUI;
+    }
+    
+    private void ShowUI(BaseUI ui)
+    {
+        _activeUI.Add(ui.GetType(), ui);
+        _activeUIList.Add(ui);
         ui.OnOpen();
     }
 
     public void CloseUI<T>() where T : BaseUI
     {
-        Type type = typeof(T);
-        BaseUI ui = _activeUIObjects.FirstOrDefault(u => u.GetType() == type);
-        if (ui == null) return;
-        CloseUI(ui);
-    }
-
-    private void CloseUI(BaseUI ui)
-    {
-        var closeEvent = new BaseUIEvent
-        {
-            OnCloseComplete = () =>
-            {
-                HandleCloseEvent(ui.Config);
-                _activeUIObjects.Remove(ui);
-            }
-        };
-        ui.UIEventHandler = closeEvent;
+        if (!_activeUI.TryGetValue(typeof(T), out BaseUI ui)) return;
         ui.OnClose();
+        _activeUI.Remove(typeof(T));
+        _activeUIList.Remove(ui);
     }
 
-    public void CloseAllUI()
+    public void CloseUI(BaseUI ui)
     {
-        var uiList = new List<BaseUI>(_activeUIObjects);
+        if (ui == null) return;
+        Type type = ui.GetType();
+        if (!_activeUI.ContainsKey(type)) return;
 
-        foreach (var ui in uiList)
-        {
-            CloseUI(ui);
-        }
+        ui.OnClose();
+        _activeUI.Remove(type);
+        _activeUIList.Remove(ui);
     }
 
-    private void HandleOpenEvent(UIConfig config)
+    public bool CloseLastUI()
     {
-        if (config.PauseGame && ++_pauseGameCount == 1)
-        {
-            Time.timeScale = 0f;
-        }
-        if (config.ShowCursor && ++_showCursorCount == 1)
-        {
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-    }
+        if (_activeUIList.Count == 0) return false;
 
-    private void HandleCloseEvent(UIConfig config)
+        BaseUI lastOpenedUI = _activeUIList[^1];
+        _activeUI.Remove(lastOpenedUI.GetType());
+        _activeUIList.Remove(lastOpenedUI);
+
+        lastOpenedUI.OnClose();
+        return true;
+    }
+    
+    private void CloseAllActiveUI(Scene arg0)
     {
-        if (config.PauseGame && --_pauseGameCount <= 0)
+        while (_activeUIList.Count > 0)
         {
-            _pauseGameCount = 0;
-            Time.timeScale = 1f;
+            CloseLastUI();
         }
-        if (config.ShowCursor && --_showCursorCount <= 0)
+    }
+    #endregion
+    
+    #region Load UI Resource
+    private async Task<T> LoadUIAsync<T>() where T : BaseUI
+    {
+        Type type = typeof(T);
+        string addressID = type.Name;
+
+        // 이미 Loading 중인지 여부는 Open에서 처리
+        _loadingUIs.Add(type);
+
+        try
         {
-            _showCursorCount = 0;
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            AsyncOperationHandle<GameObject> handle = Addressables.LoadAssetAsync<GameObject>(addressID);
+            await handle.Task;
+
+            if (handle.Status != AsyncOperationStatus.Succeeded || handle.Result == null)
+            {
+                Addressables.Release(handle);
+                return null;
+            }
+
+            GameObject uiInstance = Instantiate(handle.Result, _popupUIRoot);
+            uiInstance.SetActive(false);
+
+            T uiComponent = uiInstance.GetComponent<T>();
+            if (uiComponent == null)
+            {
+                Destroy(uiInstance);
+                Addressables.Release(handle);
+                return null;
+            }
+
+            if (uiComponent.Config.UIType == EUIType.Panel)
+            {
+                uiInstance.transform.SetParent(_panelUIRoot);
+            }
+            _loadedHandles[type] = handle;
+            _uiInstances[type] = uiComponent;
+
+            return uiComponent;
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[UIController] Exception loading {type.Name}: {e}"); 
+            return null;
+        }
+        finally
+        {
+            _loadingUIs.Remove(type);
         }
     }
 
-    public T GetUI<T>() where T :  BaseUI => _uiObjects.TryGetValue(typeof(T), out BaseUI ui) ? ui as T : null;
-    public int GetActiveUICount() => _activeUIObjects.Count;
-    public BaseUI GetTopActiveUI() => _activeUIObjects.Count > 0 ? _activeUIObjects[^1] : null;
-    public bool IsUIActive(BaseUI ui) => _activeUIObjects.Contains(ui);
-    public bool IsUIOpen<T>() where T : BaseUI => _activeUIObjects.Any(ui => ui.GetType() == typeof(T));
+    private void ReleaseUI<T>() where T : BaseUI
+    {
+        Type type = typeof(T);
+        if (IsUIOpened<T>())
+        {
+            CloseUI<T>();
+        }
+
+        if (_uiInstances.TryGetValue(type, out BaseUI ui))
+        {
+            if (ui != null)
+            {
+                Destroy(ui.gameObject);
+            }
+            _uiInstances.Remove(type);
+        }
+        
+        if (_loadedHandles.TryGetValue(type, out AsyncOperationHandle<GameObject> handle))
+        {
+            Addressables.Release(handle);
+            _loadedHandles.Remove(type);
+        }
+    }
+
+    private void ReleaseAll()
+    {
+        foreach (AsyncOperationHandle<GameObject> handle in _loadedHandles.Values)
+        {
+            Addressables.Release(handle);
+        }
+        _loadedHandles.Clear();
+        _uiInstances.Clear();
+        _activeUI.Clear();
+        _activeUIList.Clear();
+    }
+    #endregion
+    
+    #region Query
+    public bool IsUIOpened<T>() where T : BaseUI => _activeUI.ContainsKey(typeof(T));
+    #endregion
 }

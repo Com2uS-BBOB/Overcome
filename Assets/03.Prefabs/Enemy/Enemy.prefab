@@ -207,7 +207,6 @@ Transform:
   - {fileID: 3978566322607720578}
   - {fileID: 1938847382036538795}
   - {fileID: 2853815737847424684}
-  - {fileID: 9036878028524386185}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3084042683147755784
@@ -243,7 +242,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 83296821a524fa0458e4f825bac12bf3, type: 2}
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -303,6 +302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NormalEnemy
   _spawnHeight: 0
+  _spawnGapTime: 0.6
 --- !u!114 &-1422018696626397053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -372,12 +372,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56f7fe0cecdb42045bc6dd703591ef41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyLogic
-  _detectRange: 10
+  _detectRange: 22
   _standOffDistance: 8.5
   _standOffRepathInterval: 0.25
-  _outRange: 18
+  _outRange: 32
   _returnStopDistance: 0.3
-  _attackRange: 10
+  _attackRange: 22
 --- !u!95 &3365919557704155484
 Animator:
   serializedVersion: 7
@@ -453,6 +453,7 @@ MonoBehaviour:
   _attackTriggerName: Attack
   _hitTriggerName: Hit
   _deathTriggerName: Death
+  _waitBoolName: Wait
   _ripBoolName: Rip
   _fallingTriggerName: Falling
   _onGroundTriggerName: OnGround
@@ -696,78 +697,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2703575413357545223}
   m_LocalEulerAnglesHint: {x: -0.00000081736533, y: -0.00000026876157, z: 11.076597}
---- !u!1 &1889792228766348922
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9036878028524386185}
-  - component: {fileID: 4608919677309041413}
-  - component: {fileID: 4356407818194440971}
-  m_Layer: 7
-  m_Name: BiteAttackHitbox
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9036878028524386185
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889792228766348922}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 2}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 550981490064128211}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!136 &4608919677309041413
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889792228766348922}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 2.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0.8}
---- !u!114 &4356407818194440971
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1889792228766348922}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1908e5a768471c94f92b5a89b68004dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyKnockbackHitbox
-  _spawnHitEffect: 0
-  _useKnockback: 1
-  _knockbackDuration: 0.2
-  _defaultKnockbackDistance: 2
 --- !u!1 &2095826785115124734
 GameObject:
   m_ObjectHideFlags: 0
@@ -806,7 +735,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 166, y: 21}
+  m_SizeDelta: {x: 72, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8416118905685066793
 CanvasRenderer:
@@ -902,13 +831,14 @@ GameObject:
   - component: {fileID: 2853815737847424684}
   - component: {fileID: 204808772961457264}
   - component: {fileID: 7416821247574110286}
+  - component: {fileID: 5260033513275630649}
   m_Layer: 7
   m_Name: RushAttackHitbox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2853815737847424684
 Transform:
   m_ObjectHideFlags: 0
@@ -943,10 +873,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.02
-  m_Height: 3.42
+  m_Radius: 1.2
+  m_Height: 3.8
   m_Direction: 2
-  m_Center: {x: 0, y: -0.4, z: 0}
+  m_Center: {x: 0, y: -0.2, z: 0.3}
 --- !u!114 &7416821247574110286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -963,6 +893,25 @@ MonoBehaviour:
   _useKnockback: 1
   _knockbackDuration: 0.2
   _defaultKnockbackDistance: 2
+  _enemyMask:
+    serializedVersion: 2
+    m_Bits: 128
+  _playerMask:
+    serializedVersion: 2
+    m_Bits: 256
+--- !u!114 &5260033513275630649
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2190441330224371555}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60e72ca1a0405244aabb4048a05c4016, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _type: 0
 --- !u!1 &2245404678219337048
 GameObject:
   m_ObjectHideFlags: 0
@@ -1222,7 +1171,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 310, y: 80}
+  m_SizeDelta: {x: 170, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6885933452573083932
 CanvasRenderer:
@@ -1252,7 +1201,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fc01a4a612e79e14094d3a06a0ac5f35, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6d0e7b4cbc31762469067cda2c4136f9, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1650,7 +1599,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 190, y: 44}
+  m_SizeDelta: {x: 96, y: 22}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &129947539406348220
 CanvasRenderer:
@@ -1673,7 +1622,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.83137256, b: 0, a: 0.7058824}
+  m_Color: {r: 0.078431375, g: 0.078431375, b: 0.078431375, a: 0.83137256}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1757,7 +1706,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 310, y: 80}
+  m_SizeDelta: {x: 170, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8049963101813716000
 CanvasRenderer:
@@ -1787,7 +1736,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: fc01a4a612e79e14094d3a06a0ac5f35, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 6d0e7b4cbc31762469067cda2c4136f9, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1938,6 +1887,7 @@ GameObject:
   - component: {fileID: 4091802920927301826}
   - component: {fileID: 2707759934951311969}
   - component: {fileID: 8358542999202745647}
+  - component: {fileID: 1553734928424270759}
   m_Layer: 7
   m_Name: Canvas
   m_TagString: Untagged
@@ -1964,7 +1914,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1.2}
+  m_AnchoredPosition: {x: 0, y: 1.1}
   m_SizeDelta: {x: 100, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &8629028860450306224
@@ -2042,16 +1992,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3492be3c1dbc0d24db3129e5ae97ef79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealthUI
+  _canvasGroup: {fileID: 1553734928424270759}
   _healthFill: {fileID: 3919372845025264256}
   _healthDelay: {fileID: 4379973144129128948}
   _healthBorder: {fileID: 579727490752466434}
-  _normalBorderColor: {r: 0.19607843, g: 0.83137256, b: 0, a: 0.7058824}
-  _lowHpBorderColor: {r: 1, g: 0.55, b: 0, a: 0.7058824}
-  _lowHpThreshold: 0.5
-  _borderLerpSpeed: 6
-  _pulseOnlyElite: 1
-  _pulseSpeed: 6
-  _pulseAmount: 0.7
   _fillSpeed: 8
   _delaySpeed: 5
   _delayTime: 0.2
@@ -2067,6 +2011,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0228fe69fa8eef74799f1847f2dec21b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Billboard
+--- !u!225 &1553734928424270759
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6321051088905059682}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6359484250955193150
 GameObject:
   m_ObjectHideFlags: 0
@@ -2331,7 +2287,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 165, y: 20}
+  m_SizeDelta: {x: 72, y: 6}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3679726593152015942
 CanvasRenderer:
@@ -2554,6 +2510,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+  - {fileID: 2100000, guid: 714c132163a8c1c478d7ad3d496c89f1, type: 2}
   - {fileID: 2100000, guid: 21c62e82cdf8ee64a9df1b1cec44175f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0

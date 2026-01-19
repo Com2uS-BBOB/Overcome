@@ -21,9 +21,13 @@ namespace _02.Scripts.Player.Combat
         [SerializeField] private Transform _cameraTransform;
         [SerializeField] private Transform _poolContainer;
 
+        [Header("Overdrive Projectile")]
+        [SerializeField] private CrescentProjectile _overdriveProjectilePrefab;
+
         private PlayerStats _stats;
         private GaugeManager _gaugeManager;
         private ObjectPool<CrescentProjectile> _projectilePool;
+        private ObjectPool<CrescentProjectile> _overdriveProjectilePool;
 
         // === ISkill 구현 ===
         public override string SkillName => "크레센트";
@@ -56,6 +60,12 @@ namespace _02.Scripts.Player.Combat
             {
                 _projectilePool = new ObjectPool<CrescentProjectile>(
                     _projectilePrefab, _poolContainer, PoolInitialSize);
+            }
+
+            if (_overdriveProjectilePrefab != null)
+            {
+                _overdriveProjectilePool = new ObjectPool<CrescentProjectile>(
+                    _overdriveProjectilePrefab, _poolContainer, PoolInitialSize);
             }
 
             if (_firePoint == null) _firePoint = transform;
@@ -157,16 +167,26 @@ namespace _02.Scripts.Player.Combat
 
         // === Private Methods ===
 
+        private ObjectPool<CrescentProjectile> GetActivePool()
+        {
+            // Overdrive 상태이고 Overdrive 풀이 있으면 사용
+            if (IsOverDriveActive && _overdriveProjectilePool != null)
+                return _overdriveProjectilePool;
+
+            return _projectilePool;
+        }
+
         private void FireProjectile()
         {
-            if (_projectilePool == null) return;
+            var pool = GetActivePool();
+            if (pool == null) return;
 
             // 오버드라이브 중이 아닐 때만 게이지 소모
             if (!IsOverDriveActive)
                 _gaugeManager.ConsumeCrescent();
 
             Vector3 direction = _cameraTransform != null ? _cameraTransform.forward : transform.forward;
-            CrescentProjectile projectile = _projectilePool.Get();
+            CrescentProjectile projectile = pool.Get();
             projectile.transform.position = _firePoint.position;
             direction.y += 0.2f;
             direction.Normalize();
@@ -177,7 +197,14 @@ namespace _02.Scripts.Player.Combat
         private void ReturnProjectile(CrescentProjectile projectile)
         {
             projectile.OnHit -= HandleProjectileHit;
-            _projectilePool.Return(projectile);
+
+            // Overdrive 풀에 속한 프로젝타일인지 확인하여 올바른 풀에 반환
+            // 프로젝타일이 어느 풀에서 왔는지 추적하기 어려우므로,
+            // 현재 상태와 무관하게 프리팹 타입으로 구분
+            if (_overdriveProjectilePool != null && projectile.name.Contains("Overdrive"))
+                _overdriveProjectilePool.Return(projectile);
+            else
+                _projectilePool.Return(projectile);
         }
 
         private void HandleProjectileHit(IDamageable target, float damage)
@@ -188,6 +215,7 @@ namespace _02.Scripts.Player.Combat
         private void OnDestroy()
         {
             _projectilePool?.Clear();
+            _overdriveProjectilePool?.Clear();
         }
     }
 }

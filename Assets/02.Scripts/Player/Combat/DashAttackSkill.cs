@@ -93,6 +93,7 @@ namespace _02.Scripts.Player.Combat
 
             // 카메라 효과: FOV 확대 (스피드감)
             CameraEffectsManager.Instance?.StartDashFOV();
+            
 
             // 히트박스 활성화
             _hitbox?.EnableHitDetection(_dashDamage);

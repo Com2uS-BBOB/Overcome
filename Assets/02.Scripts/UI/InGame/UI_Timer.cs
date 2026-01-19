@@ -24,10 +24,12 @@ public class UI_Timer : MonoBehaviour
     {
         _timeSystem = TimeSystem.Instance;
         _timeSystem.OnRemainTimeDelta += UpdateChangeValueUI;
+        _timeSystem.OnTimeChanged += UpdateTimeUI;
         _timeChangeItemPool = new ObjectPool<TimeChangeItem>(_timeChangeItemPrefab, _changedValueStartPosition, _poolInitialSize);
+        UpdateTimeUI();
     }
 
-    private void Update()
+    private void UpdateTimeUI()
     {
         UpdateRemainTimeUI();
         UpdatePlayerTimeUI();

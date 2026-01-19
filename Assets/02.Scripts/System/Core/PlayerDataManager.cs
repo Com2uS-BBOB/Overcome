@@ -16,25 +16,20 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
     protected override void Init()
     {
         LoadData();
-        InitializeStartPlayer();
     }
 
-    private void InitializeStartPlayer()
+    public bool InitializeStartPlayer(string playerName)
     {
-        string targetID = string.IsNullOrEmpty(_startPlayerID) ? GenerateTempPlayerID() : _startPlayerID;
-
-        if (!HasPlayer(targetID))
+        bool existingUser = true;
+        if (!HasPlayer(playerName))
         {
-            RegistNewPlayer(targetID);
+            RegistNewPlayer(playerName);
+            existingUser = false;
         }
 
-        SwitchPlayer(targetID);
-        Debug.Log($"[PlayerDataManager] 현재 플레이어: {targetID}");
-    }
-
-    private string GenerateTempPlayerID()
-    {
-        return $"Player_{System.DateTime.Now:yyyyMMdd_HHmmss}";
+        SwitchPlayer(playerName);
+        Debug.Log($"[PlayerDataManager] 현재 플레이어: {playerName}");
+        return existingUser;
     }
 
     private void OnApplicationQuit()
