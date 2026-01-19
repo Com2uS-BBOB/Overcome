@@ -24,7 +24,7 @@ public class AttackWaitAction : IEnemyAction
     private float _minModeTime = 0.4f;
     private float _maxModeTime = 1.0f;
     private float _shuffleAngle = 35f;     // 원호 이동 각도
-    private float _feintDistance = 0.8f;
+    private float _feintDistance = 1.4f;
     private float _navSampleRadius = 1.5f;
 
     private float _shuffleModeValue = 0.40f;
