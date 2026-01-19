@@ -4,10 +4,10 @@ using System.Collections.Generic;
 public class EnemyAttackDirector : MonoBehaviour
 {
     [Header("동시 공격자 제한")]
-    [SerializeField] private int _maxAttackers = 3;
+    [SerializeField] private int _maxAttackers = 4;
 
     [Header("동시 압박자 제한 (플레이어 바짝 추적)")]
-    [SerializeField] private int _maxPressurers = 5;
+    [SerializeField] private int _maxPressurers = 6;
 
     [Header("최근 공격자 패널티")]
     [SerializeField] private float _fairnessCooldown = 2f;
