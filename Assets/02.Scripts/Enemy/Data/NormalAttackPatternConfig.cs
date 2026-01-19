@@ -21,7 +21,7 @@ public struct NormalAttackPatternConfig
         float meleeCooldownMin = 3f,
         float meleeCooldownMax = 5f,
         float meleeAttackDelay = 0.2f,
-        float meleeAttackRange = 8f,
+        float meleeAttackRange = 14f,
         float howlDuration = 3f,
         float knockbackDistance = 2f
     )
