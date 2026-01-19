@@ -19,7 +19,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     [SerializeField] private float _spawnHeight = 0f;  // 바닥과 적의 중심 높이 차이
 
     [Header("스폰 텀")]
-    [SerializeField] private float _spawnGapTime = 0.6f;
+    [SerializeField] private float _spawnGapTime = 0.1f;
 
     private Coroutine _spawnGapRoutine;
     public bool IsSpawnGap { get; private set; }
