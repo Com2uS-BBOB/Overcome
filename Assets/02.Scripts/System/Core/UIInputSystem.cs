@@ -4,31 +4,27 @@ using UnityEngine.InputSystem;
 
 public class UIInputSystem : SingletonBehaviour<UIInputSystem>
 {
-    [SerializeField] private InputActionAsset _inputActionAsset;
-    private InputAction _pauseAction;
+    private InputSystem_Actions _inputActions;
 
     protected override void Init()
     {
-        if (_inputActionAsset != null)
-        {
-            _pauseAction = _inputActionAsset.FindActionMap("UI")?.FindAction("Cancel");
-        }
+        _inputActions = new InputSystem_Actions();
     }
 
     private void OnEnable()
     {
-        if (_pauseAction == null) return;
-        _pauseAction.performed += OnPausePerformed;
-        _pauseAction.Enable();
+        if (_inputActions == null) return;
+        _inputActions.UI.Cancel.performed += OnPausePerformed;
+        _inputActions.Enable();
     }
 
     private void OnDisable()
     {
-        if (_pauseAction == null) return;
-        _pauseAction.performed -= OnPausePerformed;
-        _pauseAction.Disable();
+        if (_inputActions == null) return;
+        _inputActions.UI.Cancel.performed -= OnPausePerformed;
+        _inputActions.Disable();
     }
-    
+
     private void OnPausePerformed(InputAction.CallbackContext context)
     {
         if (UIController.Instance.CloseLastUI()) return;

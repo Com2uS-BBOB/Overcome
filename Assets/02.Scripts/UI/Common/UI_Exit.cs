@@ -17,7 +17,7 @@ public class UI_Exit : BaseUI
         _animator.SetTrigger(_close);
     }
 
-    private void DeactiveUI()
+    public void DeactivateUI()
     {
         gameObject.SetActive(false);
     }

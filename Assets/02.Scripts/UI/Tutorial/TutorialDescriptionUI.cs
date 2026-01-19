@@ -30,7 +30,6 @@ public class TutorialDescriptionUI : MonoBehaviour
     private void Awake()
     {
         _nextButton.onClick.AddListener(OnNextButtonClicked);
-        gameObject.SetActive(false);
     }
 
     public void ShowNearTarget(string description, RectTransform target, float offset, Action onNext)
