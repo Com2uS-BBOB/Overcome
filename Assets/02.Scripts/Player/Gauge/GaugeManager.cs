@@ -116,6 +116,24 @@ namespace _02.Scripts.Player.Gauge
             _overDriveCoroutine = StartCoroutine(OverDriveCoroutine());
         }
 
+        /// <summary>
+        /// 애니메이션 이벤트에서 호출 - 게이지 체크 없이 강제 발동
+        /// OverdriveActivationState에서 OverdriveReady 이벤트 시 호출
+        /// </summary>
+        public void ForceActivateOverDrive()
+        {
+            if (IsOverDriveActive) return;
+
+            IsOverDriveActive = true;
+            _overDriveGauge.Reset();
+            OnOverDriveGaugeChanged?.Invoke(_overDriveGauge.Current, _overDriveGauge.Max);
+
+            SetAffectedSkillsOverDriveState(true);
+            OnOverDriveActivated?.Invoke();
+
+            _overDriveCoroutine = StartCoroutine(OverDriveCoroutine());
+        }
+
         // 오버드라이브 지속 시간 관리
         private IEnumerator OverDriveCoroutine()
         {

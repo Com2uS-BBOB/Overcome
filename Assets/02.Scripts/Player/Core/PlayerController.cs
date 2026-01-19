@@ -99,6 +99,9 @@ namespace _02.Scripts.Player.Core
             StateMachine.RegisterState(new GuardState(this, StateMachine, _guardSettings, _guardManager, _gaugeManager));
             StateMachine.RegisterState(new GuardBreakState(this, StateMachine, _guardSettings));
 
+            // Overdrive 상태
+            StateMachine.RegisterState(new OverdriveActivationState(this, StateMachine));
+
             // CancelManager 초기화
             CancelManager = new CancelManager(StateMachine);
 
@@ -549,8 +552,14 @@ namespace _02.Scripts.Player.Core
             _combatStateHandler?.SetCurrentAttackFromSkill(_crescent);
         }
 
-        // 오버드라이브 발동
-        private void HandleOverDrive() => _gaugeManager?.TryActivateOverDrive();
+        // 오버드라이브 발동 - 애니메이션 상태로 전환
+        private void HandleOverDrive()
+        {
+            if (_gaugeManager == null || !_gaugeManager.CanActivateOverDrive) return;
+
+            // Overdrive 진입 애니메이션 상태로 전환
+            StateMachine.ChangeState<OverdriveActivationState>();
+        }
 
         // 적 적중 시 오버드라이브 게이지 충전 및 UI 이벤트 전달
         private void HandleEnemyHitForOverDrive(IDamageable target, float damage)

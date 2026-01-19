@@ -22,6 +22,10 @@ namespace _02.Scripts.Player.Animation
         // === 공통 이벤트 ===
         public event Action<string> OnAnimationEvent;
 
+        // === Overdrive 이벤트 ===
+        public event Action OnOverdriveReady;    // VFX 시작 타이밍
+        public event Action OnOverdriveEnd;      // 애니메이션 종료
+
         // Animation Event에서 호출 (메서드 이름 = 이벤트 이름)
         public void FireCrescent()
         {
@@ -58,6 +62,19 @@ namespace _02.Scripts.Player.Animation
         public void AnimEvent(string eventName)
         {
             OnAnimationEvent?.Invoke(eventName);
+        }
+
+        // === Overdrive 이벤트 메서드 ===
+        public void OverdriveReady()
+        {
+            Debug.Log("[AnimEventProxy] OverdriveReady called");
+            OnOverdriveReady?.Invoke();
+        }
+
+        public void OverdriveEnd()
+        {
+            Debug.Log("[AnimEventProxy] OverdriveEnd called");
+            OnOverdriveEnd?.Invoke();
         }
     }
 }
