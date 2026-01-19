@@ -282,9 +282,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Config:
+    UIType: 0
     PauseGame: 0
     UseTransition: 1
     ShowCursor: 0
+  _popupOpen: 0.2
+  _popupMaintain: 1
+  _popupClose: 0.2
   _welcomeText: {fileID: 1276288232737945712}
 --- !u!1 &1869957351670674953
 GameObject:
@@ -449,8 +453,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: WELCOME TO THE OVERCOME
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
+  m_sharedMaterial: {fileID: -9059323199911496683, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -485,6 +489,7 @@ MonoBehaviour:
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
+  m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0

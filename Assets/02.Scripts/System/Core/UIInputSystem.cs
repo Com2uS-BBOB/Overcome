@@ -15,6 +15,7 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     {
         if (_inputActions == null) return;
         _inputActions.UI.Cancel.performed += OnPausePerformed;
+        _inputActions.UI.OpenGuidePopup.performed += OpenGuidePopup;
         _inputActions.Enable();
     }
 
@@ -22,6 +23,7 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     {
         if (_inputActions == null) return;
         _inputActions.UI.Cancel.performed -= OnPausePerformed;
+        _inputActions.UI.OpenGuidePopup.performed -= OpenGuidePopup;
         _inputActions.Disable();
     }
 
@@ -39,6 +41,11 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
                 Exit();
                 break;
         }
+    }
+
+    private void OpenGuidePopup(InputAction.CallbackContext context)
+    {
+        // UIController.Instance.OpenUI<UI_GuidePopup>();
     }
     
     private void Pause()
