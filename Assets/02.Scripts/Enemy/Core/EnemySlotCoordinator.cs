@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class EnemySlotCoordinator : MonoBehaviour
 {
     [SerializeField] private Transform _player;
-    [SerializeField] private float _radius = 4.4f;
+    [SerializeField] private float _radius = 4.6f;
     [SerializeField] private int _slotCount = 10;
 
     private Dictionary<int, Transform> _occupiedSlots = new();
