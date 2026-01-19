@@ -80,19 +80,11 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     protected override void Clear()
     {
-        // BGM 정리
         _bgmSource?.Stop();
-
-        // SFX Pool 완전 정리
         _sfxPool?.Clear();
-
-        // Addressables 리소스 해제 (Editor에서 중요)
         ReleaseAllAudioClips();
     }
 
-    /// <summary>
-    /// Scene이 변경될 때 호출되어 이전 Scene의 AudioClip을 정리합니다.
-    /// </summary>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         Debug.Log($"[SoundManager] Scene 변경 감지: {scene.name} - Scene 오디오 클립 해제");

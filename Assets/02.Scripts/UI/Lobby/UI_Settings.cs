@@ -1,30 +1,30 @@
 using UnityEngine;
 
-public class UI_Settings : MonoBehaviour
+public class UI_Settings : BaseUI
 {
     private bool _isOpen;
     private Animator _animator;
-    private void Awake()
+    protected override void Init()
     {
         _animator = GetComponent<Animator>();
         gameObject.SetActive(false);
     }
 
-    public void OpenPanel()
+    protected override void PlayOpenAnimation()
     {
-        if (_isOpen) return;
-        gameObject.SetActive(true);
-        _isOpen = true;
         _animator.SetTrigger("Panel In");
     }
 
-    public void ClosePanel()
+    protected override void PlayCloseAnimation()
     {
-        if (!_isOpen) return;
-        _isOpen = false;
         _animator.SetTrigger("Panel Out");
     }
 
+    public void ExitPanel()
+    {
+        UIController.Instance.CloseUI(this);
+    }
+    
     public void DeactivePanel()
     {
         gameObject.SetActive(false);

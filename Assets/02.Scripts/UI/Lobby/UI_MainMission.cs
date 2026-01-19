@@ -9,8 +9,6 @@ public class UI_MainMission : MonoBehaviour
     
     public void LoadSelectScene()
     {
-        _lobbyCanvas.alpha = 0f;
-        _stageSelectCanvas.DOFade(1f, _changeDuration);
-        _stageSelectCanvas.blocksRaycasts = true;
+        _= UIController.Instance.OpenUI<UI_StageSelect>();
     }
 }
