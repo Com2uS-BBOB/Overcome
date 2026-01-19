@@ -37,6 +37,7 @@ public class UI_LoginPopup : BaseUI
                  .SetEase(Ease.Linear)
                  .OnComplete(() =>
                  {
+                     gameObject.SetActive(false);
                      SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
                  });
     }

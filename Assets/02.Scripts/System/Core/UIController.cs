@@ -50,10 +50,12 @@ public class UIController : SingletonBehaviour<UIController>
         Type type = typeof(T);
         if (_loadingUIs.Contains(type)) return null;
 
-        if (_activeUI.TryGetValue(type, out BaseUI ui))
+        if (_activeUI.TryGetValue(type, out BaseUI ui)) return ui as T;
+        
+        if (_uiInstances.TryGetValue(type, out BaseUI uiInstance))
         {
-            ui.OnOpen();
-            return ui as T;
+            ShowUI(uiInstance);
+            return uiInstance as T;
         }
 
         T newUI = await LoadUIAsync<T>();

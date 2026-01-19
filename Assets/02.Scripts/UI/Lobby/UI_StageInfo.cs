@@ -2,7 +2,7 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 
-public class UI_StageInfo : MonoBehaviour
+public class UI_StageInfo : BaseUI
 {
     [SerializeField] TextMeshProUGUI _title;
     [SerializeField] TextMeshProUGUI _scoreRequiredText;
@@ -66,5 +66,11 @@ public class UI_StageInfo : MonoBehaviour
     public void ClosePanel()
     {
         gameObject.SetActive(false);
+    }
+
+    public async void OpenRankingPanel()
+    {
+        UI_Ranking ranking = await UIController.Instance.OpenUI<UI_Ranking>();
+        ranking.SetStageInfo(_chapter, _level);
     }
 }
