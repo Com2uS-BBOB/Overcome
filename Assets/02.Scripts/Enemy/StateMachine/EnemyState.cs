@@ -19,20 +19,20 @@ public class EnemyState : MonoBehaviour
     private Transform _player;
 
     [Header("Trace 관련 옵션")]
-    [SerializeField] private float _detectRange = 10f;
+    [SerializeField] private float _detectRange = 22f;
     [SerializeField] private float _standOffDistance = 8.5f;  // 비압박자 유지 거리(attackRange보다 크게)
-    [SerializeField] private float _standOffRepathInterval = 0.4f;  // 목적지 자주 바뀜 방지
+    [SerializeField] private float _standOffRepathInterval = 0.25f;  // 목적지 자주 바뀜 방지
     private float _maxSamplePositionDistance = 1.5f;
 
     private float _standOffRepathTimer;
     private bool _pressureReserved;
 
     [Header("Return 관련 옵션")]
-    [SerializeField] private float _outRange = 18f;
+    [SerializeField] private float _outRange = 32f;
     [SerializeField] private float _returnStopDistance = 0.3f;
 
     [Header("Attack 관련 옵션")]
-    [SerializeField] private float _attackRange = 10f;
+    [SerializeField] private float _attackRange = 22f;
 
     private void Awake()
     {
@@ -68,6 +68,13 @@ public class EnemyState : MonoBehaviour
 
             // 죽은 뒤 상태 고정
             _currentState = EEnemyState.Idle;
+            return;
+        }
+
+        if (_enemy != null && _enemy.IsSpawnGap)
+        {
+            // 스폰 텀 동안은 AI 로직 자체를 돌리지 않음
+            _movement?.Stop();
             return;
         }
 
