@@ -8,7 +8,7 @@ namespace _02.Scripts.CameraFX
 {
     /// <summary>
     /// 스테이지 결과 연출 관리자
-    /// 플레이어 위치 이동, 카메라 전환, 랭크별 애니메이션 재생
+    /// 페이드 전환, 플레이어 위치 이동, 카메라 전환, 랭크별 애니메이션 재생
     /// </summary>
     public class ResultSequenceManager : MonoBehaviour
     {
@@ -32,9 +32,13 @@ namespace _02.Scripts.CameraFX
         [SerializeField] private Animator _playerAnimator;
         [SerializeField] private ResultAnimationData _animationData;
 
+        [Header("Fade Settings")]
+        [SerializeField] private CanvasGroup _fadeCanvasGroup;
+        [SerializeField] private float _fadeOutDuration = 0.5f;
+        [SerializeField] private float _fadeInDuration = 0.5f;
+
         [Header("Transition Settings")]
-        [SerializeField] private float _transitionDelay = 0.5f;
-        [SerializeField] private bool _teleportPlayer = true;
+        [SerializeField] private float _preDelay = 0.3f;
 
         [Header("Skip Settings")]
         [SerializeField] private bool _allowSkip = true;
@@ -47,8 +51,10 @@ namespace _02.Scripts.CameraFX
 
         public bool IsPlaying => _isPlaying;
 
-        public event Action OnResultStarted;
-        public event Action OnResultAnimationComplete;
+        /// <summary>
+        /// 페이드 인 완료 후 발생 (애니메이션 + UI 동시 시작)
+        /// </summary>
+        public event Action OnResultReady;
         public event Action OnResultSkipped;
 
         private void Awake()
@@ -63,6 +69,21 @@ namespace _02.Scripts.CameraFX
             }
         }
 
+        private void Start()
+        {
+            // TimeSystem의 게임 오버 이벤트 구독
+            if (TimeSystem.Instance != null)
+            {
+                TimeSystem.Instance.OnGameOver += HandleGameOver;
+            }
+
+            // 페이드 캔버스 초기화
+            if (_fadeCanvasGroup != null)
+            {
+                _fadeCanvasGroup.alpha = 0f;
+            }
+        }
+
         private void Update()
         {
             if (_isPlaying && _allowSkip && Keyboard.current != null && Keyboard.current[_skipKey].wasPressedThisFrame)
@@ -71,22 +92,49 @@ namespace _02.Scripts.CameraFX
             }
         }
 
+        private void OnDestroy()
+        {
+            if (TimeSystem.Instance != null)
+            {
+                TimeSystem.Instance.OnGameOver -= HandleGameOver;
+            }
+
+            if (Instance == this)
+                Instance = null;
+        }
+
+        /// <summary>
+        /// 게임 오버 시 호출
+        /// </summary>
+        private void HandleGameOver()
+        {
+            // ScoreSystem에서 현재 등급 가져오기
+            _currentGrade = ScoreSystem.Instance?.GetGradeConfig();
+            StartResultSequence();
+        }
+
         /// <summary>
         /// 결과 연출 시작
         /// </summary>
-        public void ShowResult(GradeConfig gradeConfig)
+        public void StartResultSequence()
         {
             if (_isPlaying) return;
 
-            _currentGrade = gradeConfig;
             _isPlaying = true;
             _isSkipping = false;
 
             SetPlayerInputEnabled(false);
 
-            OnResultStarted?.Invoke();
-
             _sequenceCoroutine = StartCoroutine(ResultSequenceCoroutine());
+        }
+
+        /// <summary>
+        /// 외부에서 GradeConfig를 지정하여 시작
+        /// </summary>
+        public void StartResultSequence(GradeConfig gradeConfig)
+        {
+            _currentGrade = gradeConfig;
+            StartResultSequence();
         }
 
         /// <summary>
@@ -110,60 +158,83 @@ namespace _02.Scripts.CameraFX
 
         private IEnumerator ResultSequenceCoroutine()
         {
-            // 1. 잠시 대기 (게임 종료 후 버퍼)
-            yield return new WaitForSeconds(_transitionDelay);
+            // 1. 잠시 대기
+            yield return new WaitForSeconds(_preDelay);
 
-            // 2. 플레이어를 결과 위치로 이동
+            // 2. 페이드 아웃 (화면 어두워짐)
+            yield return StartCoroutine(FadeOutCoroutine());
+
+            // 3. 플레이어를 결과 위치로 이동
             MovePlayerToResultPosition();
 
-            // 3. 결과 카메라 활성화
+            // 4. 결과 카메라 활성화
             ActivateResultCamera();
 
-            // 4. 카메라 전환 대기
-            yield return new WaitForSeconds(0.3f);
+            // 5. 페이드 인 (화면 밝아짐)
+            yield return StartCoroutine(FadeInCoroutine());
 
-            // 5. 랭크별 애니메이션 재생
+            // 6. 애니메이션 + UI 동시 시작
             PlayRankAnimation();
-
-            // 6. 애니메이션 완료 대기 (또는 일정 시간 후)
-            yield return new WaitForSeconds(1f);
-
-            // 7. 결과 UI 표시 트리거
-            OnResultAnimationComplete?.Invoke();
+            OnResultReady?.Invoke();
 
             _isPlaying = false;
             _sequenceCoroutine = null;
+        }
+
+        private IEnumerator FadeOutCoroutine()
+        {
+            if (_fadeCanvasGroup == null) yield break;
+
+            float elapsed = 0f;
+            while (elapsed < _fadeOutDuration)
+            {
+                _fadeCanvasGroup.alpha = elapsed / _fadeOutDuration;
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            _fadeCanvasGroup.alpha = 1f;
+        }
+
+        private IEnumerator FadeInCoroutine()
+        {
+            if (_fadeCanvasGroup == null) yield break;
+
+            float elapsed = 0f;
+            while (elapsed < _fadeInDuration)
+            {
+                _fadeCanvasGroup.alpha = 1f - (elapsed / _fadeInDuration);
+                elapsed += Time.deltaTime;
+                yield return null;
+            }
+            _fadeCanvasGroup.alpha = 0f;
         }
 
         private void MovePlayerToResultPosition()
         {
             if (_playerTransform == null || _resultPosition == null) return;
 
-            if (_teleportPlayer)
+            // CharacterController 비활성화 후 위치 이동
+            if (_playerCharacterController != null)
             {
-                // CharacterController 비활성화 후 위치 이동
-                if (_playerCharacterController != null)
-                {
-                    _playerCharacterController.enabled = false;
-                }
+                _playerCharacterController.enabled = false;
+            }
 
-                _playerTransform.position = _resultPosition.position;
+            _playerTransform.position = _resultPosition.position;
 
-                // LookAt 방향으로 회전
-                if (_resultLookAt != null)
+            // LookAt 방향으로 회전
+            if (_resultLookAt != null)
+            {
+                Vector3 lookDirection = _resultLookAt.position - _playerTransform.position;
+                lookDirection.y = 0;
+                if (lookDirection.sqrMagnitude > 0.01f)
                 {
-                    Vector3 lookDirection = _resultLookAt.position - _playerTransform.position;
-                    lookDirection.y = 0;
-                    if (lookDirection.sqrMagnitude > 0.01f)
-                    {
-                        _playerTransform.rotation = Quaternion.LookRotation(lookDirection);
-                    }
+                    _playerTransform.rotation = Quaternion.LookRotation(lookDirection);
                 }
+            }
 
-                if (_playerCharacterController != null)
-                {
-                    _playerCharacterController.enabled = true;
-                }
+            if (_playerCharacterController != null)
+            {
+                _playerCharacterController.enabled = true;
             }
         }
 
@@ -183,17 +254,26 @@ namespace _02.Scripts.CameraFX
 
         private void PlayRankAnimation()
         {
-            if (_playerAnimator == null || _currentGrade == null) return;
+            if (_playerAnimator == null) return;
 
-            string trigger = _animationData != null
-                ? _animationData.GetAnimationTrigger(_currentGrade.Grade)
-                : "Victory_Normal";
+            string trigger = "Victory_Normal";
+
+            if (_currentGrade != null && _animationData != null)
+            {
+                trigger = _animationData.GetAnimationTrigger(_currentGrade.Grade);
+            }
 
             _playerAnimator.SetTrigger(trigger);
         }
 
         private void CompleteResultSequence()
         {
+            // 페이드 즉시 해제
+            if (_fadeCanvasGroup != null)
+            {
+                _fadeCanvasGroup.alpha = 0f;
+            }
+
             // 플레이어 위치 즉시 이동
             MovePlayerToResultPosition();
 
@@ -203,8 +283,8 @@ namespace _02.Scripts.CameraFX
             // 애니메이션 즉시 재생
             PlayRankAnimation();
 
-            // 결과 UI 트리거
-            OnResultAnimationComplete?.Invoke();
+            // UI 트리거
+            OnResultReady?.Invoke();
 
             _isPlaying = false;
             _sequenceCoroutine = null;
@@ -235,12 +315,6 @@ namespace _02.Scripts.CameraFX
             }
 
             SetPlayerInputEnabled(true);
-        }
-
-        private void OnDestroy()
-        {
-            if (Instance == this)
-                Instance = null;
         }
     }
 }
