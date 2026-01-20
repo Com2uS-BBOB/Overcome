@@ -1,16 +1,30 @@
+using System;
 using System.Text;
 using TMPro;
 using UnityEngine;
 
-public class UI_StageInfo : MonoBehaviour
+public class UI_StageInfo : BaseUI
 {
     [SerializeField] TextMeshProUGUI _title;
     [SerializeField] TextMeshProUGUI _scoreRequiredText;
     [SerializeField] private UI_EnemyInfo[] _enemyInfos;
     private readonly StringBuilder _stringBuilder = new StringBuilder();
 
+    private int _chapter;
+    private int _level;
+
+    public event Action<int, int> OnGameStartRequested;
+    
+    public void GameStart()
+    {
+        OnGameStartRequested?.Invoke(_chapter, _level);
+    }
+    
     public void OpenStageInfoPanel(int chapter, int level)
     {
+        _chapter = chapter;
+        _level = level;
+        
         SetEnemyInfo();
         SetStageInfo(chapter, level);
     }
@@ -26,9 +40,7 @@ public class UI_StageInfo : MonoBehaviour
 
         foreach (var config in gradeConfigs.Grades)
         {
-            // C 등급 (0점 기준)은 출력하지 않음
-            if (config.RequiredScore <= 0)
-                continue;
+            if (config.RequiredScore <= 0) continue;
 
             if (!isFirst)
                 _stringBuilder.Append(" / ");
@@ -54,5 +66,11 @@ public class UI_StageInfo : MonoBehaviour
     public void ClosePanel()
     {
         gameObject.SetActive(false);
+    }
+
+    public async void OpenRankingPanel()
+    {
+        UI_Ranking ranking = await UIController.Instance.OpenUI<UI_Ranking>();
+        ranking.SetStageInfo(_chapter, _level);
     }
 }
