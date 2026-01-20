@@ -79,7 +79,7 @@ public class EliteRipAction : IEnemyAction
         OnRipGoing();
     }
 
-    public void OnRipGoing()
+    private void OnRipGoing()
     {
         Vector3 enemyPosition = _enemy.position; enemyPosition.y = 0f;
         Vector3 playerPosition = _player.position; playerPosition.y = 0f;
@@ -87,14 +87,7 @@ public class EliteRipAction : IEnemyAction
         Vector3 toPlayer = playerPosition - enemyPosition;
         float distance = toPlayer.magnitude;
 
-        // 너무 가까우면 잠깐 멈춤
-        if (distance <= _keepDistance)
-        {
-            SoftStopAgentOnly();
-            return;
-        }
-
-        // 경계 근처는 떨림 방지로 멈춤 유지
+        // 너무 가까우면 잠깐 멈추기 (경계 근처는 떨림 방지로 멈춤 유지)
         if (distance <= _keepDistance + _keepBuffer)
         {
             SoftStopAgentOnly();
@@ -124,6 +117,7 @@ public class EliteRipAction : IEnemyAction
 
         _anim.SetRip(false);
 
+        _agent.stoppingDistance = _preStoppingDistance;
         _movement.Stop();
         _hitbox?.Disable();
         _movement.ResetSpeedMultiplier();
