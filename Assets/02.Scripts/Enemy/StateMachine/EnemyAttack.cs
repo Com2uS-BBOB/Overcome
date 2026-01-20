@@ -150,7 +150,7 @@ public class EnemyAttack : MonoBehaviour
                     meleeCooldownMin: 3f,
                     meleeCooldownMax: 5f,
                     meleeAttackDelay: 0.2f,
-                    howlDuration: 1.4f,
+                    howlDuration: 0.56f,
                     knockbackDistance: 2f
                 );
 
@@ -187,7 +187,7 @@ public class EnemyAttack : MonoBehaviour
                     ripDamagePerHit: 2f,
                     ripTouchDelay: 0.25f,
                     ripKnockbackDistance: 1f,
-                    howlDuration: 3.4f
+                    howlDuration: 0.971f
                 );
 
                 _currentPattern = new EliteAttackPattern(patternContext, eliteConfig);

@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 4
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 04d4a2e64bdfe94438ca3b6a3de8bfbd
-  m_OcclusionCullingData: {fileID: 36300000, guid: fb78349aaf59347458481fb43fb64d91, type: 2}
+  m_SceneGUID: 73d6b5c21a9218f4a8bfd854c563c47f
+  m_OcclusionCullingData: {fileID: 36300000, guid: 3d3ed3f57286bd245867219dfa29e1d1, type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -909,7 +909,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -1268,12 +1268,20 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 79485fb519b6c35428186994de8564d5, type: 2}
     - target: {fileID: 2466327970891313979, guid: d0a9933f75c72b64caca0313480cd18e, type: 3}
+      propertyPath: _enemyPools.Array.data[0].InitialSize
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 2466327970891313979, guid: d0a9933f75c72b64caca0313480cd18e, type: 3}
       propertyPath: _enemyPools.Array.data[1].InitialSize
-      value: 30
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2466327970891313979, guid: d0a9933f75c72b64caca0313480cd18e, type: 3}
       propertyPath: _enemyPools.Array.data[2].InitialSize
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 2466327970891313979, guid: d0a9933f75c72b64caca0313480cd18e, type: 3}
+      propertyPath: _enemyPools.Array.data[3].InitialSize
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: 2718460419425412521, guid: d0a9933f75c72b64caca0313480cd18e, type: 3}
       propertyPath: m_Name
@@ -3881,7 +3889,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -4403,7 +4411,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -4529,7 +4537,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -5213,7 +5221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySlotCoordinator
   _player: {fileID: 915393871}
-  _radius: 6
+  _radius: 4.5
   _slotCount: 8
 --- !u!114 &915393854
 MonoBehaviour:
@@ -5850,7 +5858,7 @@ GameObject:
   m_Component:
   - component: {fileID: 966532447}
   m_Layer: 0
-  m_Name: FlyEnemySpawners
+  m_Name: FlyingEnemySpawners
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6084,7 +6092,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -6434,7 +6442,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -6859,7 +6867,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -8673,7 +8681,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -10008,7 +10016,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -10271,7 +10279,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -10590,7 +10598,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -11229,7 +11237,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
@@ -13996,7 +14004,7 @@ PrefabInstance:
       objectReference: {fileID: 201681883}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _respawnDelay
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8433518643530307828, guid: 36c2c145454e75b4784e2d2a3bdc47b7, type: 3}
       propertyPath: _attackDirector
