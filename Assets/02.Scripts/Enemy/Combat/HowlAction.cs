@@ -7,6 +7,7 @@ public class HowlAction : IEnemyAction
     private readonly NavMeshAgent _agent;
     private readonly EnemyMovement _movement;
     private readonly float _duration;
+    private readonly Transform _enemy;
     private readonly string _howlSfxKey;
 
     private float _timer;
@@ -20,13 +21,15 @@ public class HowlAction : IEnemyAction
         EnemyAnimatorController anim, 
         NavMeshAgent agent, 
         EnemyMovement movement, 
-        float duration, 
+        float duration,
+        Transform enemy,
         string howlSfxKey)
     {
         _anim = anim;
         _agent = agent;
         _movement = movement;
         _duration = duration;
+        _enemy = enemy;
         _howlSfxKey = howlSfxKey;
     }
 
@@ -70,7 +73,6 @@ public class HowlAction : IEnemyAction
 
         if (string.IsNullOrEmpty(_howlSfxKey)) return;
 
-        // todo. 사운드 재생
-        // SoundManager.Instance.PlaySfx(_howlSfxKey, _enemy.position);
+        SoundManager.Instance.PlaySfx(_howlSfxKey, _enemy.position);
     }
 }

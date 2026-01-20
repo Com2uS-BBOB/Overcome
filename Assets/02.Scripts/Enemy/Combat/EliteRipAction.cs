@@ -122,7 +122,6 @@ public class EliteRipAction : IEnemyAction
 
         if (string.IsNullOrEmpty(_ripSfxKey)) return;
 
-        // todo. 사운드 재생
-        // SoundManager.Instance.PlaySfx(_ripSfxKey, _enemy.position);
+        SoundManager.Instance.PlaySfx(_ripSfxKey, _enemy.position);
     }
 }

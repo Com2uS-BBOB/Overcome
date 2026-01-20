@@ -51,6 +51,7 @@ public class HowlingStep : IEnemyAttackStep
             _context.Agent,
             _context.Movement,
             _howlDuration,
+            _context.Enemy,
             howlKey
         );
         _howl.Enter();
