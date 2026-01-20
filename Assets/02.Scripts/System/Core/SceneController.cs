@@ -12,10 +12,9 @@ public class SceneController : SingletonBehaviour<SceneController>
     public event Action<ESceneType> OnSceneChanged;
     public ESceneType CurrentScene => _currentScene;
     public bool IsLoading => _isLoading;
+    private ESceneType _targetScene;
+    public string TargetSceneName => _sceneNameMap.GetValueOrDefault(_targetScene);
 
-    // LoadingScene에서 접근할 타겟 씬
-    public static ESceneType TargetScene { get; private set; }
-    
     protected override void Init()
     {
         InitializeSceneMapping();
@@ -30,7 +29,7 @@ public class SceneController : SingletonBehaviour<SceneController>
     {
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
     }
-    
+
     private void InitializeSceneMapping()
     {
         _sceneNameMap = new Dictionary<ESceneType, string>();
@@ -39,7 +38,7 @@ public class SceneController : SingletonBehaviour<SceneController>
         string currentSceneName = SceneManager.GetActiveScene().name;
         MapSceneTypesToScenes(buildScenes, currentSceneName);
     }
-    
+
     private HashSet<string> CollectBuildScenes()
     {
         HashSet<string> buildScenes = new HashSet<string>();
@@ -78,7 +77,7 @@ public class SceneController : SingletonBehaviour<SceneController>
         }
         _currentScene = sceneType;
 
-        if (_isLoading && sceneType == TargetScene)
+        if (_isLoading && sceneType == _targetScene)
         {
             _isLoading = false;
         }
@@ -100,7 +99,7 @@ public class SceneController : SingletonBehaviour<SceneController>
         if (!_sceneNameMap.TryGetValue(nextScene, out string sceneName)) return;
 
         _isLoading = true;
-        TargetScene = nextScene;
+        _targetScene = nextScene;
         if (LoadScene(ESceneType.LoadingScene)) return;
         _isLoading = false;
     }

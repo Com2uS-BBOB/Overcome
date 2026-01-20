@@ -305,7 +305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &130094022
 RectTransform:
   m_ObjectHideFlags: 0
@@ -770,6 +770,7 @@ MonoBehaviour:
   _firePoint: {fileID: 1524430766}
   _cameraTransform: {fileID: 479220235}
   _poolContainer: {fileID: 117908354}
+  _overdriveProjectilePrefab: {fileID: 0}
 --- !u!114 &241799519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3172,6 +3173,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.HitEffectPool
   _hitEffectPrefab: {fileID: 8884371268655795233, guid: 784554bd4b0134d42a53528d66e14f1a, type: 3}
   _initialPoolSize: 20
+  _overdriveHitEffectPrefab: {fileID: 0}
 --- !u!4 &609789949
 Transform:
   m_ObjectHideFlags: 0
@@ -5191,7 +5193,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1030175854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6360,6 +6362,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4491957037086314292, guid: bc2d5807c2393854184f300fb1824a39, type: 3}
+      propertyPath: _camera
+      value: 
+      objectReference: {fileID: 442514844}
+    - target: {fileID: 4491957037086314292, guid: bc2d5807c2393854184f300fb1824a39, type: 3}
+      propertyPath: _player
+      value: 
+      objectReference: {fileID: 241799511}
     - target: {fileID: 6160419493932267412, guid: bc2d5807c2393854184f300fb1824a39, type: 3}
       propertyPath: m_Name
       value: Minimap
@@ -8207,6 +8217,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.MeleeHitbox
   _spawnHitEffect: 0
+  _trackCameraDirection: 1
+  _cameraTransform: {fileID: 0}
+  _trackContinuously: 0
 --- !u!65 &1694096479
 BoxCollider:
   m_ObjectHideFlags: 0

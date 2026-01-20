@@ -36,6 +36,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     private EnemyMovement _movement;
     private NavMeshAgent _agent;
+    private ComboSystem _comboSystem;
 
     private Vector3 _spawnBasePosition;  // 최초 스폰 위치 저장용 (리스폰 때 사용)
 
@@ -58,6 +59,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         _movement = GetComponent<EnemyMovement>();
         _agent = GetComponent<NavMeshAgent>();
         _collider = GetComponent<Collider>();
+    }
+
+    private void Start()
+    {
+        _comboSystem = ComboSystem.Instance;
     }
 
     public void Initialize(EnemyStatData statData)
@@ -191,10 +197,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             return;
         }
 
-        _currentHealth -= damage;
+        float applyDamage = _comboSystem.DamageMultiplier * damage;
+        _currentHealth -= applyDamage;
         _currentHealth = Mathf.Max(_currentHealth, 0);
 
-        EnemyEventController.Enemy.RaiseHit(new EnemyHitEvent(this, damage, attacker));
+        EnemyEventController.Enemy.RaiseHit(new EnemyHitEvent(this, applyDamage, attacker));
         OnHpChanged?.Invoke(_currentHealth, MaxHp);
 
         StopOnHit(_hitStopTime);

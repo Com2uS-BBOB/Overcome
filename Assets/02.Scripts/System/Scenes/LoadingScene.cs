@@ -4,7 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using DG.Tweening;
-using UnityEditor;
 
 public class LoadingScene : MonoBehaviour
 {
@@ -96,10 +95,7 @@ public class LoadingScene : MonoBehaviour
     private IEnumerator LoadTargetSceneCoroutine()
     {
         yield return null;
-        ESceneType targetScene = SceneController.TargetScene;
-        string targetSceneName = targetScene.ToString();
-
-        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetSceneName);
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneController.Instance.TargetSceneName);
         asyncLoad.allowSceneActivation = false;
 
         while (!asyncLoad.isDone)
