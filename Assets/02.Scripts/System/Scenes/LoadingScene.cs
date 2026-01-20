@@ -19,9 +19,10 @@ public class LoadingScene : MonoBehaviour
     [SerializeField] private float _tooltipDuration = 2f;
     [SerializeField] private float _toolTipAnimationSpeed = 0.25f;
 
+    [SerializeField] private Vector2 _tooltipOffset = new Vector2(-100f, 0);
     private readonly Queue<int> _tooltipQueue = new Queue<int>();
     private Vector2 _tooltipPosition;
-    private readonly Vector2 _tooltipOffset = new Vector2(-100f, 0);
+    
 
     private void Awake()
     {
