@@ -119,6 +119,7 @@ namespace _02.Scripts.Player.Combat
         public void FireFromAnimationEvent()
         {
             FireProjectile();
+            OnCrescentEnded?.Invoke();
         }
 
         // 크레센트는 히트박스 대신 프로젝타일 사용
