@@ -43,13 +43,6 @@ namespace _02.Scripts.Player.StateMachine.States
 
         public override void Update()
         {
-            // 공중으로 떨어지면 가드 해제
-            if (!Movement.IsGrounded)
-            {
-                ExitGuard();
-                return;
-            }
-
             // 카메라 방향으로 회전
             Movement.RotateToCamera();
         }

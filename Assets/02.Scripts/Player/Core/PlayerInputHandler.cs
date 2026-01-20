@@ -21,6 +21,7 @@ namespace _02.Scripts.Player.Core
 
         public Vector2 MoveInput { get; private set; }
         public Vector2 LookInput { get; private set; }
+        public bool IsGuardHeld { get; private set; }
 
         public event Action OnAttackStarted;
         public event Action OnAttackPerformed;
@@ -111,8 +112,8 @@ namespace _02.Scripts.Player.Core
         private void OnJumpActionPerformed(InputAction.CallbackContext _) => OnJumpPerformed?.Invoke();
         private void OnCrescentActionPerformed(InputAction.CallbackContext _) => OnCrescentPerformed?.Invoke();
         private void OnOverDriveActionPerformed(InputAction.CallbackContext _) => OnOverDrivePerformed?.Invoke();
-        private void OnGuardActionStarted(InputAction.CallbackContext _) => OnGuardStarted?.Invoke();
-        private void OnGuardActionCanceled(InputAction.CallbackContext _) => OnGuardCanceled?.Invoke();
+        private void OnGuardActionStarted(InputAction.CallbackContext _) { IsGuardHeld = true; OnGuardStarted?.Invoke(); }
+        private void OnGuardActionCanceled(InputAction.CallbackContext _) { IsGuardHeld = false; OnGuardCanceled?.Invoke(); }
         #endregion
     }
 }

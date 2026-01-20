@@ -210,19 +210,21 @@ namespace _02.Scripts.Player.Movement
         private void CheckGround()
         {
             // 상승 중에는 지면 체크 스킵 (점프 직후 지면 재감지 방지)
-            if (_velocity.y > 0.1f)
+            // Root Motion으로 인한 미세 상승은 허용 (0.1f → 0.5f)
+            if (_velocity.y > 0.5f)
             {
                 _isGrounded = false;
                 _coyoteTimer = 0f;
                 return;
             }
 
-            // Raycast로 안정적인 지면 체크 (CharacterController 아래에서 시작)
+            // SphereCast로 넓은 범위 지면 체크 (CharacterController 아래에서 시작)
             float rayStart = _controller.height / 2f + _controller.skinWidth;
             Vector3 rayOrigin = transform.position + Vector3.up * rayStart;
 
-            bool rayHit = Physics.Raycast(
+            bool sphereHit = Physics.SphereCast(
                 rayOrigin,
+                _groundCheckRadius,
                 Vector3.down,
                 out _,
                 rayStart + _groundCheckDistance,
@@ -231,7 +233,7 @@ namespace _02.Scripts.Player.Movement
             );
 
             // CharacterController 결과와 병합
-            bool groundCheck = rayHit || _controller.isGrounded;
+            bool groundCheck = sphereHit || _controller.isGrounded;
 
             // Coyote Time 관리
             if (groundCheck)
@@ -251,7 +253,7 @@ namespace _02.Scripts.Player.Movement
                 _velocity.y = _groundedGravity;
         }
 
-        // 디버그용 Gizmo
+        // 디버그용 Gizmo (SphereCast 시각화)
         private void OnDrawGizmosSelected()
         {
             if (_controller == null) _controller = GetComponent<CharacterController>();
@@ -259,10 +261,12 @@ namespace _02.Scripts.Player.Movement
 
             float rayStart = _controller.height / 2f + _controller.skinWidth;
             Vector3 rayOrigin = transform.position + Vector3.up * rayStart;
+            Vector3 rayEnd = rayOrigin + Vector3.down * (rayStart + _groundCheckDistance);
 
             Gizmos.color = _isGrounded ? Color.green : Color.red;
-            Gizmos.DrawLine(rayOrigin, rayOrigin + Vector3.down * (rayStart + _groundCheckDistance));
-            Gizmos.DrawWireSphere(rayOrigin + Vector3.down * (rayStart + _groundCheckDistance), 0.05f);
+            Gizmos.DrawWireSphere(rayOrigin, _groundCheckRadius);
+            Gizmos.DrawWireSphere(rayEnd, _groundCheckRadius);
+            Gizmos.DrawLine(rayOrigin, rayEnd);
         }
 
         private void ApplyGravity()
