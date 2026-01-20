@@ -96,6 +96,7 @@ namespace _02.Scripts.Player.Combat
             // 후방 공격 체크
             if (!IsAttackFromFront(attackInfo.Direction, playerTransform))
             {
+                Debug.Log("가드 실패");
                 OnGuardResult?.Invoke(GuardResult.RearAttack);
                 return GuardResult.RearAttack;
             }

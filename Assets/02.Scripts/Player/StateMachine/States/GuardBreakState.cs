@@ -38,6 +38,10 @@ namespace _02.Scripts.Player.StateMachine.States
             // 모든 스킬 리셋
             Controller.DragonSwordSkill?.ResetCombo();
             Controller.Crescent?.ResetCombo();
+
+            // CombatStateHandler 상태 정리 (캔슬 체크 버그 방지)
+            Controller.CombatStateHandler?.ClearCurrentAttack();
+            Controller.InputBuffer?.Clear();
         }
 
         public override void Update()

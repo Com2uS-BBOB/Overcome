@@ -35,8 +35,12 @@ namespace _02.Scripts.Player.Animation
         {
             if (!_isRootMotionEnabled) return;
 
+            // Y축 제거 (지면 판정 안정화)
+            Vector3 delta = _animator.deltaPosition;
+            delta.y = 0;
+
             // 월드 좌표를 로컬 좌표로 변환 (애니메이션의 상대적 방향 유지)
-            Vector3 localDelta = transform.InverseTransformDirection(_animator.deltaPosition);
+            Vector3 localDelta = transform.InverseTransformDirection(delta);
             OnRootMotionUpdate?.Invoke(localDelta);
         }
     }
