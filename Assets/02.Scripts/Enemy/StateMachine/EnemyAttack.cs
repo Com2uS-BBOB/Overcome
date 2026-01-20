@@ -137,7 +137,7 @@ public class EnemyAttack : MonoBehaviour
                 var normalWaitConfig = new AttackWaitActionConfig(
                     minWait: float.PositiveInfinity,
                     maxWait: float.PositiveInfinity,
-                    waitSpeedMultiplier: 0.2f,
+                    waitSpeedMultiplier: 0.01f,
                     releaseSlotOnExit: true,
                     fixedSlotIndex: -1,
                     arrivedThreshold: 0.2f,
