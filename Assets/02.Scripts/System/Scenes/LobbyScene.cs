@@ -16,7 +16,7 @@ public class LobbyScene : MonoBehaviour
 
     public void LoadGameScene()
     {
-        SceneController.Instance.LoadSceneAsync(ESceneType.SampleScene);
+        SceneController.Instance.LoadSceneAsync(ESceneType.GameScene);
     }
 
     public void LoadTutorialScene()

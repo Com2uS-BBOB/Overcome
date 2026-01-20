@@ -18,7 +18,7 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     {
         _pauseActions = new Dictionary<ESceneType, Action>
         {
-            { ESceneType.SampleScene, () => OpenPauseUI(PauseUIConfig.InGame) },
+            { ESceneType.GameScene, () => OpenPauseUI(PauseUIConfig.InGame) },
             { ESceneType.TutorialScene, () => OpenPauseUI(PauseUIConfig.InGame) },
             { ESceneType.LobbyScene, () => OpenPauseUI(PauseUIConfig.Lobby) },
             { ESceneType.LoginScene, Exit }

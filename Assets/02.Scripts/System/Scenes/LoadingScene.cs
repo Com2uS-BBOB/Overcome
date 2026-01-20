@@ -96,6 +96,7 @@ public class LoadingScene : MonoBehaviour
     private IEnumerator LoadTargetSceneCoroutine()
     {
         yield return null;
+        Application.backgroundLoadingPriority = ThreadPriority.Low;
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneController.Instance.TargetSceneName);
         asyncLoad.allowSceneActivation = false;
 
