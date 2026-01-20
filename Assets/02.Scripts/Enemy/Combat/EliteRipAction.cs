@@ -14,7 +14,7 @@ public class EliteRipAction : IEnemyAction
     private readonly float _ripMoveSpeed;
     private readonly float _ripKnockbackDistance;
 
-    private float _keepDistance = 1.8f;  // 유지할 거리
+    private float _keepDistance = 1.15f;  // 유지할 거리
     private float _keepBuffer = 0.15f;   // 경계 떨림 방지 버퍼
     private float _preStoppingDistance;
 
