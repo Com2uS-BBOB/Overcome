@@ -123,5 +123,6 @@ public class EliteRipAction : IEnemyAction
         if (string.IsNullOrEmpty(_ripSfxKey)) return;
 
         SoundManager.Instance.PlaySfx(_ripSfxKey, _enemy.position);
+        _sfxPlayed = false;
     }
 }

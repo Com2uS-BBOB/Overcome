@@ -28,7 +28,8 @@ public sealed class EnemyAttackPatternContext
         EnemyAnimatorController anim,
         NavMeshAgent agent,
         EnemySlotCoordinator slotCoordinator,
-        EnemyAttackDirector attackDirector
+        EnemyAttackDirector attackDirector,
+        EnemyStatData statData
     )
     {
         Player = player;
@@ -39,5 +40,6 @@ public sealed class EnemyAttackPatternContext
         Agent = agent;
         SlotCoordinator = slotCoordinator;
         AttackDirector = attackDirector;
+        StatData = statData;
     }
 }

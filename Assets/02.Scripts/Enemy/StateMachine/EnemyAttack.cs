@@ -130,7 +130,8 @@ public class EnemyAttack : MonoBehaviour
             _anim,
             _agent,
             _slotCoordinator,
-            _attackDirector
+            _attackDirector,
+            _statData
         );
 
         switch (_enemy.EnemyStatData.EnemyType)
