@@ -105,11 +105,12 @@ public class AttackWaitAction : IEnemyAction
 
         if (!arrived)
         {
-            _movement.ResetSpeedMultiplier();
+            // 이동 중에는 타이머만 리셋 (속도는 Enter에서 설정한 값 유지)
             _timer = 0f;
             return;
         }
-        _movement.SetSpeedMultiplier(_actionConfig.WaitSpeedMultiplier);
+        
+        // 도착 후에도 동일한 속도 유지
         _timer += Time.deltaTime;
 
         if (_timer >= _duration)

@@ -150,7 +150,7 @@ public class EnemyAttack : MonoBehaviour
                     meleeCooldownMin: 3f,
                     meleeCooldownMax: 5f,
                     meleeAttackDelay: 0.2f,
-                    howlDuration: 3f,
+                    howlDuration: 1.4f,
                     knockbackDistance: 2f
                 );
 
