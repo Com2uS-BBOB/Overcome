@@ -135,9 +135,9 @@ public class EnemyAttack : MonoBehaviour
         {
             case EEnemyType.Normal:
                 var normalWaitConfig = new AttackWaitActionConfig(
-                    minWait: 999f,
-                    maxWait: 999f,
-                    waitSpeedMultiplier: 0.9f,
+                    minWait: float.PositiveInfinity,
+                    maxWait: float.PositiveInfinity,
+                    waitSpeedMultiplier: 0.2f,
                     releaseSlotOnExit: true,
                     fixedSlotIndex: -1,
                     arrivedThreshold: 0.2f,
@@ -150,7 +150,7 @@ public class EnemyAttack : MonoBehaviour
                     meleeCooldownMin: 3f,
                     meleeCooldownMax: 5f,
                     meleeAttackDelay: 0.2f,
-                    howlDuration: 3f,
+                    howlDuration: 1.4f,
                     knockbackDistance: 2f
                 );
 
@@ -159,9 +159,9 @@ public class EnemyAttack : MonoBehaviour
 
             case EEnemyType.Small:
                 var smallWaitConfig = new AttackWaitActionConfig(
-                    minWait: 999f,
-                    maxWait: 999f,
-                    waitSpeedMultiplier: 0.9f,
+                    minWait: float.PositiveInfinity,
+                    maxWait: float.PositiveInfinity,
+                    waitSpeedMultiplier: 0.8f,
                     releaseSlotOnExit: true,
                     fixedSlotIndex: -1,
                     arrivedThreshold: 0.2f,

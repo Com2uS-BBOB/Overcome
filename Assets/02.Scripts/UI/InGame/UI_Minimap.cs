@@ -11,6 +11,7 @@ public class UI_Minimap : MonoBehaviour
     [SerializeField] private RectTransform _minimapRect;
 
     [Header("Extra References")]
+    [SerializeField] private Camera _camera;
     [SerializeField] private Transform _player;
     [SerializeField] private GameObject _enemyIconPrefab;
     private Vector3 _playerPosition;
@@ -50,6 +51,11 @@ public class UI_Minimap : MonoBehaviour
         
         _minimapRadius = Mathf.Min(_minimapRect.rect.width, _minimapRect.rect.height) / 2f;
         _scale = _minimapRadius / _presentArea;
+
+        if (_camera == null)
+        {
+            _camera = Camera.main;
+        }
         
         InitializePool();
     }
@@ -147,7 +153,7 @@ public class UI_Minimap : MonoBehaviour
 
     private void UpdatePlayerIcon()
     {
-        _playerIcon.localRotation = Quaternion.Euler(0, 0, -_player.eulerAngles.y);
+        _playerIcon.localRotation = Quaternion.Euler(0, 0, -_camera.transform.eulerAngles.y);
     }
 
     private void UpdateEnemyIcons()

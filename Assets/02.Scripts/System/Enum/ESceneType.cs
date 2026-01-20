@@ -1,6 +1,8 @@
 public enum ESceneType
 {
     SampleScene,
+    LoginScene,
+    LoadingScene,
     LobbyScene,
-    StageSelectScene
+    TutorialScene,
 }
