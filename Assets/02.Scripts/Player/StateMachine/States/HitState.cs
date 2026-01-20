@@ -42,6 +42,9 @@ namespace _02.Scripts.Player.StateMachine.States
             // 피격 애니메이션 재생
             Controller.PlayerAnimatorController?.PlayHit();
 
+            // 애니메이션 전투 파라미터 리셋 (Attack 트리거, 콤보 카운트 등)
+            Controller.PlayerAnimatorController?.EndCombat();
+
             // 모든 스킬 리셋
             Controller.DragonSwordSkill?.ResetCombo();
             Controller.Crescent?.ResetCombo();
