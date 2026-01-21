@@ -12,6 +12,7 @@ public class LobbyScene : MonoBehaviour
         CloseStageSelect = OnCloseStageSelect;
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+        Time.timeScale = 1f;
     }
     
     public void HandleGameStart(int chapter, int level)

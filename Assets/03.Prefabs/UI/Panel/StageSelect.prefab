@@ -700,6 +700,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 7004148793254992545}
     m_Modifications:
     - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Colors.m_NormalColor.b
       value: 1
       objectReference: {fileID: 0}
@@ -719,13 +723,17 @@ PrefabInstance:
       propertyPath: m_Colors.m_PressedColor.r
       value: 0.78431374
       objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1de8c8021ffe70646b2a5eea9d372c98, type: 3}
     - target: {fileID: 6730499273032693226, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Type
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6971313681274088975, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Name
-      value: StageButton (2)
+      value: StageButton_2_1
       objectReference: {fileID: 0}
     - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: _level
@@ -1057,6 +1065,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7004148793254992545}
     m_Modifications:
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1de8c8021ffe70646b2a5eea9d372c98, type: 3}
     - target: {fileID: 6730499273032693226, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Type
       value: 0
@@ -1171,13 +1187,21 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7004148793254992545}
     m_Modifications:
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1de8c8021ffe70646b2a5eea9d372c98, type: 3}
     - target: {fileID: 6730499273032693226, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Type
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6971313681274088975, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Name
-      value: StageButton (1)
+      value: StageButton_1_3
       objectReference: {fileID: 0}
     - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: _level
@@ -1189,6 +1213,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: _isBossStage
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: _blockColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: _blockColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: _blockColor.r
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9091973454951074847, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
@@ -1289,6 +1325,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7004148793254992545}
     m_Modifications:
+    - target: {fileID: 3628003383864730324, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3719456306964398770, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1336,6 +1376,22 @@ PrefabInstance:
     - target: {fileID: 3758177262401568652, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5147259598295761557, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1de8c8021ffe70646b2a5eea9d372c98, type: 3}
+    - target: {fileID: 5813486838552148066, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6730499273032693226, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Type
@@ -1375,6 +1431,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: _chapter
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: _blockColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: _blockColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8455230648199620668, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: _blockColor.r
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9091973454951074847, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
@@ -1523,13 +1591,21 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1de8c8021ffe70646b2a5eea9d372c98, type: 3}
     - target: {fileID: 6730499273032693226, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Type
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6971313681274088975, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Name
-      value: StageButton (2)
+      value: StageButton_2_2
       objectReference: {fileID: 0}
     - target: {fileID: 8118484849027308190, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_AnchorMax.y
@@ -1725,13 +1801,21 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_Transition
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5422887523339861340, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
+      propertyPath: m_SpriteState.m_PressedSprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 1de8c8021ffe70646b2a5eea9d372c98, type: 3}
     - target: {fileID: 6730499273032693226, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Type
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6971313681274088975, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_Name
-      value: StageButton (1)
+      value: StageButton_2_1
       objectReference: {fileID: 0}
     - target: {fileID: 8118484849027308190, guid: fc27c4784dcb8e64ca42ef1671bbc50a, type: 3}
       propertyPath: m_AnchorMax.y

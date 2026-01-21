@@ -6,6 +6,7 @@ public class LoginScene : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
+        Time.timeScale = 1f;
     }
     
     public void HandleLoginCompleted()
