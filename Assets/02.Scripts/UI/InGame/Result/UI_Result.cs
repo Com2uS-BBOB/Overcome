@@ -111,6 +111,11 @@ public class UI_Result : MonoBehaviour
         _rankInfo.gameObject.SetActive(true);
     }
 
+    public void Retry()
+    {
+        SceneController.Instance.ReloadCurrentScene();
+    }
+
     public void Skip()
     {
         if (!_allComplete)
@@ -119,6 +124,7 @@ public class UI_Result : MonoBehaviour
             _scoreResult.Complete();
             _killResult.Complete();
         }
-        // todo. Lobby Scene으로 넘어가기
+        
+        SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
     }
 }
