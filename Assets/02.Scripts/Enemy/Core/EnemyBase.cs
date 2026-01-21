@@ -138,6 +138,10 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (_gameOverStopped) return;
         _gameOverStopped = true;
 
+#if UNITY_EDITOR
+        Debug.Log("게임 오버로 적 정지");
+#endif
+
         // EnemyState 정리하면서 완전 정지
         var state = GetComponent<EnemyState>();
         if (state != null)
@@ -223,6 +227,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public virtual void TakeDamage(float damage, GameObject attacker = null)
     {
+        if (_gameOverStopped)
+        {
+#if UNITY_EDITOR
+            Debug.Log("게임 오버로 히트 무시");
+#endif
+            return;
+        }
         if (IsDead)
         {
             return;
