@@ -295,6 +295,18 @@ namespace _02.Scripts.Player.Movement
             _velocity.y = Mathf.Max(_velocity.y, 0f) + amount;
         }
 
+        /// <summary>
+        /// 모든 속도 초기화 (리스폰 시 사용)
+        /// </summary>
+        public void ResetVelocity()
+        {
+            _velocity = Vector3.zero;
+            _horizontalMove = Vector3.zero;
+            _jumpCount = 0;
+            _coyoteTimer = 0f;
+            _isGrounded = true;
+        }
+
         #endregion
 
         /// <summary>
