@@ -342,6 +342,7 @@ GameObject:
   - component: {fileID: 225690275}
   - component: {fileID: 225690274}
   - component: {fileID: 225690273}
+  - component: {fileID: 225690292}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -695,6 +696,31 @@ Transform:
   - {fileID: 1895830953}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &225690292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 225690272}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153fff1daa8a641afa8f9378557043bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Overdrive.OverdrivePostProcessController
+  _gaugeManager: {fileID: 225690279}
+  _volume: {fileID: 1351897568}
+  _punchDuration: 0.2
+  _punchChromaticPeak: 0.5
+  _punchLensDistortionPeak: -0.3
+  _sustainedChromaticIntensity: 0.15
+  _bloomIntensityIncrease: 0.4
+  _vignetteIntensity: 0.25
+  _vignetteColor: {r: 0.1, g: 0.2, b: 0.8, a: 1}
+  _colorFilter: {r: 0.85, g: 0.95, b: 1, a: 1}
+  _saturationIncrease: 15
+  _fadeInDuration: 0.3
+  _fadeOutDuration: 0.5
 --- !u!1001 &256191989
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -131370,8 +131396,8 @@ MonoBehaviour:
         z: 0.77259374
       Rotation:
         value:
-          x: 0.270794
-          y: 0.4623512
+          x: 0.27079397
+          y: 0.46235132
           z: 0.64778113
           w: 0.54155475
     - Position:
@@ -131976,6 +132002,7 @@ MonoBehaviour:
   _electricityVFXPrefab: {fileID: 7834434380170384362, guid: 31f1d34af5c814b8186f1dcacd8ec074, type: 3}
   _vfxSpawnPoint: {fileID: 2142957616}
   _vfxDuration: 0
+  _activationSfxName: SFX_Player_Overdrive
 --- !u!4 &2081084123
 Transform:
   m_ObjectHideFlags: 0
