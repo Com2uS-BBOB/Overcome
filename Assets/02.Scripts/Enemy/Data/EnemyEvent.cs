@@ -4,7 +4,7 @@ public readonly struct EnemyKilledEvent
 {
     public readonly EnemyBase Enemy;
     public readonly int Score;
-    public readonly int Playtime;
+    public readonly float Playtime;
 
     public EnemyKilledEvent(EnemyBase enemy)
     {

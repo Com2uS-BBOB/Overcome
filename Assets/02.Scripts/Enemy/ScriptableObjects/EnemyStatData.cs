@@ -17,10 +17,10 @@ public class EnemyStatData : ScriptableObject
 
     [Header("보상")]
     [SerializeField] private int _score;
-    [SerializeField] private int _playtime;
+    [SerializeField] private float _playtime;
 
     public int Score => _score;
-    public int Playtime => _playtime;
+    public float Playtime => _playtime;
 
     [Header("SFX Set")]
     [SerializeField] private EnemySfxSet _enemySfxSet;
