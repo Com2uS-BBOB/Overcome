@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Linq;
 using UnityEngine;
 using _02.Scripts.Player.Movement;
@@ -26,8 +27,15 @@ namespace _02.Scripts.Player.Spawn
         [SerializeField] private SpawnPoint[] _spawnPoints;
         [SerializeField] private bool _autoCollectSpawnPoints = true;
 
+        [Header("Fade Settings")]
+        [SerializeField] private bool _useFadeEffect = true;
+        [SerializeField] private float _fadeOutDuration = 0.3f;
+        [SerializeField] private float _fadeInDuration = 0.3f;
+        [SerializeField] private CanvasGroup _fadeCanvasGroup;
+
         private Vector3 _lastSafePosition;
         private float _safePositionTimer;
+        private bool _isRespawning;
 
         public event Action OnFallDeath;
         public event Action<Vector3> OnRespawn;
@@ -89,6 +97,8 @@ namespace _02.Scripts.Player.Spawn
 
         private void CheckFallDeath()
         {
+            if (_isRespawning) return;
+
             if (_player.position.y < _deathHeight)
             {
                 HandleFallDeath();
@@ -102,12 +112,12 @@ namespace _02.Scripts.Player.Spawn
             var closestSpawn = FindClosestSpawnPoint(_lastSafePosition);
             if (closestSpawn != null)
             {
-                Respawn(closestSpawn.Position);
+                StartCoroutine(RespawnWithFade(closestSpawn.Position));
             }
             else
             {
                 // 스폰 포인트가 없으면 마지막 안전 위치로 복귀
-                Respawn(_lastSafePosition);
+                StartCoroutine(RespawnWithFade(_lastSafePosition));
             }
         }
 
@@ -122,6 +132,43 @@ namespace _02.Scripts.Player.Spawn
                     new Vector2(referencePosition.x, referencePosition.z),
                     new Vector2(sp.Position.x, sp.Position.z)))
                 .FirstOrDefault();
+        }
+
+        private IEnumerator RespawnWithFade(Vector3 position)
+        {
+            _isRespawning = true;
+
+            // 페이드 아웃 (화면 어두워짐)
+            if (_useFadeEffect && _fadeCanvasGroup != null)
+            {
+                yield return StartCoroutine(FadeCoroutine(0f, 1f, _fadeOutDuration));
+            }
+
+            // 실제 리스폰 처리
+            Respawn(position);
+
+            // 페이드 인 (화면 밝아짐)
+            if (_useFadeEffect && _fadeCanvasGroup != null)
+            {
+                yield return StartCoroutine(FadeCoroutine(1f, 0f, _fadeInDuration));
+            }
+
+            _isRespawning = false;
+        }
+
+        private IEnumerator FadeCoroutine(float fromAlpha, float toAlpha, float duration)
+        {
+            float elapsed = 0f;
+            _fadeCanvasGroup.alpha = fromAlpha;
+
+            while (elapsed < duration)
+            {
+                elapsed += Time.deltaTime;
+                _fadeCanvasGroup.alpha = Mathf.Lerp(fromAlpha, toAlpha, elapsed / duration);
+                yield return null;
+            }
+
+            _fadeCanvasGroup.alpha = toAlpha;
         }
 
         private void Respawn(Vector3 position)
