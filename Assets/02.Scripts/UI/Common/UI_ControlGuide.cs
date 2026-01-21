@@ -30,6 +30,9 @@ public class UI_ControlGuide : BaseUI
     
     private readonly Dictionary<string, VideoClip> _loadedVideos = new Dictionary<string, VideoClip>();
     private readonly List<AsyncOperationHandle<VideoClip>> _videoHandles = new List<AsyncOperationHandle<VideoClip>>();
+
+    [SerializeField] private Color _unlockColor = new Color(0.3f, 0.4f, 0.5f, 1f);
+    [SerializeField] private Color _lockColor = new Color(0.1f, 0.2f, 0.3f, 1f);
     
     protected override void Init()
     {
@@ -40,14 +43,14 @@ public class UI_ControlGuide : BaseUI
                            !RewardManager.Instance.IsRewardUnlocked(data.RequiredReward);
             
             data.Button.interactable = !isLocked;
-            if (isLocked)
-            {
-                data.BackgroundImage.color = Color.gray;
-            }
+            data.BackgroundImage.color = isLocked ? _lockColor : _unlockColor;
             data.BlockIcon?.gameObject.SetActive(isLocked);
             
             data.Button.onClick.AddListener(() => ShowDescription(data));
         }
+
+        _skillInfoText.text = "";
+        _skillDescriptionText.text = "";
     }
 
     private void OnEnable()
@@ -64,12 +67,6 @@ public class UI_ControlGuide : BaseUI
     private void OnDestroy()
     {
         CleanupAllVideos();
-
-        foreach (SkillButtonData data in _skillButtons)
-        {
-            if (data?.Button == null) continue;
-            data.Button.onClick.RemoveAllListeners();
-        }
     }
     
     private void CleanupAllVideos()
@@ -93,6 +90,12 @@ public class UI_ControlGuide : BaseUI
             {
                 Addressables.Release(handle);
             }
+        }
+        
+        foreach (SkillButtonData data in _skillButtons)
+        {
+            if (data?.Button == null) continue;
+            data.Button.onClick.RemoveAllListeners();
         }
         
         _videoHandles.Clear();
