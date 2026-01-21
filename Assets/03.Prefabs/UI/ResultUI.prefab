@@ -517,7 +517,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8651882510608078706
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1219,9 +1219,9 @@ RectTransform:
   - {fileID: 2624264360739445190}
   m_Father: {fileID: 5074004824025985276}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 301.99994, y: -102}
   m_SizeDelta: {x: 400, y: 68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4241220079567575138
@@ -2004,9 +2004,9 @@ RectTransform:
   - {fileID: 1337193156375584378}
   m_Father: {fileID: 5074004824025985276}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 301.99994, y: -170}
   m_SizeDelta: {x: 400, y: 68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7500551171595102507
@@ -2421,7 +2421,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6194277335729247526
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2867,9 +2867,9 @@ RectTransform:
   - {fileID: 8823673452616429094}
   m_Father: {fileID: 5074004824025985276}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 301.99994, y: -34}
   m_SizeDelta: {x: 400, y: 68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4864817209453087772
@@ -3058,6 +3058,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7760961618830041038}
     m_Modifications:
+    - target: {fileID: 2750340838441777066, guid: 4ac390abc95bfcc48994225d00d22942, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b287e042a89bbb542a54bbd76fcc583b, type: 3}
     - target: {fileID: 3338007562998073008, guid: 4ac390abc95bfcc48994225d00d22942, type: 3}
       propertyPath: m_Name
       value: BlankStar2
@@ -3272,6 +3276,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4555645388403646833, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 772a96aecc7c00e4bb702fc2dbeaa867, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3409,6 +3417,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4555645388403646833, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 772a96aecc7c00e4bb702fc2dbeaa867, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3566,6 +3578,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4555645388403646833, guid: f36021b1966c5884e9ac372fcb26282a, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 772a96aecc7c00e4bb702fc2dbeaa867, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3595,6 +3611,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7760961618830041038}
     m_Modifications:
+    - target: {fileID: 2750340838441777066, guid: 4ac390abc95bfcc48994225d00d22942, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b287e042a89bbb542a54bbd76fcc583b, type: 3}
     - target: {fileID: 3338007562998073008, guid: 4ac390abc95bfcc48994225d00d22942, type: 3}
       propertyPath: m_Name
       value: BlankStar3
@@ -3697,6 +3717,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 7760961618830041038}
     m_Modifications:
+    - target: {fileID: 2750340838441777066, guid: 4ac390abc95bfcc48994225d00d22942, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b287e042a89bbb542a54bbd76fcc583b, type: 3}
     - target: {fileID: 3334590561805041889, guid: 4ac390abc95bfcc48994225d00d22942, type: 3}
       propertyPath: _starImage
       value: 

@@ -5,6 +5,8 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
 {
     protected override bool DontDestroy => false;
 
+    [SerializeField] private GameObject _hudObject;
+    
     [Header("난이도 설정")]
     [SerializeField] private DifficultyConfigData _difficultyConfigData;
     [SerializeField] private EDifficultyType _currentDifficulty = EDifficultyType.Normal;
@@ -84,6 +86,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
 
         _remainTime = 0f;
         _isGameOver = true;
+        _hudObject.gameObject.SetActive(false);
         OnGameOver?.Invoke();
     }
 
@@ -93,6 +96,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         if (_playTime < _difficultyConfig.MaxPlayTime) return;
         
         _isGameOver = true;
+        _hudObject.gameObject.SetActive(false);
         OnClearGame?.Invoke(_difficultyConfig.ClearBonus);
         OnGameOver?.Invoke();
     }
