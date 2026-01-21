@@ -44,6 +44,10 @@ namespace _02.Scripts.CameraFX
         [SerializeField] private bool _allowSkip = true;
         [SerializeField] private Key _skipKey = Key.Space;
 
+        [Header("BGM Settings")]
+        [SerializeField] private bool _changeResultBgm = true;
+        [SerializeField] private string _resultBgmName = "BGM_Result";
+
         private bool _isPlaying;
         private bool _isSkipping;
         private GradeConfig _currentGrade;
@@ -164,6 +168,9 @@ namespace _02.Scripts.CameraFX
             // 2. 페이드 아웃 (화면 어두워짐)
             yield return StartCoroutine(FadeOutCoroutine());
 
+            // 2.5 결과 BGM으로 전환
+            PlayResultBGM();
+
             // 3. 플레이어를 결과 위치로 이동
             MovePlayerToResultPosition();
 
@@ -274,6 +281,9 @@ namespace _02.Scripts.CameraFX
                 _fadeCanvasGroup.alpha = 0f;
             }
 
+            // 결과 BGM 전환
+            PlayResultBGM();
+
             // 플레이어 위치 즉시 이동
             MovePlayerToResultPosition();
 
@@ -288,6 +298,14 @@ namespace _02.Scripts.CameraFX
 
             _isPlaying = false;
             _sequenceCoroutine = null;
+        }
+
+        private void PlayResultBGM()
+        {
+            if (_changeResultBgm && !string.IsNullOrEmpty(_resultBgmName))
+            {
+                SoundManager.Instance?.PlayBGM(_resultBgmName);
+            }
         }
 
         private void SetPlayerInputEnabled(bool isEnabled)

@@ -1,10 +1,12 @@
 using System;
 using UnityEngine;
 
-public class TimeSystem : SingletonBehaviour<TimeSystem>
+public class TimeSystem : SingletonBehaviour<TimeSystem>, IGameSystem
 {
     protected override bool DontDestroy => false;
 
+    [SerializeField] private GameObject _hudObject;
+    
     [Header("난이도 설정")]
     [SerializeField] private DifficultyConfigData _difficultyConfigData;
     [SerializeField] private EDifficultyType _currentDifficulty = EDifficultyType.Normal;
@@ -13,7 +15,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     // Ingame Data
     private float _remainTime;
     private float _playTime;
-    private bool _isGameOver;
+    private bool _isOnGame;
     private float _updateTimer;
     private const float UpdateInterval = 0.01f;
 
@@ -24,23 +26,12 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     // Event
     public event Action<float> OnRemainTimeDelta; // 변화량 기반(부호 명시 필요)
     public event Action OnTimeChanged;
-    public event Action OnGameOver;
-    public event Action<int> OnClearGame;
-
+    
     protected override void Init()
     {
         SetInfoByDifficulty();
     }
     
-    private void OnEnable()
-    {
-        EnemyEventController.Enemy.OnKilled += KillEnemy;
-    }
-
-    private void OnDisable()
-    {
-        EnemyEventController.Enemy.OnKilled -= KillEnemy;
-    }
     
     private void SetInfoByDifficulty()
     {
@@ -56,7 +47,7 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
 
     private void Update()
     {
-        if (_isGameOver) return;
+        if (!_isOnGame) return;
         _updateTimer += Time.deltaTime;
         if (_updateTimer < UpdateInterval) return;
         
@@ -79,31 +70,35 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
     private void CheckGameOver()
     {
         if (!_difficultyConfig.HasTimeLimit) return;
-        if (_isGameOver) return;
+        if (!_isOnGame) return;
         if (_remainTime > 0f) return;
 
         _remainTime = 0f;
-        _isGameOver = true;
-        OnGameOver?.Invoke();
+        _isOnGame = false;
+        _hudObject.gameObject.SetActive(false);
+        GameEventHandler.GameEnd();
     }
 
     private void CheckGameClear()
     {
-        if (_isGameOver) return;
+        if (!_isOnGame) return;
         if (_playTime < _difficultyConfig.MaxPlayTime) return;
         
-        _isGameOver = true;
-        OnClearGame?.Invoke(_difficultyConfig.ClearBonus);
-        OnGameOver?.Invoke();
+        _isOnGame = false;
+        _hudObject.gameObject.SetActive(false);
+        GameEventHandler.GameClear(_difficultyConfig.ClearBonus);
+        GameEventHandler.GameEnd();
     }
     
     private void KillEnemy(EnemyKilledEvent killedEvent)
     {
+        if (!_isOnGame) return;
         AddTimeLimit(killedEvent.Playtime);
     }
     
     public void AddTimeLimit(float additionalTime)
     {
+        if (!_isOnGame) return;
         if (!_difficultyConfig.HasTimeLimit) return;
 
         float additionalValue = additionalTime + _difficultyConfig.TimeAdjustment;
@@ -123,5 +118,17 @@ public class TimeSystem : SingletonBehaviour<TimeSystem>
         OnRemainTimeDelta?.Invoke(-reducedTime);
         OnTimeChanged?.Invoke();
         CheckGameOver();
+    }
+
+    public void GameStart()
+    {
+        _isOnGame = true;
+        EnemyEventController.Enemy.OnKilled += KillEnemy;
+    }
+
+    public void GameEnd()
+    {
+        _isOnGame = false;
+        EnemyEventController.Enemy.OnKilled -= KillEnemy;
     }
 }

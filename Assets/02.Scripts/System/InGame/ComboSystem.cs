@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class ComboSystem : SingletonBehaviour<ComboSystem>
+public class ComboSystem : SingletonBehaviour<ComboSystem>, IGameSystem
 {
     protected override bool DontDestroy => false;
 
@@ -35,12 +35,12 @@ public class ComboSystem : SingletonBehaviour<ComboSystem>
         _currentComboConfig = _comboConfigData.GetConfig(_comboCount);
     }
     
-    private void OnEnable()
+    public void GameStart()
     {
         EnemyEventController.Enemy.OnHit += AddCombo;
     }
 
-    private void OnDisable()
+    public void GameEnd()
     {
         EnemyEventController.Enemy.OnHit -= AddCombo;
     }

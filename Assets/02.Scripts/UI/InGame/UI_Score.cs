@@ -7,7 +7,7 @@ public class UI_Score : MonoBehaviour
     [Header("Current Score")]
     [SerializeField] private GameObject _currentScoreObject;
     private TextMeshProUGUI _scoreText;
-    private DOTweenAnimation[] _scoreAnimations;
+    private DOTweenAnimation _scoreAnimation;
     
     [Space(10)]
     [Header("High Score")]
@@ -15,21 +15,27 @@ public class UI_Score : MonoBehaviour
     private TextMeshProUGUI _highScoreText;
     private DOTweenAnimation _highScoreAnimation;
     
+    [Space(10)]
+    [Header("Rank")]
+    [SerializeField] private GameObject _rankObject;
+    private TextMeshProUGUI _rankText;
+    private DOTweenAnimation _rankAnimation;
+    private string _prevGrade = "C"; 
+    
     private bool _isHighScore = false;
     
     private void Awake()
     {
         // Current Score 바인딩
         _scoreText = _currentScoreObject.GetComponent<TextMeshProUGUI>();
-        _scoreAnimations = _currentScoreObject.GetComponents<DOTweenAnimation>();
-        foreach (DOTweenAnimation anim in _scoreAnimations)
-        {
-            anim.autoKill = false;
-        }
+        _scoreAnimation = _currentScoreObject.GetComponent<DOTweenAnimation>();
 
         // High Score 바인딩
         _highScoreText = _highScoreObject.GetComponent<TextMeshProUGUI>();
         _highScoreAnimation = _highScoreObject.GetComponent<DOTweenAnimation>();
+        
+        _rankText = _rankObject.GetComponent<TextMeshProUGUI>();
+        _rankAnimation = _rankObject.GetComponent<DOTweenAnimation>();
     }
 
     private void Start()
@@ -41,6 +47,7 @@ public class UI_Score : MonoBehaviour
         // 초기화 시에는 애니메이션 없이 텍스트만 업데이트
         _scoreText.text = system.CurrentScore.ToString();
         _highScoreText.text = system.HighScore.ToString();
+        _rankText.text = system.GetGradeConfig().Grade;
     }
 
     private void OnDisable()
@@ -54,8 +61,17 @@ public class UI_Score : MonoBehaviour
     private void UpdateScoreUI(int currentScore, int highScore)
     {
         UpdateCurrentScoreUI(currentScore);
+        UpdateGradeUI();
         if (!_isHighScore) return;
         UpdateHighScoreUI(highScore);
+    }
+    private void UpdateGradeUI()
+    {
+        GradeConfig grade = ScoreSystem.Instance.GetGradeConfig();
+        if (_prevGrade == grade.Grade) return;
+        _prevGrade = grade.Grade;
+        _rankText.text = grade.Grade;
+        _rankAnimation.DORestart();
     }
 
     private void SetNewHighScore()
@@ -77,9 +93,6 @@ public class UI_Score : MonoBehaviour
 
     private void PlayScoreEvent()
     {
-        foreach (DOTweenAnimation anim in _scoreAnimations)
-        {
-            anim.DORestart();
-        }
+        _scoreAnimation.DORestart();
     }
 }
