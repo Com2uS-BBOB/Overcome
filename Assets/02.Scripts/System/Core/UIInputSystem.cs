@@ -18,7 +18,8 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     {
         _pauseActions = new Dictionary<ESceneType, Action>
         {
-            { ESceneType.GameScene, () => OpenPauseUI(PauseUIConfig.InGame) },
+            { ESceneType.Stage1_1, () => OpenPauseUI(PauseUIConfig.InGame) },
+            { ESceneType.Stage2_1, () => OpenPauseUI(PauseUIConfig.InGame) },
             { ESceneType.TutorialScene, () => OpenPauseUI(PauseUIConfig.InGame) },
             { ESceneType.LobbyScene, () => OpenPauseUI(PauseUIConfig.Lobby) },
             { ESceneType.LoginScene, Exit }
@@ -54,7 +55,8 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
 
     private void OpenGuidePopup(InputAction.CallbackContext context)
     {
-        if (ESceneType.GameScene != SceneController.Instance.CurrentScene) return;
+        if (ESceneType.Stage1_1 != SceneController.Instance.CurrentScene) return;
+        if (ESceneType.Stage2_1 != SceneController.Instance.CurrentScene) return;
         bool isOpened = UI_GuidePopup.IsOpened;
         
         if (!isOpened)

@@ -75,11 +75,9 @@ namespace _02.Scripts.CameraFX
 
         private void Start()
         {
-            // TimeSystem의 게임 오버 이벤트 구독
-            if (TimeSystem.Instance != null)
-            {
-                TimeSystem.Instance.OnGameOver += HandleGameOver;
-            }
+            // 게임 오버 이벤트 구독
+            GameEventHandler.OnGameEnd += HandleGameOver;
+
 
             // 페이드 캔버스 초기화
             if (_fadeCanvasGroup != null)
@@ -98,10 +96,7 @@ namespace _02.Scripts.CameraFX
 
         private void OnDestroy()
         {
-            if (TimeSystem.Instance != null)
-            {
-                TimeSystem.Instance.OnGameOver -= HandleGameOver;
-            }
+            GameEventHandler.OnGameEnd -= HandleGameOver;
 
             if (Instance == this)
                 Instance = null;

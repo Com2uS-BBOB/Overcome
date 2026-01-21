@@ -221,6 +221,7 @@ namespace _02.Scripts.CameraFX
             _introCoroutine = null;
 
             OnIntroCompleted?.Invoke();
+            GameEventHandler.GameStart();
         }
 
         private void PlayPlayerAnimation(string triggerName)
