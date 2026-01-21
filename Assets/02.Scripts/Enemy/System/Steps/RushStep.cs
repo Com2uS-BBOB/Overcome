@@ -62,6 +62,7 @@ public class RushStep : IEnemyAttackStep
         }
         _reserved = (_context.AttackDirector != null);
 
+        string rushKey = _context.SfxSet != null ? _context.SfxSet.EnemyRushSound : null;
         _rush = new RushAction(
             _context.Enemy,
             _context.Player,
@@ -70,7 +71,8 @@ public class RushStep : IEnemyAttackStep
             _context.Agent,
             _context.Anim,
             _rushDuration,
-            _context.Damage
+            _context.Damage,
+            rushKey
         );
 
         _rush.Enter();

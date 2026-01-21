@@ -45,9 +45,16 @@ public class HowlingStep : IEnemyAttackStep
 
         _finished = false;
 
-        _howl = new HowlAction(_context.Anim, _context.Agent, _context.Movement, _howlDuration);
+        string howlKey = _context.SfxSet != null ? _context.SfxSet.EnemyHowlSound : null;
+        _howl = new HowlAction(
+            _context.Anim,
+            _context.Agent,
+            _context.Movement,
+            _howlDuration,
+            _context.Enemy,
+            howlKey
+        );
         _howl.Enter();
-
         return true;
     }
 
@@ -91,6 +98,13 @@ public class HowlingStep : IEnemyAttackStep
 
     public void OnAnimEvent(EAttackAnimEvent animEvent)
     {
-        // 포효 애니메이션 이벤트 처리 필요시 여기에 작성
+        if (_howl == null) return;
+
+        switch (animEvent)
+        {
+            case EAttackAnimEvent.SfxStart:
+                _howl.OnSfxStart();
+                break;
+        }
     }
 }

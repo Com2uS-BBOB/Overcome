@@ -53,6 +53,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public event Action OnDeath;
     public event Action<EnemyBase> OnDespawn;
 
+    private bool _gameOverStopped;
+
     protected virtual void Awake()
     {
         _anim = GetComponent<EnemyAnimatorController>();
@@ -87,6 +89,11 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (EnemyStatData == null) return;
 
+        // GameOver 구독
+        GameEventHandler.OnGameEnd += HandleGameOver;
+
+        _gameOverStopped = false;
+
         _collider.enabled = true;
         _despawnRequested = false;
 
@@ -101,6 +108,9 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void OnDisable()
     {
+        // GameOver 해제
+        GameEventHandler.OnGameEnd -= HandleGameOver;
+
         // 코루틴 정리
         if (_hitStopRoutine != null)
         {
@@ -115,6 +125,29 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         }
 
         IsSpawnGap = false;
+    }
+
+    private void HandleGameOver()
+    {
+        if (_gameOverStopped) return;
+        _gameOverStopped = true;
+
+#if UNITY_EDITOR
+        Debug.Log("게임 오버로 적 정지");
+#endif
+
+        // EnemyState 정리하면서 완전 정지
+        var state = GetComponent<EnemyState>();
+        if (state != null)
+        {
+            state.ForceStopByGameOver();
+        }
+        else
+        {
+            // 혹시 EnemyState가 없는 경우 대비 최소 안전장치
+            GetComponent<EnemyAttack>()?.Stop();
+            _movement?.FullStop();
+        }
     }
 
     public void SetPool(EnemyPool pool)
@@ -188,6 +221,13 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public virtual void TakeDamage(float damage, GameObject attacker = null)
     {
+        if (_gameOverStopped)
+        {
+#if UNITY_EDITOR
+            Debug.Log("게임 오버로 히트 무시");
+#endif
+            return;
+        }
         if (IsDead)
         {
             return;
@@ -210,6 +250,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (_currentHealth <= 0)
         {
             Die();
+            PlaySfx_Death();
         }
     }
 
@@ -220,6 +261,18 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             return;
         }
         _movement.ApplyHitStop(time);
+    }
+
+    #endregion
+
+    #region Play Sfx
+
+    private void PlaySfx_Death()
+    {
+        var key = EnemyStatData != null ? EnemyStatData.EnemySfxSet?.EnemyDeathSound : null;
+        if (string.IsNullOrEmpty(key)) return;
+
+        SoundManager.Instance.PlaySfx(key, transform);
     }
 
     #endregion
@@ -268,4 +321,5 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     }
 
     #endregion
+
 }

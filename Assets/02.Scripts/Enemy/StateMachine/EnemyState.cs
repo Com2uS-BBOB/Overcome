@@ -34,6 +34,9 @@ public class EnemyState : MonoBehaviour
     [Header("Attack 관련 옵션")]
     [SerializeField] private float _attackRange = 22f;
 
+    // 게임 오버 정지 플러그 (중복 호출 방지용)
+    private bool _stoppedByGameOver;
+
     private void Awake()
     {
         _enemy = GetComponent<EnemyBase>();
@@ -56,10 +59,51 @@ public class EnemyState : MonoBehaviour
             _pressureReserved = false;
             _standOffRepathTimer = 0f;
         }
+
+        // 리스폰되면 게임오버 정지 플래그 초기화
+        _stoppedByGameOver = false;
+
+        // GameOver 구독
+        GameEventHandler.OnGameEnd += HandleGameOver;
+    }
+
+    private void OnDisable()
+    {
+        // GameOver 해제
+        GameEventHandler.OnGameEnd -= HandleGameOver;
+    }
+
+    private void HandleGameOver()
+    {
+        ForceStopByGameOver();
+    }
+
+    public void ForceStopByGameOver()
+    {
+        if (_stoppedByGameOver) return;
+        _stoppedByGameOver = true;
+
+        // 공격 중단 (히트박스/코루틴 포함)
+        _attack?.Stop();
+
+        // 공격 대기 위협 해제
+        CleanupEngagement();
+
+        // 이동 완전 정지
+        _movement?.FullStop();
+
+        // 상태 고정
+        _currentState = EEnemyState.Idle;
+
+        // Update 루프 자체를 끊음
+        enabled = false;
     }
 
     private void Update()
     {
+        // enabled=false 전에 들어올 수 있는 경우 방어
+        if (_stoppedByGameOver) return;
+
         if (_enemy != null && _enemy.IsDead)
         {
             // 죽었으면 전투 / 공격 루프를 끊어버림
