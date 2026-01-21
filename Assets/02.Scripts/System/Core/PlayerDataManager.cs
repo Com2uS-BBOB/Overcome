@@ -182,4 +182,35 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
     }
 
     #endregion
+    
+#if UNITY_EDITOR
+    #region Editor Test
+
+    [ContextMenu("Test/Save Data")]
+    private void TestSave()
+    {
+        SaveData();
+        Debug.Log($"[PlayerDataManager] 저장 완료: {Application.persistentDataPath}/GameSaveData.json");
+    }
+
+    [ContextMenu("Test/Load Data")]
+    private void TestLoad()
+    {
+        LoadData();
+        Debug.Log($"[PlayerDataManager] 로드 완료 - 플레이어 수: {_saveData.Players.Count}, 현재: {GetPlayerID()}");
+    }
+
+    [ContextMenu("Test/Print All Stage Progress")]
+    private void TestPrintAllProgress()
+    {
+        var allProgress = GetAllStageProgress();
+        Debug.Log($"=== 전체 스테이지 진행도 ({allProgress.Count}개) ===");
+        foreach (var progress in allProgress)
+        {
+            Debug.Log($"Stage {progress.StageID}: Stars={progress.StarsEarned}, Best={progress.BestScore}, Plays={progress.PlayCount}");
+        }
+    }
+
+    #endregion
+#endif
 }

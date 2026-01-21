@@ -94,7 +94,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 112000000, guid: 00e6309b155a5bc44bf97cb1b1ffc2da, type: 2}
-  m_LightingSettings: {fileID: 4890085278179872738, guid: e023051a9974ac445b6563d8885aeecc, type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 9730f8ca311645a4b9515c554b6425a3, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -1631,6 +1631,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Combat.HitEffectPool
   _hitEffectPrefab: {fileID: 8884371268655795233, guid: 784554bd4b0134d42a53528d66e14f1a, type: 3}
   _initialPoolSize: 20
+  _overdriveHitEffectPrefab: {fileID: 0}
 --- !u!4 &467159748
 Transform:
   m_ObjectHideFlags: 0
@@ -2348,6 +2349,7 @@ MonoBehaviour:
   _firePoint: {fileID: 1849879993}
   _cameraTransform: {fileID: 1408905993}
   _poolContainer: {fileID: 1446532961}
+  _overdriveProjectilePrefab: {fileID: 0}
 --- !u!114 &681277587
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4041,55 +4043,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1189728112}
   m_CullTransparentMesh: 1
---- !u!1 &1204848883
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1204848885}
-  - component: {fileID: 1204848884}
-  m_Layer: 0
-  m_Name: Global Volume
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1204848884
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204848883}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IsGlobal: 1
-  priority: 0
-  blendDistance: 0
-  weight: 1
-  sharedProfile: {fileID: 11400000, guid: aa6b986c2fffd71428db03118df7c7dd, type: 2}
---- !u!4 &1204848885
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1204848883}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1210089293
 GameObject:
   m_ObjectHideFlags: 0
@@ -6989,7 +6942,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48df590cf111e4443bd38d2c7771d27c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayTimeSystem
-  _uiSequencer: {fileID: 0}
   _difficultyConfigData: {fileID: 11400000, guid: bae2da0e7a83ffc47b7e18b34867a97f, type: 2}
   _currentDifficulty: 0
 --- !u!1001 &2065275168
@@ -7398,6 +7350,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4122794663308658270, guid: 5ae37bec211d3a0488d823556ccb6e5d, type: 3}
+      propertyPath: m_Intensity
+      value: 0.15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7423,7 +7379,6 @@ SceneRoots:
   - {fileID: 870568470}
   - {fileID: 256871823}
   - {fileID: 467159748}
-  - {fileID: 1204848885}
   - {fileID: 1408905993}
   - {fileID: 1446532961}
   - {fileID: 1768334919}
