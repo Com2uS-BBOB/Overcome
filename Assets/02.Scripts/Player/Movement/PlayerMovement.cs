@@ -16,8 +16,8 @@ namespace _02.Scripts.Player.Movement
         [SerializeField] private float _groundedGravity = -5f;  // 지면에서 더 강하게 붙이기
 
         [Header("Ground Check")]
-        [SerializeField] private float _groundCheckDistance = 0.3f;
-        [SerializeField] private float _groundCheckRadius = 0.2f;
+        [SerializeField] private float _groundCheckDistance = 1.08f;
+        [SerializeField] private float _groundCheckRadius = 0.8f;
         [SerializeField] private LayerMask _groundLayer = ~0;  // 기본: 모든 레이어
         [SerializeField] private float _coyoteTime = 0.1f;  // 지면 떠난 후 점프 허용 시간
 

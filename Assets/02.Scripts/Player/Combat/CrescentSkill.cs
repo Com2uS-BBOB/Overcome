@@ -33,7 +33,8 @@ namespace _02.Scripts.Player.Combat
         public override string SkillName => "크레센트";
         public override float Cooldown => 0f;
         public override bool CanUse => !_isActive && !_inComboGrace &&
-                                       _gaugeManager != null && _gaugeManager.CanUseCrescent;
+                                       _gaugeManager != null && _gaugeManager.CanUseCrescent &&
+                                       RewardManager.Instance.IsCrescentUnlocked();
 
         // === IOverDriveAffected 구현 ===
         public bool IsOverDriveActive { get; set; }
