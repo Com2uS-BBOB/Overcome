@@ -487,6 +487,7 @@ namespace _02.Scripts.Player.Core
         private void HandleCrescent()
         {
             if (_crescent == null) return;
+            if (!RewardManager.Instance.IsCrescentUnlocked()) return;
 
             bool isGrounded = Movement.IsGrounded;
 
