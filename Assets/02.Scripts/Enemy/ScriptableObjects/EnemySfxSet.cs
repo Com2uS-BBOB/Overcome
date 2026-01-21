@@ -4,7 +4,6 @@ using UnityEngine;
 public class EnemySfxSet : ScriptableObject
 {
     [Header("리액션")]
-    public string EnemyHitSound;
     public string EnemyDeathSound;
 
     [Header("공격")]

@@ -9,7 +9,7 @@ public class EliteRipAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
     private readonly EnemyAnimatorController _anim;
-    private readonly string _ripSfxKey;
+    // private readonly string _ripSfxKey;
 
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;

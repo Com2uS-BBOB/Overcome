@@ -258,10 +258,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
             Die();
             PlaySfx_Death();
         }
-        else
-        {
-            PlaySfx_Hit();
-        }
     }
 
     private void StopOnHit(float time)
@@ -276,14 +272,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     #endregion
 
     #region Play Sfx
-
-    private void PlaySfx_Hit()
-    {
-        var key = EnemyStatData != null ? EnemyStatData.EnemySfxSet?.EnemyHitSound : null;
-        if (string.IsNullOrEmpty(key)) return;
-
-        SoundManager.Instance.PlaySfx(key, transform);
-    }
 
     private void PlaySfx_Death()
     {
