@@ -47,7 +47,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public bool IsDead => _currentHealth <= 0;
 
     public int Score => EnemyStatData.Score;
-    public int Playtime => EnemyStatData.Playtime;
+    public float Playtime => EnemyStatData.Playtime;
 
     public event Action<float, float> OnHpChanged;
     public event Action OnDeath;
