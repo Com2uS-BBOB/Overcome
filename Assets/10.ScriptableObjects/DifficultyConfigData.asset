@@ -15,7 +15,7 @@ MonoBehaviour:
   Configs:
   - Difficulty: 0
     HasTimeLimit: 0
-    StartTime: 99999
+    StartTime: 10
     MaxPlayTime: 99999
     TimeAdjustment: 0
     AdjustmentDecayStart: 120
@@ -33,11 +33,11 @@ MonoBehaviour:
     ClearBonus: 0
   - Difficulty: 2
     HasTimeLimit: 1
-    StartTime: 60
-    MaxPlayTime: 300
+    StartTime: 10
+    MaxPlayTime: 240
     TimeAdjustment: 0
-    AdjustmentDecayStart: 120
-    AdjustmentDecayRatio: 0.5
+    AdjustmentDecayStart: 90
+    AdjustmentDecayRatio: 0.2
     ScoreMultiplier: 1
     ClearBonus: 0
   - Difficulty: 3

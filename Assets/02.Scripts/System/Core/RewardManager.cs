@@ -19,4 +19,7 @@ public class RewardManager : SingletonBehaviour<RewardManager>
     {
         return _rewardUnlockData.GetRewardUnlockInfo(rewardType);
     }
+
+    public bool IsCrescentUnlocked() => IsRewardUnlocked(ERewardType.CrescentSkill);
+    public bool IsOverDriveUnlocked() => IsRewardUnlocked(ERewardType.OverDriveSkill);
 }

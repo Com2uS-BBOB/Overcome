@@ -27,7 +27,7 @@ namespace _02.Scripts.Player.Gauge
         public float OverDriveMax => _overDriveGauge.Max;
         public float OverDriveRatio => _overDriveGauge.Ratio;
         public bool CanUseCrescent => IsOverDriveActive || _crescentGauge.Current >= _settings.CrescentCostPerShot;
-        public bool CanActivateOverDrive => _overDriveGauge.IsFull && !IsOverDriveActive;
+        public bool CanActivateOverDrive => _overDriveGauge.IsFull && !IsOverDriveActive && RewardManager.Instance.IsOverDriveUnlocked();
         public bool IsOverDriveActive { get; private set; }
         
         // Events

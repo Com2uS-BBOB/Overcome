@@ -27,6 +27,9 @@ namespace _02.Scripts.Player.Animation
         public event Action OnOverdriveReady;   // VFX 시작 타이밍
         public event Action OnOverdriveEnd;     // 애니메이션 종료
 
+        // 발소리 이벤트
+        public event Action OnFootstep;
+
         // Animator 파라미터 해시 - Locomotion
         private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
         private static readonly int JumpHash = Animator.StringToHash("Jump");
@@ -71,6 +74,7 @@ namespace _02.Scripts.Player.Animation
                 _animEventProxy.OnCancelWindowExit += HandleCancelWindowExit;
                 _animEventProxy.OnOverdriveReady += HandleOverdriveReady;
                 _animEventProxy.OnOverdriveEnd += HandleOverdriveEnd;
+                _animEventProxy.OnFootstep += HandleFootstep;
             }
             else
             {
@@ -100,6 +104,7 @@ namespace _02.Scripts.Player.Animation
             Debug.Log("[PlayerAnimatorController] HandleOverdriveEnd called");
             OnOverdriveEnd?.Invoke();
         }
+        private void HandleFootstep() => OnFootstep?.Invoke();
 
         #endregion
 
@@ -279,9 +284,10 @@ namespace _02.Scripts.Player.Animation
         /// <summary>
         /// Overdrive 진입 애니메이션 재생
         /// </summary>
-        public void PlayOverdriveActivation()
+        public void PlayOverdriveActivation(bool isGrounded)
         {
-            Debug.Log("[PlayerAnimatorController] PlayOverdriveActivation");
+            Debug.Log($"[PlayerAnimatorController] PlayOverdriveActivation - isGrounded: {isGrounded}");
+            _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.ResetTrigger(OverdriveActivationHash);
             _animator.SetTrigger(OverdriveActivationHash);
         }
@@ -306,6 +312,7 @@ namespace _02.Scripts.Player.Animation
                 _animEventProxy.OnCancelWindowExit -= HandleCancelWindowExit;
                 _animEventProxy.OnOverdriveReady -= HandleOverdriveReady;
                 _animEventProxy.OnOverdriveEnd -= HandleOverdriveEnd;
+                _animEventProxy.OnFootstep -= HandleFootstep;
             }
         }
     }
