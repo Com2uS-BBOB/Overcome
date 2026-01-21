@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class SceneController : SingletonBehaviour<SceneController>
 {
-    private ESceneType _currentScene = ESceneType.SampleScene;
+    private ESceneType _currentScene = ESceneType.LoginScene;
     private Dictionary<ESceneType, string> _sceneNameMap;
     private bool _isLoading;
     public event Action<ESceneType> OnSceneChanged;

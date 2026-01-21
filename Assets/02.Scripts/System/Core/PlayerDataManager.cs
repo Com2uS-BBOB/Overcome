@@ -5,13 +5,11 @@ using UnityEngine;
 public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 {
     private const string SaveKey = "GameSaveData";
+    private GameSaveData _saveData;
     private PlayerData _currentPlayer;
 
     [Header("Start Settings")]
     [SerializeField] private string _startPlayerID;
-    
-    [Header("Debug")]
-    [SerializeField] private GameSaveData _saveData;
 
     protected override void Init()
     {
@@ -90,7 +88,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     public bool SwitchPlayer(string playerId)
     {
-        var player = FindPlayer(playerId);
+        PlayerData player = FindPlayer(playerId);
         if (player == null) return false;
 
         SyncCurrentPlayerToSaveData();
@@ -151,7 +149,12 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     public StageProgress GetStageProgress(int stageId)
     {
-        return _currentPlayer?.StageProgress?.Find(p => p.StageID == stageId);
+        StageProgress progress = _currentPlayer?.StageProgress?.Find(p => p.StageID == stageId);
+        if (progress != null) return progress;
+        StageProgress stageProgress = new StageProgress();
+        stageProgress.StageID = stageId;
+        SaveStageProgress(stageProgress);
+        return stageProgress;
     }
 
     public void SaveStageProgress(StageProgress progress)

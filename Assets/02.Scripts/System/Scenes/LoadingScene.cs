@@ -26,6 +26,10 @@ public class LoadingScene : MonoBehaviour
 
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+        Time.timeScale = 1f;
+        
         _tooltipPosition = _toolTipText.rectTransform.anchoredPosition;
         RefillTooltipQueue();
 
@@ -96,6 +100,7 @@ public class LoadingScene : MonoBehaviour
     private IEnumerator LoadTargetSceneCoroutine()
     {
         yield return null;
+        Application.backgroundLoadingPriority = ThreadPriority.Low;
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneController.Instance.TargetSceneName);
         asyncLoad.allowSceneActivation = false;
 

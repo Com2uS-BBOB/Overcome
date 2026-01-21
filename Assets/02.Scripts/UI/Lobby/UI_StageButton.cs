@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,15 +38,13 @@ public class UI_StageButton : MonoBehaviour
     
     private void Start()
     {
-        SetDefaultUI();
-        
-        StageManager stageManager = StageManager.Instance;
-        bool isUnlocked = stageManager.IsStageUnlocked(_chapter, _level);
-        SetBackgroundImage(isUnlocked);
-        if (!isUnlocked) return;
-        
-        _stageProgress = stageManager.GetStageProgress(_chapter, _level);
-        SetStarUI();
+        SetDefaultText();
+        SetProgressUI();
+    }
+
+    private void OnEnable()
+    {
+        SetProgressUI();
     }
     
     private void SetBackgroundImage(bool isUnlocked)
@@ -61,10 +57,12 @@ public class UI_StageButton : MonoBehaviour
         else if (_isBossStage)
         {
             _stageSelectImage.color = _bossColor;
+            _openButton.interactable = true;
         }
         else
         {
             _stageSelectImage.color = _normalColor;
+            _openButton.interactable = true;
         }
     }
 
@@ -80,9 +78,20 @@ public class UI_StageButton : MonoBehaviour
         }
     }
 
-    private void SetDefaultUI()
+    private void SetDefaultText()
     {
-        _stageText.text = $"{_chapter}_{_level}";
+        _stageText.text = $"{_chapter}-{_level}";
+    }
+
+    private void SetProgressUI()
+    {
+        StageManager stageManager = StageManager.Instance;
+        if (stageManager == null) return;
+        
+        bool isUnlocked = stageManager.IsStageUnlocked(_chapter, _level);
+        SetBackgroundImage(isUnlocked);
+        _stageProgress = stageManager.GetStageProgress(_chapter, _level);
+        SetStarUI();
     }
 
     private async void SelectStage()
