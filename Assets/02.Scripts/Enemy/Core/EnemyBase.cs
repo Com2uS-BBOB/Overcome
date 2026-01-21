@@ -53,6 +53,8 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     public event Action OnDeath;
     public event Action<EnemyBase> OnDespawn;
 
+    private bool _gameOverStopped;
+
     protected virtual void Awake()
     {
         _anim = GetComponent<EnemyAnimatorController>();
@@ -87,6 +89,14 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (EnemyStatData == null) return;
 
+        // GameOver 구독
+        if (TimeSystem.Instance != null)
+        {
+            TimeSystem.Instance.OnGameOver += HandleGameOver;
+        }
+
+        _gameOverStopped = false;
+
         _collider.enabled = true;
         _despawnRequested = false;
 
@@ -101,6 +111,12 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     protected virtual void OnDisable()
     {
+        // GameOver 해제
+        if (TimeSystem.Instance != null)
+        {
+            TimeSystem.Instance.OnGameOver -= HandleGameOver;
+        }
+
         // 코루틴 정리
         if (_hitStopRoutine != null)
         {
@@ -115,6 +131,25 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         }
 
         IsSpawnGap = false;
+    }
+
+    private void HandleGameOver()
+    {
+        if (_gameOverStopped) return;
+        _gameOverStopped = true;
+
+        // EnemyState 정리하면서 완전 정지
+        var state = GetComponent<EnemyState>();
+        if (state != null)
+        {
+            state.ForceStopByGameOver();
+        }
+        else
+        {
+            // 혹시 EnemyState가 없는 경우 대비 최소 안전장치
+            GetComponent<EnemyAttack>()?.Stop();
+            _movement?.FullStop();
+        }
     }
 
     public void SetPool(EnemyPool pool)
