@@ -31,8 +31,6 @@ public class UI_Result : MonoBehaviour
             child.gameObject.SetActive(false);
         }
         _canvasGroup.alpha = 0;
-        
-        GameEventHandler.OnGameEnd += ShowResultUI;
     }
     
     private void Start()
@@ -49,7 +47,6 @@ public class UI_Result : MonoBehaviour
         _timeResult.OnComplete -= HandleTimeComplete;
         _scoreResult.OnComplete -= HandleScoreComplete;
         _killResult.OnComplete -= HandleKillComplete;
-        GameEventHandler.OnGameEnd -= ShowResultUI;
     }
     
     private void OnDestroy()
