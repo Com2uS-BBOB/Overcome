@@ -36,8 +36,7 @@ public class EliteRipAction : IEnemyAction
         EnemyAnimatorController anim,
         float damagePerHit,
         float ripMoveSpeed,
-        float ripKnockbackDistance,
-        string ripSfxKey
+        float ripKnockbackDistance
     )
     {
         _enemy = enemy;
@@ -49,7 +48,6 @@ public class EliteRipAction : IEnemyAction
         _damagePerHit = damagePerHit;
         _ripMoveSpeed = ripMoveSpeed;
         _ripKnockbackDistance = ripKnockbackDistance;
-        _ripSfxKey = ripSfxKey;
     }
 
     public void Enter()
@@ -156,16 +154,5 @@ public class EliteRipAction : IEnemyAction
     public void OnAnimEnd()
     {
 
-    }
-
-    public void OnSfxStart()
-    {
-        if (_sfxPlayed) return;
-        _sfxPlayed = true;
-
-        if (string.IsNullOrEmpty(_ripSfxKey)) return;
-
-        SoundManager.Instance.PlaySfx(_ripSfxKey, _enemy.position);
-        _sfxPlayed = false;
     }
 }
