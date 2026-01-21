@@ -65,7 +65,7 @@ public class UI_StageInfo : BaseUI
 
     public void ClosePanel()
     {
-        gameObject.SetActive(false);
+        UIController.Instance.CloseUI(this);
     }
 
     public async void OpenRankingPanel()

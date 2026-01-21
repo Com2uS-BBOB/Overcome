@@ -29,6 +29,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        GameEventHandler.IsOnGame = true;
         OnGameStart();
     }
     
@@ -59,6 +60,7 @@ public class GameManager : MonoBehaviour
         _comboSystem?.GameEnd();
         _scoreSystem?.GameEnd();
         _killLogSystem?.GameEnd();
+        GameEventHandler.IsOnGame = false;
     }
 
     private void SetCursor(bool active)

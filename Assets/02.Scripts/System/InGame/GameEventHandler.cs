@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class GameEventHandler
 {
+    public static bool IsOnGame = false;
     public static event Action OnGameStart;
     public static event Action OnGameEnd;
     public static event Action<int> OnGameClear;

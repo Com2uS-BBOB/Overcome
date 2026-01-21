@@ -63,6 +63,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
         {
             _saveData.Players[index] = _currentPlayer;
         }
+        // StageManager.Instance
     }
 
     #endregion
@@ -90,7 +91,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     public bool SwitchPlayer(string playerId)
     {
-        var player = FindPlayer(playerId);
+        PlayerData player = FindPlayer(playerId);
         if (player == null) return false;
 
         SyncCurrentPlayerToSaveData();
@@ -151,7 +152,11 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
 
     public StageProgress GetStageProgress(int stageId)
     {
-        return _currentPlayer?.StageProgress?.Find(p => p.StageID == stageId);
+        StageProgress progress = _currentPlayer?.StageProgress?.Find(p => p.StageID == stageId);
+        if (progress != null) return progress;
+        StageProgress stageProgress = new StageProgress();
+        SaveStageProgress(stageProgress);
+        return stageProgress;
     }
 
     public void SaveStageProgress(StageProgress progress)

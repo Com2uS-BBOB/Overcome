@@ -14,6 +14,12 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>, IGameSystem
     
     public int CurrentScore => _currentScore;
     public int HighScore => _highScore;
+
+    private void OnEnable()
+    {
+        RankingData data = RankingDataManager.Instance.GetOrCreateStageRanking(StageManager.Instance.StageID);
+        _highScore = data.Ranks.Count < 1 ? 0 : data.Ranks[0].Score;
+    }
     
     public void GameStart()
     {

@@ -7,7 +7,13 @@ public class StageManager : SingletonBehaviour<StageManager>
     private const int MaxStarCount = 3;
     private string _currentStageId = "1_1"; // "1_1", "1_2" 형식
     private int _currentStageIntId = 11; // 11, 12, 13... (저장용 ID)
-
+    public int StageID => _currentStageIntId;
+    
+    protected override void Init()
+    {
+        GameEventHandler.OnGameEnd += CompleteStage;
+    }
+    
     #region Stage Setup
     public void SetCurrentStage(int chapter, int level)
     {
@@ -40,8 +46,11 @@ public class StageManager : SingletonBehaviour<StageManager>
     #endregion
 
     #region Stage Completion
-    public void CompleteStage(int finalScore)
+    private void CompleteStage()
     {
+        int finalScore = ScoreSystem.Instance.CurrentScore;
+        string userID = PlayerDataManager.Instance.GetPlayerID();
+        
         // Previous Data
         GradeConfig grade = _stageData.GetGrade(_currentStageId, finalScore);
         StageProgress progress = PlayerDataManager.Instance.GetStageProgress(_currentStageIntId);
@@ -50,8 +59,7 @@ public class StageManager : SingletonBehaviour<StageManager>
         UpdateStageProgress(progress, grade, finalScore);
         PlayerDataManager.Instance.SaveStageProgress(progress);
 
-        // Show Data
-        ShowStageResult(grade);
+        RankingDataManager.Instance.UpdateRanking(_currentStageIntId, userID, finalScore);
     }
 
     private void UpdateStageProgress(StageProgress previousProgress, GradeConfig grade, int score)
@@ -67,10 +75,6 @@ public class StageManager : SingletonBehaviour<StageManager>
         previousProgress.BestScore = score;
     }
 
-    private void ShowStageResult(GradeConfig grade)
-    {
-        // todo. Result UI 표시 로직 위치 수정
-    }
     #endregion
 
     #region Stage Info Query
