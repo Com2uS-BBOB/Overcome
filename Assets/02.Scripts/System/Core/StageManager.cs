@@ -5,7 +5,8 @@ public class StageManager : SingletonBehaviour<StageManager>
     [SerializeField] private StageData _stageData;
 
     [Header("BGM Settings")]
-    [SerializeField] private bool _playBgmOnStart = true;
+    [Tooltip("SoundManager의 SceneBGMConfig를 사용하면 false로 설정")]
+    [SerializeField] private bool _playBgmOnStart = false;
     [SerializeField] private bool _useIntroLoop = false;
     [SerializeField] private string _introBgmName = "BGM_Stage_Intro";
     [SerializeField] private string _loopBgmName = "BGM_Stage_Loop";

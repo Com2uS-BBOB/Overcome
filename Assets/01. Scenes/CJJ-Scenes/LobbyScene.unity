@@ -1625,56 +1625,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 844624810}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &804781283
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 804781285}
-  - component: {fileID: 804781284}
-  m_Layer: 0
-  m_Name: StageManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &804781284
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 804781283}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1b530eb6f0d6efc4295a353d1c333e66, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::StageManager
-  _stageData: {fileID: 11400000, guid: f0882550f8978444f90e7d6b6cb071f3, type: 2}
-  _playBgmOnStart: 1
-  _useIntroLoop: 1
-  _introBgmName: BGM_Stage_Intro
-  _loopBgmName: BGM_Stage_Loop
-  _stageBgmName: BGM_Stage
---- !u!4 &804781285
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 804781283}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &844624809
 GameObject:
   m_ObjectHideFlags: 0
@@ -3196,6 +3146,56 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1344612884}
   m_CullTransparentMesh: 0
+--- !u!1 &1366675830
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1366675832}
+  - component: {fileID: 1366675831}
+  m_Layer: 0
+  m_Name: StageManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1366675831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366675830}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b530eb6f0d6efc4295a353d1c333e66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StageManager
+  _stageData: {fileID: 11400000, guid: f0882550f8978444f90e7d6b6cb071f3, type: 2}
+  _playBgmOnStart: 0
+  _useIntroLoop: 0
+  _introBgmName: BGM_Stage_Intro
+  _loopBgmName: BGM_Stage_Loop
+  _stageBgmName: BGM_Stage
+--- !u!4 &1366675832
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1366675830}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1419016146
 GameObject:
   m_ObjectHideFlags: 0
@@ -13680,9 +13680,9 @@ SceneRoots:
   - {fileID: 1174122013}
   - {fileID: 475650981}
   - {fileID: 622136186}
-  - {fileID: 804781285}
   - {fileID: 271142184}
   - {fileID: 284994885}
   - {fileID: 372847551}
   - {fileID: 165366833}
   - {fileID: 844624810}
+  - {fileID: 1366675832}
