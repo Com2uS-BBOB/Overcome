@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ScoreSystem : SingletonBehaviour<ScoreSystem>
 {
+    [SerializeField] private StageData _stageData;
     protected override bool DontDestroy => false;
     
     private int _currentScore;
@@ -12,8 +13,21 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     public event Action<int, int> OnScoreChanged;
     public event Action BreakHighScore;
     
+    [Header("Test Settings")]
+    [SerializeField] private bool _isTest = false;
+    [SerializeField] private int _testHighScore;
+    [SerializeField] private int _testScore;
+    
     public int CurrentScore => _currentScore;
     public int HighScore => _highScore;
+    
+    protected override void Init()
+    {
+        if (_isTest)
+        {
+            _highScore = _testHighScore;
+        }
+    }
     
     private void OnEnable()
     {

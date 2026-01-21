@@ -33,8 +33,7 @@ namespace _02.Scripts.Player.Combat
         public override string SkillName => "크레센트";
         public override float Cooldown => 0f;
         public override bool CanUse => !_isActive && !_inComboGrace &&
-                                       _gaugeManager != null && _gaugeManager.CanUseCrescent &&
-                                       RewardManager.Instance.IsCrescentUnlocked();
+                                       _gaugeManager != null && _gaugeManager.CanUseCrescent;
 
         // === IOverDriveAffected 구현 ===
         public bool IsOverDriveActive { get; set; }
@@ -52,7 +51,6 @@ namespace _02.Scripts.Player.Combat
 
         // === Events ===
         public event Action OnCrescentEnded;
-        public event Action OnCrescentEndedUI;
 
         // === Initialization ===
 
@@ -121,7 +119,6 @@ namespace _02.Scripts.Player.Combat
         public void FireFromAnimationEvent()
         {
             FireProjectile();
-            OnCrescentEndedUI?.Invoke();
         }
 
         // 크레센트는 히트박스 대신 프로젝타일 사용

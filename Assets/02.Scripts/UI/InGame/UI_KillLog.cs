@@ -1,16 +1,8 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class UI_KillLog : MonoBehaviour
 {
-    [Serializable]
-    private struct SkillIconInfo
-    {
-        public EEnemyType Type;
-        public Sprite Icon;
-    }
-    
     [Header("Settings")]
     [SerializeField] private KillLogItem _killLogItemPrefab;
     [SerializeField] private Transform _killLogContainer;
@@ -22,7 +14,7 @@ public class UI_KillLog : MonoBehaviour
     private readonly Queue<KillLogItem> _itemPool = new Queue<KillLogItem>();
     private readonly List<KillLogItem> _activeItems = new List<KillLogItem>();
     
-    [SerializeField] private SkillIconInfo[] _skillIcons;
+    [SerializeField] private Sprite[] _skillIcon;
 
     private void Awake()
     {
@@ -54,26 +46,15 @@ public class UI_KillLog : MonoBehaviour
         }
         KillLogItem item = GetItemFromPool();
 
-        Sprite enemyIcon = GetIcon(config.DeathEnemy);
+        // todo. 실제 각각의 정보에 맞는 Icon 정보 필요
+        Sprite skillIcon = _skillIcon[UnityEngine.Random.Range(0, _skillIcon.Length)];
         var enemyName = config.DeathEnemy.ToString();
         
-        item.Initialize(enemyIcon, enemyName, _itemLifetime);
+        item.Initialize(skillIcon, enemyName, _itemLifetime);
         _activeItems.Add(item);
         item.transform.SetAsFirstSibling();
     }
 
-    private Sprite GetIcon(EEnemyType type)
-    {
-        foreach (SkillIconInfo icon in _skillIcons)
-        {
-            if (icon.Type == type)
-            {
-                return icon.Icon;
-            }
-        }
-        return null;
-    }
-    
     #region Pool
     private void InitializePool()
     {

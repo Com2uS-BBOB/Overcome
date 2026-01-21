@@ -9,9 +9,9 @@ public class LoadingScene : MonoBehaviour
 {
     private static readonly string[] _toolTips = new[]
     {
-        "Tip! Dash Attack으로 적을 처치하면 쿨타임이 초기화 됩니다.",
-        "Tip! Combo 등급에 비례하여 더 강한 데미지를 입힐 수 있습니다.",
-        "Tip! Overdrive를 사용하면 Dash Attack과 Crescent(Guard) Gauge를 계속 사용할 수 있습니다."
+        "Dash Attack으로 적을 처치하면 쿨타임이 초기화 됩니다.",
+        "Combo 등급에 비례하여 더 강한 데미지를 입힐 수 있습니다.",
+        "Overdrive를 사용하면 Dash Attack과 Crescent(Guard) Gauge를 계속 사용할 수 있습니다."
     };
 
     [Header("Tooltip")]

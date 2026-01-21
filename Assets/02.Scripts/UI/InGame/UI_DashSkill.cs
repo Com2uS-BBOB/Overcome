@@ -1,6 +1,4 @@
 using _02.Scripts.Player.Combat;
-using _02.Scripts.Player.Gauge;
-using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,123 +6,86 @@ using UnityEngine.UI;
 public class UI_DashSkill : MonoBehaviour
 {
     [SerializeField] private DashAttackSkill _dashSkill;
-    [SerializeField] private GaugeManager _gaugeManager;
     
     [Header("UI References")]
-    [SerializeField] private Image _skillIcon;
-    
-    [Tooltip("1 -> 0으로 감소")]
     [SerializeField] private Image _coolDownGauge;
     [SerializeField] private TextMeshProUGUI _coolDownCountText;
+    [SerializeField] private Image _coolDownBackground;
     [SerializeField] private Image _blockSkillImage;
+    private int _lastDisplayTime;
+    private bool _processCoolDown;
 
-    [Header("스킬 색상")]
-    [SerializeField] private Color _skillUnuseColor;
-    [SerializeField] private Color _skillUseColor;
-
-    private bool _onProcessDash;
-    private bool _killEnemy;
-    private bool _isOverDriveActive;
+    private float _elapsedTime = 0f;
 
     private void Start()
     {
-        // OnDashStarted : SkillIcon 사용중 이미지 표시
-        // OnDashEnded : SkillIcon 사용중 이미지 끄기, CoolDown 시작
-        // OnCooldownReset : CoolDown UI 초기화
-        
-        _dashSkill.OnDashStarted += ActivateSkillUsingImage;
         _dashSkill.OnDashEnded += SetCoolDown;
-        _dashSkill.OnCooldownReset += ResetCooldownUI;
-        
-        _gaugeManager.OnOverDriveActivated += ActivateOverdrive;
-        _gaugeManager.OnOverDriveDeactivated += DeactivateOverdrive;
-
+        _dashSkill.OnCooldownReset += EndCoolDown;
         _blockSkillImage.gameObject.SetActive(!_dashSkill.CanUse);
         HideCooldownUI();
     }
 
     private void OnDestroy()
     {
-        _dashSkill.OnDashStarted -= ActivateSkillUsingImage;
-        _dashSkill.OnDashEnded -= SetCoolDown;
-        _dashSkill.OnCooldownReset -= ResetCooldownUI;
-    
-        _gaugeManager.OnOverDriveActivated -= ActivateOverdrive;
-        _gaugeManager.OnOverDriveDeactivated -= DeactivateOverdrive;
-    
-        // Tween 정리
-        _blockSkillImage?.DOKill();
-    }
-
-    private void ActivateOverdrive()
-    {
-        _isOverDriveActive = true;
-    }
-    
-    private void DeactivateOverdrive()
-    {
-        _isOverDriveActive = false;
-    }
-    
-    private void SetCoolDown()
-    {
-        DeactivateSkillUsingImage();
-
-        if (_killEnemy)
+        if (_dashSkill != null)
         {
-            _killEnemy = false;
-            return;
+            _dashSkill.OnDashEnded -= SetCoolDown;
+            _dashSkill.OnCooldownReset -= EndCoolDown;
         }
-        if (_isOverDriveActive) return;
+    }
+
+    public void SetCoolDown()
+    {
+        _elapsedTime = 0f;
+        _processCoolDown = true;
 
         ShowCooldownUI();
-    
-        // 기존 Tween 완전히 제거
-        _coolDownGauge.DOKill();
-    
-        _coolDownGauge.fillAmount = 1f;
-        _coolDownGauge.DOFillAmount(0f, _dashSkill.Cooldown - _dashSkill.DashDuration)
-                      .SetEase(Ease.Linear)
-                      .OnUpdate(() => 
-                      {
-                          float remaining = _dashSkill.Cooldown * _coolDownGauge.fillAmount;
-                          _coolDownCountText.SetText(Mathf.Ceil(remaining).ToString("N0"));
-                      })
-                      .OnComplete(HideCooldownUI);
     }
 
-    private void ResetCooldownUI()
+    private void Update()
     {
-        _coolDownGauge.DOKill();
-        HideCooldownUI();
-        if (_onProcessDash)
+        if (!_processCoolDown) return;
+
+        _elapsedTime += Time.deltaTime;
+        float progress = Mathf.Clamp01(_elapsedTime / _dashSkill.Cooldown);
+        UpdateCoolDownUI(progress);
+
+        if (progress >= 1f)
         {
-            _killEnemy = true;
+            EndCoolDown();
         }
+    }
+
+    private void UpdateCoolDownUI(float progress)
+    {
+        _coolDownGauge.fillAmount = progress;
+
+        float remainTime = _dashSkill.Cooldown * (1f - progress);
+        int displayTime = Mathf.CeilToInt(remainTime);
+        if (displayTime != _lastDisplayTime)
+        {
+            _lastDisplayTime = displayTime;
+            _coolDownCountText.text = displayTime.ToString();
+        }
+    }
+
+    private void EndCoolDown()
+    {
+        _processCoolDown = false;
+        HideCooldownUI();
     }
 
     private void ShowCooldownUI()
     {
+        _coolDownBackground?.gameObject.SetActive(true);
         _coolDownGauge?.gameObject.SetActive(true);
         _coolDownCountText?.gameObject.SetActive(true);
     }
 
     private void HideCooldownUI()
     {
+        _coolDownBackground?.gameObject.SetActive(false);
         _coolDownGauge?.gameObject.SetActive(false);
         _coolDownCountText?.gameObject.SetActive(false);
-    }
-    
-    private void DeactivateSkillUsingImage()
-    {
-        _onProcessDash = false;
-        _skillIcon.color = _skillUnuseColor;
-    }
-
-    private void ActivateSkillUsingImage()
-    {
-        _onProcessDash = true;
-        _coolDownGauge.DOKill();
-        _skillIcon.color = _skillUseColor;
     }
 }

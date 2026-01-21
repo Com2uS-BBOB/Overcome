@@ -6,7 +6,7 @@ public class StageManager : SingletonBehaviour<StageManager>
 
     private const int MaxStarCount = 3;
     private string _currentStageId = "1_1"; // "1_1", "1_2" 형식
-    private int _currentStageIntId = 11; // 11, 12, 13... (저장용 ID)
+    private int _currentStageIntId; // 11, 12, 13... (저장용 ID)
 
     #region Stage Setup
     public void SetCurrentStage(int chapter, int level)
@@ -108,4 +108,22 @@ public class StageManager : SingletonBehaviour<StageManager>
 
     public int GetTotalStars() => MaxStarCount * _stageData.GetStageCount();
     #endregion
+
+#if UNITY_EDITOR
+
+    #region Editor Test
+    [Header("Test Info")]
+    [SerializeField] private int _stage;
+    [SerializeField] private int _level;
+    [SerializeField] private int _score;
+
+    [ContextMenu("Test/Test Complete Stage")]
+    public void TestCompleteStage()
+    {
+        SetCurrentStage(_stage, _level);
+        CompleteStage(_score);
+    }
+    #endregion
+
+#endif
 }

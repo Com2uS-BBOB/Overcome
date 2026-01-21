@@ -32,7 +32,6 @@ namespace _02.Scripts.Player.Combat
         // ISkill
         public string SkillName => "질풍참";
         public float Cooldown => _stats != null ? _stats.DashCooldown : 3f;
-        public float DashDuration => _dashDuration;
         public bool CanUse => !_isDashing && (IsOverDriveActive || _cooldownManager.IsReady(CooldownKey, Cooldown));
         public bool IsDashing => _isDashing;
 

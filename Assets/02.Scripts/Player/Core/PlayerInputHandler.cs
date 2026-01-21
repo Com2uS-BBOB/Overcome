@@ -22,7 +22,6 @@ namespace _02.Scripts.Player.Core
         public Vector2 MoveInput { get; private set; }
         public Vector2 LookInput { get; private set; }
         public bool IsGuardHeld { get; private set; }
-        public bool IsInputEnabled { get; private set; } = true;
 
         public event Action OnAttackStarted;
         public event Action OnAttackPerformed;
@@ -103,77 +102,18 @@ namespace _02.Scripts.Player.Core
         }
 
         #region Event Handlers
-        private void OnMovePerformed(InputAction.CallbackContext ctx)
-        {
-            if (!IsInputEnabled) return;
-            MoveInput = ctx.ReadValue<Vector2>();
-        }
+        private void OnMovePerformed(InputAction.CallbackContext ctx) => MoveInput = ctx.ReadValue<Vector2>();
         private void OnMoveCanceled(InputAction.CallbackContext _) => MoveInput = Vector2.zero;
-        private void OnLookPerformed(InputAction.CallbackContext ctx)
-        {
-            if (!IsInputEnabled) return;
-            LookInput = ctx.ReadValue<Vector2>();
-        }
+        private void OnLookPerformed(InputAction.CallbackContext ctx) => LookInput = ctx.ReadValue<Vector2>();
         private void OnLookCanceled(InputAction.CallbackContext _) => LookInput = Vector2.zero;
-        private void OnAttackActionStarted(InputAction.CallbackContext _)
-        {
-            if (!IsInputEnabled) return;
-            OnAttackStarted?.Invoke();
-        }
-        private void OnAttackActionPerformed(InputAction.CallbackContext _)
-        {
-            if (!IsInputEnabled) return;
-            OnAttackPerformed?.Invoke();
-        }
-        private void OnSprintPerformed(InputAction.CallbackContext _)
-        {
-            if (!IsInputEnabled) return;
-            OnDashAttackPerformed?.Invoke();
-        }
-        private void OnJumpActionPerformed(InputAction.CallbackContext _)
-        {
-            if (!IsInputEnabled) return;
-            OnJumpPerformed?.Invoke();
-        }
-        private void OnCrescentActionPerformed(InputAction.CallbackContext _)
-        {
-            if (!IsInputEnabled) return;
-            OnCrescentPerformed?.Invoke();
-        }
-        private void OnOverDriveActionPerformed(InputAction.CallbackContext _)
-        {
-            if (!IsInputEnabled) return;
-            OnOverDrivePerformed?.Invoke();
-        }
-        private void OnGuardActionStarted(InputAction.CallbackContext _)
-        {
-            if (!IsInputEnabled) return;
-            IsGuardHeld = true;
-            OnGuardStarted?.Invoke();
-        }
-        private void OnGuardActionCanceled(InputAction.CallbackContext _)
-        {
-            IsGuardHeld = false;
-            OnGuardCanceled?.Invoke();
-        }
-        #endregion
-
-        #region Input Control
-        /// <summary>
-        /// 입력 활성화/비활성화 (인트로 연출 등에서 사용)
-        /// </summary>
-        public void SetInputEnabled(bool enabled)
-        {
-            IsInputEnabled = enabled;
-
-            if (!enabled)
-            {
-                // 입력 비활성화 시 현재 입력 초기화
-                MoveInput = Vector2.zero;
-                LookInput = Vector2.zero;
-                IsGuardHeld = false;
-            }
-        }
+        private void OnAttackActionStarted(InputAction.CallbackContext _) => OnAttackStarted?.Invoke();
+        private void OnAttackActionPerformed(InputAction.CallbackContext _) => OnAttackPerformed?.Invoke();
+        private void OnSprintPerformed(InputAction.CallbackContext _) => OnDashAttackPerformed?.Invoke();
+        private void OnJumpActionPerformed(InputAction.CallbackContext _) => OnJumpPerformed?.Invoke();
+        private void OnCrescentActionPerformed(InputAction.CallbackContext _) => OnCrescentPerformed?.Invoke();
+        private void OnOverDriveActionPerformed(InputAction.CallbackContext _) => OnOverDrivePerformed?.Invoke();
+        private void OnGuardActionStarted(InputAction.CallbackContext _) { IsGuardHeld = true; OnGuardStarted?.Invoke(); }
+        private void OnGuardActionCanceled(InputAction.CallbackContext _) { IsGuardHeld = false; OnGuardCanceled?.Invoke(); }
         #endregion
     }
 }

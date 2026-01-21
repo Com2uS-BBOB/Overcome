@@ -20,8 +20,8 @@ namespace _02.Scripts.Player.StateMachine.States
                 Controller.PlayerAnimatorController.OnOverdriveEnd += HandleOverdriveEnd;
             }
 
-            // Overdrive 진입 애니메이션 재생 (현재 지면 상태 전달)
-            Controller.PlayerAnimatorController?.PlayOverdriveActivation(Controller.Movement.IsGrounded);
+            // Overdrive 진입 애니메이션 재생
+            Controller.PlayerAnimatorController?.PlayOverdriveActivation();
         }
 
 
@@ -52,14 +52,11 @@ namespace _02.Scripts.Player.StateMachine.States
 
         /// <summary>
         /// 애니메이션 이벤트: 진입 애니메이션 종료
-        /// 현재 지면 상태에 따라 적절한 상태로 전환
+        /// Idle 상태로 복귀
         /// </summary>
         private void HandleOverdriveEnd()
         {
-            if (Controller.Movement.IsGrounded)
-                StateMachine.ChangeState<IdleState>();
-            else
-                StateMachine.ChangeState<FallState>();
+            StateMachine.ChangeState<IdleState>();
         }
     }
 }

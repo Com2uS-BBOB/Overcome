@@ -12,10 +12,12 @@ public class UI_OverDrive : MonoBehaviour
 
     [Header("Components")]
     [SerializeField] private Gauge _gauge;
+    [SerializeField] private AnimatedNumber _percentText;
 
     private void Awake()
     {
         _gauge.Init();
+        _percentText.Init();
         ResetGauge();
         SubscribeOverDriveEvents();
     }
@@ -40,6 +42,7 @@ public class UI_OverDrive : MonoBehaviour
     private void OnDestroy()
     {
         _gauge.Clear();
+        _percentText.Clear();
         UnsubscribeOverDriveEvents();
     }
 
@@ -48,6 +51,7 @@ public class UI_OverDrive : MonoBehaviour
         float nextValue = value / maxValue;
         float gaugeValue = Mathf.Clamp01(nextValue);
         _gauge.SetValue(gaugeValue);
+        _percentText.SetValue(gaugeValue * 100f);
         
         if (Mathf.Approximately(value, maxValue))
         {
@@ -58,6 +62,7 @@ public class UI_OverDrive : MonoBehaviour
     private void ResetGauge()
     {
         _gauge.SetValue(0f, immediate: true);
+        _percentText.SetValue(0f, immediate: true);
         ShowChargingPercent();
     }
 
@@ -65,11 +70,13 @@ public class UI_OverDrive : MonoBehaviour
     {
         _gaugeEffectImage.gameObject.SetActive(false);
         _overDriveIcon.gameObject.SetActive(false);
+        _percentText.ActivateTextUI();
     }
 
     private void ShowOverDrive()
     {
         _gaugeEffectImage.gameObject.SetActive(true);
         _overDriveIcon.gameObject.SetActive(true);
+        _percentText.DeactivateTextUI();
     }
 }

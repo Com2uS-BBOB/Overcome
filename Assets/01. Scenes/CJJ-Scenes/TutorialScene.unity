@@ -5193,7 +5193,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1030175854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6783,7 +6783,9 @@ MonoBehaviour:
   _maxActiveItems: 5
   _itemLifetime: 3
   _initialPoolSize: 10
-  _skillIcons: []
+  _skillIcon:
+  - {fileID: 21300000, guid: 6efddec039515f245bfc9ddbbaa547fa, type: 3}
+  - {fileID: 21300000, guid: fe74d3b484063cc408cfac46d38f9a86, type: 3}
 --- !u!114 &1362151469
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8036,16 +8038,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_DashSkill
   _dashSkill: {fileID: 241799517}
-  _gaugeManager: {fileID: 0}
   _coolDownGauge: {fileID: 834499957}
   _coolDownCountText: {fileID: 435070376}
   _coolDownBackground: {fileID: 1072973086}
   _blockSkillImage: {fileID: 407793944}
-  _gaugeAlpha: 0
-  _gauge:
-    _fillImage: {fileID: 0}
-    _duration: 1
-    _ease: 1
 --- !u!222 &1648026912
 CanvasRenderer:
   m_ObjectHideFlags: 0

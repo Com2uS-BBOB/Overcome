@@ -48,9 +48,7 @@ public class UI_Timer : MonoBehaviour
 
     private void UpdatePlayerTimeUI()
     {
-        int minutes = Mathf.FloorToInt(_timeSystem.PlayTime / 60f);
-        int seconds = Mathf.FloorToInt(_timeSystem.PlayTime % 60f);
-        _playTimeText.text = $"{minutes:D2}:{seconds:D2}";
+        _playTimeText.text = $"{_timeSystem.PlayTime:F2}s";
     }
 
     private void UpdateChangeValueUI(float value)
