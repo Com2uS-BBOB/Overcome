@@ -52,6 +52,7 @@ namespace _02.Scripts.Player.Combat
 
         // === Events ===
         public event Action OnCrescentEnded;
+        public event Action OnCrescentEndedUI;
 
         // === Initialization ===
 
@@ -120,7 +121,7 @@ namespace _02.Scripts.Player.Combat
         public void FireFromAnimationEvent()
         {
             FireProjectile();
-            OnCrescentEnded?.Invoke();
+            OnCrescentEndedUI?.Invoke();
         }
 
         // 크레센트는 히트박스 대신 프로젝타일 사용
