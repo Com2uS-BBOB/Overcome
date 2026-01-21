@@ -26,6 +26,9 @@ public class LoadingScene : MonoBehaviour
 
     private void Awake()
     {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+        
         _tooltipPosition = _toolTipText.rectTransform.anchoredPosition;
         RefillTooltipQueue();
 

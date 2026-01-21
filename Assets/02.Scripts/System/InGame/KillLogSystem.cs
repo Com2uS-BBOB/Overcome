@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KillLogSystem : SingletonBehaviour<KillLogSystem>
+public class KillLogSystem : SingletonBehaviour<KillLogSystem>, IGameSystem
 {
     protected override bool DontDestroy => false;
 
@@ -17,12 +17,12 @@ public class KillLogSystem : SingletonBehaviour<KillLogSystem>
         }
     }
     
-    private void OnEnable()
+    public void GameStart()
     {
         EnemyEventController.Enemy.OnKilled += LogKill;
     }
 
-    private void OnDisable()
+    public void GameEnd()
     {
         EnemyEventController.Enemy.OnKilled -= LogKill;
     }

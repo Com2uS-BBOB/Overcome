@@ -2,6 +2,12 @@ using UnityEngine;
 
 public class LoginScene : MonoBehaviour
 {
+    private void Awake()
+    {
+        Cursor.lockState = CursorLockMode.Confined;
+        Cursor.visible = true;
+    }
+    
     public void HandleLoginCompleted()
     {
         LoadLobbyScene();

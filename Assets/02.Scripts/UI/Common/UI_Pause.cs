@@ -40,6 +40,7 @@ public class UI_Pause : BaseUI
 
     public void Retry()
     {
+        GameEventHandler.GameEnd();
         SceneController.Instance.ReloadCurrentScene();
     }
 
@@ -57,11 +58,13 @@ public class UI_Pause : BaseUI
 
     public void GotoLobby()
     {
+        GameEventHandler.GameEnd();
         SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
     }
 
     public void GotoTitle()
     {
+        GameEventHandler.GameEnd();
         SceneController.Instance.LoadSceneAsync(ESceneType.LoginScene);
     }
 

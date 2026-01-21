@@ -32,11 +32,8 @@ public class UI_Result : MonoBehaviour
             child.gameObject.SetActive(false);
         }
         _canvasGroup.alpha = 0;
-    }
-
-    private void Start()
-    {
-        TimeSystem.Instance.OnGameOver += ShowResultUI;
+        
+        GameEventHandler.OnGameEnd += ShowResultUI;
     }
 
     private void OnDestroy()
