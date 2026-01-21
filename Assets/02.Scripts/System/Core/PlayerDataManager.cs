@@ -94,6 +94,7 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
         SyncCurrentPlayerToSaveData();
         _currentPlayer = player;
         _saveData.CurrentPlayerID = playerId;
+        SoundManager.Instance.LoadPlayerVolumeSettings(player.Settings);
 
         return true;
     }

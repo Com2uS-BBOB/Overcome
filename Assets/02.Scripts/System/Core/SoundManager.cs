@@ -109,7 +109,25 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     #region Volume Setting
     private void LoadVolumeSettings()
     {
-        var settings = PlayerDataManager.Instance?.GetSettings();
+        // PlayerDataManager에서 현재 플레이어의 설정 로드 시도
+        if (PlayerDataManager.Instance != null)
+        {
+            PlayerSettings settings = PlayerDataManager.Instance.GetSettings();
+            if (settings != null && (settings.MasterVolume > 0 || settings.MusicVolume > 0 || settings.SfxVolume > 0))
+            {
+                LoadPlayerVolumeSettings(settings);
+                return;
+            }
+        }
+
+        // 저장된 설정이 없으면 기본값 사용
+        SetAudioVolume(EAudioType.Master, 0.5f);
+        SetAudioVolume(EAudioType.Music, 0.5f);
+        SetAudioVolume(EAudioType.Effect, 0.5f);
+    }
+
+    public void LoadPlayerVolumeSettings(PlayerSettings settings)
+    {
         if (settings != null)
         {
             Debug.Log($"[SoundManager] 저장된 볼륨 로드 - Master: {settings.MasterVolume}, Music: {settings.MusicVolume}, Effect: {settings.SfxVolume}");
@@ -117,15 +135,8 @@ public class SoundManager : SingletonBehaviour<SoundManager>
             SetAudioVolume(EAudioType.Music, settings.MusicVolume);
             SetAudioVolume(EAudioType.Effect, settings.SfxVolume);
         }
-        else
-        {
-            Debug.Log("[SoundManager] 저장된 설정 없음 - 기본값 1f 적용");
-            SetAudioVolume(EAudioType.Master, 1f);
-            SetAudioVolume(EAudioType.Music, 1f);
-            SetAudioVolume(EAudioType.Effect, 1f);
-        }
     }
-
+    
     public void SetAudioVolume(EAudioType eAudioType, float volume)
     {
         volume = Mathf.Clamp01(volume);
