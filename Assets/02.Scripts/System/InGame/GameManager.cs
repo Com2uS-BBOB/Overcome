@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -26,12 +25,6 @@ public class GameManager : MonoBehaviour
         GameEventHandler.OnGameEnd -= OnGameEnd;
         GameEventHandler.OnGameResume -= OnGameResume;
     }
-
-    private void Start()
-    {
-        GameEventHandler.IsOnGame = true;
-        OnGameStart();
-    }
     
     private void OnGameStart()
     {
@@ -41,6 +34,7 @@ public class GameManager : MonoBehaviour
         _scoreSystem?.GameStart();
         _killLogSystem?.GameStart();
         _hudUIObject.SetActive(true);
+        GameEventHandler.IsOnGame = true;
     }
     
     private void OnGamePause()

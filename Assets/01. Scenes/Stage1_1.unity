@@ -211,35 +211,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerDataManager
   _startPlayerID: LJH
-  _saveData:
-    CurrentPlayerID: LJH
-    Players:
-    - PlayerID: LJH
-      Settings:
-        MasterVolume: 0
-        MusicVolume: 0
-        SfxVolume: 0
-      StageProgress:
-      - StageID: 11
-        IsCleared: 1
-        StarsEarned: 3
-        BestScore: 0
-        PlayCount: 0
-      - StageID: 12
-        IsCleared: 1
-        StarsEarned: 3
-        BestScore: 0
-        PlayCount: 0
-      - StageID: 13
-        IsCleared: 1
-        StarsEarned: 3
-        BestScore: 0
-        PlayCount: 0
-      - StageID: 21
-        IsCleared: 1
-        StarsEarned: 3
-        BestScore: 0
-        PlayCount: 0
 --- !u!4 &169494530
 Transform:
   m_ObjectHideFlags: 0
@@ -126319,6 +126290,55 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &378351769
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 378351770}
+  - component: {fileID: 378351771}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &378351770
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378351769}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1685462037}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &378351771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 378351769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b12477bd9055fea428836478f6d5f4f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  _hudUIObject: {fileID: 1042087840}
+  _timeSystem: {fileID: 1834651159}
+  _comboSystem: {fileID: 666109525}
+  _scoreSystem: {fileID: 966306072}
+  _killLogSystem: {fileID: 371110894}
 --- !u!1 &414989350
 GameObject:
   m_ObjectHideFlags: 0
@@ -128900,6 +128920,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 08e9ebed1c5775d4fa3fde12b7f27a6f, type: 3}
+--- !u!1 &1042087840 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1205911928956709972, guid: 08e9ebed1c5775d4fa3fde12b7f27a6f, type: 3}
+  m_PrefabInstance: {fileID: 1042087839}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1044926913
 GameObject:
   m_ObjectHideFlags: 0
@@ -129977,6 +130002,7 @@ Transform:
   - {fileID: 966306071}
   - {fileID: 1834651158}
   - {fileID: 666109524}
+  - {fileID: 378351770}
   - {fileID: 371110893}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -131413,6 +131439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48df590cf111e4443bd38d2c7771d27c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayTimeSystem
+  _hudObject: {fileID: 1042087840}
   _difficultyConfigData: {fileID: 11400000, guid: bae2da0e7a83ffc47b7e18b34867a97f, type: 2}
   _currentDifficulty: 2
 --- !u!1 &1843722248

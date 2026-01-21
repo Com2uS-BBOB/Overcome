@@ -5,5 +5,7 @@ public enum ESceneType
     LoadingScene,
     LobbyScene,
     TutorialScene,
-    GameScene
+    GameScene,
+    Stage1_1,
+    Stage2_1,
 }

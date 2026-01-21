@@ -23,7 +23,18 @@ public class LobbyScene : MonoBehaviour
 
     private void LoadGameScene(int chapter, int level)
     {
-        SceneController.Instance.LoadSceneAsync(ESceneType.GameScene);
+        ESceneType stageScene = GetStageEnum(chapter, level);
+        SceneController.Instance.LoadSceneAsync(stageScene);
+    }
+
+    private ESceneType GetStageEnum(int chapter, int level)
+    {
+        string enumName = $"Stage{chapter}_{level}";
+        if (Enum.TryParse(enumName, out ESceneType stageType))
+        {
+            return stageType;
+        }
+        return ESceneType.GameScene;
     }
 
     public void LoadTutorialScene()
