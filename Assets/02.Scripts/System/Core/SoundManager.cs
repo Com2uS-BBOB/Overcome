@@ -112,12 +112,14 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         var settings = PlayerDataManager.Instance?.GetSettings();
         if (settings != null)
         {
+            Debug.Log($"[SoundManager] 저장된 볼륨 로드 - Master: {settings.MasterVolume}, Music: {settings.MusicVolume}, Effect: {settings.SfxVolume}");
             SetAudioVolume(EAudioType.Master, settings.MasterVolume);
             SetAudioVolume(EAudioType.Music, settings.MusicVolume);
             SetAudioVolume(EAudioType.Effect, settings.SfxVolume);
         }
         else
         {
+            Debug.Log("[SoundManager] 저장된 설정 없음 - 기본값 1f 적용");
             SetAudioVolume(EAudioType.Master, 1f);
             SetAudioVolume(EAudioType.Music, 1f);
             SetAudioVolume(EAudioType.Effect, 1f);
@@ -181,14 +183,21 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     {
         try
         {
+            Debug.Log($"[SoundManager] PlayBGM 시작: {clipName}");
             _bgmSource.Stop();
 
             var clip = await LoadAudioClipAsync(clipName);
-            if (clip == null) return;
+            if (clip == null)
+            {
+                Debug.LogError($"[SoundManager] BGM 클립 로드 실패: {clipName}");
+                return;
+            }
 
+            Debug.Log($"[SoundManager] BGM 클립 로드 성공: {clip.name}, 길이: {clip.length}초");
             _bgmSource.clip = clip;
             _bgmSource.volume = 1f;
             _bgmSource.Play();
+            Debug.Log($"[SoundManager] BGM 재생 시작, isPlaying: {_bgmSource.isPlaying}");
         }
         catch (Exception e)
         {
