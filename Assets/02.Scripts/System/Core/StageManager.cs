@@ -4,9 +4,21 @@ public class StageManager : SingletonBehaviour<StageManager>
 {
     [SerializeField] private StageData _stageData;
 
+    [Header("BGM Settings")]
+    [SerializeField] private string _stageBgmName = "BGM_Stage";
+    [SerializeField] private bool _playBgmOnStart = true;
+
     private const int MaxStarCount = 3;
     private string _currentStageId = "1_1"; // "1_1", "1_2" 형식
     private int _currentStageIntId = 11; // 11, 12, 13... (저장용 ID)
+
+    private void Start()
+    {
+        if (_playBgmOnStart && !string.IsNullOrEmpty(_stageBgmName))
+        {
+            SoundManager.Instance?.PlayBGM(_stageBgmName);
+        }
+    }
 
     #region Stage Setup
     public void SetCurrentStage(int chapter, int level)

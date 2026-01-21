@@ -34,6 +34,24 @@ namespace _02.Scripts.Player.Core
         [SerializeField] private CombatStateHandler _combatStateHandler;
         [SerializeField] private InputBuffer _inputBuffer;
 
+        // 사운드 클립 이름 (Addressables) - 이동
+        private const string SFX_JUMP = "SFX_Player_Jump";
+        private const string SFX_DOUBLE_JUMP = "SFX_Player_DoubleJump";
+        private const string SFX_LAND = "SFX_Player_Land";
+        private const string SFX_FOOTSTEP = "SFX_Player_Footstep";
+
+        // 사운드 클립 이름 (Addressables) - 전투
+        private const string SFX_SWORD_SWING_1 = "SFX_Player_SwordSwing1";
+        private const string SFX_SWORD_SWING_2 = "SFX_Player_SwordSwing2";
+        private const string SFX_SWORD_SWING_3 = "SFX_Player_SwordSwing3";
+        private const string SFX_HIT = "SFX_Player_Hit";
+        private const string SFX_CRESCENT_FIRE = "SFX_Player_CrescentFire";
+        private const string SFX_DASH_ATTACK = "SFX_Player_DashAttack";
+        private const string SFX_OVERDRIVE = "SFX_Player_Overdrive";
+
+        // 착지 감지용
+        private bool _wasGrounded;
+
         public PlayerInputHandler Input { get; private set; }
         public CombatStateHandler CombatStateHandler => _combatStateHandler;
         public InputBuffer InputBuffer => _inputBuffer;
@@ -302,9 +320,11 @@ namespace _02.Scripts.Player.Core
             {
                 case 1:
                     _playerAnimatorController?.PlayJump();
+                    PlayJumpSound(false);
                     break;
                 case 2:
                     _playerAnimatorController?.PlayDoubleJump();
+                    PlayJumpSound(true);
                     break;
             }
         }
@@ -328,7 +348,22 @@ namespace _02.Scripts.Player.Core
 
             // Root Motion 이벤트 연결
             if (_playerAnimatorController != null)
+            {
                 _playerAnimatorController.OnRootMotionUpdate += HandleRootMotion;
+                _playerAnimatorController.OnFootstep += HandleFootstep;
+                _playerAnimatorController.OnAttackHitboxEnable += HandleSwordSwingSound;
+                _playerAnimatorController.OnCrescentFireEvent += HandleCrescentFireSound;
+                _playerAnimatorController.OnOverdriveReady += HandleOverdriveSound;
+            }
+
+            // 전투 사운드 이벤트 연결
+            if (_dragonSwordSkill != null) _dragonSwordSkill.OnEnemyHit += HandleHitSound;
+            if (_crescent != null) _crescent.OnEnemyHit += HandleHitSound;
+            if (_dashAttack != null)
+            {
+                _dashAttack.OnDashStarted += HandleDashAttackSound;
+                _dashAttack.OnEnemyHit += HandleHitSound;
+            }
 
             // 피격/가드 이벤트 연결
             if (Stats != null)
@@ -358,7 +393,22 @@ namespace _02.Scripts.Player.Core
 
             // Root Motion 이벤트 연결 해제
             if (_playerAnimatorController != null)
+            {
                 _playerAnimatorController.OnRootMotionUpdate -= HandleRootMotion;
+                _playerAnimatorController.OnFootstep -= HandleFootstep;
+                _playerAnimatorController.OnAttackHitboxEnable -= HandleSwordSwingSound;
+                _playerAnimatorController.OnCrescentFireEvent -= HandleCrescentFireSound;
+                _playerAnimatorController.OnOverdriveReady -= HandleOverdriveSound;
+            }
+
+            // 전투 사운드 이벤트 연결 해제
+            if (_dragonSwordSkill != null) _dragonSwordSkill.OnEnemyHit -= HandleHitSound;
+            if (_crescent != null) _crescent.OnEnemyHit -= HandleHitSound;
+            if (_dashAttack != null)
+            {
+                _dashAttack.OnDashStarted -= HandleDashAttackSound;
+                _dashAttack.OnEnemyHit -= HandleHitSound;
+            }
 
             // 피격/가드 이벤트 연결 해제
             if (Stats != null)
@@ -375,6 +425,14 @@ namespace _02.Scripts.Player.Core
             // 지면 상태 먼저 동기화 (상태 전환 전에 Animator 파라미터 업데이트)
             _playerAnimatorController?.SetGrounded(Movement.IsGrounded);
 
+            // 착지 감지
+            bool isGrounded = Movement.IsGrounded;
+            if (isGrounded && !_wasGrounded)
+            {
+                PlayLandSound();
+            }
+            _wasGrounded = isGrounded;
+
             StateMachine.Update();
         }
 
@@ -389,9 +447,11 @@ namespace _02.Scripts.Player.Core
                 case 1: // 1단 점프
                     _playerAnimatorController?.PlayJump();
                     StateMachine.ChangeState<JumpState>();
+                    PlayJumpSound(false);
                     break;
                 case 2: // 2단 점프
                     _playerAnimatorController?.PlayDoubleJump();
+                    PlayJumpSound(true);
                     // JumpState 유지
                     break;
             }
@@ -637,6 +697,65 @@ namespace _02.Scripts.Player.Core
             // 일반 가드 성공 애니메이션 + 카메라 쉐이크
             _playerAnimatorController?.PlayGuardBlock();
             CameraShakeManager.Instance?.OnNormalGuard();
+        }
+
+        #endregion
+
+        #region Sound Handlers
+
+        private void PlayJumpSound(bool isDoubleJump)
+        {
+            string clipName = isDoubleJump ? SFX_DOUBLE_JUMP : SFX_JUMP;
+            SoundManager.Instance?.PlaySfx(clipName, transform);
+        }
+
+        private void PlayLandSound()
+        {
+            SoundManager.Instance?.PlaySfx(SFX_LAND, transform);
+        }
+
+        private void HandleFootstep()
+        {
+            // 지면에 있을 때만 발소리 재생
+            if (Movement.IsGrounded)
+            {
+                SoundManager.Instance?.PlaySfx(SFX_FOOTSTEP, transform);
+            }
+        }
+
+        // === 전투 사운드 ===
+
+        private void HandleSwordSwingSound()
+        {
+            // 콤보 단계에 따라 다른 사운드 재생 (1, 2, 3타)
+            int comboStep = _dragonSwordSkill?.ComboStep ?? 1;
+            string clipName = comboStep switch
+            {
+                1 => SFX_SWORD_SWING_1,
+                2 => SFX_SWORD_SWING_2,
+                _ => SFX_SWORD_SWING_3
+            };
+            SoundManager.Instance?.PlaySfx(clipName, transform);
+        }
+
+        private void HandleHitSound(IDamageable target, float damage)
+        {
+            SoundManager.Instance?.PlaySfx(SFX_HIT, transform);
+        }
+
+        private void HandleCrescentFireSound()
+        {
+            SoundManager.Instance?.PlaySfx(SFX_CRESCENT_FIRE, transform);
+        }
+
+        private void HandleDashAttackSound()
+        {
+            SoundManager.Instance?.PlaySfx(SFX_DASH_ATTACK, transform);
+        }
+
+        private void HandleOverdriveSound()
+        {
+            SoundManager.Instance?.PlaySfx(SFX_OVERDRIVE, transform);
         }
 
         #endregion
