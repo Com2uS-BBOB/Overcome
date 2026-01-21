@@ -19,7 +19,12 @@ public class UI_CrescentSkill : MonoBehaviour
     
     private void Start()
     {
-        _blockImage.gameObject.SetActive(!_crescentSkill.CanUse);
+        bool canUse = RewardManager.Instance.IsCrescentUnlocked();
+        if (!canUse)
+        {
+            _blockImage.gameObject.SetActive(true);
+            return;
+        }
         _crescentSkill.OnCrescentEndedUI += ActivateSkillUsingImage;
     }
     

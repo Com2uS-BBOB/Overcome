@@ -9,7 +9,8 @@ public class UI_OverDrive : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Image _gaugeEffectImage;
     [SerializeField] private Image _overDriveIcon;
-
+    [SerializeField] private Image _blockImage;
+    
     [Header("Components")]
     [SerializeField] private Gauge _gauge;
 
@@ -17,6 +18,11 @@ public class UI_OverDrive : MonoBehaviour
     {
         _gauge.Init();
         ResetGauge();
+        
+        bool canUse = RewardManager.Instance.IsOverDriveUnlocked();
+        _blockImage.gameObject.SetActive(!canUse);
+        if (!canUse) return;
+        
         SubscribeOverDriveEvents();
     }
 
