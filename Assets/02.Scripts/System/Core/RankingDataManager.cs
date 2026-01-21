@@ -67,9 +67,10 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
         RankConfig existingEntry = ranking.Ranks.FirstOrDefault(r => r.UserID == userID);
     
         if (existingEntry == null) return false;
-        if (score <= existingEntry.Score) return false;
-    
-        existingEntry.Score = score;
+        if (score <= existingEntry.Score)
+        {
+            existingEntry.Score = score;
+        }
         return true;
     }
 

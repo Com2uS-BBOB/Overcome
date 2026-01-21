@@ -33,6 +33,7 @@ public class UI_ControlGuide : BaseUI
     
     protected override void Init()
     {
+        if (RewardManager.Instance == null) return;
         foreach (SkillButtonData data in _skillButtons)
         {
             bool isLocked = data.RequiredReward != ERewardType.None && 
@@ -48,6 +49,12 @@ public class UI_ControlGuide : BaseUI
             data.Button.onClick.AddListener(() => ShowDescription(data));
         }
     }
+
+    private void OnEnable()
+    {
+        Init();
+    }
+    
     
     private void OnDisable()
     {

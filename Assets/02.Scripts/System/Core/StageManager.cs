@@ -5,17 +5,35 @@ public class StageManager : SingletonBehaviour<StageManager>
     [SerializeField] private StageData _stageData;
 
     [Header("BGM Settings")]
-    [SerializeField] private string _stageBgmName = "BGM_Stage";
     [SerializeField] private bool _playBgmOnStart = true;
+    [SerializeField] private bool _useIntroLoop = false;
+    [SerializeField] private string _introBgmName = "BGM_Stage_Intro";
+    [SerializeField] private string _loopBgmName = "BGM_Stage_Loop";
+    [SerializeField] private string _stageBgmName = "BGM_Stage";
 
     private const int MaxStarCount = 3;
     private string _currentStageId = "1_1"; // "1_1", "1_2" 형식
     private int _currentStageIntId = 11; // 11, 12, 13... (저장용 ID)
+    public int StageID => _currentStageIntId;
+    
+    protected override void Init()
+    {
+        GameEventHandler.OnGameEnd += CompleteStage;
+    }
+    
 
     private void Start()
     {
-        if (_playBgmOnStart && !string.IsNullOrEmpty(_stageBgmName))
+        if (!_playBgmOnStart) return;
+
+        if (_useIntroLoop)
         {
+            // 인트로 + 루프 방식
+            SoundManager.Instance?.PlayBGMWithIntro(_introBgmName, _loopBgmName);
+        }
+        else if (!string.IsNullOrEmpty(_stageBgmName))
+        {
+            // 단일 BGM 루프 방식
             SoundManager.Instance?.PlayBGM(_stageBgmName);
         }
     }
@@ -52,8 +70,11 @@ public class StageManager : SingletonBehaviour<StageManager>
     #endregion
 
     #region Stage Completion
-    public void CompleteStage(int finalScore)
+    private void CompleteStage()
     {
+        int finalScore = ScoreSystem.Instance.CurrentScore;
+        string userID = PlayerDataManager.Instance.GetPlayerID();
+        
         // Previous Data
         GradeConfig grade = _stageData.GetGrade(_currentStageId, finalScore);
         StageProgress progress = PlayerDataManager.Instance.GetStageProgress(_currentStageIntId);
@@ -62,8 +83,7 @@ public class StageManager : SingletonBehaviour<StageManager>
         UpdateStageProgress(progress, grade, finalScore);
         PlayerDataManager.Instance.SaveStageProgress(progress);
 
-        // Show Data
-        ShowStageResult(grade);
+        RankingDataManager.Instance.UpdateRanking(_currentStageIntId, userID, finalScore);
     }
 
     private void UpdateStageProgress(StageProgress previousProgress, GradeConfig grade, int score)
@@ -79,10 +99,6 @@ public class StageManager : SingletonBehaviour<StageManager>
         previousProgress.BestScore = score;
     }
 
-    private void ShowStageResult(GradeConfig grade)
-    {
-        // todo. Result UI 표시 로직 위치 수정
-    }
     #endregion
 
     #region Stage Info Query

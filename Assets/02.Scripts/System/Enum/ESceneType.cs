@@ -5,4 +5,5 @@ public enum ESceneType
     LoadingScene,
     LobbyScene,
     TutorialScene,
+    GameScene
 }

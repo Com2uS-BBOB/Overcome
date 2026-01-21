@@ -10,7 +10,6 @@ public class UI_Result : MonoBehaviour
     [SerializeField] private UI_ScoreResult _scoreResult;
     [SerializeField] private UI_KillResult _killResult;
     [SerializeField] private UI_RankInfo _rankInfo;
-    
 
     private Transform[] _resultUiObjects;
     
@@ -19,21 +18,23 @@ public class UI_Result : MonoBehaviour
     private bool _killComplete;
     private bool _allComplete;
 
-    private void Awake()
+    private void OnEnable()
     {
         _timeResult.OnComplete += HandleTimeComplete;
         _scoreResult.OnComplete += HandleScoreComplete;
         _killResult.OnComplete += HandleKillComplete;
         _resultUiObjects = GetComponentsInChildren<Transform>(true)
-            .Where(t => t != transform)
-            .ToArray();
+                           .Where(t => t != transform)
+                           .ToArray();
         foreach (Transform child in _resultUiObjects)
         {
             child.gameObject.SetActive(false);
         }
         _canvasGroup.alpha = 0;
+        
+        GameEventHandler.OnGameEnd += ShowResultUI;
     }
-
+    
     private void Start()
     {
         // ResultSequenceManager의 결과 준비 이벤트 구독
@@ -42,13 +43,17 @@ public class UI_Result : MonoBehaviour
             _02.Scripts.CameraFX.ResultSequenceManager.Instance.OnResultReady += ShowResultUI;
         }
     }
-
-    private void OnDestroy()
+    
+    private void OnDisable()
     {
         _timeResult.OnComplete -= HandleTimeComplete;
         _scoreResult.OnComplete -= HandleScoreComplete;
         _killResult.OnComplete -= HandleKillComplete;
-
+        GameEventHandler.OnGameEnd -= ShowResultUI;
+    }
+    
+    private void OnDestroy()
+    {
         // ResultSequenceManager 이벤트 구독 해제
         if (_02.Scripts.CameraFX.ResultSequenceManager.Instance != null)
         {
@@ -56,7 +61,7 @@ public class UI_Result : MonoBehaviour
         }
     }
     
-    private void ShowResultUI()
+    public void ShowResultUI()
     {
         _canvasGroup.alpha = 1;
         foreach (Transform child in _resultUiObjects)

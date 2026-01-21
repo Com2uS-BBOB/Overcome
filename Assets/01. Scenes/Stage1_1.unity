@@ -179,6 +179,8 @@ MonoBehaviour:
   _preDelay: 0.3
   _allowSkip: 1
   _skipKey: 32
+  _changeResultBgm: 1
+  _resultBgmName: BGM_Result
 --- !u!1 &169494528
 GameObject:
   m_ObjectHideFlags: 0
@@ -126657,7 +126659,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &538718910
 Transform:
   m_ObjectHideFlags: 0
@@ -127172,8 +127174,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 807727896}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0015402421, y: 0.16194955, z: -0.0002527787, w: 0.9867978}
-  m_LocalPosition: {x: 19.13, y: 13.22, z: -36.52}
+  m_LocalRotation: {x: 0.0015571298, y: 0.16698405, z: -0.0002637189, w: 0.9859584}
+  m_LocalPosition: {x: 18.92, y: 13.22, z: -36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -127191,7 +127193,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44d70cc20219cd84593f67d248eafe36, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineCameraOffset
-  Offset: {x: 1, y: 0, z: 0}
+  Offset: {x: 1.5, y: 0, z: 0}
   ApplyAfter: 1
   PreserveComposition: 0
 --- !u!114 &807727899
@@ -127247,7 +127249,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 50
+    FieldOfView: 40
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -127613,8 +127615,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stageData: {fileID: 11400000, guid: f0882550f8978444f90e7d6b6cb071f3, type: 2}
-  _stageBgmName: BGM_Stage
   _playBgmOnStart: 1
+  _useIntroLoop: 1
+  _introBgmName: BGM_Stage_Intro
+  _loopBgmName: BGM_Stage_Loop
+  _stageBgmName: BGM_Stage
 --- !u!4 &873606662
 Transform:
   m_ObjectHideFlags: 0

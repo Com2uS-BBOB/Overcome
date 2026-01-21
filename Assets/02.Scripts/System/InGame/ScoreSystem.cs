@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class ScoreSystem : SingletonBehaviour<ScoreSystem>
+public class ScoreSystem : SingletonBehaviour<ScoreSystem>, IGameSystem
 {
     protected override bool DontDestroy => false;
     
@@ -14,24 +14,19 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>
     
     public int CurrentScore => _currentScore;
     public int HighScore => _highScore;
-    
+
     private void OnEnable()
+    {
+        RankingData data = RankingDataManager.Instance.GetOrCreateStageRanking(StageManager.Instance.StageID);
+        _highScore = data.Ranks.Count < 1 ? 0 : data.Ranks[0].Score;
+    }
+    
+    public void GameStart()
     {
         EnemyEventController.Enemy.OnKilled += IncreaseScore;
     }
-    
-    private void Start()
-    {
-        TimeSystem.Instance.OnClearGame += IncreaseScore;
-    }
 
-    private void OnDestroy()
-    {
-        if (TimeSystem.Instance == null) return;
-        TimeSystem.Instance.OnClearGame -= IncreaseScore;
-    }
-
-    private void OnDisable()
+    public void GameEnd()
     {
         EnemyEventController.Enemy.OnKilled -= IncreaseScore;
     }

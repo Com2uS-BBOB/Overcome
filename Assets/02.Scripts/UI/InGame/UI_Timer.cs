@@ -43,7 +43,8 @@ public class UI_Timer : MonoBehaviour
 
     private void UpdateRemainTimeUI()
     {
-        _remainTimeText.text = $"{_timeSystem.RemainTime:F2}s";
+        float remainTime = Mathf.Max(0f, _timeSystem.RemainTime);
+        _remainTimeText.text = $"{remainTime:F2}s";
     }
 
     private void UpdatePlayerTimeUI()

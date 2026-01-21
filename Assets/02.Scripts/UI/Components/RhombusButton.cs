@@ -10,6 +10,9 @@ public class RhombusButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     private Image _image;
     private RectTransform _rectTransform;
 
+    [SerializeField] private Sprite _normalSprite;
+    [SerializeField] private Sprite _pressedSprite;
+    
     [SerializeField] private Color _normalColor = Color.white;
     [SerializeField] private Color _pressedColor = new Color(0.6f, 0.6f, 0.6f);
     [SerializeField] private UnityEvent _onButtonClicked = new UnityEvent();
@@ -17,6 +20,7 @@ public class RhombusButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     private void Awake()
     {
         _image = GetComponent<Image>();
+        _image.sprite = _normalSprite;
         _image.color = _normalColor;
         _image.raycastTarget = true;
 
@@ -25,11 +29,13 @@ public class RhombusButton : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        _image.sprite = _pressedSprite;
         _image.color = _pressedColor;
     }
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        _image.sprite = _normalSprite;
         _image.color = _normalColor;
     }
 

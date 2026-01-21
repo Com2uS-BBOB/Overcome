@@ -25,6 +25,11 @@ public class UI_RewardInfo : MonoBehaviour
         
         ResetInfo();
     }
+
+    private void OnEnable()
+    {
+        ResetInfo();
+    }
     
     private void ResetInfo()
     {
@@ -34,12 +39,18 @@ public class UI_RewardInfo : MonoBehaviour
     
     private void SetRewardInfo()
     {
+        if (_rewardUnlockConfig == null) return;
         _rewardIIcon.sprite = _rewardUnlockConfig.RewardSprite;
         _requiredStarText.SetText($"x {_rewardUnlockConfig.RequiredStars}");
     }
     private void ShowClearImage()
     {
-        if (!_rewardManager.IsRewardUnlocked(_rewardType)) return;
+        if (_rewardManager == null) return;
+        if (!_rewardManager.IsRewardUnlocked(_rewardType))
+        {
+            _clearImage.gameObject.SetActive(false);
+            return;
+        }
         _clearImage.gameObject.SetActive(true);
     }
 }
