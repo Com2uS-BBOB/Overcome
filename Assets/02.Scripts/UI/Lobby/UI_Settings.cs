@@ -2,22 +2,13 @@ using UnityEngine;
 
 public class UI_Settings : BaseUI
 {
+    private static readonly int _close = Animator.StringToHash("Close");
     private bool _isOpen;
-    private Animator _animator;
-    protected override void Init()
-    {
-        _animator = GetComponent<Animator>();
-        gameObject.SetActive(false);
-    }
-
-    protected override void PlayOpenAnimation()
-    {
-        _animator.SetTrigger("Panel In");
-    }
-
+    [SerializeField] private Animator _animator;
+    
     protected override void PlayCloseAnimation()
     {
-        _animator.SetTrigger("Panel Out");
+        _animator.SetTrigger(_close);
     }
 
     public void ExitPanel()
@@ -25,7 +16,7 @@ public class UI_Settings : BaseUI
         UIController.Instance.CloseUI(this);
     }
     
-    public void DeactivePanel()
+    public void DeactivatePanel()
     {
         gameObject.SetActive(false);
     }
