@@ -179,6 +179,8 @@ MonoBehaviour:
   _preDelay: 0.3
   _allowSkip: 1
   _skipKey: 32
+  _changeResultBgm: 1
+  _resultBgmName: BGM_Result
 --- !u!1 &169494528
 GameObject:
   m_ObjectHideFlags: 0
@@ -126657,7 +126659,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &538718910
 Transform:
   m_ObjectHideFlags: 0
@@ -127613,8 +127615,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stageData: {fileID: 11400000, guid: f0882550f8978444f90e7d6b6cb071f3, type: 2}
-  _stageBgmName: BGM_Stage
   _playBgmOnStart: 1
+  _useIntroLoop: 1
+  _introBgmName: BGM_Stage_Intro
+  _loopBgmName: BGM_Stage_Loop
+  _stageBgmName: BGM_Stage
 --- !u!4 &873606662
 Transform:
   m_ObjectHideFlags: 0

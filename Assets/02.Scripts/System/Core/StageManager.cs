@@ -5,8 +5,11 @@ public class StageManager : SingletonBehaviour<StageManager>
     [SerializeField] private StageData _stageData;
 
     [Header("BGM Settings")]
-    [SerializeField] private string _stageBgmName = "BGM_Stage";
     [SerializeField] private bool _playBgmOnStart = true;
+    [SerializeField] private bool _useIntroLoop = false;
+    [SerializeField] private string _introBgmName = "BGM_Stage_Intro";
+    [SerializeField] private string _loopBgmName = "BGM_Stage_Loop";
+    [SerializeField] private string _stageBgmName = "BGM_Stage";
 
     private const int MaxStarCount = 3;
     private string _currentStageId = "1_1"; // "1_1", "1_2" 형식
@@ -14,8 +17,16 @@ public class StageManager : SingletonBehaviour<StageManager>
 
     private void Start()
     {
-        if (_playBgmOnStart && !string.IsNullOrEmpty(_stageBgmName))
+        if (!_playBgmOnStart) return;
+
+        if (_useIntroLoop)
         {
+            // 인트로 + 루프 방식
+            SoundManager.Instance?.PlayBGMWithIntro(_introBgmName, _loopBgmName);
+        }
+        else if (!string.IsNullOrEmpty(_stageBgmName))
+        {
+            // 단일 BGM 루프 방식
             SoundManager.Instance?.PlayBGM(_stageBgmName);
         }
     }

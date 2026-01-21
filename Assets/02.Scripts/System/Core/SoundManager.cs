@@ -205,10 +205,71 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         }
     }
 
+    /// <summary>
+    /// 인트로 BGM 재생 후 루프 BGM으로 전환
+    /// </summary>
+    public void PlayBGMWithIntro(string introClipName, string loopClipName)
+    {
+        PlayBGMWithIntroAsync(introClipName, loopClipName);
+    }
+
+    private async void PlayBGMWithIntroAsync(string introClipName, string loopClipName)
+    {
+        try
+        {
+            _bgmSource.Stop();
+            StopAllCoroutines();
+
+            // 인트로 로드 및 재생
+            var introClip = await LoadAudioClipAsync(introClipName);
+            if (introClip == null)
+            {
+                Debug.LogError($"[SoundManager] 인트로 BGM 로드 실패: {introClipName}");
+                return;
+            }
+
+            // 루프 미리 로드
+            var loopClip = await LoadAudioClipAsync(loopClipName);
+            if (loopClip == null)
+            {
+                Debug.LogError($"[SoundManager] 루프 BGM 로드 실패: {loopClipName}");
+                return;
+            }
+
+            Debug.Log($"[SoundManager] 인트로 BGM 재생: {introClip.name} ({introClip.length}초)");
+            _bgmSource.clip = introClip;
+            _bgmSource.loop = false;
+            _bgmSource.volume = 1f;
+            _bgmSource.Play();
+
+            // 인트로 끝나면 루프 재생
+            StartCoroutine(WaitForIntroAndPlayLoop(introClip.length, loopClip));
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
+    }
+
+    private IEnumerator WaitForIntroAndPlayLoop(float introLength, AudioClip loopClip)
+    {
+        yield return new WaitForSeconds(introLength);
+
+        if (_bgmSource != null && loopClip != null)
+        {
+            Debug.Log($"[SoundManager] 루프 BGM 전환: {loopClip.name}");
+            _bgmSource.clip = loopClip;
+            _bgmSource.loop = true;
+            _bgmSource.Play();
+        }
+    }
+
     public void StopBGM()
     {
+        StopAllCoroutines();
         _bgmSource.Stop();
         _bgmSource.clip = null;
+        _bgmSource.loop = true;
     }
 
     public void PauseBGM() => _bgmSource.Pause();
