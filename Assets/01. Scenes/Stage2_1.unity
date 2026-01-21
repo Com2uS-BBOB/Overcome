@@ -146,6 +146,7 @@ GameObject:
   - component: {fileID: 66653395}
   - component: {fileID: 66653394}
   - component: {fileID: 66653393}
+  - component: {fileID: 66653412}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -499,6 +500,31 @@ Transform:
   - {fileID: 648169926}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &66653412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66653392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 153fff1daa8a641afa8f9378557043bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Overdrive.OverdrivePostProcessController
+  _gaugeManager: {fileID: 66653399}
+  _volume: {fileID: 1966083294}
+  _punchDuration: 0.2
+  _punchChromaticPeak: 0.5
+  _punchLensDistortionPeak: -0.3
+  _sustainedChromaticIntensity: 0.15
+  _bloomIntensityIncrease: 0.4
+  _vignetteIntensity: 0.25
+  _vignetteColor: {r: 0.1, g: 0.2, b: 0.8, a: 1}
+  _colorFilter: {r: 0.85, g: 0.95, b: 1, a: 1}
+  _saturationIncrease: 15
+  _fadeInDuration: 0.3
+  _fadeOutDuration: 0.5
 --- !u!1 &84765895
 GameObject:
   m_ObjectHideFlags: 0
@@ -2099,9 +2125,9 @@ MonoBehaviour:
       Rotation:
         value:
           x: 0.6530137
-          y: 0.75238425
-          z: 0.037732024
-          w: -0.077893235
+          y: 0.7523842
+          z: 0.03773203
+          w: -0.07789325
     - Position:
         x: 0
         y: 2
