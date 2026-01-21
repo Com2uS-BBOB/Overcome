@@ -21,7 +21,7 @@ public class EliteRipAction : IEnemyAction
 
     private float _ratio;
 
-    private bool _sfxPlayed;
+    // private bool _sfxPlayed;
 
     private bool _isFinished;
 
@@ -54,7 +54,7 @@ public class EliteRipAction : IEnemyAction
     {
         _isFinished = false;
 
-        _sfxPlayed = false;
+        // _sfxPlayed = false;
 
         // 난도질 중엔 계속 전진
         _agent.isStopped = false;

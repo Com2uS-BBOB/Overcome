@@ -90,10 +90,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
         if (EnemyStatData == null) return;
 
         // GameOver 구독
-        if (TimeSystem.Instance != null)
-        {
-            TimeSystem.Instance.OnGameOver += HandleGameOver;
-        }
+        GameEventHandler.OnGameEnd += HandleGameOver;
 
         _gameOverStopped = false;
 
@@ -112,10 +109,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     protected virtual void OnDisable()
     {
         // GameOver 해제
-        if (TimeSystem.Instance != null)
-        {
-            TimeSystem.Instance.OnGameOver -= HandleGameOver;
-        }
+        GameEventHandler.OnGameEnd -= HandleGameOver;
 
         // 코루틴 정리
         if (_hitStopRoutine != null)

@@ -64,19 +64,13 @@ public class EnemyState : MonoBehaviour
         _stoppedByGameOver = false;
 
         // GameOver 구독
-        if (TimeSystem.Instance != null)
-        {
-            TimeSystem.Instance.OnGameOver += HandleGameOver;
-        }
+        GameEventHandler.OnGameEnd += HandleGameOver;
     }
 
     private void OnDisable()
     {
         // GameOver 해제
-        if (TimeSystem.Instance != null)
-        {
-            TimeSystem.Instance.OnGameOver -= HandleGameOver;
-        }
+        GameEventHandler.OnGameEnd -= HandleGameOver;
     }
 
     private void HandleGameOver()
