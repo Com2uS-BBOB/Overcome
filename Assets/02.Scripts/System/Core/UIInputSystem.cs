@@ -54,7 +54,17 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
 
     private void OpenGuidePopup(InputAction.CallbackContext context)
     {
-        // UIController.Instance.OpenUI<UI_GuidePopup>();
+        if (ESceneType.GameScene != SceneController.Instance.CurrentScene) return;
+        bool isOpened = UI_GuidePopup.IsOpened;
+        
+        if (!isOpened)
+        {
+            _= UIController.Instance.OpenUI<UI_GuidePopup>();
+        }
+        else
+        {
+            UIController.Instance.CloseUI<UI_GuidePopup>();
+        }
     }
     
     private async void OpenPauseUI(PauseUIConfig config)
