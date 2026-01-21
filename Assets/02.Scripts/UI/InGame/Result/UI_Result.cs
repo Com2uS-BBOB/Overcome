@@ -36,7 +36,11 @@ public class UI_Result : MonoBehaviour
 
     private void Start()
     {
-        TimeSystem.Instance.OnGameOver += ShowResultUI;
+        // ResultSequenceManager의 결과 준비 이벤트 구독
+        if (_02.Scripts.CameraFX.ResultSequenceManager.Instance != null)
+        {
+            _02.Scripts.CameraFX.ResultSequenceManager.Instance.OnResultReady += ShowResultUI;
+        }
     }
 
     private void OnDestroy()
@@ -44,6 +48,12 @@ public class UI_Result : MonoBehaviour
         _timeResult.OnComplete -= HandleTimeComplete;
         _scoreResult.OnComplete -= HandleScoreComplete;
         _killResult.OnComplete -= HandleKillComplete;
+
+        // ResultSequenceManager 이벤트 구독 해제
+        if (_02.Scripts.CameraFX.ResultSequenceManager.Instance != null)
+        {
+            _02.Scripts.CameraFX.ResultSequenceManager.Instance.OnResultReady -= ShowResultUI;
+        }
     }
     
     private void ShowResultUI()

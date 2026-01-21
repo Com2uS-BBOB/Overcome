@@ -20,12 +20,12 @@ public class UI_CrescentSkill : MonoBehaviour
     private void Start()
     {
         _blockImage.gameObject.SetActive(!_crescentSkill.CanUse);
-        _crescentSkill.OnCrescentEnded += ActivateSkillUsingImage;
+        _crescentSkill.OnCrescentEndedUI += ActivateSkillUsingImage;
     }
     
     private void OnDestroy()
     {
-        _crescentSkill.OnCrescentEnded -= ActivateSkillUsingImage;
+        _crescentSkill.OnCrescentEndedUI -= ActivateSkillUsingImage;
     }
 
     private void ActivateSkillUsingImage()

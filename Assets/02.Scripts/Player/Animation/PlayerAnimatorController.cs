@@ -279,9 +279,10 @@ namespace _02.Scripts.Player.Animation
         /// <summary>
         /// Overdrive 진입 애니메이션 재생
         /// </summary>
-        public void PlayOverdriveActivation()
+        public void PlayOverdriveActivation(bool isGrounded)
         {
-            Debug.Log("[PlayerAnimatorController] PlayOverdriveActivation");
+            Debug.Log($"[PlayerAnimatorController] PlayOverdriveActivation - isGrounded: {isGrounded}");
+            _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.ResetTrigger(OverdriveActivationHash);
             _animator.SetTrigger(OverdriveActivationHash);
         }
