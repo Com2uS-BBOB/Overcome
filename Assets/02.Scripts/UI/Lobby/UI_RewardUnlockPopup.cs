@@ -7,13 +7,14 @@ using UnityEngine.UI;
 public class UI_RewardUnlockPopup : BaseUI
 {
     [SerializeField] private Image _rewardIcon;
-    [SerializeField] private TextMeshProUGUI _rewardNameText;
+    [SerializeField] private TextMeshProUGUI _description;
     [SerializeField] private Button _closeButton;
 
     [Header("Animation")]
     [SerializeField] private CanvasGroup _canvasGroup;
     [SerializeField] private float _animationDuration = 0.5f;
 
+    private const string RewardDescription = "을 획득하였습니다!\nESC를 눌러 조작법을 익혀보세요!";
     private ERewardType _currentReward;
     
     public void SetRewardInfo(ERewardType type)
@@ -32,9 +33,10 @@ public class UI_RewardUnlockPopup : BaseUI
             _rewardIcon.sprite = config.RewardSprite;
         }
         
-        if (_rewardNameText != null)
+        if (_description != null)
         {
-            _rewardNameText.text = GetRewardName(_currentReward);
+            string rewardName = GetRewardName(_currentReward);
+            _description.SetText($"{rewardName}{RewardDescription}");
         }
     }
 
