@@ -12,7 +12,9 @@ public class UI_Combo : MonoBehaviour
     [Header("Animation")]
     [SerializeField] private DOTweenAnimation _openComboPanelAnimation;
     [SerializeField] private DOTweenAnimation _increaseComboAnimation;
-    
+
+    private Tweener _fadeTweener;
+
     private void Awake()
     {
         _openComboPanelAnimation.autoKill = false;
@@ -29,6 +31,7 @@ public class UI_Combo : MonoBehaviour
     private void OnDestroy()
     {
         _comboSystem.OnComboChanged -= UpdateComboUI;
+        _fadeTweener?.Kill();
     }
 
     private void UpdateComboUI()
@@ -49,10 +52,16 @@ public class UI_Combo : MonoBehaviour
         _gradeText.text = _comboSystem.ComboText;
         _gradeText.colorGradient = _comboSystem.GradeColorGradient;
         _increaseComboAnimation.DORestart();
+
+        _fadeTweener?.Kill();
+        _canvasGroup.alpha = 1;
+        _fadeTweener = _canvasGroup.DOFade(0, _comboSystem.ComboDuration)
+                                   .SetEase(Ease.InQuad);
     }
 
     private void ClearComboUI()
     {
+        _fadeTweener?.Kill();
         _comboText.text = "";
         _comboText.colorGradient = new VertexGradient(Color.black);
         _gradeText.text = "";

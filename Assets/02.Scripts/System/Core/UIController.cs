@@ -72,6 +72,7 @@ public class UIController : SingletonBehaviour<UIController>
     {
         _activeUI.Add(ui.GetType(), ui);
         _activeUIList.Add(ui);
+        ui.transform.SetAsLastSibling();
         ui.OnOpen();
     }
 
