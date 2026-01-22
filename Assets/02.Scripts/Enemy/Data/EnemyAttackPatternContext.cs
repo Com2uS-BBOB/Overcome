@@ -29,7 +29,8 @@ public sealed class EnemyAttackPatternContext
         NavMeshAgent agent,
         EnemySlotCoordinator slotCoordinator,
         EnemyAttackDirector attackDirector,
-        EnemyStatData statData
+        EnemyStatData statData,
+        Func<EEnemyHitboxType, EnemyKnockbackHitbox> getHitbox
     )
     {
         Player = player;
@@ -41,5 +42,6 @@ public sealed class EnemyAttackPatternContext
         SlotCoordinator = slotCoordinator;
         AttackDirector = attackDirector;
         StatData = statData;
+        GetHitbox = getHitbox;
     }
 }
