@@ -62,13 +62,22 @@ namespace _02.Scripts.Player.StateMachine.States
 
         private void ReturnToNormalState()
         {
-            if (!Movement.IsGrounded)
+            bool isGrounded = Movement.IsGrounded;
+            bool isMoving = HasMoveInput();
+
+            // Animator 상태 강제 동기화
+            Controller.PlayerAnimatorController?.SyncLocomotionState(isGrounded, isMoving);
+
+            if (!isGrounded)
             {
                 StateMachine.ChangeState<FallState>();
                 return;
             }
 
-            StateMachine.ChangeState<IdleState>();
+            if (isMoving)
+                StateMachine.ChangeState<MoveState>();
+            else
+                StateMachine.ChangeState<IdleState>();
         }
     }
 }

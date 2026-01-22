@@ -13,6 +13,8 @@ namespace _02.Scripts.Player.StateMachine.States
         public override void Enter()
         {
             // 점프 애니메이션은 이미 PlayerController.HandleJump()에서 트리거됨
+            // IsGrounded=false 강제 동기화 (Hit 후 공중 상태 전환 시 안전장치)
+            Controller.PlayerAnimatorController?.SetGrounded(false);
         }
         
         public override void Update()

@@ -10,6 +10,8 @@ namespace _02.Scripts.Player.StateMachine.States
         public override void Enter()
         {
             Controller.PlayerAnimatorController?.SetMoving(false);
+            // IsGrounded=true 강제 동기화 (Hit 후 지상 상태 전환 시 안전장치)
+            Controller.PlayerAnimatorController?.SetGrounded(true);
         }
 
         public override void Update()

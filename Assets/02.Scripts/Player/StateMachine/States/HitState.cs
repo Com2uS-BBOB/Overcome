@@ -84,20 +84,26 @@ namespace _02.Scripts.Player.StateMachine.States
 
         private void ReturnToNormalState()
         {
+            bool isGrounded = Movement.IsGrounded;
+            bool isMoving = HasMoveInput();
+
+            // Animator 상태 강제 동기화 (Hit → Idle 직접 전환 방지)
+            Controller.PlayerAnimatorController?.SyncLocomotionState(isGrounded, isMoving);
+
             // 가드 키를 홀드 중이면 가드 상태로 복귀
-            if (Input.IsGuardHeld && _guardManager != null && Movement.IsGrounded)
+            if (Input.IsGuardHeld && _guardManager != null && isGrounded)
             {
                 StateMachine.ChangeState<GuardState>();
                 return;
             }
 
-            if (!Movement.IsGrounded)
+            if (!isGrounded)
             {
                 StateMachine.ChangeState<FallState>();
                 return;
             }
 
-            if (HasMoveInput())
+            if (isMoving)
                 StateMachine.ChangeState<MoveState>();
             else
                 StateMachine.ChangeState<IdleState>();

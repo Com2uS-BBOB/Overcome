@@ -233,6 +233,34 @@ namespace _02.Scripts.Player.Animation
         }
 
         /// <summary>
+        /// Hit 종료 후 Locomotion 상태 강제 동기화
+        /// StateMachine과 Animator 간 불일치 방지
+        /// </summary>
+        public void SyncLocomotionState(bool isGrounded, bool isMoving)
+        {
+            // 모든 전투 관련 트리거 리셋 (잔여 트리거 제거)
+            _animator.ResetTrigger(HitHash);
+            _animator.ResetTrigger(AttackHash);
+            _animator.ResetTrigger(CrescentHash);
+            _animator.ResetTrigger(DashAttackHash);
+
+            // Locomotion 파라미터 강제 동기화
+            _animator.SetBool(IsGroundedHash, isGrounded);
+            _animator.SetBool(IsMovingHash, isMoving);
+
+            // 콤보 카운트 리셋
+            _animator.SetInteger(AttackComboCountHash, 0);
+            _animator.SetInteger(CrescentComboCountHash, 0);
+
+            Debug.Log($"[PlayerAnimatorController] SyncLocomotionState - isGrounded: {isGrounded}, isMoving: {isMoving}");
+        }
+
+        /// <summary>
+        /// 현재 Animator의 IsGrounded 상태 반환 (디버깅용)
+        /// </summary>
+        public bool GetAnimatorGrounded() => _animator.GetBool(IsGroundedHash);
+
+        /// <summary>
         /// 가드 시작 (Trigger + Bool)
         /// </summary>
         public void PlayGuard()
