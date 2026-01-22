@@ -199,96 +199,6 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     #endregion
 
     #region BGM Control
-    public void PlayBGM(string clipName)
-    {
-        PlayBGMAsync(clipName);
-    }
-
-    private async void PlayBGMAsync(string clipName)
-    {
-        try
-        {
-            Debug.Log($"[SoundManager] PlayBGM 시작: {clipName}");
-            _bgmSource.Stop();
-
-            var clip = await LoadAudioClipAsync(clipName);
-            if (clip == null)
-            {
-                Debug.LogError($"[SoundManager] BGM 클립 로드 실패: {clipName}");
-                return;
-            }
-
-            Debug.Log($"[SoundManager] BGM 클립 로드 성공: {clip.name}, 길이: {clip.length}초");
-            _bgmSource.clip = clip;
-            _bgmSource.volume = 1f;
-            _bgmSource.Play();
-            Debug.Log($"[SoundManager] BGM 재생 시작, isPlaying: {_bgmSource.isPlaying}");
-        }
-        catch (Exception e)
-        {
-            Debug.LogException(e);
-        }
-    }
-
-    /// <summary>
-    /// 인트로 BGM 재생 후 루프 BGM으로 전환
-    /// </summary>
-    public void PlayBGMWithIntro(string introClipName, string loopClipName)
-    {
-        PlayBGMWithIntroAsync(introClipName, loopClipName);
-    }
-
-    private async void PlayBGMWithIntroAsync(string introClipName, string loopClipName)
-    {
-        try
-        {
-            _bgmSource.Stop();
-            StopAllCoroutines();
-
-            // 인트로 로드 및 재생
-            var introClip = await LoadAudioClipAsync(introClipName);
-            if (introClip == null)
-            {
-                Debug.LogError($"[SoundManager] 인트로 BGM 로드 실패: {introClipName}");
-                return;
-            }
-
-            // 루프 미리 로드
-            var loopClip = await LoadAudioClipAsync(loopClipName);
-            if (loopClip == null)
-            {
-                Debug.LogError($"[SoundManager] 루프 BGM 로드 실패: {loopClipName}");
-                return;
-            }
-
-            Debug.Log($"[SoundManager] 인트로 BGM 재생: {introClip.name} ({introClip.length}초)");
-            _bgmSource.clip = introClip;
-            _bgmSource.loop = false;
-            _bgmSource.volume = 1f;
-            _bgmSource.Play();
-
-            // 인트로 끝나면 루프 재생
-            StartCoroutine(WaitForIntroAndPlayLoop(introClip.length, loopClip));
-        }
-        catch (Exception e)
-        {
-            Debug.LogException(e);
-        }
-    }
-
-    private IEnumerator WaitForIntroAndPlayLoop(float introLength, AudioClip loopClip)
-    {
-        yield return new WaitForSeconds(introLength);
-
-        if (_bgmSource != null && loopClip != null)
-        {
-            Debug.Log($"[SoundManager] 루프 BGM 전환: {loopClip.name}");
-            _bgmSource.clip = loopClip;
-            _bgmSource.loop = true;
-            _bgmSource.Play();
-        }
-    }
-
     public void StopBGM()
     {
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
@@ -727,7 +637,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     [ContextMenu("Test/Play BGM")]
     private void TestPlayBGM()
     {
-        PlayBGM(_testBGMName);
+        CrossfadeToBGM(_testBGMName, 0.5f, 1f);
         Debug.Log($"[SoundManager] BGM 재생: {_testBGMName}");
     }
 
