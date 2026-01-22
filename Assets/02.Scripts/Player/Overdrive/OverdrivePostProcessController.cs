@@ -30,12 +30,13 @@ namespace _02.Scripts.Player.Overdrive
         [SerializeField] private float _bloomIntensityIncrease = 0.4f;
 
         [Tooltip("지속 중 Vignette 강도")]
-        [SerializeField] private float _vignetteIntensity = 0.25f;
-        [SerializeField] private Color _vignetteColor = new Color(0.1f, 0.2f, 0.8f, 1f);
+        [SerializeField] private float _vignetteIntensity = 0.3f;
+        [SerializeField] private Color _vignetteColor = new Color(0.6f, 0.05f, 0.1f, 1f);
 
-        [Tooltip("Color Filter (차가운 톤)")]
-        [SerializeField] private Color _colorFilter = new Color(0.85f, 0.95f, 1f, 1f);
-        [SerializeField] private float _saturationIncrease = 15f;
+        [Tooltip("Color Filter (붉은 톤)")]
+        [SerializeField] private Color _colorFilter = new Color(1f, 0.88f, 0.85f, 1f);
+        [SerializeField] private float _saturationIncrease = 20f;
+        [SerializeField] private float _contrastIncrease = 10f;
 
         [Header("Transition Settings")]
         [SerializeField] private float _fadeInDuration = 0.3f;
@@ -54,6 +55,7 @@ namespace _02.Scripts.Player.Overdrive
         private Color _originalVignetteColor;
         private Color _originalColorFilter;
         private float _originalSaturation;
+        private float _originalContrast;
         private float _originalChromaticIntensity;
 
         private Coroutine _effectCoroutine;
@@ -124,6 +126,7 @@ namespace _02.Scripts.Player.Overdrive
             _originalVignetteColor = _vignette.color.value;
             _originalColorFilter = _colorAdjustments.colorFilter.value;
             _originalSaturation = _colorAdjustments.saturation.value;
+            _originalContrast = _colorAdjustments.contrast.value;
             _originalChromaticIntensity = _chromaticAberration.intensity.value;
 
             _isInitialized = true;
@@ -207,6 +210,7 @@ namespace _02.Scripts.Player.Overdrive
                 // Color Adjustments
                 _colorAdjustments.colorFilter.Override(Color.Lerp(_originalColorFilter, _colorFilter, t));
                 _colorAdjustments.saturation.Override(Mathf.Lerp(_originalSaturation, _originalSaturation + _saturationIncrease, t));
+                _colorAdjustments.contrast.Override(Mathf.Lerp(_originalContrast, _originalContrast + _contrastIncrease, t));
 
                 elapsed += Time.unscaledDeltaTime;
                 yield return null;
@@ -218,6 +222,7 @@ namespace _02.Scripts.Player.Overdrive
             _vignette.color.Override(_vignetteColor);
             _colorAdjustments.colorFilter.Override(_colorFilter);
             _colorAdjustments.saturation.Override(_originalSaturation + _saturationIncrease);
+            _colorAdjustments.contrast.Override(_originalContrast + _contrastIncrease);
 
             _effectCoroutine = null;
         }
@@ -233,6 +238,7 @@ namespace _02.Scripts.Player.Overdrive
             Color currentVignetteColor = _vignette.color.value;
             Color currentColorFilter = _colorAdjustments.colorFilter.value;
             float currentSaturation = _colorAdjustments.saturation.value;
+            float currentContrast = _colorAdjustments.contrast.value;
             float currentChromatic = _chromaticAberration.intensity.value;
 
             float elapsed = 0f;
@@ -246,6 +252,7 @@ namespace _02.Scripts.Player.Overdrive
                 _vignette.color.Override(Color.Lerp(currentVignetteColor, _originalVignetteColor, t));
                 _colorAdjustments.colorFilter.Override(Color.Lerp(currentColorFilter, _originalColorFilter, t));
                 _colorAdjustments.saturation.Override(Mathf.Lerp(currentSaturation, _originalSaturation, t));
+                _colorAdjustments.contrast.Override(Mathf.Lerp(currentContrast, _originalContrast, t));
                 _chromaticAberration.intensity.Override(Mathf.Lerp(currentChromatic, _originalChromaticIntensity, t));
 
                 elapsed += Time.unscaledDeltaTime;
@@ -258,6 +265,7 @@ namespace _02.Scripts.Player.Overdrive
             _vignette.color.Override(_originalVignetteColor);
             _colorAdjustments.colorFilter.Override(_originalColorFilter);
             _colorAdjustments.saturation.Override(_originalSaturation);
+            _colorAdjustments.contrast.Override(_originalContrast);
             _chromaticAberration.intensity.Override(_originalChromaticIntensity);
             _lensDistortion.intensity.Override(0f);
 
@@ -282,6 +290,7 @@ namespace _02.Scripts.Player.Overdrive
                 _vignette?.color.Override(_originalVignetteColor);
                 _colorAdjustments?.colorFilter.Override(_originalColorFilter);
                 _colorAdjustments?.saturation.Override(_originalSaturation);
+                _colorAdjustments?.contrast.Override(_originalContrast);
                 _chromaticAberration?.intensity.Override(_originalChromaticIntensity);
                 _lensDistortion?.intensity.Override(0f);
             }

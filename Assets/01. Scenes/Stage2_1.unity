@@ -514,15 +514,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::_02.Scripts.Player.Overdrive.OverdrivePostProcessController
   _gaugeManager: {fileID: 66653399}
   _volume: {fileID: 1966083294}
-  _punchDuration: 0.2
-  _punchChromaticPeak: 0.5
-  _punchLensDistortionPeak: -0.3
-  _sustainedChromaticIntensity: 0.15
-  _bloomIntensityIncrease: 0.4
-  _vignetteIntensity: 0.25
-  _vignetteColor: {r: 0.1, g: 0.2, b: 0.8, a: 1}
-  _colorFilter: {r: 0.85, g: 0.95, b: 1, a: 1}
-  _saturationIncrease: 15
+  _punchDuration: 0.8
+  _punchChromaticPeak: 1
+  _punchLensDistortionPeak: -0.8
+  _sustainedChromaticIntensity: 0.4
+  _bloomIntensityIncrease: 0.7
+  _vignetteIntensity: 0.5
+  _vignetteColor: {r: 0.6, g: 0.05882353, b: 0.101960786, a: 1}
+  _colorFilter: {r: 1, g: 0.8784314, b: 0.8509804, a: 1}
+  _saturationIncrease: 20
+  _contrastIncrease: 10
   _fadeInDuration: 0.3
   _fadeOutDuration: 0.5
 --- !u!1 &84765895
