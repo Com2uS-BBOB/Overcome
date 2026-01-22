@@ -86,7 +86,7 @@ public class LobbyScene : MonoBehaviour
         {
             return stageType;
         }
-        return ESceneType.GameScene;
+        return ESceneType.LobbyScene;
     }
 
     public void LoadTutorialScene()
