@@ -24,11 +24,13 @@ public class ScoreSystem : SingletonBehaviour<ScoreSystem>, IGameSystem
     public void GameStart()
     {
         EnemyEventController.Enemy.OnKilled += IncreaseScore;
+        GameEventHandler.OnGameClear += IncreaseScore;
     }
 
     public void GameEnd()
     {
         EnemyEventController.Enemy.OnKilled -= IncreaseScore;
+        GameEventHandler.OnGameClear -= IncreaseScore;
     }
     
     private void IncreaseScore(EnemyKilledEvent killedEvent)

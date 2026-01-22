@@ -6,6 +6,7 @@ public class RewardManager : SingletonBehaviour<RewardManager>
     
     public bool IsRewardUnlocked(ERewardType rewardType)
     {
+        if (rewardType == ERewardType.None) return true;
         if (SceneController.Instance != null)
         {
             ESceneType currentScene = SceneController.Instance.CurrentOrTargetScene;
@@ -30,4 +31,18 @@ public class RewardManager : SingletonBehaviour<RewardManager>
 
     public bool IsCrescentUnlocked() => IsRewardUnlocked(ERewardType.CrescentSkill);
     public bool IsOverDriveUnlocked() => IsRewardUnlocked(ERewardType.OverDriveSkill);
+
+    public System.Collections.Generic.List<ERewardType> GetAllUnlockedRewards()
+    {
+        var unlockedRewards = new System.Collections.Generic.List<ERewardType>();
+        foreach (ERewardType rewardType in System.Enum.GetValues(typeof(ERewardType)))
+        {
+            if (rewardType == ERewardType.None) continue;
+            if (IsRewardUnlocked(rewardType))
+            {
+                unlockedRewards.Add(rewardType);
+            }
+        }
+        return unlockedRewards;
+    }
 }
