@@ -131,7 +131,8 @@ public class EnemyAttack : MonoBehaviour
             _agent,
             _slotCoordinator,
             _attackDirector,
-            _statData
+            _statData,
+            GetHitbox
         );
 
         switch (_enemy.EnemyStatData.EnemyType)
