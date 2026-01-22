@@ -29,11 +29,16 @@ public class KillLogSystem : SingletonBehaviour<KillLogSystem>, IGameSystem
     
     private void LogKill(EnemyKilledEvent killedEvent)
     {
-        _killLogs[killedEvent.Enemy.EnemyType]++;
+        EEnemyType type = killedEvent.Enemy.EnemyType;
+        if (type == EEnemyType.FloatSmall)
+        {
+            type = EEnemyType.Small;
+        }
+        _killLogs[type]++;
         var killLogConfig = new KillLogConfig
         {
             SkillName = "",
-            DeathEnemy = killedEvent.Enemy.EnemyType
+            DeathEnemy = type
         };
 
         OnKillLogged?.Invoke(killLogConfig);
