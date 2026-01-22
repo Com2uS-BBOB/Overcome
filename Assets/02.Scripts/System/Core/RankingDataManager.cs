@@ -49,29 +49,20 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
     public void UpdateRanking(int stageID, string userID, int score)
     {
         RankingData ranking = GetOrCreateStageRanking(stageID);
-    
-        if (TryUpdateExistingUser(ranking, userID, score))
-        {
-            FinalizeRanking(stageID, ranking);
-            return;
-        }
-
-        if (!CanEnterRanking(ranking, score)) return;
-        
-        AddNewEntry(ranking, userID, score);
-        FinalizeRanking(stageID, ranking);
-    }
-
-    private bool TryUpdateExistingUser(RankingData ranking, string userID, int score)
-    {
         RankConfig existingEntry = ranking.Ranks.FirstOrDefault(r => r.UserID == userID);
     
-        if (existingEntry == null) return false;
-        if (score <= existingEntry.Score)
+        if (existingEntry != null)
         {
+            if (score <= existingEntry.Score) return;
             existingEntry.Score = score;
         }
-        return true;
+        else
+        {
+            if (!CanEnterRanking(ranking, score)) return;
+            AddNewEntry(ranking, userID, score);
+        }
+    
+        FinalizeRanking(stageID, ranking);
     }
 
     private bool CanEnterRanking(RankingData ranking, int score)
