@@ -615,6 +615,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1881364499}
     m_Modifications:
+    - target: {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: _slideInAnimation
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7448200280359536786, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -695,6 +699,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8227195524230688579, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: m_text
+      value: Elite
+      objectReference: {fileID: 0}
     - target: {fileID: 8562116266077505458, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Name
       value: KillLogOffset
@@ -707,7 +715,9 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: -9059323199911496683, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1913080442937328890, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+    - {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1533,7 +1543,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 41.15
+  m_fontSize: 41.8
   m_fontSizeBase: 44
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -1733,6 +1743,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1881364499}
     m_Modifications:
+    - target: {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: _slideInAnimation
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7448200280359536786, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1813,6 +1827,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8227195524230688579, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: m_text
+      value: Elite
+      objectReference: {fileID: 0}
     - target: {fileID: 8562116266077505458, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Name
       value: KillLogOffset (2)
@@ -1825,7 +1843,9 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: -9059323199911496683, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1913080442937328890, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+    - {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2082,6 +2102,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1881364499}
     m_Modifications:
+    - target: {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: _slideInAnimation
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7448200280359536786, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -2162,6 +2186,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8227195524230688579, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: m_text
+      value: Elite
+      objectReference: {fileID: 0}
     - target: {fileID: 8562116266077505458, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Name
       value: KillLogOffset (1)
@@ -2174,7 +2202,9 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: -9059323199911496683, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1913080442937328890, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+    - {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2929,7 +2959,7 @@ MonoBehaviour:
   m_text: "\u2191\u2193\u2190\u2192 : WASD\L\uC810\uD504 : Space \uC810\uD504\L\uC774\uB2E8
     \uC810\uD504 : \uACF5\uC911\uC5D0\uC11C \uC810\uD504\L\uAE30\uBCF8 \uACF5\uACA9
     : \uB9C8\uC6B0\uC2A4 \uC88C\uD074\uB9AD\LGaurd : E\LCrescent : \uB9C8\uC6B0\uC2A4
-    \uC6B0\uD074\uB9AD\LOverdrive : Q\nDash : Left Shift\n\uC548\uB0B4\uCC3D : F1"
+    \uC6B0\uD074\uB9AD\LOverdrive : Q\nDash : Left Shift"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
   m_sharedMaterial: {fileID: -9059323199911496683, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
@@ -3750,6 +3780,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1881364499}
     m_Modifications:
+    - target: {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: _slideInAnimation
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7448200280359536786, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3830,6 +3864,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8227195524230688579, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: m_text
+      value: Elite
+      objectReference: {fileID: 0}
     - target: {fileID: 8562116266077505458, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Name
       value: KillLogOffset (4)
@@ -3842,7 +3880,9 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: -9059323199911496683, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1913080442937328890, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+    - {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4250,7 +4290,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 0, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -72}
-  m_SizeDelta: {x: 420, y: 400}
+  m_SizeDelta: {x: 420, y: 380}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!225 &2050929844
 CanvasGroup:
@@ -4513,6 +4553,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1881364499}
     m_Modifications:
+    - target: {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: _slideInAnimation
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 7448200280359536786, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -4593,6 +4637,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8227195524230688579, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+      propertyPath: m_text
+      value: Elite
+      objectReference: {fileID: 0}
     - target: {fileID: 8562116266077505458, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
       propertyPath: m_Name
       value: KillLogOffset (3)
@@ -4605,7 +4653,9 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: -9059323199911496683, guid: c3ddd55c32e07c441bd3fc4d2688c3b9, type: 2}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1913080442937328890, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
+    - {fileID: 6915304592585911670, guid: d1bff38c51cd04648b23b47a65ee8633, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
