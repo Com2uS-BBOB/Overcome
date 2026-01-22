@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
         _killLogSystem?.GameStart();
         _hudUIObject.SetActive(true);
         GameEventHandler.IsOnGame = true;
+        _= UIController.Instance.OpenUI<UI_GuidePopup>();
     }
     
     private void OnGamePause()
@@ -55,6 +56,7 @@ public class GameManager : MonoBehaviour
         _scoreSystem?.GameEnd();
         _killLogSystem?.GameEnd();
         GameEventHandler.IsOnGame = false;
+        UIController.Instance.CloseUI<UI_GuidePopup>();
     }
 
     private void SetCursor(bool active)

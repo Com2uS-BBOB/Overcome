@@ -184,6 +184,8 @@ public class TutorialSequencer : MonoBehaviour
         Time.timeScale = _prevTimeScale;
 
         UIInputSystem.Instance.UnblockInput();
+        
+        GameEventHandler.GameStart();
     }
 
     private void SkipTutorial()
