@@ -952,9 +952,7 @@ MonoBehaviour:
   _maxActiveItems: 5
   _itemLifetime: 3
   _initialPoolSize: 10
-  _skillIcon:
-  - {fileID: 21300000, guid: 6efddec039515f245bfc9ddbbaa547fa, type: 3}
-  - {fileID: 21300000, guid: fe74d3b484063cc408cfac46d38f9a86, type: 3}
+  _skillIcons: []
 --- !u!114 &278842878
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1087,6 +1085,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UI_Score
   _currentScoreObject: {fileID: 951124951}
   _highScoreObject: {fileID: 1779194628}
+  _rankObject: {fileID: 0}
 --- !u!222 &342423785
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2235,7 +2234,7 @@ Transform:
   m_GameObject: {fileID: 681277576}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 136.56, z: 28.32}
+  m_LocalPosition: {x: -0.19256276, y: 144.3725, z: -25.847496}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3616,7 +3615,7 @@ PrefabInstance:
     - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
       propertyPath: '_defaultGameObjects.Array.data[0]'
       value: 
-      objectReference: {fileID: 1913240852}
+      objectReference: {fileID: 0}
     - target: {fileID: 6012965461183801973, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
       propertyPath: '_defaultGameObjects.Array.data[1]'
       value: 
@@ -4317,7 +4316,7 @@ Transform:
   m_GameObject: {fileID: 1335022515}
   serializedVersion: 2
   m_LocalRotation: {x: 0.1784248, y: -0.000000021466738, z: 0.0000000038926613, w: 0.98395354}
-  m_LocalPosition: {x: 0, y: 138.06, z: 24.32}
+  m_LocalPosition: {x: -0.19256276, y: 145.8725, z: -29.847496}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4704,7 +4703,7 @@ Transform:
   m_GameObject: {fileID: 1408905992}
   serializedVersion: 2
   m_LocalRotation: {x: 0.17842479, y: -0.000000021466734, z: 0.00000000389266, w: 0.9839536}
-  m_LocalPosition: {x: 0, y: 138.06, z: 24.32}
+  m_LocalPosition: {x: -0.19256276, y: 145.8725, z: -29.847496}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5149,10 +5148,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a648eb8ff5c56a47bfdb384375702f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreSystem
-  _stageData: {fileID: 0}
-  _isTest: 0
-  _testHighScore: 4000
-  _testScore: 0
 --- !u!1 &1483505759
 GameObject:
   m_ObjectHideFlags: 0
@@ -5318,15 +5313,11 @@ MonoBehaviour:
   _gaugeManager: {fileID: 681277584}
   _gaugeEffectImage: {fileID: 1788254214}
   _overDriveIcon: {fileID: 1354673263}
+  _blockImage: {fileID: 0}
   _gauge:
     _fillImage: {fileID: 1733974889}
     _duration: 0.25
     _ease: 1
-  _percentText:
-    _text: {fileID: 19299798}
-    _format: '{0:0}'
-    _duration: 0.5
-    _ease: 6
 --- !u!222 &1483505763
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5446,6 +5437,7 @@ MonoBehaviour:
     _duration: 0.25
     _ease: 1
   _gaugeManager: {fileID: 681277584}
+  _gaugeBorders: []
 --- !u!1 &1608762391
 GameObject:
   m_ObjectHideFlags: 0
@@ -5499,6 +5491,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_Skill
   _crescentSkill: {fileID: 0}
+  _blockImage: {fileID: 0}
+  _skillImage: {fileID: 0}
+  _skillUnuseColor: {r: 0, g: 0, b: 0, a: 0}
+  _skillUseColor: {r: 0, g: 0, b: 0, a: 0}
+  _resetDuration: 0
 --- !u!222 &1608762394
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -5967,9 +5964,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stageData: {fileID: 11400000, guid: f0882550f8978444f90e7d6b6cb071f3, type: 2}
-  _stage: 0
-  _level: 0
-  _score: 0
 --- !u!4 &1768334919
 Transform:
   m_ObjectHideFlags: 0
@@ -6430,11 +6424,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1913240852 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1091328049032755812, guid: 6b094e184eb8fdc43b16e51cded32782, type: 3}
-  m_PrefabInstance: {fileID: 1065513683}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1913681425
 GameObject:
   m_ObjectHideFlags: 0
@@ -6749,10 +6738,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_DashSkill
   _dashSkill: {fileID: 681277585}
+  _gaugeManager: {fileID: 0}
+  _skillIcon: {fileID: 0}
   _coolDownGauge: {fileID: 1189728114}
   _coolDownCountText: {fileID: 124481784}
-  _coolDownBackground: {fileID: 2095664154}
   _blockSkillImage: {fileID: 948727436}
+  _skillUnuseColor: {r: 0, g: 0, b: 0, a: 0}
+  _skillUseColor: {r: 0, g: 0, b: 0, a: 0}
 --- !u!222 &1944092593
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6942,6 +6934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48df590cf111e4443bd38d2c7771d27c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayTimeSystem
+  _hudObject: {fileID: 0}
   _difficultyConfigData: {fileID: 11400000, guid: bae2da0e7a83ffc47b7e18b34867a97f, type: 2}
   _currentDifficulty: 0
 --- !u!1001 &2065275168
@@ -7349,10 +7342,6 @@ PrefabInstance:
     - target: {fileID: 1121188033812173564, guid: 5ae37bec211d3a0488d823556ccb6e5d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4122794663308658270, guid: 5ae37bec211d3a0488d823556ccb6e5d, type: 3}
-      propertyPath: m_Intensity
-      value: 0.15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
