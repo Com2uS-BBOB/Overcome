@@ -17,10 +17,17 @@ public class UI_Ranking : BaseUI
     {
         int stageID = _chapter * 10 +  _level;
         RankingData rankData = RankingDataManager.Instance.GetOrCreateStageRanking(stageID);
-        for (var i = 0; i < rankData.Ranks.Count; i++)
+        for (var i = 0; i < _rankItems.Length; i++)
         {
-            RankConfig rankConfig = rankData.Ranks[i];
-            _rankItems[i].SetRankInfo(rankConfig);
+            if (i < rankData.Ranks.Count)
+            {
+                RankConfig rankConfig = rankData.Ranks[i];
+                _rankItems[i].SetRankInfo(rankConfig);
+            }
+            else
+            {
+                _rankItems[i].SetDefaultInfo();
+            }
         }
     }
 

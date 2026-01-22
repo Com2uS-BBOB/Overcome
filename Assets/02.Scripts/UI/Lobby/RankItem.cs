@@ -11,4 +11,10 @@ public class RankItem : MonoBehaviour
         _userName.text = config.UserID;
         _score.text = config.Score.ToString("N0");
     }
+
+    public void SetDefaultInfo()
+    {
+        _userName.text = "-";
+        _score.text = "-";
+    }
 }
