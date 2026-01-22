@@ -6,6 +6,14 @@ public class RewardManager : SingletonBehaviour<RewardManager>
     
     public bool IsRewardUnlocked(ERewardType rewardType)
     {
+        if (SceneController.Instance != null)
+        {
+            ESceneType currentScene = SceneController.Instance.CurrentOrTargetScene;
+            if (currentScene == ESceneType.TutorialScene)
+            {
+                return true;
+            }
+        }
         int totalStars = PlayerDataManager.Instance.GetPlayerStarCount();
         return _rewardUnlockData.IsRewardUnlocked(rewardType, totalStars);
     }

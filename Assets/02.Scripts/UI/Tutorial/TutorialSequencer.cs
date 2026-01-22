@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using UnityEngine.InputSystem;
 
 public class TutorialSequencer : MonoBehaviour
 {
@@ -19,7 +18,6 @@ public class TutorialSequencer : MonoBehaviour
 
     [Header("Targets")]
     [SerializeField] private List<HighlightTarget> _targets = new List<HighlightTarget>();
-    private InputSystem_Actions _inputActions;
     
     [Header("UI References")]
     [SerializeField] private Image _darkOverlay;
@@ -53,8 +51,6 @@ public class TutorialSequencer : MonoBehaviour
         _darkCanvasRect = _darkOverlay.canvas.GetComponent<RectTransform>();
         _darkOverlayMaterial = _darkOverlay.material;
 
-        _inputActions = new InputSystem_Actions();
-        
         _darkOverlay.gameObject.SetActive(false);
         _highlightMask.gameObject.SetActive(false);
         _descriptionUI.gameObject.SetActive(false);
@@ -68,27 +64,17 @@ public class TutorialSequencer : MonoBehaviour
         }
     }
 
-    private void OnDisable()
-    {
-        _inputActions?.Dispose();
-    }
-    
-    private void OnDestroy()
-    {
-        _inputActions?.Dispose();
-    }
-    
     private void PlayTutorial()
     {
         if (_isPlaying) return;
-        _inputActions.UI.Disable();
-        
+        UIInputSystem.Instance.BlockInput();
+
         _prevTimeScale = Time.timeScale;
         Time.timeScale = 0f;
-        
+
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
-        
+
         _currentIndex = 0;
         _isPlaying = true;
         StartCoroutine(TutorialSequenceCoroutine());
@@ -188,16 +174,16 @@ public class TutorialSequencer : MonoBehaviour
             _darkOverlay.gameObject.SetActive(false);
             _highlightMask.gameObject.SetActive(false);
         });
-        
+
         _darkOverlayMaterial.SetVector(HoleCenter, Vector4.zero);
         _darkOverlayMaterial.SetVector(HoleSize, Vector4.zero);
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        
+
         Time.timeScale = _prevTimeScale;
-        
-        _inputActions.UI.Enable();
+
+        UIInputSystem.Instance.UnblockInput();
     }
 
     private void SkipTutorial()

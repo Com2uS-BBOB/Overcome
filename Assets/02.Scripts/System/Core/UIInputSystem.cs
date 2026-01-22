@@ -7,6 +7,7 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
 {
     private InputSystem_Actions _inputActions;
     private Dictionary<ESceneType, bool> _isIngame;
+    private bool _isInputBlocked;
 
     protected override void Init()
     {
@@ -44,16 +45,18 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
 
     private void OnPausePerformed(InputAction.CallbackContext context)
     {
+        if (_isInputBlocked) return;
         if (UIController.Instance.CloseLastUI()) return;
         OpenPauseUI();
     }
 
     private void OpenGuidePopup(InputAction.CallbackContext context)
     {
+        if (_isInputBlocked) return;
         ESceneType currentScene = SceneController.Instance.CurrentScene;
         if (!_isIngame[currentScene]) return;
         bool isOpened = UI_GuidePopup.IsOpened;
-        
+
         if (!isOpened)
         {
             _= UIController.Instance.OpenUI<UI_GuidePopup>();
@@ -77,5 +80,15 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     private void Exit()
     {
         _= UIController.Instance.OpenUI<UI_Exit>();
+    }
+
+    public void BlockInput()
+    {
+        _isInputBlocked = true;
+    }
+
+    public void UnblockInput()
+    {
+        _isInputBlocked = false;
     }
 }

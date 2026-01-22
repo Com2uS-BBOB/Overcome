@@ -11,9 +11,13 @@ public class SceneController : SingletonBehaviour<SceneController>
     private bool _isLoading;
     public event Action<ESceneType> OnSceneChanged;
     public ESceneType CurrentScene => _currentScene;
-    public bool IsLoading => _isLoading;
     private ESceneType _targetScene;
+    public bool IsLoading => _isLoading;
     public string TargetSceneName => _sceneNameMap.GetValueOrDefault(_targetScene);
+    
+    // Loading 중이면 다음에 오는 Scene 정보를 반환하는 Property
+    public ESceneType CurrentOrTargetScene => CurrentScene == ESceneType.LoadingScene ? _targetScene : CurrentScene;
+    
 
     protected override void Init()
     {
@@ -75,8 +79,8 @@ public class SceneController : SingletonBehaviour<SceneController>
             Debug.LogWarning($"[SceneController] '{newScene.name}' is not defined in ESceneType enum.");
             return;
         }
-        _currentScene = sceneType;
 
+        _currentScene = sceneType;
         if (_isLoading && sceneType == _targetScene)
         {
             _isLoading = false;
@@ -108,4 +112,5 @@ public class SceneController : SingletonBehaviour<SceneController>
     {
         LoadSceneAsync(_currentScene);
     }
+
 }
