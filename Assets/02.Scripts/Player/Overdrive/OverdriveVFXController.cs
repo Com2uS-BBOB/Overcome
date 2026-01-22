@@ -34,6 +34,9 @@ namespace _02.Scripts.Player.Overdrive
         [SerializeField] private Transform _vfxSpawnPoint;
         [SerializeField] private float _vfxDuration = 0f; // 0 = 오버드라이브 종료 시까지 유지
 
+        [Header("Sound Settings")]
+        [SerializeField] private string _activationSfxName = "SFX_Player_Overdrive";
+
         private GameObject _activeElectricityVFX;
 
         private void Awake()
@@ -82,6 +85,10 @@ namespace _02.Scripts.Player.Overdrive
 
             // 전기 이펙트 생성
             SpawnElectricityVFX();
+
+            // 발동 사운드 재생
+            if (!string.IsNullOrEmpty(_activationSfxName))
+                SoundManager.Instance?.PlaySfx(_activationSfxName);
         }
 
         private void HandleOverdriveDeactivated()

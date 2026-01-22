@@ -47,6 +47,9 @@ public class EliteRipStep : IEnemyAttackStep
 
         _finished = false;
 
+        // 사운드 필요 시 사용
+        // string ripKey = _context.SfxSet != null ? _context.SfxSet.EnemyRipSound : null;
+
         _rip = new EliteRipAction(
             _context.Enemy,
             _context.Player,

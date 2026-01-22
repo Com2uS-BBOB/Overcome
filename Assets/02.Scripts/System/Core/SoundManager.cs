@@ -30,7 +30,16 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     [Header("Common Settings")]
     [SerializeField] private string _commonSoundLabel = "Common";
 
+    [Header("Scene BGM Settings")]
+    [SerializeField] private SceneBGMConfig _sceneBGMConfig;
+    [SerializeField] private bool _autoPlaySceneBGM = true;
+    [Tooltip("LoadingScene에서는 BGM을 변경하지 않음")]
+    [SerializeField] private bool _skipLoadingScene = true;
+
     private AudioSource _bgmSource;
+    private Coroutine _fadeCoroutine;
+    private Coroutine _introLoopCoroutine;
+    private float _currentBGMVolume = 1f;
     private ObjectPool<AudioSource> _sfxPool;
 
     // clipName(Address 또는 이름) -> AudioClip 캐시
@@ -89,6 +98,22 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     {
         Debug.Log($"[SoundManager] Scene 변경 감지: {scene.name} - Scene 오디오 클립 해제");
         ReleaseCurrentSceneAudioClips();
+
+        // 씬별 자동 BGM 재생
+        if (_autoPlaySceneBGM && _sceneBGMConfig != null)
+        {
+            if (Enum.TryParse(scene.name, out ESceneType sceneType))
+            {
+                // LoadingScene은 건너뛰기 (기존 BGM 유지)
+                if (_skipLoadingScene && sceneType == ESceneType.LoadingScene)
+                {
+                    Debug.Log("[SoundManager] LoadingScene - BGM 유지");
+                    return;
+                }
+
+                PlaySceneBGM(sceneType);
+            }
+        }
     }
 
     private void InitializeAudioSources()
@@ -266,7 +291,26 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     public void StopBGM()
     {
-        StopAllCoroutines();
+        if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        if (_introLoopCoroutine != null) StopCoroutine(_introLoopCoroutine);
+        _bgmSource.Stop();
+        _bgmSource.clip = null;
+        _bgmSource.loop = true;
+        _currentBGMVolume = 1f;
+    }
+
+    /// <summary>
+    /// 페이드 아웃 후 BGM 정지
+    /// </summary>
+    public void StopBGMWithFade(float fadeOutDuration = 0.5f)
+    {
+        if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        _fadeCoroutine = StartCoroutine(FadeOutAndStopCoroutine(fadeOutDuration));
+    }
+
+    private IEnumerator FadeOutAndStopCoroutine(float duration)
+    {
+        yield return FadeOutBGMCoroutine(duration);
         _bgmSource.Stop();
         _bgmSource.clip = null;
         _bgmSource.loop = true;
@@ -274,6 +318,214 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     public void PauseBGM() => _bgmSource.Pause();
     public void ResumeBGM() => _bgmSource.UnPause();
+    #endregion
+
+    #region Scene BGM Control
+    /// <summary>
+    /// 씬 타입에 맞는 BGM을 자동 재생 (SceneBGMConfig 참조)
+    /// </summary>
+    public void PlaySceneBGM(ESceneType sceneType)
+    {
+        if (_sceneBGMConfig == null)
+        {
+            Debug.LogWarning("[SoundManager] SceneBGMConfig가 할당되지 않았습니다.");
+            return;
+        }
+
+        SceneBGMData bgmData = _sceneBGMConfig.GetBGMData(sceneType);
+        if (bgmData == null)
+        {
+            Debug.Log($"[SoundManager] {sceneType} 씬에 대한 BGM 설정이 없습니다.");
+            return;
+        }
+
+        if (!bgmData.PlayOnSceneLoad)
+        {
+            Debug.Log($"[SoundManager] {sceneType} 씬 BGM 자동 재생이 비활성화되어 있습니다.");
+            return;
+        }
+
+        CrossfadeToBGM(bgmData);
+    }
+
+    /// <summary>
+    /// 크로스페이드로 새 BGM으로 전환
+    /// </summary>
+    public void CrossfadeToBGM(SceneBGMData bgmData)
+    {
+        if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        if (_introLoopCoroutine != null) StopCoroutine(_introLoopCoroutine);
+        _fadeCoroutine = StartCoroutine(CrossfadeCoroutine(bgmData));
+    }
+
+    /// <summary>
+    /// 기존 BGM에서 새 BGM으로 크로스페이드
+    /// </summary>
+    public void CrossfadeToBGM(string newBGMName, float fadeOutDuration = 0.5f, float fadeInDuration = 1f)
+    {
+        if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        if (_introLoopCoroutine != null) StopCoroutine(_introLoopCoroutine);
+        _fadeCoroutine = StartCoroutine(CrossfadeToSingleBGMCoroutine(newBGMName, fadeOutDuration, fadeInDuration));
+    }
+
+    private IEnumerator CrossfadeCoroutine(SceneBGMData bgmData)
+    {
+        // 1. 기존 BGM 페이드 아웃
+        if (_bgmSource.isPlaying && bgmData.FadeOutDuration > 0f)
+        {
+            yield return FadeOutBGMCoroutine(bgmData.FadeOutDuration);
+        }
+
+        _bgmSource.Stop();
+
+        // 2. 새 BGM 로드 및 재생
+        if (bgmData.UseIntroLoop)
+        {
+            yield return PlayBGMWithIntroAndFadeCoroutine(bgmData.IntroBGMName, bgmData.LoopBGMName, bgmData.FadeInDuration, bgmData.VolumeMultiplier);
+        }
+        else
+        {
+            yield return PlayBGMWithFadeCoroutine(bgmData.BGMName, bgmData.FadeInDuration, bgmData.VolumeMultiplier);
+        }
+    }
+
+    private IEnumerator CrossfadeToSingleBGMCoroutine(string bgmName, float fadeOutDuration, float fadeInDuration)
+    {
+        // 1. 기존 BGM 페이드 아웃
+        if (_bgmSource.isPlaying && fadeOutDuration > 0f)
+        {
+            yield return FadeOutBGMCoroutine(fadeOutDuration);
+        }
+
+        _bgmSource.Stop();
+
+        // 2. 새 BGM 로드 및 페이드 인
+        yield return PlayBGMWithFadeCoroutine(bgmName, fadeInDuration, 1f);
+    }
+
+    private IEnumerator PlayBGMWithFadeCoroutine(string clipName, float fadeInDuration, float targetVolumeMultiplier)
+    {
+        // Task를 코루틴에서 대기
+        var loadTask = LoadAudioClipAsync(clipName);
+        while (!loadTask.IsCompleted)
+        {
+            yield return null;
+        }
+
+        AudioClip loadedClip = loadTask.Result;
+        if (loadedClip == null)
+        {
+            Debug.LogError($"[SoundManager] BGM 클립 로드 실패: {clipName}");
+            yield break;
+        }
+
+        Debug.Log($"[SoundManager] BGM 재생 시작 (페이드 인): {loadedClip.name}");
+        _bgmSource.clip = loadedClip;
+        _bgmSource.loop = true;
+        _bgmSource.volume = 0f;
+        _bgmSource.Play();
+
+        // 페이드 인
+        yield return FadeInBGMCoroutine(fadeInDuration, targetVolumeMultiplier);
+    }
+
+    private IEnumerator PlayBGMWithIntroAndFadeCoroutine(string introClipName, string loopClipName, float fadeInDuration, float targetVolumeMultiplier)
+    {
+        // 인트로 로드
+        var introTask = LoadAudioClipAsync(introClipName);
+        while (!introTask.IsCompleted) yield return null;
+        AudioClip introClip = introTask.Result;
+
+        // 루프 로드
+        var loopTask = LoadAudioClipAsync(loopClipName);
+        while (!loopTask.IsCompleted) yield return null;
+        AudioClip loopClip = loopTask.Result;
+
+        if (introClip == null || loopClip == null)
+        {
+            Debug.LogError($"[SoundManager] 인트로/루프 BGM 로드 실패: {introClipName}, {loopClipName}");
+            yield break;
+        }
+
+        Debug.Log($"[SoundManager] 인트로 BGM 재생 (페이드 인): {introClip.name}");
+        _bgmSource.clip = introClip;
+        _bgmSource.loop = false;
+        _bgmSource.volume = 0f;
+        _bgmSource.Play();
+
+        // 페이드 인
+        yield return FadeInBGMCoroutine(fadeInDuration, targetVolumeMultiplier);
+
+        // 인트로 끝나면 루프로 전환
+        float remainingTime = introClip.length - fadeInDuration;
+        if (remainingTime > 0)
+        {
+            yield return new WaitForSeconds(remainingTime);
+        }
+
+        if (_bgmSource != null && loopClip != null)
+        {
+            Debug.Log($"[SoundManager] 루프 BGM 전환: {loopClip.name}");
+            _bgmSource.clip = loopClip;
+            _bgmSource.loop = true;
+            _bgmSource.Play();
+        }
+    }
+
+    private IEnumerator FadeOutBGMCoroutine(float duration)
+    {
+        float startVolume = _bgmSource.volume;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            _bgmSource.volume = Mathf.Lerp(startVolume, 0f, elapsed / duration);
+            yield return null;
+        }
+
+        _bgmSource.volume = 0f;
+    }
+
+    private IEnumerator FadeInBGMCoroutine(float duration, float targetVolumeMultiplier = 1f)
+    {
+        float targetVolume = _currentBGMVolume * targetVolumeMultiplier;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            _bgmSource.volume = Mathf.Lerp(0f, targetVolume, elapsed / duration);
+            yield return null;
+        }
+
+        _bgmSource.volume = targetVolume;
+    }
+
+    /// <summary>
+    /// BGM 볼륨 페이드 (현재 재생 중인 BGM의 볼륨만 조절)
+    /// </summary>
+    public void FadeBGMVolume(float targetVolume, float duration)
+    {
+        if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        _fadeCoroutine = StartCoroutine(FadeBGMVolumeCoroutine(targetVolume, duration));
+    }
+
+    private IEnumerator FadeBGMVolumeCoroutine(float targetVolume, float duration)
+    {
+        float startVolume = _bgmSource.volume;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            _bgmSource.volume = Mathf.Lerp(startVolume, targetVolume, elapsed / duration);
+            yield return null;
+        }
+
+        _bgmSource.volume = targetVolume;
+        _currentBGMVolume = targetVolume;
+    }
     #endregion
 
     #region SFX Control

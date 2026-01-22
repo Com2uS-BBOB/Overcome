@@ -9,6 +9,7 @@ public class EliteRipAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
     private readonly EnemyAnimatorController _anim;
+    // private readonly string _ripSfxKey;
 
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;
@@ -19,6 +20,9 @@ public class EliteRipAction : IEnemyAction
     private float _preStoppingDistance;
 
     private float _ratio;
+
+    // private bool _sfxPlayed;
+
     private bool _isFinished;
 
     public bool IsFinished => _isFinished;
@@ -49,6 +53,8 @@ public class EliteRipAction : IEnemyAction
     public void Enter()
     {
         _isFinished = false;
+
+        // _sfxPlayed = false;
 
         // 난도질 중엔 계속 전진
         _agent.isStopped = false;

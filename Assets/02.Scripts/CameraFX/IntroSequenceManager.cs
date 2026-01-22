@@ -27,6 +27,9 @@ namespace _02.Scripts.CameraFX
         [SerializeField] private int _introCameraPriority = 20;
         [SerializeField] private int _gameplayCameraPriority = 10;
 
+        [Header("Blend Settings")]
+        [SerializeField] private float _cameraBlendTime = 2f;
+
         [Header("FOV Settings")]
         [SerializeField] private bool _useFOVTransition = true;
         [SerializeField] private float _introStartFOV = 70f;
@@ -207,9 +210,9 @@ namespace _02.Scripts.CameraFX
             if (_gameplayCamera != null)
                 _gameplayCamera.Priority = _introCameraPriority;
 
-            // IntroCam 완전 비활성화 (떨림 방지)
+            // 블렌딩 완료 후 IntroCam 비활성화 (블렌딩 중 비활성화 시 버벅거림 발생)
             if (_introCamera != null)
-                _introCamera.gameObject.SetActive(false);
+                StartCoroutine(DisableIntroCamAfterBlend());
 
             // Idle 애니메이션으로 전환
             PlayPlayerAnimation(_idleAnimationTrigger);
@@ -222,6 +225,14 @@ namespace _02.Scripts.CameraFX
 
             OnIntroCompleted?.Invoke();
             GameEventHandler.GameStart();
+        }
+
+        private IEnumerator DisableIntroCamAfterBlend()
+        {
+            yield return new WaitForSeconds(_cameraBlendTime);
+
+            if (_introCamera != null)
+                _introCamera.gameObject.SetActive(false);
         }
 
         private void PlayPlayerAnimation(string triggerName)

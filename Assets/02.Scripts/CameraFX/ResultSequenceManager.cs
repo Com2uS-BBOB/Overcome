@@ -47,6 +47,8 @@ namespace _02.Scripts.CameraFX
         [Header("BGM Settings")]
         [SerializeField] private bool _changeResultBgm = true;
         [SerializeField] private string _resultBgmName = "BGM_Result";
+        [SerializeField] private float _bgmFadeOutDuration = 0.5f;
+        [SerializeField] private float _bgmFadeInDuration = 1f;
 
         private bool _isPlaying;
         private bool _isSkipping;
@@ -299,7 +301,8 @@ namespace _02.Scripts.CameraFX
         {
             if (_changeResultBgm && !string.IsNullOrEmpty(_resultBgmName))
             {
-                SoundManager.Instance?.PlayBGM(_resultBgmName);
+                // 페이드 아웃 → 페이드 인으로 부드럽게 전환
+                SoundManager.Instance?.CrossfadeToBGM(_resultBgmName, _bgmFadeOutDuration, _bgmFadeInDuration);
             }
         }
 
