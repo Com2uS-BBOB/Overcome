@@ -70,7 +70,7 @@ public class TutorialSequencer : MonoBehaviour
 
     private void OnDisable()
     {
-        _inputActions?.Disable();
+        _inputActions?.Dispose();
     }
     
     private void OnDestroy()
@@ -81,7 +81,7 @@ public class TutorialSequencer : MonoBehaviour
     private void PlayTutorial()
     {
         if (_isPlaying) return;
-        _inputActions?.Disable();
+        _inputActions.UI.Disable();
         
         _prevTimeScale = Time.timeScale;
         Time.timeScale = 0f;
@@ -197,7 +197,7 @@ public class TutorialSequencer : MonoBehaviour
         
         Time.timeScale = _prevTimeScale;
         
-        _inputActions?.Enable();
+        _inputActions.UI.Enable();
     }
 
     private void SkipTutorial()

@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class UIInputSystem : SingletonBehaviour<UIInputSystem>
 {
     private InputSystem_Actions _inputActions;
-    private Dictionary<ESceneType, Action> _pauseActions;
+    private Dictionary<ESceneType, bool> _isIngame;
 
     protected override void Init()
     {
@@ -16,13 +16,13 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
 
     private void InitializePauseActions()
     {
-        _pauseActions = new Dictionary<ESceneType, Action>
+        _isIngame = new Dictionary<ESceneType, bool>
         {
-            { ESceneType.Stage1_1, () => OpenPauseUI(PauseUIConfig.InGame) },
-            { ESceneType.Stage2_1, () => OpenPauseUI(PauseUIConfig.InGame) },
-            { ESceneType.TutorialScene, () => OpenPauseUI(PauseUIConfig.InGame) },
-            { ESceneType.LobbyScene, () => OpenPauseUI(PauseUIConfig.Lobby) },
-            { ESceneType.LoginScene, Exit }
+            { ESceneType.Stage1_1, true },
+            { ESceneType.Stage2_1, true },
+            { ESceneType.TutorialScene, true },
+            { ESceneType.LobbyScene, false },
+            { ESceneType.LoginScene, false }
         };
     }
 
@@ -45,18 +45,13 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     private void OnPausePerformed(InputAction.CallbackContext context)
     {
         if (UIController.Instance.CloseLastUI()) return;
-
-        ESceneType currentScene = SceneController.Instance.CurrentScene;
-        if (_pauseActions.TryGetValue(currentScene, out Action action))
-        {
-            action?.Invoke();
-        }
+        OpenPauseUI();
     }
 
     private void OpenGuidePopup(InputAction.CallbackContext context)
     {
-        if (ESceneType.Stage1_1 != SceneController.Instance.CurrentScene) return;
-        if (ESceneType.Stage2_1 != SceneController.Instance.CurrentScene) return;
+        ESceneType currentScene = SceneController.Instance.CurrentScene;
+        if (!_isIngame[currentScene]) return;
         bool isOpened = UI_GuidePopup.IsOpened;
         
         if (!isOpened)
@@ -69,9 +64,13 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
         }
     }
     
-    private async void OpenPauseUI(PauseUIConfig config)
+    private async void OpenPauseUI()
     {
         UI_Pause pauseUI = await UIController.Instance.OpenUI<UI_Pause>();
+
+        ESceneType currentScene = SceneController.Instance.CurrentScene;
+        bool isIngame = _isIngame[currentScene];
+        PauseUIConfig config = isIngame ? PauseUIConfig.InGame : PauseUIConfig.Lobby;
         pauseUI.Setup(config);
     }
 
