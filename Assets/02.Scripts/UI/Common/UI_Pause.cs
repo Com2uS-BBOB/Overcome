@@ -37,7 +37,7 @@ public class UI_Pause : BaseUI
         _toLobbyButton.gameObject.SetActive(config.ShowToLobby);
         _toTitleButton.gameObject.SetActive(config.ShowToTitle);
     }
-
+    
     public void Retry()
     {
         if (GameEventHandler.IsOnGame)
@@ -50,13 +50,11 @@ public class UI_Pause : BaseUI
     public void OpenControls()
     {
         _= UIController.Instance.OpenUI<UI_ControlGuide>();
-        UIController.Instance.CloseUI(this);
     }
 
     public void OpenSettings()
     {
         _= UIController.Instance.OpenUI<UI_Settings>();
-        UIController.Instance.CloseUI(this);
     }
 
     public void GotoLobby()
