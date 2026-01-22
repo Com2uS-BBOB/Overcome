@@ -91,7 +91,7 @@ public class LobbyScene : MonoBehaviour
 
     public void LoadTutorialScene()
     {
-        SceneController.Instance.LoadSceneAsync(ESceneType.TutorialScene);
+        SceneController.Instance.LoadSceneAsync(ESceneType.TutorialMap);
     }
     
     private void OnCloseStageSelect()
