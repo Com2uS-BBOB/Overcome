@@ -33,6 +33,8 @@ namespace _02.Scripts.Player.StateMachine.States
 
             // 가드 포즈 애니메이션 (Trigger + Bool)
             Controller.PlayerAnimatorController?.PlayGuard();
+            // IsGrounded=true 강제 동기화 (가드는 지상 전용)
+            Controller.PlayerAnimatorController?.SetGrounded(true);
 
             // 입력 이벤트 구독
             Input.OnGuardCanceled += HandleGuardRelease;

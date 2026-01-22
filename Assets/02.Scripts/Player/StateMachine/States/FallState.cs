@@ -15,7 +15,8 @@ namespace _02.Scripts.Player.StateMachine.States
         {
             // 이동 애니메이션 비활성화
             Controller.PlayerAnimatorController?.SetMoving(false);
-            // 낙하 애니메이션은 Animator의 IsGrounded=false로 자동 처리
+            // 낙하 애니메이션: IsGrounded=false 강제 동기화 (Hit 후 공중 상태 전환 시 필수)
+            Controller.PlayerAnimatorController?.SetGrounded(false);
         }
 
         public override void Update()
