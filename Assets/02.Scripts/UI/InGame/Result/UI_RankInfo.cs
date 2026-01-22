@@ -73,7 +73,7 @@ public class UI_RankInfo : MonoBehaviour
 
         foreach (StarItem item in _starItems)
         {
-            item.ResetStar();
+            item?.ResetStar();
         }
     }
 }

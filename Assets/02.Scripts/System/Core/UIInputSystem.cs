@@ -23,7 +23,8 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
             { ESceneType.Stage2_1, true },
             { ESceneType.TutorialScene, true },
             { ESceneType.LobbyScene, false },
-            { ESceneType.LoginScene, false }
+            { ESceneType.LoginScene, false },
+            { ESceneType.LoadingScene, false }
         };
     }
 

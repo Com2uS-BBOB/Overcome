@@ -124,7 +124,9 @@ public class UI_Result : MonoBehaviour
             _scoreResult.Complete();
             _killResult.Complete();
         }
-        
-        SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
+        else
+        {
+            SceneController.Instance.LoadSceneAsync(ESceneType.LobbyScene);
+        }
     }
 }
