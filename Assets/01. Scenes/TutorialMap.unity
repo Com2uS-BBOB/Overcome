@@ -355,6 +355,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &175327529 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1205911928956709972, guid: 08e9ebed1c5775d4fa3fde12b7f27a6f, type: 3}
+  m_PrefabInstance: {fileID: 1841623357}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &184023365
 GameObject:
   m_ObjectHideFlags: 0
@@ -474,9 +479,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48df590cf111e4443bd38d2c7771d27c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TimeSystem
-  _hudObject: {fileID: 0}
+  _hudObject: {fileID: 175327529}
   _difficultyConfigData: {fileID: 11400000, guid: bae2da0e7a83ffc47b7e18b34867a97f, type: 2}
-  _currentDifficulty: 2
+  _currentDifficulty: 0
 --- !u!1 &223949715
 GameObject:
   m_ObjectHideFlags: 0
@@ -986,7 +991,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b12477bd9055fea428836478f6d5f4f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
-  _hudUIObject: {fileID: 0}
+  _hudUIObject: {fileID: 175327529}
   _timeSystem: {fileID: 197584251}
   _comboSystem: {fileID: 523525565}
   _scoreSystem: {fileID: 1933160481}
@@ -3668,7 +3673,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1159440652311338702, guid: 1a76631d31ec343b98d35a386297ab14, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[0].Rotation.value.x
-      value: 0.27079403
+      value: 0.2707941
       objectReference: {fileID: 0}
     - target: {fileID: 1159440652311338702, guid: 1a76631d31ec343b98d35a386297ab14, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[0].Rotation.value.y
