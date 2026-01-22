@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using TMPro;
@@ -113,3 +114,4 @@ public class ReplaceTMPFontTool : EditorWindow
         Debug.Log($"Replaced {count} TMP fonts in all prefabs!");
     }
 }
+#endif
