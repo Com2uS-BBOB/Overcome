@@ -613,6 +613,7 @@ GameObject:
   - component: {fileID: 5132541938653667053}
   - component: {fileID: 7016494760028869723}
   - component: {fileID: 4565063972054819854}
+  - component: {fileID: 6948353969439173305}
   m_Layer: 5
   m_Name: Overdrive
   m_TagString: Untagged
@@ -710,6 +711,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6948353969439173305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 232307081135158355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &302886145878668466
 GameObject:
   m_ObjectHideFlags: 0
@@ -2871,6 +2884,7 @@ GameObject:
   - component: {fileID: 6718823797534116692}
   - component: {fileID: 6516911090648895491}
   - component: {fileID: 8288917297766526851}
+  - component: {fileID: 3299346808675474783}
   m_Layer: 5
   m_Name: Crescent
   m_TagString: Untagged
@@ -2968,6 +2982,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3299346808675474783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1739606626678313279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &1770586729078716510
 GameObject:
   m_ObjectHideFlags: 0
@@ -6048,6 +6074,7 @@ GameObject:
   - component: {fileID: 8336237016945189273}
   - component: {fileID: 4804467555602728814}
   - component: {fileID: 1391000035300380400}
+  - component: {fileID: 2390033298082099921}
   m_Layer: 5
   m_Name: Guard
   m_TagString: Untagged
@@ -6144,6 +6171,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2390033298082099921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3234736580645616019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &3315090035989120743
 GameObject:
   m_ObjectHideFlags: 0
@@ -7049,6 +7088,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config:
     UIType: 0
+    HasSound: 1
     PauseGame: 1
     UseTransition: 0
     ShowCursor: 1
@@ -8025,6 +8065,7 @@ GameObject:
   - component: {fileID: 1858647459230052721}
   - component: {fileID: 4720555280227068945}
   - component: {fileID: 899665062062765340}
+  - component: {fileID: 8807371313174233633}
   m_Layer: 5
   m_Name: BasicAttack
   m_TagString: Untagged
@@ -8121,6 +8162,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8807371313174233633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4496754144352713745}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &4675409772473535357
 GameObject:
   m_ObjectHideFlags: 0
@@ -8530,6 +8583,7 @@ GameObject:
   - component: {fileID: 3083413562210640228}
   - component: {fileID: 590169402186998502}
   - component: {fileID: 4609450039527668793}
+  - component: {fileID: 6093549866333305465}
   m_Layer: 5
   m_Name: Movement
   m_TagString: Untagged
@@ -8626,6 +8680,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &6093549866333305465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5008944416512636886}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &5144631142775317543
 GameObject:
   m_ObjectHideFlags: 0
@@ -9185,6 +9251,7 @@ GameObject:
   - component: {fileID: 8285376838022738911}
   - component: {fileID: 7040961981465701818}
   - component: {fileID: 4074741745791254018}
+  - component: {fileID: 8029061122318918699}
   m_Layer: 5
   m_Name: DashAttack
   m_TagString: Untagged
@@ -9281,6 +9348,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8029061122318918699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5469277274052222636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &5483120495421095182
 GameObject:
   m_ObjectHideFlags: 0

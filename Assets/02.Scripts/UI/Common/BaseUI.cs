@@ -20,6 +20,10 @@ public abstract class BaseUI : MonoBehaviour
     {
         gameObject.SetActive(true);
 
+        if (Config.HasSound)
+        {
+            SoundManager.Instance.PlaySfx("SFX_UIOpen");
+        }
         if (Config.PauseGame)
         {
             _prevTimeScale = Time.timeScale;
@@ -41,6 +45,10 @@ public abstract class BaseUI : MonoBehaviour
 
     public virtual void OnClose()
     {
+        if (Config.HasSound)
+        {
+            SoundManager.Instance.PlaySfx("SFX_UIClose");
+        }
         if (Config.PauseGame)
         {
             Time.timeScale = _prevTimeScale;

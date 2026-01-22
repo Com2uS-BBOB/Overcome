@@ -577,6 +577,7 @@ GameObject:
   - component: {fileID: 8561238441448217639}
   - component: {fileID: 5923064075233992469}
   - component: {fileID: 107937900315925854}
+  - component: {fileID: 5348711335775643526}
   m_Layer: 5
   m_Name: ControlGuide
   m_TagString: Untagged
@@ -684,6 +685,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5348711335775643526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 320781492918024073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &334725754570099877
 GameObject:
   m_ObjectHideFlags: 0
@@ -2811,6 +2824,7 @@ GameObject:
   - component: {fileID: 6514934209770178381}
   - component: {fileID: 4782204310134922572}
   - component: {fileID: 396365692266755023}
+  - component: {fileID: 3198449055953052154}
   m_Layer: 5
   m_Name: Retry
   m_TagString: Untagged
@@ -2918,6 +2932,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3198449055953052154
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735785995330843848}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &1778236571403428799
 GameObject:
   m_ObjectHideFlags: 0
@@ -4514,6 +4540,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Config:
     UIType: 0
+    HasSound: 1
     PauseGame: 1
     UseTransition: 0
     ShowCursor: 1
@@ -5707,6 +5734,7 @@ GameObject:
   - component: {fileID: 5094458940433615817}
   - component: {fileID: 8301241588117692860}
   - component: {fileID: 5270227990529377025}
+  - component: {fileID: 7643813205471295190}
   m_Layer: 5
   m_Name: Exit
   m_TagString: Untagged
@@ -5814,6 +5842,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7643813205471295190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4322463392652628550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &4552681532396952570
 GameObject:
   m_ObjectHideFlags: 0
@@ -7295,6 +7335,7 @@ GameObject:
   - component: {fileID: 3131924590072558093}
   - component: {fileID: 7027617927945565950}
   - component: {fileID: 1806280878651190870}
+  - component: {fileID: 3618303592106143871}
   m_Layer: 5
   m_Name: Setting
   m_TagString: Untagged
@@ -7402,6 +7443,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &3618303592106143871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5557547140927068546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &5671424278267531083
 GameObject:
   m_ObjectHideFlags: 0
@@ -11263,6 +11316,7 @@ GameObject:
   - component: {fileID: 4973583344940119919}
   - component: {fileID: 1147237284402800545}
   - component: {fileID: 3582959851432734039}
+  - component: {fileID: 5362264008569931214}
   m_Layer: 5
   m_Name: ToTitle
   m_TagString: Untagged
@@ -11370,6 +11424,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5362264008569931214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8998333867814483147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &9035788147277470104
 GameObject:
   m_ObjectHideFlags: 0
@@ -11381,6 +11447,7 @@ GameObject:
   - component: {fileID: 6740249925416541063}
   - component: {fileID: 6120854020535948050}
   - component: {fileID: 6663940299357583374}
+  - component: {fileID: 5811489909886135757}
   m_Layer: 5
   m_Name: ToLobby
   m_TagString: Untagged
@@ -11488,6 +11555,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &5811489909886135757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9035788147277470104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &9116153757162274038
 GameObject:
   m_ObjectHideFlags: 0

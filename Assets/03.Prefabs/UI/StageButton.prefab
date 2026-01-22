@@ -303,6 +303,7 @@ GameObject:
   - component: {fileID: 6730499273032693226}
   - component: {fileID: 5422887523339861340}
   - component: {fileID: 8455230648199620668}
+  - component: {fileID: 2562941349814904381}
   m_Layer: 5
   m_Name: StageButton
   m_TagString: Untagged
@@ -440,6 +441,18 @@ MonoBehaviour:
   _starSprites:
   - {fileID: 21300000, guid: b287e042a89bbb542a54bbd76fcc583b, type: 3}
   - {fileID: 21300000, guid: 772a96aecc7c00e4bb702fc2dbeaa867, type: 3}
+--- !u!114 &2562941349814904381
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6971313681274088975}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &7267719504578319670
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Common
   m_GUID: 90cad20778c36d841b9d49334430774a
   m_SerializeEntries:
+  - m_GUID: 1cb0f909a16acd14c8cb78d55cce1674
+    m_Address: SFX_UIClose
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3259a62d220258b48a845dab7adc07c5
     m_Address: UI_Pause
     m_ReadOnly: 0
@@ -27,6 +32,11 @@ MonoBehaviour:
     m_SerializedLabels:
     - default
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 73dedf9235546d34382a1fde3d341110
+    m_Address: SFX_UIOpen
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7f4177cddcb2bf546a84a95752d46b35
     m_Address: UI_ControlGuide
     m_ReadOnly: 0
@@ -34,7 +44,7 @@ MonoBehaviour:
     - default
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: a6473f5264a14804e992a7a4a29cd744
-    m_Address: Hover
+    m_Address: SFX_Hover
     m_ReadOnly: 0
     m_SerializedLabels:
     - Common
@@ -46,7 +56,7 @@ MonoBehaviour:
     - Common
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: bfc5803fa8fa8924bbeaa34f4f689bb1
-    m_Address: Click
+    m_Address: SFX_Click
     m_ReadOnly: 0
     m_SerializedLabels:
     - Common

@@ -84,7 +84,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     private void Start()
     {
-        LoadVolumeSettings();
+        SetDefaultAudioVolume();
     }
 
     protected override void Clear()
@@ -144,13 +144,17 @@ public class SoundManager : SingletonBehaviour<SoundManager>
                 return;
             }
         }
+        SetDefaultAudioVolume();
+    }
 
+    private void SetDefaultAudioVolume()
+    {
         // 저장된 설정이 없으면 기본값 사용
         SetAudioVolume(EAudioType.Master, 0.5f);
         SetAudioVolume(EAudioType.Music, 0.5f);
         SetAudioVolume(EAudioType.Effect, 0.5f);
     }
-
+    
     public void LoadPlayerVolumeSettings(PlayerSettings settings)
     {
         if (settings != null)

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7484355344910100427}
   - component: {fileID: 6917815958860579105}
   - component: {fileID: 7535007067384405031}
+  - component: {fileID: 8887292404512406230}
   m_Layer: 5
   m_Name: SFX volume
   m_TagString: Untagged
@@ -129,6 +130,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8887292404512406230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 59346056418549663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &299732758486513955
 GameObject:
   m_ObjectHideFlags: 0
@@ -326,6 +339,7 @@ GameObject:
   - component: {fileID: 7199412909493515334}
   - component: {fileID: 1942044382235584542}
   - component: {fileID: 1203896433072417668}
+  - component: {fileID: 319235858523626979}
   m_Layer: 5
   m_Name: Master volume
   m_TagString: Untagged
@@ -443,6 +457,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &319235858523626979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 457508338514861138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &526854728961784468
 GameObject:
   m_ObjectHideFlags: 0
@@ -794,6 +820,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UI_Settings
   Config:
     UIType: 0
+    HasSound: 1
     PauseGame: 1
     UseTransition: 1
     ShowCursor: 1
@@ -3931,6 +3958,7 @@ GameObject:
   - component: {fileID: 7357705219722853379}
   - component: {fileID: 1940819971019412429}
   - component: {fileID: 2969143833178463124}
+  - component: {fileID: 7449869339952935777}
   m_Layer: 5
   m_Name: Music volume
   m_TagString: Untagged
@@ -4048,6 +4076,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &7449869339952935777
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5085958114760570279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b90e8de21de2da46aff65e8c22e66bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UISoundComponent
 --- !u!1 &5150359528732994322
 GameObject:
   m_ObjectHideFlags: 0

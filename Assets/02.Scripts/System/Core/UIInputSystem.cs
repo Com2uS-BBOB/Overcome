@@ -70,9 +70,15 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
     
     private async void OpenPauseUI()
     {
+        ESceneType currentScene = SceneController.Instance.CurrentScene;
+        if (currentScene == ESceneType.LoginScene)
+        {
+            _= UIController.Instance.OpenUI<UI_Exit>();
+            return;
+        }
+        
         UI_Pause pauseUI = await UIController.Instance.OpenUI<UI_Pause>();
 
-        ESceneType currentScene = SceneController.Instance.CurrentScene;
         bool isIngame = _isIngame[currentScene];
         PauseUIConfig config = isIngame ? PauseUIConfig.InGame : PauseUIConfig.Lobby;
         pauseUI.Setup(config);
