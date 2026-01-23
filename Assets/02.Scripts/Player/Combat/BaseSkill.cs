@@ -171,15 +171,29 @@ namespace _02.Scripts.Player.Combat
             OnSkillUsed?.Invoke();
             OnComboAttack?.Invoke(_comboStep);
 
+            // Fallback 타임아웃 (Animation Event 미발동 대비)
+            const float maxSkillDuration = 1.5f;
+            float elapsedTime = 0f;
+
             // Animation Event에서 OnAnimEventSkillEnd()가 호출될 때까지 대기
             while (_isActive)
             {
+                elapsedTime += Time.deltaTime;
+
                 // 콤보 큐잉 시 즉시 다음 콤보로
                 if (_comboQueued && CanContinueCombo)
                 {
                     DisableHitbox();
                     ExecuteNextCombo();
                     yield break;
+                }
+
+                // Fallback: Animation Event가 발동하지 않으면 강제 종료
+                if (elapsedTime >= maxSkillDuration)
+                {
+                    _isActive = false;
+                    DisableHitbox();
+                    break;
                 }
 
                 yield return null;
@@ -194,7 +208,6 @@ namespace _02.Scripts.Player.Combat
         /// </summary>
         private void HandleSkillEnd()
         {
-            Debug.Log($"[BaseSkill] HandleSkillEnd - comboStep={_comboStep}, MaxCombo={MaxCombo}, CanContinueCombo={CanContinueCombo}");
             if (_comboQueued && CanContinueCombo)
             {
                 ExecuteNextCombo();
@@ -206,7 +219,6 @@ namespace _02.Scripts.Player.Combat
             else
             {
                 // 마지막 콤보 완료
-                Debug.Log("[BaseSkill] Last combo finished, invoking OnSkillEnded");
                 _comboStep = 0;
                 OnSkillEnded?.Invoke();
             }
@@ -236,12 +248,10 @@ namespace _02.Scripts.Player.Combat
         /// </summary>
         public void OnAnimEventSkillEnd()
         {
-            Debug.Log($"[BaseSkill] OnAnimEventSkillEnd called, _isActive={_isActive}");
             if (!_isActive) return;
 
             _isActive = false;
-            DisableHitbox();  // 안전장치
-            Debug.Log("[BaseSkill] _isActive set to false");
+            DisableHitbox();
         }
 
         protected void ExecuteNextCombo()

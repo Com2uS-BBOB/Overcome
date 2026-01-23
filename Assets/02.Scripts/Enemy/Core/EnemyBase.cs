@@ -72,9 +72,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (statData == null)
         {
-#if UNITY_EDITOR
-            Debug.LogError($"[EnemyBase] Initialize: statData가 null입니다! EnemyType: {EnemyType}");
-#endif
             return;
         }
 
@@ -131,10 +128,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
     {
         if (_gameOverStopped) return;
         _gameOverStopped = true;
-
-#if UNITY_EDITOR
-        Debug.Log("게임 오버로 적 정지");
-#endif
 
         // EnemyState 정리하면서 완전 정지
         var state = GetComponent<EnemyState>();
@@ -221,18 +214,7 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
     public virtual void TakeDamage(float damage, GameObject attacker = null)
     {
-        if (_gameOverStopped)
-        {
-#if UNITY_EDITOR
-            Debug.Log("게임 오버로 히트 무시");
-#endif
-            return;
-        }
-        if (IsDead)
-        {
-            return;
-        }
-        if (IsSpawnGap)
+        if (_gameOverStopped || IsDead || IsSpawnGap)
         {
             return;
         }
@@ -289,10 +271,6 @@ public abstract class EnemyBase : MonoBehaviour, IDamageable
 
         _movement?.FullStop ();
         _collider.enabled = false;
-
-#if UNITY_EDITOR
-        Debug.Log($"적이 죽었습니다. EnemyType: {EnemyType}");
-#endif
 
         EnemyEventController.Enemy.RaiseKilled(new EnemyKilledEvent(this));
         OnDeath?.Invoke();

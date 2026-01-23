@@ -9,7 +9,6 @@ public class EliteRipAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
     private readonly EnemyAnimatorController _anim;
-    // private readonly string _ripSfxKey;
 
     private readonly float _damagePerHit;
     private readonly float _ripMoveSpeed;
@@ -20,8 +19,6 @@ public class EliteRipAction : IEnemyAction
     private float _preStoppingDistance;
 
     private float _ratio;
-
-    // private bool _sfxPlayed;
 
     private bool _isFinished;
 
@@ -54,8 +51,6 @@ public class EliteRipAction : IEnemyAction
     {
         _isFinished = false;
 
-        // _sfxPlayed = false;
-
         // 난도질 중엔 계속 전진
         _agent.isStopped = false;
 
@@ -70,9 +65,6 @@ public class EliteRipAction : IEnemyAction
         _movement.SetSpeedMultiplier(_ratio);
 
         _anim.SetRip(true);
-#if UNITY_EDITOR
-        Debug.Log("난도질 공격 시도");
-#endif
     }
 
     public void Update()
@@ -137,17 +129,11 @@ public class EliteRipAction : IEnemyAction
 
     public void OnHitStart()
     {
-#if UNITY_EDITOR
-        Debug.Log($"난도질 히트 시작");
-#endif
         _hitbox?.Enable(_damagePerHit, _ripKnockbackDistance);
     }
 
     public void OnHitEnd()
     {
-#if UNITY_EDITOR
-        Debug.Log($"난도질 히트 종료");
-#endif
         _hitbox?.Disable();
     }
 

@@ -35,9 +35,9 @@ public class PoolManager : MonoBehaviour
     public T GetPool<T>() where T : PoolBase
     {
         if (_pools.TryGetValue(typeof(T), out PoolBase pool))
+        {
             return pool as T;
-
-        Debug.LogError($"[PoolManager] Pool not found: {typeof(T)}");
+        }
         return null;
     }
 }

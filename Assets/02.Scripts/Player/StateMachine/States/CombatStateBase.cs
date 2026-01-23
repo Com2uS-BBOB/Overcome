@@ -134,26 +134,17 @@ namespace _02.Scripts.Player.StateMachine.States
         /// </summary>
         protected void ReturnToPreviousState()
         {
-            Debug.Log($"[CombatStateBase] ReturnToPreviousState - IsGrounded={Movement.IsGrounded}, HasMoveInput={HasMoveInput()}");
-
             // 공중이면 FallState로 전환 (착지까지 대기)
             if (!Movement.IsGrounded)
             {
-                Debug.Log("[CombatStateBase] Changing to FallState");
                 StateMachine.ChangeState<FallState>();
                 return;
             }
 
             if (HasMoveInput())
-            {
-                Debug.Log("[CombatStateBase] Changing to MoveState");
                 StateMachine.ChangeState<MoveState>();
-            }
             else
-            {
-                Debug.Log("[CombatStateBase] Changing to IdleState");
                 StateMachine.ChangeState<IdleState>();
-            }
         }
 
         /// <summary>
@@ -161,7 +152,6 @@ namespace _02.Scripts.Player.StateMachine.States
         /// </summary>
         protected void OnSkillEnded()
         {
-            Debug.Log("[CombatStateBase] OnSkillEnded called, calling ReturnToPreviousState");
             ReturnToPreviousState();
         }
     }

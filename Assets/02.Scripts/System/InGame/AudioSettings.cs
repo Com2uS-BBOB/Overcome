@@ -22,7 +22,12 @@ public class AudioSettings : MonoBehaviour
     [SerializeField] private AudioSlider _masterSlider;
     [SerializeField] private AudioSlider _musicSlider;
     [SerializeField] private AudioSlider _sfxSlider;
+
+    [Header("Mouse Sensitivity")]
+    [SerializeField] private AudioSlider _sensitivitySlider;
+
     private const string Format = "F3";
+    private const string SensitivityFormat = "F1";
 
     private void OnEnable()
     {
@@ -43,6 +48,20 @@ public class AudioSettings : MonoBehaviour
         _musicSlider.SetAudioVolume(musicVolume);
         float sfxVolume = SoundManager.Instance.GetVolume(EAudioType.Effect);
         _sfxSlider.SetAudioVolume(sfxVolume);
+
+        InitializeSensitivitySlider();
+    }
+
+    private void InitializeSensitivitySlider()
+    {
+        if (_sensitivitySlider.Slider == null) return;
+
+        float sensitivity = CameraSensitivityManager.Instance != null
+            ? CameraSensitivityManager.Instance.Sensitivity
+            : 1.0f;
+
+        _sensitivitySlider.ValueText.text = sensitivity.ToString(SensitivityFormat);
+        _sensitivitySlider.Slider.value = sensitivity;
     }
 
     private void RegisterSliderListeners()
@@ -64,6 +83,12 @@ public class AudioSettings : MonoBehaviour
             _sfxSlider.Slider.onValueChanged.RemoveListener(OnSfxVolumeChanged);
             _sfxSlider.Slider.onValueChanged.AddListener(OnSfxVolumeChanged);
         }
+
+        if (_sensitivitySlider.Slider != null)
+        {
+            _sensitivitySlider.Slider.onValueChanged.RemoveListener(OnSensitivityChanged);
+            _sensitivitySlider.Slider.onValueChanged.AddListener(OnSensitivityChanged);
+        }
     }
 
     private void UnregisterSliderListeners()
@@ -81,6 +106,11 @@ public class AudioSettings : MonoBehaviour
         if (_sfxSlider.Slider != null)
         {
             _sfxSlider.Slider.onValueChanged.RemoveListener(OnSfxVolumeChanged);
+        }
+
+        if (_sensitivitySlider.Slider != null)
+        {
+            _sensitivitySlider.Slider.onValueChanged.RemoveListener(OnSensitivityChanged);
         }
     }
 
@@ -114,4 +144,13 @@ public class AudioSettings : MonoBehaviour
         }
     }
 
+    private void OnSensitivityChanged(float value)
+    {
+        _sensitivitySlider.ValueText.text = value.ToString(SensitivityFormat);
+
+        if (CameraSensitivityManager.Instance != null)
+        {
+            CameraSensitivityManager.Instance.SetSensitivity(value);
+        }
+    }
 }

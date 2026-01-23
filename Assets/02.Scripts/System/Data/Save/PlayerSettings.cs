@@ -6,4 +6,5 @@ public class PlayerSettings
     public float MasterVolume;
     public float MusicVolume;
     public float SfxVolume;
+    public float MouseSensitivity = 1.0f;
 }

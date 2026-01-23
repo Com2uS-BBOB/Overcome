@@ -139,6 +139,19 @@ public class PlayerDataManager : SingletonBehaviour<PlayerDataManager>
         _currentPlayer.Settings.SfxVolume = sfxVolume;
     }
 
+    public float GetMouseSensitivity()
+    {
+        return _currentPlayer?.Settings?.MouseSensitivity ?? 1.0f;
+    }
+
+    public void SetMouseSensitivity(float sensitivity)
+    {
+        if (_currentPlayer == null) return;
+
+        _currentPlayer.Settings ??= new PlayerSettings();
+        _currentPlayer.Settings.MouseSensitivity = sensitivity;
+    }
+
     #endregion
 
     #region Stage Data

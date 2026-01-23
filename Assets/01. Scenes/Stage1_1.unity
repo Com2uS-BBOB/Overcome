@@ -128539,6 +128539,7 @@ GameObject:
   - component: {fileID: 1812008089}
   - component: {fileID: 1812008088}
   - component: {fileID: 1812008087}
+  - component: {fileID: 1812008096}
   m_Layer: 0
   m_Name: GamePlayCamera
   m_TagString: Untagged
@@ -128858,6 +128859,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1812008096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1812008086}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d18a8cf4eaeaa4932bc459bd691c2fca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraSensitivityManager
+  _inputAxisController: {fileID: 1812008090}
 --- !u!1 &1834651157
 GameObject:
   m_ObjectHideFlags: 0
@@ -129457,11 +129471,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1159440652311338702, guid: 1a76631d31ec343b98d35a386297ab14, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[0].Rotation.value.x
-      value: 0.2707941
+      value: 0.27079403
       objectReference: {fileID: 0}
     - target: {fileID: 1159440652311338702, guid: 1a76631d31ec343b98d35a386297ab14, type: 3}
       propertyPath: m_Splines.Array.data[0].m_Knots.Array.data[0].Rotation.value.y
-      value: 0.46235132
+      value: 0.4623512
       objectReference: {fileID: 0}
     - target: {fileID: 2026678319830686261, guid: 1a76631d31ec343b98d35a386297ab14, type: 3}
       propertyPath: _cameraTransform
