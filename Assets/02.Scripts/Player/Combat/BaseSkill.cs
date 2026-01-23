@@ -172,7 +172,7 @@ namespace _02.Scripts.Player.Combat
             OnComboAttack?.Invoke(_comboStep);
 
             // Fallback 타임아웃 (Animation Event 미발동 대비)
-            const float maxSkillDuration = 0.3f;
+            const float maxSkillDuration = 0.8f;
             float elapsedTime = 0f;
 
             // Animation Event에서 OnAnimEventSkillEnd()가 호출될 때까지 대기
