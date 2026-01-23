@@ -26,7 +26,7 @@ public class AudioSettings : MonoBehaviour
     [Header("Mouse Sensitivity")]
     [SerializeField] private AudioSlider _sensitivitySlider;
 
-    private const string Format = "F3";
+    private const string Format = "F2";
     private const string SensitivityFormat = "F1";
 
     private void OnEnable()
