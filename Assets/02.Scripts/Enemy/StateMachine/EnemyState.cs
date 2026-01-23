@@ -16,6 +16,8 @@ public class EnemyState : MonoBehaviour
     private bool _canReturn => _enemy.CanReturn;
     private bool _canAttack => _enemy.CanAttack;
 
+    private bool _isElite => _enemy != null && _enemy.EnemyType == EEnemyType.Elite;
+
     private Transform _player;
 
     [Header("Trace 관련 옵션")]
@@ -192,11 +194,25 @@ public class EnemyState : MonoBehaviour
             return;
         }
 
+        _movement.SetRotationToLookAt(_player);
+
+        // 엘리트는 거리두고 위협 연출 시스템 완전 무시하고 플레이어 추적
+        if (_isElite)
+        {
+            // 혹시 남아있을 수 있는 pressure 예약 흔적 정리(안전장치)
+            if (_pressureReserved)
+            {
+                _attackDirector?.ReleasePressure(transform);
+                _pressureReserved = false;
+            }
+
+            _movement.MoveTo(_player.position);
+            return;
+        }
+
         // 플레이어 가까이 갈 압박자 여부 결정
         bool isPressurer = (_attackDirector == null) || _attackDirector.TryReservePressure(transform);
         _pressureReserved = isPressurer && (_attackDirector != null);
-
-        _movement.SetRotationToLookAt(_player);
 
         if (isPressurer)
         {
