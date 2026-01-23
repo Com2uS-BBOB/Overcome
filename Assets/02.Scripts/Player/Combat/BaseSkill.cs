@@ -191,7 +191,6 @@ namespace _02.Scripts.Player.Combat
                 // Fallback: Animation Event가 발동하지 않으면 강제 종료
                 if (elapsedTime >= maxSkillDuration)
                 {
-                    Debug.LogWarning($"[BaseSkill] Skill timeout! Animation Event 'EndAttack' not received. Forcing skill end.");
                     _isActive = false;
                     DisableHitbox();
                     break;
@@ -209,7 +208,6 @@ namespace _02.Scripts.Player.Combat
         /// </summary>
         private void HandleSkillEnd()
         {
-            Debug.Log($"[BaseSkill] HandleSkillEnd - comboStep={_comboStep}, MaxCombo={MaxCombo}, CanContinueCombo={CanContinueCombo}");
             if (_comboQueued && CanContinueCombo)
             {
                 ExecuteNextCombo();
@@ -221,7 +219,6 @@ namespace _02.Scripts.Player.Combat
             else
             {
                 // 마지막 콤보 완료
-                Debug.Log("[BaseSkill] Last combo finished, invoking OnSkillEnded");
                 _comboStep = 0;
                 OnSkillEnded?.Invoke();
             }
@@ -251,12 +248,10 @@ namespace _02.Scripts.Player.Combat
         /// </summary>
         public void OnAnimEventSkillEnd()
         {
-            Debug.Log($"[BaseSkill] OnAnimEventSkillEnd called, _isActive={_isActive}");
             if (!_isActive) return;
 
             _isActive = false;
-            DisableHitbox();  // 안전장치
-            Debug.Log("[BaseSkill] _isActive set to false");
+            DisableHitbox();
         }
 
         protected void ExecuteNextCombo()

@@ -65,7 +65,6 @@ namespace _02.Scripts.Player.Animation
 
             if (_animEventProxy != null)
             {
-                Debug.Log("[PlayerAnimatorController] AnimEventProxy connected successfully");
                 _animEventProxy.OnCrescentFire += HandleCrescentFire;
                 _animEventProxy.OnAttackHitboxEnable += HandleAttackHitboxEnable;
                 _animEventProxy.OnAttackHitboxDisable += HandleAttackHitboxDisable;
@@ -87,23 +86,11 @@ namespace _02.Scripts.Player.Animation
         private void HandleCrescentFire() => OnCrescentFireEvent?.Invoke();
         private void HandleAttackHitboxEnable() => OnAttackHitboxEnable?.Invoke();
         private void HandleAttackHitboxDisable() => OnAttackHitboxDisable?.Invoke();
-        private void HandleAttackEnd()
-        {
-            Debug.Log("[PlayerAnimatorController] HandleAttackEnd called");
-            OnAttackEnd?.Invoke();
-        }
+        private void HandleAttackEnd() => OnAttackEnd?.Invoke();
         private void HandleCancelWindowEnter() => OnCancelWindowEnter?.Invoke();
         private void HandleCancelWindowExit() => OnCancelWindowExit?.Invoke();
-        private void HandleOverdriveReady()
-        {
-            Debug.Log("[PlayerAnimatorController] HandleOverdriveReady called");
-            OnOverdriveReady?.Invoke();
-        }
-        private void HandleOverdriveEnd()
-        {
-            Debug.Log("[PlayerAnimatorController] HandleOverdriveEnd called");
-            OnOverdriveEnd?.Invoke();
-        }
+        private void HandleOverdriveReady() => OnOverdriveReady?.Invoke();
+        private void HandleOverdriveEnd() => OnOverdriveEnd?.Invoke();
         private void HandleFootstep() => OnFootstep?.Invoke();
 
         #endregion
@@ -175,9 +162,6 @@ namespace _02.Scripts.Player.Animation
         /// </summary>
         public void PlayAttack(int comboStep, bool isGrounded)
         {
-            var stateInfo = _animator.GetCurrentAnimatorStateInfo(0);
-            Debug.Log($"[Anim] PlayAttack - combo: {comboStep}, grounded: {isGrounded}, " +
-                      $"currentState: {stateInfo.shortNameHash}, inTransition: {_animator.IsInTransition(0)}");
             // 기존 트리거 리셋 (이전 상태의 잔여 트리거 제거)
             _animator.ResetTrigger(AttackHash);
             // 공격 시작 시점에 IsGrounded 즉시 동기화
@@ -251,8 +235,6 @@ namespace _02.Scripts.Player.Animation
             // 콤보 카운트 리셋
             _animator.SetInteger(AttackComboCountHash, 0);
             _animator.SetInteger(CrescentComboCountHash, 0);
-
-            Debug.Log($"[PlayerAnimatorController] SyncLocomotionState - isGrounded: {isGrounded}, isMoving: {isMoving}");
         }
 
         /// <summary>
@@ -314,7 +296,6 @@ namespace _02.Scripts.Player.Animation
         /// </summary>
         public void PlayOverdriveActivation(bool isGrounded)
         {
-            Debug.Log($"[PlayerAnimatorController] PlayOverdriveActivation - isGrounded: {isGrounded}");
             _animator.SetBool(IsGroundedHash, isGrounded);
             _animator.ResetTrigger(OverdriveActivationHash);
             _animator.SetTrigger(OverdriveActivationHash);

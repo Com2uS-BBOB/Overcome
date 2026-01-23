@@ -195,8 +195,6 @@ namespace _02.Scripts.Player.Spawn
             _lastSafePosition = position;
 
             OnRespawn?.Invoke(position);
-
-            Debug.Log($"[FallDeathManager] Player respawned at {position}");
         }
 
         private void OnDrawGizmosSelected()

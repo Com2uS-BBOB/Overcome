@@ -47,7 +47,6 @@ namespace _02.Scripts.Player.Animation
 
         public void EndAttack()
         {
-            Debug.Log("[AnimEventProxy] EndAttack called");
             OnAttackEnd?.Invoke();
         }
 
@@ -70,13 +69,11 @@ namespace _02.Scripts.Player.Animation
         // === Overdrive 이벤트 메서드 ===
         public void OverdriveReady()
         {
-            Debug.Log("[AnimEventProxy] OverdriveReady called");
             OnOverdriveReady?.Invoke();
         }
 
         public void OverdriveEnd()
         {
-            Debug.Log("[AnimEventProxy] OverdriveEnd called");
             OnOverdriveEnd?.Invoke();
         }
 

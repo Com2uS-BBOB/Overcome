@@ -64,7 +64,6 @@ namespace _02.Scripts.Player.Combat
 
         private void HandleSkillEnded()
         {
-            Debug.Log("[DragonSwordSkill] HandleSkillEnded, invoking OnAttackEnded");
             OnAttackEnded?.Invoke();
         }
 
