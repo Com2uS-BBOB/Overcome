@@ -84,9 +84,9 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     private void Start()
     {
-        SetDefaultAudioVolume();
+        LoadVolumeSettings();
     }
-
+    
     protected override void Clear()
     {
         _bgmSource?.Stop();
@@ -160,6 +160,10 @@ public class SoundManager : SingletonBehaviour<SoundManager>
             SetAudioVolume(EAudioType.Master, settings.MasterVolume);
             SetAudioVolume(EAudioType.Music, settings.MusicVolume);
             SetAudioVolume(EAudioType.Effect, settings.SfxVolume);
+        }
+        else
+        {
+            SetDefaultAudioVolume();
         }
     }
     
