@@ -15,7 +15,7 @@ MonoBehaviour:
   _useCommonStageBGM: 1
   _commonStageBGM:
     PlayOnSceneLoad: 1
-    FirstBGMName: BGM_Stage_Intro
+    FirstBGMName: BGM_Stage_Loop
     LoopBGMName: BGM_Stage_Loop
     FadeInDuration: 0.5
     FadeOutDuration: 0.5
@@ -34,6 +34,15 @@ MonoBehaviour:
     PlayOnSceneLoad: 1
     UseIntroLoop: 0
     BGMName: BGM_Lobby
+    IntroBGMName: 
+    LoopBGMName: 
+    FadeInDuration: 1
+    FadeOutDuration: 0.5
+    VolumeMultiplier: 1
+  - SceneType: 3
+    PlayOnSceneLoad: 1
+    UseIntroLoop: 0
+    BGMName: BGM_Tutorial
     IntroBGMName: 
     LoopBGMName: 
     FadeInDuration: 1
