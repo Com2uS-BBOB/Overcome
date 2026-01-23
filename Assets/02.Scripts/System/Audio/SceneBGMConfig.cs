@@ -97,7 +97,6 @@ public class SceneBGMConfig : ScriptableObject
         // Stage 씬들은 _commonStageBGM 사용 (개별 설정 불필요)
 
         UnityEditor.EditorUtility.SetDirty(this);
-        Debug.Log("[SceneBGMConfig] 기본 설정이 초기화되었습니다. 모든 Stage 씬은 공통 BGM을 사용합니다.");
     }
 #endif
 }

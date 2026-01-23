@@ -16,7 +16,6 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
     private void OnApplicationQuit()
     {
         SaveData();
-        Debug.Log("[RankingDataManager] 종료 시 자동 저장 완료");
     }
 
     #region Save/Load
@@ -103,29 +102,17 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
     private void TestSave()
     {
         SaveData();
-        Debug.Log($"[RankingDataManager] 저장 완료: {Application.persistentDataPath}/Rankings.json");
     }
 
     [ContextMenu("Test/Load Data")]
     private void TestLoad()
     {
         LoadData();
-        Debug.Log($"[RankingDataManager] 로드 완료 - 랭킹 수: {_rankingsData.Rankings.Count}");
     }
 
     [ContextMenu("Test/Print All Rankings")]
     private void TestPrintAllRankings()
     {
-        Debug.Log($"=== 전체 랭킹 데이터 ({_rankingsData.Rankings.Count}개 스테이지) ===");
-        foreach (var ranking in _rankingsData.Rankings)
-        {
-            Debug.Log($"\n[Stage {ranking.StageID}] - {ranking.Ranks.Count}개 기록");
-            for (int i = 0; i < ranking.Ranks.Count; i++)
-            {
-                var rank = ranking.Ranks[i];
-                Debug.Log($"  {i + 1}위. {rank.UserID}: {rank.Score}점");
-            }
-        }
     }
 
     [ContextMenu("Test/Add Sample Data")]
@@ -141,7 +128,6 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
         UpdateRanking(12, "Bob", 2200);
         UpdateRanking(12, "Frank", 2800);
 
-        Debug.Log("[RankingDataManager] 샘플 데이터 추가 완료");
         TestPrintAllRankings();
     }
 
@@ -156,7 +142,6 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
 
         int randomScore = UnityEngine.Random.Range(10000, 50000);
         UpdateRanking(11, playerName, randomScore);
-        Debug.Log($"[RankingDataManager] Stage 1에 {playerName} ({randomScore}점) 추가");
         TestPrintAllRankings();
     }
 
@@ -165,7 +150,6 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
     {
         _rankingsData.Rankings.Clear();
         SaveData();
-        Debug.Log("[RankingDataManager] 모든 랭킹 데이터 삭제 완료");
     }
 
     [ContextMenu("Test/Delete Save File")]
@@ -173,7 +157,6 @@ public class RankingDataManager : SingletonBehaviour<RankingDataManager>
     {
         JsonSaveService.Delete(SaveKey);
         LoadData();
-        Debug.Log("[RankingDataManager] 저장 파일 삭제 및 초기화 완료");
     }
 
     #endregion

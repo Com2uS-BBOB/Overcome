@@ -53,7 +53,6 @@ namespace _02.Scripts.Trailer
                 {
                     t = 1f;
                     _isPlaying = false;
-                    Debug.Log("[TrailerOrbitCamera] Orbit complete");
                 }
             }
 
@@ -73,8 +72,6 @@ namespace _02.Scripts.Trailer
 
             if (_dolly != null)
                 _dolly.CameraPosition = 0f;
-
-            Debug.Log("[TrailerOrbitCamera] Playing orbit shot");
         }
 
         [ContextMenu("Stop Orbit")]
@@ -84,8 +81,6 @@ namespace _02.Scripts.Trailer
 
             if (_orbitCamera != null)
                 _orbitCamera.Priority = 0;
-
-            Debug.Log("[TrailerOrbitCamera] Stopped");
         }
 
         [ContextMenu("Reset Position")]

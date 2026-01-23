@@ -80,7 +80,6 @@ public class UI_RewardUnlockPopup : BaseUI
 
     public void ClosePopup()
     {
-        Debug.Log("Close Popup");
         UIController.Instance.CloseUI(this);
     }
 }

@@ -66,8 +66,6 @@ namespace _02.Scripts.Trailer
             // 타겟 즉시 동기화
             if (_footTarget != null)
                 _footTarget.Snap();
-
-            Debug.Log("[TrailerFootCamera] Playing foot shot");
         }
 
         /// <summary>
@@ -81,8 +79,6 @@ namespace _02.Scripts.Trailer
             // 카메라 비활성화
             if (_footCamera != null)
                 _footCamera.Priority = _inactivePriority;
-
-            Debug.Log("[TrailerFootCamera] Stopped");
         }
 
 #if UNITY_EDITOR

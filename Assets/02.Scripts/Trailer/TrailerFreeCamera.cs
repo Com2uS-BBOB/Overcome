@@ -118,8 +118,6 @@ namespace _02.Scripts.Trailer
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
             }
-
-            Debug.Log("[TrailerFreeCamera] Enabled");
         }
 
         [ContextMenu("Disable Camera")]
@@ -128,8 +126,6 @@ namespace _02.Scripts.Trailer
             _isEnabled = false;
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            Debug.Log("[TrailerFreeCamera] Disabled");
         }
     }
 }
