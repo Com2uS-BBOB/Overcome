@@ -9,12 +9,9 @@ public class RushAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
     private readonly EnemyAnimatorController _anim;
-    private readonly string _rushSfxKey;
 
     private readonly float _maxDuration;  // 속도 계산용
     private readonly float _damage;
-
-    private bool _sfxPlayed;
 
     private bool _isFinished;
 
@@ -57,8 +54,7 @@ public class RushAction : IEnemyAction
         NavMeshAgent agent,
         EnemyAnimatorController anim,
         float maxDuration,
-        float damage,
-        string rushSfxKey
+        float damage
     )
     {
         _enemy = enemy;
@@ -69,15 +65,12 @@ public class RushAction : IEnemyAction
         _anim = anim;
         _maxDuration = maxDuration;
         _damage = damage;
-        _rushSfxKey = rushSfxKey;
         _playerLayerMask = ~0;
     }
 
     public void Enter()
     {
         _isFinished = false;
-
-        _sfxPlayed = false;
 
         _traveled = 0f;
         _timer = 0f;
@@ -131,9 +124,6 @@ public class RushAction : IEnemyAction
         _hitbox?.Enable(_damage);
 
         _anim.TryPlayRush();
-#if UNITY_EDITOR
-        Debug.Log("돌진 시작");
-#endif
     }
 
     public void Update()
@@ -171,18 +161,12 @@ public class RushAction : IEnemyAction
                         if (moveDistance > 0f)
                             MoveBy(moveDistance);
 
-#if UNITY_EDITOR
-                        Debug.Log("돌진 종료: 플레이어 앞에서 정지");
-#endif
                         _isFinished = true;
                         return;
                     }
 
                     if (_stopOnPlayerHit)
                     {
-#if UNITY_EDITOR
-                        Debug.Log("돌진 종료: 플레이어 충돌로 정지");
-#endif
                         _isFinished = true;
                         return;
                     }
@@ -196,9 +180,6 @@ public class RushAction : IEnemyAction
         // 거리 기반 종료
         if (_traveled >= _targetDistance - _sqrMagnitudeThreshold)
         {
-#if UNITY_EDITOR
-            Debug.Log("돌진 종료: 거리 달성");
-#endif
             _isFinished = true;
             return;
         }
@@ -206,9 +187,6 @@ public class RushAction : IEnemyAction
         // 타임아웃 종료
         if (_timer >= _timeout)
         {
-#if UNITY_EDITOR
-            Debug.Log("돌진 종료: 타임아웃");
-#endif
             _isFinished = true;
         }
     }
@@ -266,16 +244,5 @@ public class RushAction : IEnemyAction
         _agent.ResetPath();
 
         _movement.ResetSpeedMultiplier();
-    }
-
-    public void OnSfxStart()
-    {
-        if (_sfxPlayed) return;
-        _sfxPlayed = true;
-
-        if (string.IsNullOrEmpty(_rushSfxKey)) return;
-
-        // todo. 사운드 재생
-        // SoundManager.Instance.PlaySfx(_rushSfxKey, _enemy.position);
     }
 }

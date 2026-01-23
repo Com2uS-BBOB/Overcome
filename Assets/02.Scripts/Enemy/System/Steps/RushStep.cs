@@ -71,8 +71,7 @@ public class RushStep : IEnemyAttackStep
             _context.Agent,
             _context.Anim,
             _rushDuration,
-            _context.Damage,
-            rushKey
+            _context.Damage
         );
 
         _rush.Enter();

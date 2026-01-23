@@ -29,10 +29,12 @@ public class UI_Login : MonoBehaviour
         UI_LoginPopup loginPopup = await UIController.Instance.OpenUI<UI_LoginPopup>();
         if (existingUser)
         {
+            UI_StageSelect.IsFirst = false;
             loginPopup?.SetTitle(WelcomeMessages[0]);
         }
         else
         {
+            UI_StageSelect.IsFirst = true;
             string text = WelcomeMessages[1];
             loginPopup?.SetTitle($"{text} {_username.text}");
         }

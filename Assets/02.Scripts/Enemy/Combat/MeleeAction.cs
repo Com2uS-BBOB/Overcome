@@ -56,9 +56,6 @@ public class MeleeAction : IEnemyAction
         }
 
         _anim.TryPlayAttack();
-#if UNITY_EDITOR
-        Debug.Log("근접 공격 시도");
-#endif
     }
 
     public void Update() { }

@@ -82,10 +82,6 @@ public class EnemyHitReaction : MonoBehaviour
             source = _player;
             return true;
         }
-
-#if UNITY_EDITOR
-        Debug.LogWarning("[EnemyHitReaction] attacker/player 둘 다 없어서 넉백 스킵");
-#endif
         source = null;
         return false;
     }

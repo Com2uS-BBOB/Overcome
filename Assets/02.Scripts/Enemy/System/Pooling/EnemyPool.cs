@@ -33,7 +33,6 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
         EnemyStatData statData = GetStatData(type);
         if (statData == null)
         {
-            Debug.LogError($"[EnemyPool] StatData가 null입니다! Type: {type} - 스폰 취소");
             Despawn(type, enemy);
             return null;
         }
@@ -53,8 +52,6 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
             if (data.Type == type)
                 return data.StatData;
         }
-
-        Debug.LogError($"StatData not found for type: {type}");
         return null;
     }
 
@@ -65,8 +62,6 @@ public class EnemyPool : PoolBase<EEnemyType, EnemyBase>
         {
             return prefab.GetSpawnHeight();
         }
-
-        Debug.LogError($"적 프리팹을 찾을 수 없습니다: {type}");
         return 0f;
     }
 }

@@ -45,10 +45,6 @@ public class SingleEnemySpawner : MonoBehaviour, IEnemyDespawnHandler
     {
         if (_gameOverStopped) return;
         _gameOverStopped = true;
-
-#if UNITY_EDITOR
-        Debug.Log("게임 오버로 적 스폰 정지");
-#endif
     }
 
     private void SpawnAt(Vector3 basePosition)
