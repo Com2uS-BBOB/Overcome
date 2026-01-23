@@ -9,7 +9,6 @@ public class RushAction : IEnemyAction
     private readonly EnemyKnockbackHitbox _hitbox;
     private readonly NavMeshAgent _agent;
     private readonly EnemyAnimatorController _anim;
-    private readonly string _rushSfxKey;
 
     private readonly float _maxDuration;  // 속도 계산용
     private readonly float _damage;
@@ -55,8 +54,7 @@ public class RushAction : IEnemyAction
         NavMeshAgent agent,
         EnemyAnimatorController anim,
         float maxDuration,
-        float damage,
-        string rushSfxKey
+        float damage
     )
     {
         _enemy = enemy;
@@ -67,7 +65,6 @@ public class RushAction : IEnemyAction
         _anim = anim;
         _maxDuration = maxDuration;
         _damage = damage;
-        _rushSfxKey = rushSfxKey;
         _playerLayerMask = ~0;
     }
 
@@ -247,10 +244,5 @@ public class RushAction : IEnemyAction
         _agent.ResetPath();
 
         _movement.ResetSpeedMultiplier();
-    }
-
-    public void OnSfxStart()
-    {
-
     }
 }
