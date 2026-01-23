@@ -77,4 +77,10 @@ public class UI_RewardUnlockPopup : BaseUI
                  .SetEase(Ease.InBack)
                  .OnComplete(() => gameObject.SetActive(false));
     }
+
+    public void ClosePopup()
+    {
+        Debug.Log("Close Popup");
+        UIController.Instance.CloseUI(this);
+    }
 }
