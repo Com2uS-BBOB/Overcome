@@ -20,7 +20,11 @@ public class UIInputSystem : SingletonBehaviour<UIInputSystem>
         _isIngame = new Dictionary<ESceneType, bool>
         {
             { ESceneType.Stage1_1, true },
+            { ESceneType.Stage1_2, true },
+            { ESceneType.Stage1_3, true },
             { ESceneType.Stage2_1, true },
+            { ESceneType.Stage2_2, true },
+            { ESceneType.Stage2_3, true },
             { ESceneType.TutorialMap, true },
             { ESceneType.LobbyScene, false },
             { ESceneType.LoginScene, false },
