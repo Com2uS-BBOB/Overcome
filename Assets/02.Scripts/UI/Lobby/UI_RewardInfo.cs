@@ -7,7 +7,7 @@ public class UI_RewardInfo : MonoBehaviour
 {
     [SerializeField] private ERewardType _rewardType;
     [SerializeField] private Image _rewardIIcon;
-    [SerializeField] private Image _clearImage;
+    [SerializeField] private Image _blockImage;
     [SerializeField] private TextMeshProUGUI _requiredStarText;
 
     private RewardManager _rewardManager;
@@ -46,11 +46,6 @@ public class UI_RewardInfo : MonoBehaviour
     private void ShowClearImage()
     {
         if (_rewardManager == null) return;
-        if (!_rewardManager.IsRewardUnlocked(_rewardType))
-        {
-            _clearImage.gameObject.SetActive(false);
-            return;
-        }
-        _clearImage.gameObject.SetActive(true);
+        _blockImage.gameObject.SetActive(!_rewardManager.IsRewardUnlocked(_rewardType));
     }
 }

@@ -100,6 +100,11 @@ namespace _02.Scripts.CameraFX
         {
             GameEventHandler.OnGameEnd -= HandleGameOver;
 
+            if (_sequenceCoroutine != null)
+            {
+                StopCoroutine(_sequenceCoroutine);
+            }
+
             if (Instance == this)
                 Instance = null;
         }
