@@ -44,7 +44,6 @@ public abstract class PoolBase<TEnum, TObject> : MonoBehaviour
     {
         if (!_pool.ContainsKey(type))
         {
-            Debug.LogError($"Pool not found: {type}");
             return null;
         }
 

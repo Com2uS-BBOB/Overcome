@@ -74,17 +74,11 @@ public class EnemyAttack : MonoBehaviour
             var tag = hb.GetComponent<EnemyHitboxTag>();
             if (tag == null)
             {
-#if UNITY_EDITOR
-                Debug.LogWarning($"[EnemyAttack] EnemyHitboxTag missing on {hb.name} ({name})");
-#endif
                 continue;
             }
 
             if (_hitboxMap.ContainsKey(tag.Type))
             {
-#if UNITY_EDITOR
-                Debug.LogWarning($"[EnemyAttack] Duplicate hitbox type {tag.Type} on {name}");
-#endif
                 continue;
             }
             _hitboxMap.Add(tag.Type, hb);

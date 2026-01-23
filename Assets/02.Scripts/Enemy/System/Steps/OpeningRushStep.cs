@@ -30,7 +30,6 @@ public class OpeningRushStep : IEnemyAttackStep
 
         _finished = false;
 
-        string rushKey = _context.SfxSet != null ? _context.SfxSet.EnemyRushSound : null;
         _rush = new RushAction(
             _context.Enemy,
             _context.Player,
@@ -39,8 +38,7 @@ public class OpeningRushStep : IEnemyAttackStep
             _context.Agent,
             _context.Anim,
             _rushDuration,
-            _context.Damage,
-            rushKey
+            _context.Damage
         );
         _rush.Enter();
         return true;
@@ -80,13 +78,6 @@ public class OpeningRushStep : IEnemyAttackStep
 
     public void OnAnimEvent(EAttackAnimEvent animEvent)
     {
-        if (_rush == null) return;
 
-        switch (animEvent)
-        {
-            case EAttackAnimEvent.SfxStart:
-                _rush.OnSfxStart();
-                break;
-        }
     }
 }

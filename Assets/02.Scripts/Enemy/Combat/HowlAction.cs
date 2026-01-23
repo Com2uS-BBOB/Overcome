@@ -46,9 +46,6 @@ public class HowlAction : IEnemyAction
         _movement.LockMovement(true, _duration);
 
         _anim.TryPlayHowl();
-#if UNITY_EDITOR
-        Debug.Log("포효 시작");
-#endif
     }
 
     public void Update()

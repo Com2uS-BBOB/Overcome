@@ -21,7 +21,5 @@ public class EnemyReward : MonoBehaviour
     {
         _score += e.Score;
         _playtime += e.Playtime;
-
-        Debug.Log($"보상 획득 → Score +{e.Score}, Time +{e.Playtime}");
     }
 }
