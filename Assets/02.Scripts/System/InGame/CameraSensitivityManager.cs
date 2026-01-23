@@ -61,6 +61,8 @@ public class CameraSensitivityManager : MonoBehaviour
 
     private void SaveSensitivity()
     {
-        PlayerDataManager.Instance?.SetMouseSensitivity(_sensitivity);
+        if (PlayerDataManager.Instance == null) return;
+        PlayerDataManager.Instance.SetMouseSensitivity(_sensitivity);
+        PlayerDataManager.Instance.SaveData();
     }
 }

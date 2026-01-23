@@ -56,9 +56,19 @@ public class AudioSettings : MonoBehaviour
     {
         if (_sensitivitySlider.Slider == null) return;
 
-        float sensitivity = CameraSensitivityManager.Instance != null
-            ? CameraSensitivityManager.Instance.Sensitivity
-            : 1.0f;
+        float sensitivity;
+        if (CameraSensitivityManager.Instance != null)
+        {
+            sensitivity = CameraSensitivityManager.Instance.Sensitivity;
+        }
+        else if (PlayerDataManager.Instance != null)
+        {
+            sensitivity = PlayerDataManager.Instance.GetMouseSensitivity();
+        }
+        else
+        {
+            sensitivity = 1.0f;
+        }
 
         _sensitivitySlider.ValueText.text = sensitivity.ToString(SensitivityFormat);
         _sensitivitySlider.Slider.value = sensitivity;
@@ -151,6 +161,11 @@ public class AudioSettings : MonoBehaviour
         if (CameraSensitivityManager.Instance != null)
         {
             CameraSensitivityManager.Instance.SetSensitivity(value);
+        }
+        else if (PlayerDataManager.Instance != null)
+        {
+            PlayerDataManager.Instance.SetMouseSensitivity(value);
+            PlayerDataManager.Instance.SaveData();
         }
     }
 }

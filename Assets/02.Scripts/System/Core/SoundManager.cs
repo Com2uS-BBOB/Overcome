@@ -155,12 +155,19 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     
     public void LoadPlayerVolumeSettings(PlayerSettings settings)
     {
-        if (settings != null)
+        if (settings == null)
         {
-            SetAudioVolume(EAudioType.Master, settings.MasterVolume);
-            SetAudioVolume(EAudioType.Music, settings.MusicVolume);
-            SetAudioVolume(EAudioType.Effect, settings.SfxVolume);
+            SetDefaultAudioVolume();
+            return;
         }
+
+        float master = settings.MasterVolume > 0 ? settings.MasterVolume : 0.5f;
+        float music = settings.MusicVolume > 0 ? settings.MusicVolume : 0.5f;
+        float sfx = settings.SfxVolume > 0 ? settings.SfxVolume : 0.5f;
+
+        SetAudioVolume(EAudioType.Master, master);
+        SetAudioVolume(EAudioType.Music, music);
+        SetAudioVolume(EAudioType.Effect, sfx);
     }
     
     public void SetAudioVolume(EAudioType eAudioType, float volume)
@@ -206,6 +213,7 @@ public class SoundManager : SingletonBehaviour<SoundManager>
                 _musicVolume,
                 _effectVolume
             );
+            playerDataManager.SaveData();
         }
     }
     #endregion
