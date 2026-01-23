@@ -3,12 +3,11 @@ using UnityEngine;
 
 public class UI_MainMission : MonoBehaviour
 {
-    [SerializeField] private CanvasGroup _canvasGroup;
+    [SerializeField] private GameObject _Root;
 
     public void LoadSelectScene()
     {
         _= UIController.Instance.OpenUI<UI_StageSelect>();
-        _canvasGroup.alpha = 0;
-        _canvasGroup.interactable = false;
+        _Root.SetActive(false);
     }
 }

@@ -84,9 +84,9 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     private void Start()
     {
-        SetDefaultAudioVolume();
+        LoadVolumeSettings();
     }
-
+    
     protected override void Clear()
     {
         _bgmSource?.Stop();

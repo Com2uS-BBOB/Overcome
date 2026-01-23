@@ -13,7 +13,7 @@ public class AudioSettings : MonoBehaviour
 
         public void SetAudioVolume(float value)
         {
-            ValueText.text = value.ToString("F3");
+            ValueText.text = value.ToString(Format);
             Slider.value = value;
         }
     }
@@ -31,8 +31,8 @@ public class AudioSettings : MonoBehaviour
 
     private void OnEnable()
     {
-        RegisterSliderListeners();
         InitializeSliders();
+        RegisterSliderListeners();
     }
 
     private void OnDisable()

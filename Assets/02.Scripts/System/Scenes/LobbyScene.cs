@@ -11,18 +11,23 @@ public class LobbyScene : MonoBehaviour
         public ERewardType UnlockedRewardType;
     }
     public static Action CloseStageSelect;
-    [SerializeField] private CanvasGroup _lobbyCanvasGroup;
+    [SerializeField] private GameObject _lobbyUI;
     
     private static PlayerRewardInfo _rewardInfo;
     private static readonly int _rewardTypeCount = System.Enum.GetValues(typeof(ERewardType)).Length;
 
     
-    private void Awake()
+    private void OnEnable()
     {
         CloseStageSelect = OnCloseStageSelect;
         Cursor.lockState = CursorLockMode.Confined;
         Cursor.visible = true;
         Time.timeScale = 1f;
+    }
+
+    private void OnDisable()
+    {
+        CloseStageSelect = null;
     }
 
     private void Start()
@@ -96,9 +101,10 @@ public class LobbyScene : MonoBehaviour
     
     private void OnCloseStageSelect()
     {
-        if (_lobbyCanvasGroup == null) return;
-        _lobbyCanvasGroup.alpha = 1;
-        _lobbyCanvasGroup.interactable = true;
+        if (_lobbyUI != null)
+        {
+            _lobbyUI?.SetActive(true);
+        }
     }
 
     public void OpenSettingUI()
