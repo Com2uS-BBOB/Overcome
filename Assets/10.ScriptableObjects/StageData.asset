@@ -16,35 +16,7 @@ MonoBehaviour:
   - StageId: 1_1
     Grades:
     - Grade: S
-      RequiredScore: 5000
-      RewardStars: 3
-    - Grade: A
-      RequiredScore: 4000
-      RewardStars: 2
-    - Grade: B
-      RequiredScore: 3000
-      RewardStars: 1
-    - Grade: C
-      RequiredScore: 0
-      RewardStars: 0
-  - StageId: 1_2
-    Grades:
-    - Grade: S
-      RequiredScore: 5500
-      RewardStars: 3
-    - Grade: A
-      RequiredScore: 4500
-      RewardStars: 2
-    - Grade: B
-      RequiredScore: 3500
-      RewardStars: 1
-    - Grade: C
-      RequiredScore: 0
-      RewardStars: 0
-  - StageId: 1_3
-    Grades:
-    - Grade: S
-      RequiredScore: 8000
+      RequiredScore: 7000
       RewardStars: 3
     - Grade: A
       RequiredScore: 6000
@@ -55,16 +27,44 @@ MonoBehaviour:
     - Grade: C
       RequiredScore: 0
       RewardStars: 0
+  - StageId: 1_2
+    Grades:
+    - Grade: S
+      RequiredScore: 8000
+      RewardStars: 3
+    - Grade: A
+      RequiredScore: 7000
+      RewardStars: 2
+    - Grade: B
+      RequiredScore: 6000
+      RewardStars: 1
+    - Grade: C
+      RequiredScore: 0
+      RewardStars: 0
+  - StageId: 1_3
+    Grades:
+    - Grade: S
+      RequiredScore: 10000
+      RewardStars: 3
+    - Grade: A
+      RequiredScore: 8000
+      RewardStars: 2
+    - Grade: B
+      RequiredScore: 6000
+      RewardStars: 1
+    - Grade: C
+      RequiredScore: 0
+      RewardStars: 0
   - StageId: 2_1
     Grades:
     - Grade: S
-      RequiredScore: 13000
+      RequiredScore: 25000
       RewardStars: 3
     - Grade: A
-      RequiredScore: 11000
+      RequiredScore: 16000
       RewardStars: 2
     - Grade: B
-      RequiredScore: 9000
+      RequiredScore: 10000
       RewardStars: 1
     - Grade: C
       RequiredScore: 0
@@ -72,13 +72,13 @@ MonoBehaviour:
   - StageId: 2_2
     Grades:
     - Grade: S
-      RequiredScore: 14500
+      RequiredScore: 30000
       RewardStars: 3
     - Grade: A
-      RequiredScore: 12500
+      RequiredScore: 22000
       RewardStars: 2
     - Grade: B
-      RequiredScore: 10000
+      RequiredScore: 13000
       RewardStars: 1
     - Grade: C
       RequiredScore: 0
