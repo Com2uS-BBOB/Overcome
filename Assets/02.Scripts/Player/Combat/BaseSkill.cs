@@ -171,15 +171,30 @@ namespace _02.Scripts.Player.Combat
             OnSkillUsed?.Invoke();
             OnComboAttack?.Invoke(_comboStep);
 
+            // Fallback 타임아웃 (Animation Event 미발동 대비)
+            const float maxSkillDuration = 1.5f;
+            float elapsedTime = 0f;
+
             // Animation Event에서 OnAnimEventSkillEnd()가 호출될 때까지 대기
             while (_isActive)
             {
+                elapsedTime += Time.deltaTime;
+
                 // 콤보 큐잉 시 즉시 다음 콤보로
                 if (_comboQueued && CanContinueCombo)
                 {
                     DisableHitbox();
                     ExecuteNextCombo();
                     yield break;
+                }
+
+                // Fallback: Animation Event가 발동하지 않으면 강제 종료
+                if (elapsedTime >= maxSkillDuration)
+                {
+                    Debug.LogWarning($"[BaseSkill] Skill timeout! Animation Event 'EndAttack' not received. Forcing skill end.");
+                    _isActive = false;
+                    DisableHitbox();
+                    break;
                 }
 
                 yield return null;
