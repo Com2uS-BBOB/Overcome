@@ -14,8 +14,6 @@ public class RushAction : IEnemyAction
     private readonly float _maxDuration;  // 속도 계산용
     private readonly float _damage;
 
-    private bool _sfxPlayed;
-
     private bool _isFinished;
 
     private float _targetDistance;
@@ -77,8 +75,6 @@ public class RushAction : IEnemyAction
     {
         _isFinished = false;
 
-        _sfxPlayed = false;
-
         _traveled = 0f;
         _timer = 0f;
         _lastPosition = _enemy.position;
@@ -131,9 +127,6 @@ public class RushAction : IEnemyAction
         _hitbox?.Enable(_damage);
 
         _anim.TryPlayRush();
-#if UNITY_EDITOR
-        Debug.Log("돌진 시작");
-#endif
     }
 
     public void Update()
@@ -171,18 +164,12 @@ public class RushAction : IEnemyAction
                         if (moveDistance > 0f)
                             MoveBy(moveDistance);
 
-#if UNITY_EDITOR
-                        Debug.Log("돌진 종료: 플레이어 앞에서 정지");
-#endif
                         _isFinished = true;
                         return;
                     }
 
                     if (_stopOnPlayerHit)
                     {
-#if UNITY_EDITOR
-                        Debug.Log("돌진 종료: 플레이어 충돌로 정지");
-#endif
                         _isFinished = true;
                         return;
                     }
@@ -196,9 +183,6 @@ public class RushAction : IEnemyAction
         // 거리 기반 종료
         if (_traveled >= _targetDistance - _sqrMagnitudeThreshold)
         {
-#if UNITY_EDITOR
-            Debug.Log("돌진 종료: 거리 달성");
-#endif
             _isFinished = true;
             return;
         }
@@ -206,9 +190,6 @@ public class RushAction : IEnemyAction
         // 타임아웃 종료
         if (_timer >= _timeout)
         {
-#if UNITY_EDITOR
-            Debug.Log("돌진 종료: 타임아웃");
-#endif
             _isFinished = true;
         }
     }
@@ -270,12 +251,6 @@ public class RushAction : IEnemyAction
 
     public void OnSfxStart()
     {
-        if (_sfxPlayed) return;
-        _sfxPlayed = true;
 
-        if (string.IsNullOrEmpty(_rushSfxKey)) return;
-
-        // todo. 사운드 재생
-        // SoundManager.Instance.PlaySfx(_rushSfxKey, _enemy.position);
     }
 }

@@ -14,6 +14,6 @@ public class EnemyHit : MonoBehaviour
 
     private void HandleHit(EnemyHitEvent e)
     {
-        Debug.Log($"적 피격! {e.Enemy.name}, Damage: {e.Damage}");
+        
     }
 }
