@@ -47,22 +47,10 @@ public class StageDataImporter : EditorWindow
             return;
         }
 
-        // 첫 번째 줄 디버그 출력
-        Debug.Log($"[Debug] First line: '{lines[0]}'");
-        Debug.Log($"[Debug] Line length: {lines[0].Length}");
-
         // 헤더 파싱 (탭이나 콤마 구분 모두 지원)
         char delimiter = lines[0].Contains('\t') ? '\t' : ',';
-        Debug.Log($"[Debug] Using delimiter: '{delimiter}'");
 
         string[] headers = lines[0].Split(delimiter);
-        
-        // 헤더 디버그 출력
-        Debug.Log($"[Debug] Headers count: {headers.Length}");
-        for (int i = 0; i < headers.Length; i++)
-        {
-            Debug.Log($"[Debug] Header[{i}]: '{headers[i].Trim()}'");
-        }
 
         List<string> stageIds = new List<string>();
         int rewardsColumnIndex = -1;
@@ -76,7 +64,6 @@ public class StageDataImporter : EditorWindow
                 header.Equals("Reward", System.StringComparison.OrdinalIgnoreCase))
             {
                 rewardsColumnIndex = i;
-                Debug.Log($"[Debug] Found Rewards column at index: {i}");
                 break;
             }
             
@@ -92,8 +79,6 @@ public class StageDataImporter : EditorWindow
             Debug.LogError($"'Rewards' column not found in CSV! Headers: {string.Join(", ", headers)}");
             return;
         }
-
-        Debug.Log($"[Debug] Stage IDs: {string.Join(", ", stageIds)}");
 
         // 등급별 보상 매핑
         Dictionary<string, int> gradeRewards = new Dictionary<string, int>();
@@ -124,7 +109,6 @@ public class StageDataImporter : EditorWindow
                 {
                     rewardStars = parsedReward;
                     gradeRewards[grade] = rewardStars;
-                    Debug.Log($"[Debug] Grade {grade} = {rewardStars} stars");
                 }
             }
 
@@ -201,10 +185,6 @@ public class StageDataImporter : EditorWindow
             $"StageData created at {path}\n\n{rewardInfo}\n\nStages: {stageIds.Count}",
             "OK");
         Selection.activeObject = stageData;
-        
-        Debug.Log($"[GradeDataImporter] Import completed successfully!");
-        Debug.Log($"[GradeDataImporter] Stages imported: {string.Join(", ", stageIds)}");
-        Debug.Log($"[GradeDataImporter] {rewardInfo}");
     }
 }
 #endif

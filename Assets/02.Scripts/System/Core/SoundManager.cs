@@ -96,7 +96,6 @@ public class SoundManager : SingletonBehaviour<SoundManager>
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"[SoundManager] Scene 변경 감지: {scene.name} - Scene 오디오 클립 해제");
         ReleaseCurrentSceneAudioClips();
 
         // 씬별 자동 BGM 재생
@@ -107,7 +106,6 @@ public class SoundManager : SingletonBehaviour<SoundManager>
                 // LoadingScene은 건너뛰기 (기존 BGM 유지)
                 if (_skipLoadingScene && sceneType == ESceneType.LoadingScene)
                 {
-                    Debug.Log("[SoundManager] LoadingScene - BGM 유지");
                     return;
                 }
 
@@ -159,7 +157,6 @@ public class SoundManager : SingletonBehaviour<SoundManager>
     {
         if (settings != null)
         {
-            Debug.Log($"[SoundManager] 저장된 볼륨 로드 - Master: {settings.MasterVolume}, Music: {settings.MusicVolume}, Effect: {settings.SfxVolume}");
             SetAudioVolume(EAudioType.Master, settings.MasterVolume);
             SetAudioVolume(EAudioType.Music, settings.MusicVolume);
             SetAudioVolume(EAudioType.Effect, settings.SfxVolume);
@@ -260,13 +257,11 @@ public class SoundManager : SingletonBehaviour<SoundManager>
         SceneBGMData bgmData = _sceneBGMConfig.GetBGMData(sceneType);
         if (bgmData == null)
         {
-            Debug.Log($"[SoundManager] {sceneType} 씬에 대한 BGM 설정이 없습니다.");
             return;
         }
 
         if (!bgmData.PlayOnSceneLoad)
         {
-            Debug.Log($"[SoundManager] {sceneType} 씬 BGM 자동 재생이 비활성화되어 있습니다.");
             return;
         }
 
@@ -344,7 +339,6 @@ public class SoundManager : SingletonBehaviour<SoundManager>
             yield break;
         }
 
-        Debug.Log($"[SoundManager] BGM 재생 시작 (페이드 인): {loadedClip.name}");
         _bgmSource.clip = loadedClip;
         _bgmSource.loop = true;
         _bgmSource.volume = 0f;
@@ -372,7 +366,6 @@ public class SoundManager : SingletonBehaviour<SoundManager>
             yield break;
         }
 
-        Debug.Log($"[SoundManager] 인트로 BGM 재생 (페이드 인): {introClip.name}");
         _bgmSource.clip = introClip;
         _bgmSource.loop = false;
         _bgmSource.volume = 0f;

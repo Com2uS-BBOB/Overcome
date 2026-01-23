@@ -69,8 +69,6 @@ public class ReplaceTMPFontTool : EditorWindow
             tmp.font = newFont;
             EditorUtility.SetDirty(tmp);
         }
-
-        Debug.Log($"Replaced {uiTexts.Length + worldTexts.Length} TMP fonts!");
     }
 
     void ReplaceAllFontsInProject()
@@ -111,7 +109,6 @@ public class ReplaceTMPFontTool : EditorWindow
         }
 
         AssetDatabase.SaveAssets();
-        Debug.Log($"Replaced {count} TMP fonts in all prefabs!");
     }
 }
 #endif
